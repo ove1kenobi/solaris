@@ -1,21 +1,16 @@
 #pragma once
 #include "Light.h"
 
-//Point Lights: have a position, a fall off point or range, and a color
-
-class PointLight {
+class PointLight : public Light {
 private:
-	DirectX::XMMATRIX view;
-	DirectX::XMMATRIX projection;
-	DirectX::XMVECTOR position;
-	DirectX::XMVECTOR ambient;
-	DirectX::XMVECTOR diffuse;
-	D3D11_BUFFER_DESC buffer;
+	DirectX::XMFLOAT3 position;
+	DirectX::XMFLOAT3 attenuation;
 	float range;
-protected:
 public:
-	PointLight(DirectX::XMVECTOR position, DirectX::XMVECTOR ambient, DirectX::XMVECTOR diffuse);
+	PointLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 attenuation, float range, DirectX::XMFLOAT4 ambient, DirectX::XMFLOAT4 diffuse);
 	~PointLight();
-	bool CreateViewMatrix();
-	bool CreateProjectionMatrix();
+	//Only for debugging and dynamic adjustment of values if needed
+	void SetPosition(DirectX::XMFLOAT3 position);
+	void SetAttenuation(DirectX::XMFLOAT3 attenuation);
+	void SetRange(float range);
 };

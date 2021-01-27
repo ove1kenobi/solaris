@@ -1,32 +1,26 @@
 #include "PointLight.h"
 
-PointLight::PointLight(DirectX::XMVECTOR position) {
+PointLight::PointLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 attenuation, float range, DirectX::XMFLOAT4 ambient, DirectX::XMFLOAT4 diffuse) : Light(ambient, diffuse) {
 	this->position = position;
-	this->ambient = ambient;
-	this->diffuse = diffuse;
-	/*
-	light.Position = XMVectorSet(-20.0f, 15.0f, -20.0f, 0.0f);
-	light.Ambient = XMVectorSet(0.3f, 0.3f, 0.3f, 1.0f);
-	light.Diffuse = XMVectorSet(0.8f, 0.8f, 0.8f, 1.0f);
-
-	XMVECTOR lookAtPos = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	XMVECTOR direction = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	light.LightView = XMMatrixLookAtLH(light.Position, lookAtPos, direction);
-
-	light.LightProjection = XMMatrixOrthographicLH((float)WIDTH, (float)HEIGHT, 0.1f, 100.0f);
-	*/
+	this->attenuation = attenuation;
+	this->range = range;
 }
 
-PointLight::~PointLight()
-{
+PointLight::~PointLight() {
+
 }
 
-bool PointLight::CreateViewMatrix()
-{
-	return false;
+//changes position of the point light
+void PointLight::SetPosition(DirectX::XMFLOAT3 position) {
+	this->position = position;
 }
 
-bool PointLight::CreateProjectionMatrix()
-{
-	return false;
+//Changes the three fall off factors for the point light
+void PointLight::SetAttenuation(DirectX::XMFLOAT3 attenuation) {
+	this->attenuation = attenuation;
+}
+
+//Changes the range of the point light
+void PointLight::SetRange(float range) {
+	this->range = range;
 }
