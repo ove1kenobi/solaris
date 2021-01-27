@@ -7,7 +7,6 @@ Engine::Engine()
 
 const bool Engine::Initialize()
 {
-
 	return true;
 }
 
