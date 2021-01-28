@@ -8,7 +8,7 @@ private:
 	DXCore m_DXCore;
 	RenderWindow m_window;
 private:
-	 
+	
 public:
 	Engine();
 	virtual ~Engine() = default;

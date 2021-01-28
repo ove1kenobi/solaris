@@ -4,6 +4,8 @@ RenderWindow::RenderWindow()
 {
     LPCWSTR className = L"Window Class";
     LPCWSTR windowTitle = L"Window";
+    m_clientWinWidth = 1200;
+    m_clientWinHeight = 900;
     WNDCLASSEX wc = { 0 };
     wc.style = CS_HREDRAW | CS_VREDRAW;                  //Flags [Redraw on width/height change from resize/movement] See: https://msdn.microsoft.com/en-us/library/windows/desktop/ff729176(v=vs.85).aspx
     wc.lpfnWndProc = WindowProc;                         //Pointer to Window Proc function for handling messages from this window
@@ -19,18 +21,22 @@ RenderWindow::RenderWindow()
     wc.cbSize = sizeof(WNDCLASSEX);                      //Need to fill in the size of our struct for cbSize
 
     RegisterClassEx(&wc);
+
+    RECT winRect = {0, 0, static_cast<LONG>(m_clientWinWidth), static_cast<LONG>(m_clientWinHeight)};
+
     m_winHandle = CreateWindowEx(
         0,                                              // Optional window style
         className,
         windowTitle,
         WS_OVERLAPPEDWINDOW,                            // Window style
         // x positoin, y positoin, width, height
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+        CW_USEDEFAULT, CW_USEDEFAULT, winRect.left - winRect.right, winRect.top - winRect.bottom,
         nullptr,                                        // Parent window
         nullptr,                                        // Menu
         (HINSTANCE)GetModuleHandle(nullptr),            // Instance handle
         nullptr                                         // Additional application data
     );
+    ShowWindow(m_winHandle, SW_SHOWNORMAL);
 }
 
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -58,6 +64,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 return 0;
         }
     }
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
 HWND RenderWindow::GetHandle()

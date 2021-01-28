@@ -7,6 +7,7 @@ class RenderWindow
 {
 private:
 	HWND m_winHandle;
+	UINT m_clientWinWidth, m_clientWinHeight;
 private:
 	RenderWindow& operator=(const RenderWindow&) = delete;
 
