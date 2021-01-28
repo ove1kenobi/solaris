@@ -82,12 +82,20 @@
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="ForwardRenderer.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="PlayerCamera.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="PointLight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXCore.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="ForwardRenderer.h" />
     <ClInclude Include="RenderWindow.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="PlayerCamera.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="PointLight.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
