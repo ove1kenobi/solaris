@@ -5,6 +5,7 @@
 class Engine
 {
 private:
+	bool m_Running;
 	DXCore m_DXCore;
 	RenderWindow m_window;
 private:

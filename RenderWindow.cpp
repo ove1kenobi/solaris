@@ -4,8 +4,8 @@ RenderWindow::RenderWindow()
 {
     LPCWSTR className = L"Window Class";
     LPCWSTR windowTitle = L"Window";
-    m_clientWinWidth = 1200;
-    m_clientWinHeight = 900;
+    m_clientWinWidth = 1600u;
+    m_clientWinHeight = 1000u;
     WNDCLASSEX wc = { 0 };
     wc.style = CS_HREDRAW | CS_VREDRAW;                  //Flags [Redraw on width/height change from resize/movement] See: https://msdn.microsoft.com/en-us/library/windows/desktop/ff729176(v=vs.85).aspx
     wc.lpfnWndProc = WindowProc;                         //Pointer to Window Proc function for handling messages from this window
@@ -30,7 +30,7 @@ RenderWindow::RenderWindow()
         windowTitle,
         WS_OVERLAPPEDWINDOW,                            // Window style
         // x positoin, y positoin, width, height
-        CW_USEDEFAULT, CW_USEDEFAULT, winRect.left - winRect.right, winRect.top - winRect.bottom,
+        CW_USEDEFAULT, CW_USEDEFAULT, winRect.right - winRect.left, winRect.bottom - winRect.top,
         nullptr,                                        // Parent window
         nullptr,                                        // Menu
         (HINSTANCE)GetModuleHandle(nullptr),            // Instance handle

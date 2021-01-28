@@ -13,6 +13,7 @@ bool PlayerCamera::init(int screenWidth, int screenHeight, float screenNear, flo
 	float screenAspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
 
 	DirectX::XMStoreFloat4x4(&this->my_pMatrix, DirectX::XMMatrixPerspectiveFovLH(FOV, screenAspect, screenNear, screenFar));
+	return true;
 }
 
 void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
