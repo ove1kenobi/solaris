@@ -8,7 +8,7 @@ Engine::Engine() noexcept
 
 const bool Engine::Initialize()
 {
-	if (!m_DXCore.Initialize(1200u, 800u, m_Window.GetHandle()))
+	if (!m_DXCore.Initialize(m_Window.GetWidth(), m_Window.GetHeight(), m_Window.GetHandle()))
 	{
 		return false;
 	}
@@ -43,7 +43,7 @@ void Engine::Run()
 
 void Engine::Update()
 {
-
+	//Here we will update entire scene, though note that the eventsystem is part of doing that for us
 }
 
 void Engine::Render()

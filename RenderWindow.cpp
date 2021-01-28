@@ -62,6 +62,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 DestroyWindow(hwnd);
             else
                 return 0;
+            break;
         }
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
