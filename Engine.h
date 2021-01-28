@@ -5,13 +5,15 @@
 class Engine
 {
 private:
-	bool m_Running;
+	RenderWindow m_Window;
 	DXCore m_DXCore;
-	RenderWindow m_window;
+	ForwardRenderer m_ForwardRenderer;
+	bool m_Running;
 private:
-	
+	void Update();
+	void Render();
 public:
-	Engine();
+	Engine() noexcept;
 	virtual ~Engine() = default;
 	const bool Initialize();
 	void Run();
