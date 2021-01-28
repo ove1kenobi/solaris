@@ -1,6 +1,7 @@
 #include "PointLight.h"
 
-PointLight::PointLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 attenuation, float range, DirectX::XMFLOAT4 ambient, DirectX::XMFLOAT4 diffuse) : Light(ambient, diffuse) {
+PointLight::PointLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 attenuation, float range, DirectX::XMFLOAT4 ambient, DirectX::XMFLOAT4 diffuse)
+	: Light(ambient, diffuse) {
 	this->position = position;
 	this->attenuation = attenuation;
 	this->range = range;
@@ -8,6 +9,14 @@ PointLight::PointLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 attenuation
 
 PointLight::~PointLight() {
 
+}
+
+DirectX::XMFLOAT3 PointLight::GetPosition() {
+	return this->position;
+}
+
+DirectX::XMFLOAT3 PointLight::GetAttenuation() {
+	return this->attenuation;
 }
 
 //changes position of the point light

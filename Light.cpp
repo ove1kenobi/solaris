@@ -9,6 +9,15 @@ Light::~Light() {
 
 }
 
+DirectX::XMFLOAT4 Light::GetAmbient()
+{
+	return this->ambient;
+}
+
+DirectX::XMFLOAT4 Light::GetDiffuse() {
+	return this->diffuse;
+}
+
 void Light::SetAmbient(DirectX::XMFLOAT4 ambient) {
 	this->ambient = ambient;
 }
