@@ -138,9 +138,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ourMath.h" />
     <ClInclude Include="Planet.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ourMath.cpp" />
     <ClCompile Include="Planet.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
