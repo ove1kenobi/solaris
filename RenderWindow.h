@@ -14,5 +14,7 @@ private:
 public:
 	RenderWindow();
 	HWND GetHandle();
+	UINT GetWidth();
+	UINT GetHeight();
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

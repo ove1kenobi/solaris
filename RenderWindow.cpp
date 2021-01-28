@@ -71,3 +71,13 @@ HWND RenderWindow::GetHandle()
 {
     return m_winHandle;
 }
+
+UINT RenderWindow::GetWidth()
+{
+    return m_clientWinWidth;
+}
+
+UINT RenderWindow::GetHeight()
+{
+    return m_clientWinHeight;
+}
