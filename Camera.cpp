@@ -26,7 +26,7 @@ bool Camera::init(int screenWidth, int screenHeight, float screenNear, float scr
 	this->setRot(-90.0f, 0.0f, 0.0f);
 
 	//Setting the view matrix. Doing it in init since it will not have to be updated for the static ortho camera.
-	DirectX::XMMATRIX rotMatrix, rotMatrixX;
+	DirectX::XMMATRIX rotMatrixX;
 	float pRad = this->my_pitch * 0.0174532925f; //Pitch in radians.
 
 	//Create the rotation matrix.
