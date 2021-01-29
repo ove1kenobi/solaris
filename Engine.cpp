@@ -8,8 +8,16 @@ Engine::Engine() noexcept
 
 const bool Engine::Initialize()
 {
+	//DirectX Core
 	if (!m_DXCore.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_Window.GetHandle()))
 	{
+		//Throw
+		return false;
+	}
+
+	//Scene
+	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT)) {
+		//Throw
 		return false;
 	}
 	return true;

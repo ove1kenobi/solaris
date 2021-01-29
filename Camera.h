@@ -18,12 +18,16 @@ protected:
 	//Orientational vectors
 	DirectX::XMVECTOR m_forwardVector, m_upVector, m_rightVector;
 
+	float m_screenNear = 0.1f;
+	float m_screenFar;
+	
+
 public:
 	Camera() noexcept;
 	~Camera();
 
 	//Initializes the pMatrix & vMatrix of the orthographic camera.
-	virtual bool init(int screenWidth, int screenHeight, float screenNear, float screenFar, float cameraHeight);
+	virtual bool init(int screenWidth, int screenHeight, float cameraHeight);
 
 	//Changes the position of the camera.
 	void setPos(float x, float y, float z);

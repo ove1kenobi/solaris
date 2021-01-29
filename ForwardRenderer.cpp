@@ -5,7 +5,6 @@
 
 ForwardRenderer::ForwardRenderer() noexcept {
 	this->m_Background = { 0, 0, 0, 1 };
-	this->m_Bloom = Bloom();
 }
 
 //Submits what objects that will be rendered, takes a list of gameObjects as argument
