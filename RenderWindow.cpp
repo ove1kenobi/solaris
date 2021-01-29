@@ -4,8 +4,8 @@ RenderWindow::RenderWindow()
 {
     LPCWSTR className = L"Window Class";
     LPCWSTR windowTitle = L"Window";
-    m_clientWinWidth = 1600u;
-    m_clientWinHeight = 1000u;
+    m_clientWinWidth = 160u;
+    m_clientWinHeight = 100u;
     WNDCLASSEX wc = { 0 };
     wc.style = CS_HREDRAW | CS_VREDRAW;                  //Flags [Redraw on width/height change from resize/movement] See: https://msdn.microsoft.com/en-us/library/windows/desktop/ff729176(v=vs.85).aspx
     wc.lpfnWndProc = WindowProc;                         //Pointer to Window Proc function for handling messages from this window
