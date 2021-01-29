@@ -87,6 +87,9 @@
     <ClCompile Include="PlayerCamera.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="PointLight.cpp" />
+    <ClCompile Include="ourMath.cpp" />
+    <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -99,6 +102,9 @@
     <ClInclude Include="PlayerCamera.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="PointLight.h" />
+    <ClInclude Include="Time.h" />
+    <ClInclude Include="ourMath.h" />
+    <ClInclude Include="Planet.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

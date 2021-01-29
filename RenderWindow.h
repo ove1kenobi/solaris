@@ -10,7 +10,9 @@ private:
 	UINT m_clientWinWidth, m_clientWinHeight;
 private:
 	RenderWindow& operator=(const RenderWindow&) = delete;
-
+public:
+	static const UINT DEFAULT_WIN_WIDTH = 1200u;
+	static const UINT DEFAULT_WIN_HEIGHT = 800u;
 public:
 	RenderWindow();
 	HWND GetHandle();

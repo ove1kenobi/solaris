@@ -13,7 +13,7 @@ bool PlayerCamera::init(int screenWidth, int screenHeight, float screenNear, flo
 	float screenAspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
 
 	DirectX::XMStoreFloat4x4(&this->my_pMatrix, DirectX::XMMatrixPerspectiveFovLH(FOV, screenAspect, screenNear, screenFar));
-	return true;
+	return true;			// TODO: added by Ove due to "missing return value" error
 }
 
 void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
@@ -23,7 +23,7 @@ void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
 	DirectX::XMVECTOR forward = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	DirectX::XMVECTOR right = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 
-	float rad = 0.0174532925;
+	float rad = 0.0174532925f;
 	float pitch = this->my_pitch * rad;
 	float roll = this->my_roll * rad;
 	float yaw = this->my_yaw * rad;
