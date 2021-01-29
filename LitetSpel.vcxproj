@@ -82,6 +82,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="ForwardRenderer.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="PlayerCamera.cpp" />
@@ -98,6 +99,7 @@
     <ClInclude Include="DXDebug.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="ForwardRenderer.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="PlayerCamera.h" />
