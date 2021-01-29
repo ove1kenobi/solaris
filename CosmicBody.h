@@ -4,8 +4,11 @@
 #include <cmath>
 #include <vector>
 
+#include "GameObject.h"
 #include "ourMath.h"
-class Planet
+
+//Represents a planet, moon or asteroid.
+class CosmicBody : public GameObject
 {
 private:
 	//Called in init to create the sphere.
@@ -16,16 +19,15 @@ private:
 	std::vector<DirectX::XMFLOAT3> m_vertexBuffer;
 	std::vector<int> m_indexBuffer;
 
-	DirectX::XMFLOAT3 m_center;
 	float m_radius;
-	float m_mass;
 
-	float m_pitch;
-	float m_yaw;
+	//Where the buffers are stored
+	//Model m_model;
 public:
-	Planet();
-	~Planet();
+	CosmicBody() noexcept;
+	~CosmicBody() = default;
 
 	bool init(float x, float y, float z, float r);
+	bool update();
 };
 

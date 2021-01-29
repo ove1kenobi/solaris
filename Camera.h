@@ -6,20 +6,20 @@
 //sed as Base class for the PlayerCamera.
 class Camera {
 protected:
-	float my_pitch, my_roll, my_yaw;
+	float m_pitch, m_roll, m_yaw;
 
 	//View Matrix
-	DirectX::XMFLOAT4X4 my_vMatrix;
+	DirectX::XMFLOAT4X4 m_vMatrix;
 	//Projection Matrix
-	DirectX::XMFLOAT4X4 my_pMatrix;
+	DirectX::XMFLOAT4X4 m_pMatrix;
 
 	//Position
-	DirectX::XMVECTOR my_posVector;
+	DirectX::XMVECTOR m_posVector;
 	//Orientational vectors
-	DirectX::XMVECTOR my_forwardVector, my_upVector, my_rightVector;
+	DirectX::XMVECTOR m_forwardVector, m_upVector, m_rightVector;
 
 public:
-	Camera();
+	Camera() noexcept;
 	~Camera();
 
 	//Initializes the pMatrix & vMatrix of the orthographic camera.

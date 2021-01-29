@@ -5,8 +5,8 @@
 
 class PlayerCamera : public Camera {
 public:
-	PlayerCamera();
-	~PlayerCamera();
+	PlayerCamera() = default;
+	~PlayerCamera() = default;
 
 	//Initializes the pMatrix
 	bool init(int screenWidth, int screenHeight, float screenNear, float screenFar, float FOVvalue);

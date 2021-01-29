@@ -1,10 +1,9 @@
 #include "Scene.h"
 
-Scene::Scene() {
-	this->m_numPlanets = 0;
-}
+Scene::Scene() noexcept
+	:	m_numPlanets{ 0 }
+{
 
-Scene::~Scene() {
 }
 
 bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, float screenNear, float screenFar, float FOVvalue) {
@@ -44,16 +43,16 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, float scre
 	std::uniform_int_distribution<int> distributionPlanets(12, 15);
 	this->m_numPlanets = distributionPlanets(generator);
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
-	/*
+	
 	for(int i = 0; i < this->m_numPlanets; i++){
-		Planet planet;
-		if(!planet.init(i * 1000, 0, 0, distributionRadius(generator))){
+		CosmicBody planet;
+		if(!planet.init(static_cast<float>(i * 1000), 0, 0, static_cast<float>(distributionRadius(generator)))){
 			//Throw
-			return -1;
+			return 0;
 		}
-		this->m_gameObjects.push_back(planet);
+		this->m_gameObjects.push_back(&planet);
 	}
-	*/
+	
 
 	return 1;
 }
