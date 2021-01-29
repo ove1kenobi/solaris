@@ -23,7 +23,7 @@ void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
 	DirectX::XMVECTOR forward = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	DirectX::XMVECTOR right = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 
-	float rad = 0.0174532925;
+	float rad = 0.0174532925f;
 	float pitch = this->my_pitch * rad;
 	float roll = this->my_roll * rad;
 	float yaw = this->my_yaw * rad;
