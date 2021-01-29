@@ -1,27 +1,27 @@
 #include "Light.h"
 
-Light::Light(DirectX::XMFLOAT4 ambient, DirectX::XMFLOAT4 diffuse) {
-	this->ambient = ambient;
-	this->diffuse = diffuse;
+Light::Light(DirectX::XMVECTOR ambient, DirectX::XMVECTOR diffuse) {
+	this->m_Ambient = ambient;
+	this->m_Diffuse = diffuse;
 }
 
 Light::~Light() {
 
 }
 
-DirectX::XMFLOAT4 Light::GetAmbient()
+DirectX::XMVECTOR Light::GetAmbient()
 {
-	return this->ambient;
+	return this->m_Ambient;
 }
 
-DirectX::XMFLOAT4 Light::GetDiffuse() {
-	return this->diffuse;
+DirectX::XMVECTOR Light::GetDiffuse() {
+	return this->m_Diffuse;
 }
 
-void Light::SetAmbient(DirectX::XMFLOAT4 ambient) {
-	this->ambient = ambient;
+void Light::SetAmbient(DirectX::XMVECTOR ambient) {
+	this->m_Ambient = ambient;
 }
 
-void Light::SetDiffuse(DirectX::XMFLOAT4 diffuse) {
-	this->diffuse = diffuse;
+void Light::SetDiffuse(DirectX::XMVECTOR diffuse) {
+	this->m_Diffuse = diffuse;
 }
