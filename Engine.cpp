@@ -3,12 +3,12 @@
 Engine::Engine() noexcept
 	: m_Running{ true }
 {
-
+	m_gameTime.Update();
 }
 
 const bool Engine::Initialize()
 {
-	if (!m_DXCore.Initialize(1200u, 800u, m_Window.GetHandle()))
+	if (!m_DXCore.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_Window.GetHandle()))
 	{
 		return false;
 	}
@@ -43,7 +43,7 @@ void Engine::Run()
 
 void Engine::Update()
 {
-
+	m_gameTime.Update();
 }
 
 void Engine::Render()
@@ -54,7 +54,7 @@ void Engine::Render()
 
 	//Annat tankesätt än ovan är att här bara köra m_ForwardRenderer.RenderFrame() 
 	//och låta ovan funktioner vara privata till bara m_ForwardRenderer.
-
+	//this->m_ForwardRenderer.RenderFrame(this->m_DXCore.GetDeviceContext().Get());
 	//Followed by 2D-render...
 
 

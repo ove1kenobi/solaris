@@ -77,6 +77,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bloom.cpp" />
     <ClCompile Include="DXCore.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
@@ -88,9 +89,11 @@
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="ourMath.cpp" />
     <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="Time.cpp" />
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bloom.h" />
     <ClInclude Include="DXCore.h" />
     <ClInclude Include="DXDebug.h" />
     <ClInclude Include="Engine.h" />
@@ -100,6 +103,7 @@
     <ClInclude Include="PlayerCamera.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="PointLight.h" />
+    <ClInclude Include="Time.h" />
     <ClInclude Include="ourMath.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="Scene.h" />
