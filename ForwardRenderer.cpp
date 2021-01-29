@@ -1,7 +1,7 @@
 #include "ForwardRenderer.h"
 
 //NOTE: pointers probably are gonna have to be adjusted to be handled by the functions correctly,
-//can also be removed completelly based on the structure of the event handler. -steph
+//can also be removed completely based on the structure of the event handler. -steph
 
 ForwardRenderer::ForwardRenderer() noexcept {
 	this->m_Background = { 0, 0, 0, 1 };
