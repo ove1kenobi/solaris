@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include "DXCore.h"
 #include "RenderWindow.h"
 #include "ForwardRenderer.h"
@@ -12,8 +11,6 @@ private:
 	ForwardRenderer m_ForwardRenderer;
 	bool m_Running;
 	Time m_gameTime;
-	Time m_gameTimeCpy;
-	long double sumTime;
 private:
 	void Update();
 	void Render();

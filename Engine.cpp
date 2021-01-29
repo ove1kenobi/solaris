@@ -1,14 +1,14 @@
 #include "Engine.h"
 
 Engine::Engine() noexcept
-	: m_Running{ true }, sumTime{0.0}
+	: m_Running{ true }
 {
 	m_gameTime.Update();
 }
 
 const bool Engine::Initialize()
 {
-	if (!m_DXCore.Initialize(1200u, 800u, m_Window.GetHandle()))
+	if (!m_DXCore.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_Window.GetHandle()))
 	{
 		return false;
 	}
@@ -43,9 +43,7 @@ void Engine::Run()
 
 void Engine::Update()
 {
-	sumTime += m_gameTimeCpy.DeltaTime();
 	m_gameTime.Update();
-	OutputDebugString((std::to_wstring(m_gameTime.SinceStart()) + std::wstring(L" -> ") + std::to_wstring(sumTime) + std::wstring(L"\n")).c_str());
 }
 
 void Engine::Render()
