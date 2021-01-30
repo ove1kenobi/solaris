@@ -12,6 +12,10 @@ const bool Engine::Initialize()
 	{
 		return false;
 	}
+	if (!m_ResourceManager.Initialize(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext()))
+	{
+		return false;
+	}
 	return true;
 }
 
@@ -29,9 +33,6 @@ void Engine::Run()
 				m_Running = false;			//Could use future event system to stop running as an event instead (Emil F);	
 			}					
 		}
-
-		//Here we will empty our own event queue:
-		/*EventHandler.ProcessEvents() or something */
 
 		//Regular Update:
 		Update();

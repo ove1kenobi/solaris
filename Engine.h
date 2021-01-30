@@ -2,12 +2,14 @@
 #include "DXCore.h"
 #include "RenderWindow.h"
 #include "ForwardRenderer.h"
+#include "Resources/ResourceManager.h"
 class Engine
 {
 private:
 	RenderWindow m_Window;
 	DXCore m_DXCore;
 	ForwardRenderer m_ForwardRenderer;
+	ResourceManager m_ResourceManager;
 	bool m_Running;
 private:
 	void Update();

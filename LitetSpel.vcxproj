@@ -88,6 +88,12 @@
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="ourMath.cpp" />
     <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="Resources\IBindable.cpp" />
+    <ClCompile Include="Resources\InputLayout.cpp" />
+    <ClCompile Include="Resources\PixelShader.cpp" />
+    <ClCompile Include="Resources\PrimitiveTopology.cpp" />
+    <ClCompile Include="Resources\ResourceManager.cpp" />
+    <ClCompile Include="Resources\VertexShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXCore.h" />
@@ -101,6 +107,13 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="ourMath.h" />
     <ClInclude Include="Planet.h" />
+    <ClInclude Include="Resources\IBindable.h" />
+    <ClInclude Include="Resources\InputLayout.h" />
+    <ClInclude Include="Resources\IShader.h" />
+    <ClInclude Include="Resources\PixelShader.h" />
+    <ClInclude Include="Resources\PrimitiveTopology.h" />
+    <ClInclude Include="Resources\ResourceManager.h" />
+    <ClInclude Include="Resources\VertexShader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
