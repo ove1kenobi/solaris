@@ -1,28 +1,33 @@
-#include "Planet.h"
+#include "CosmicBody.h"
 
-Planet::Planet() {
-	this->m_radius = 0;
-	this->m_center.x = 0;
-	this->m_center.y = 0;
-	this->m_center.z = 0;
+CosmicBody::CosmicBody() noexcept
+	:	m_radius{ 0 }
+{
+	
 }
 
-Planet::~Planet() {
-
-}
-
-bool Planet::init(float x, float y, float z, float r) {
+bool CosmicBody::init(float x, float y, float z, float r) {
 	this->m_radius = r;
 	this->m_center.x = x;
 	this->m_center.y = y;
 	this->m_center.z = z;
 
+	/*
+	if(!this->m_model.init()){
+		//Throw
+		return 0;
+	}
+	*/
 	createSphere();
 
 	return 1;
 }
 
-void Planet::createSphere() {
+bool CosmicBody::update() {
+	//this->m_model.update(this->m_timer.DeltaTime());
+	return 1;
+}
+void CosmicBody::createSphere() {
 	//Starting octahedron points.
 	DirectX::XMFLOAT3 p0, p1, p2, p3, p4, p5;
 	//So that the triangles have the same length on all 3 sides.
@@ -116,7 +121,7 @@ void Planet::createSphere() {
 	this->m_indexBuffer = triangles;
 }
 
-void Planet::createTriangleFace(std::vector<int> edge1, std::vector<int> edge2, std::vector<int> edge3, bool reverse, std::vector<DirectX::XMFLOAT3> &vertices, std::vector<int> &triangles) {
+void CosmicBody::createTriangleFace(std::vector<int> edge1, std::vector<int> edge2, std::vector<int> edge3, bool reverse, std::vector<DirectX::XMFLOAT3> &vertices, std::vector<int> &triangles) {
 	int pointsOnEdge = static_cast<int>(edge1.size());
 	std::vector<int> vertexMap;
 	vertexMap.push_back(edge1[0]);

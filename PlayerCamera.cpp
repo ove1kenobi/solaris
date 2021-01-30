@@ -1,19 +1,12 @@
 #include "PlayerCamera.h"
 
-PlayerCamera::PlayerCamera() {
-
-}
-
-PlayerCamera::~PlayerCamera() {
-
-}
-
-bool PlayerCamera::init(int screenWidth, int screenHeight, float screenNear, float screenFar, float FOVvalue) {
-	float FOV = 3.141592654f / FOVvalue;
+bool PlayerCamera::init(int screenWidth, int screenHeight) {
+	this->m_screenFar = 1000;
+	float FOV = 3.141592654f / this->m_FOVvalue;
 	float screenAspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
 
-	DirectX::XMStoreFloat4x4(&this->my_pMatrix, DirectX::XMMatrixPerspectiveFovLH(FOV, screenAspect, screenNear, screenFar));
-	return true;
+	DirectX::XMStoreFloat4x4(&this->m_pMatrix, DirectX::XMMatrixPerspectiveFovLH(FOV, screenAspect, this->m_screenNear, this->m_screenFar));
+	return true;			// TODO: added by Ove due to "missing return value" error
 }
 
 void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
@@ -24,9 +17,9 @@ void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
 	DirectX::XMVECTOR right = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 
 	float rad = 0.0174532925f;
-	float pitch = this->my_pitch * rad;
-	float roll = this->my_roll * rad;
-	float yaw = this->my_yaw * rad;
+	float pitch = this->m_pitch * rad;
+	float roll = this->m_roll * rad;
+	float yaw = this->m_yaw * rad;
 
 	//Create the rotation matrices.
 	DirectX::XMMATRIX rotMatrix = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
@@ -34,27 +27,27 @@ void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
 	DirectX::XMMATRIX rotMatrixY = DirectX::XMMatrixRotationY(yaw);
 
 	//Update the cameras vectors.
-	this->my_forwardVector = DirectX::XMVector3TransformCoord(forward, rotMatrixY);
-	this->my_rightVector = DirectX::XMVector3TransformCoord(right, rotMatrixY);
+	this->m_forwardVector = DirectX::XMVector3TransformCoord(forward, rotMatrixY);
+	this->m_rightVector = DirectX::XMVector3TransformCoord(right, rotMatrixY);
 
 	//Update lookAt
 	lookAt = DirectX::XMVector3TransformCoord(lookAt, rotMatrix);
 	up = DirectX::XMVector3TransformCoord(up, rotMatrix);
 
 	//Oklart om denna behövs
-	lookAt = DirectX::XMVectorAdd(this->my_posVector, lookAt);
+	lookAt = DirectX::XMVectorAdd(this->m_posVector, lookAt);
 
 	//Update the vMatrix
-	DirectX::XMStoreFloat4x4(&this->my_vMatrix, DirectX::XMMatrixLookAtLH(this->my_posVector, lookAt, up));
+	DirectX::XMStoreFloat4x4(&this->m_vMatrix, DirectX::XMMatrixLookAtLH(this->m_posVector, lookAt, up));
 }
 
 void PlayerCamera::move(DirectX::XMVECTOR shipCoordsDiff) {
-	this->my_posVector = DirectX::XMVectorAdd(shipCoordsDiff, this->my_posVector);
+	this->m_posVector = DirectX::XMVectorAdd(shipCoordsDiff, this->m_posVector);
 }
 
 void PlayerCamera::mouseRot(int mouseX, int mouseY) {
 	if (mouseY < 1000 && mouseY > -1000) {
-		this->my_pitch = mouseY * 0.1f;
+		this->m_pitch = mouseY * 0.1f;
 	}
-	this->my_roll = mouseX * 0.1f;
+	this->m_roll = mouseX * 0.1f;
 }

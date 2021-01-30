@@ -1,15 +1,23 @@
-#include "Engine.h"
+ï»¿#include "Engine.h"
 
 Engine::Engine() noexcept
 	: m_Running{ true }
 {
-
+	m_gameTime.Update();
 }
 
 const bool Engine::Initialize()
 {
-	if (!m_DXCore.Initialize(m_Window.GetWidth(), m_Window.GetHeight(), m_Window.GetHandle()))
+	//DirectX Core
+	if (!m_DXCore.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_Window.GetHandle()))
 	{
+		//Throw
+		return false;
+	}
+
+	//Scene
+	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT)) {
+		//Throw
 		return false;
 	}
 	return true;
@@ -43,18 +51,19 @@ void Engine::Run()
 
 void Engine::Update()
 {
+	m_gameTime.Update();
 	//Here we will update entire scene, though note that the eventsystem is part of doing that for us
 }
 
 void Engine::Render()
 {
 	/*m_ForwardRenderer.BeginFrame() exempelvis */ //Will set up everything and ready rendering pass.
-	/*m_ForwardRenderer.Submit(Ett gäng med cullade modeller...) exempelvis*/
+	/*m_ForwardRenderer.Submit(Ett gï¿½ng med cullade modeller...) exempelvis*/
 	/*m_ForwardRenderer.EndFrame() exempelvis */
 
-	//Annat tankesätt än ovan är att här bara köra m_ForwardRenderer.RenderFrame() 
-	//och låta ovan funktioner vara privata till bara m_ForwardRenderer.
-
+	//Annat tankesï¿½tt ï¿½n ovan ï¿½r att hï¿½r bara kï¿½ra m_ForwardRenderer.RenderFrame() 
+	//och lï¿½ta ovan funktioner vara privata till bara m_ForwardRenderer.
+	//this->m_ForwardRenderer.RenderFrame(this->m_DXCore.GetDeviceContext().Get());
 	//Followed by 2D-render...
 
 
