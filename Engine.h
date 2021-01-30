@@ -2,6 +2,9 @@
 #include "DXCore.h"
 #include "RenderWindow.h"
 #include "ForwardRenderer.h"
+#include "Time.h"
+#include "Scene.h"
+
 #include "Resources/ResourceManager.h"
 class Engine
 {
@@ -11,6 +14,8 @@ private:
 	ForwardRenderer m_ForwardRenderer;
 	ResourceManager m_ResourceManager;
 	bool m_Running;
+	Time m_gameTime;
+	Scene m_scene;
 private:
 	void Update();
 	void Render();

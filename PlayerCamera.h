@@ -4,12 +4,14 @@
 #include "Camera.h"
 
 class PlayerCamera : public Camera {
+private:
+	float m_FOVvalue = 4.0f;
 public:
-	PlayerCamera();
-	~PlayerCamera();
+	PlayerCamera() = default;
+	~PlayerCamera() = default;
 
 	//Initializes the pMatrix
-	bool init(int screenWidth, int screenHeight, float screenNear, float screenFar, float FOVvalue);
+	bool init(int screenWidth, int screenHeight);
 	//Updates the vMatrix
 	void update(DirectX::XMVECTOR shipCoords);
 	//Move the camera the same amount that the spaceship moved.
