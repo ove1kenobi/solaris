@@ -82,13 +82,14 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="ForwardRenderer.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="PlayerCamera.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="ourMath.cpp" />
-    <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="CosmicBody.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>
@@ -98,6 +99,7 @@
     <ClInclude Include="DXDebug.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="ForwardRenderer.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="ModelFactory.h" />
     <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="Camera.h" />
@@ -106,7 +108,7 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="ourMath.h" />
-    <ClInclude Include="Planet.h" />
+    <ClInclude Include="CosmicBody.h" />
     <ClInclude Include="Scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
