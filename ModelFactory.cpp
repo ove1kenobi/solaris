@@ -80,7 +80,8 @@ Model* ModelFactory::GetModel(std::string filePath)
 			loadDebug += std::string("=======================================\n");
 			OutputDebugStringA(loadDebug.c_str());
 #endif
+			model.Loaded();
 		}
 	}
-	return nullptr;
+	return &model;
 }
