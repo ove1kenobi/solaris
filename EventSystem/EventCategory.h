@@ -1,2 +1,2 @@
 #pragma once
-enum class WindowCategory { WindowCategory = 0 };
+enum class EventCategory { WindowCategory = 0 };

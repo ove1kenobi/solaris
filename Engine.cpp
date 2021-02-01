@@ -9,7 +9,6 @@ Engine::Engine() noexcept
 const bool Engine::Initialize()
 {
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
-
 	//DirectX Core
 	if (!m_DXCore.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_Window.GetHandle()))
 		return false;
@@ -39,7 +38,6 @@ void Engine::Run()
 			TranslateMessage(&message);
 			DispatchMessageA(&message);				
 		}
-
 		//Regular Update:
 		Update();
 
@@ -77,6 +75,7 @@ void Engine::Render()
 
 	//Followed by presentation of everything (backbuffer):
 	m_ForwardRenderer.RenderFrame();
-	HRESULT HR = m_DXCore.GetSwapChain()->Present(1, 0); //TODO: implement 3rd macro for debugging support (Emil F)
-	assert(SUCCEEDED(HR));
+	//HRESULT HR = m_DXCore.GetSwapChain()->Present(1, 0); //TODO: implement 3rd macro for debugging support (Emil F)
+	//assert(SUCCEEDED(HR));
+	HR_A(m_DXCore.GetSwapChain()->Present(1, 0), "Present");
 }
