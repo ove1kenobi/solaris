@@ -24,4 +24,5 @@ public:
 	ResourceManager() noexcept;
 	virtual ~ResourceManager() noexcept = default;
 	[[nodiscard]] const bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext) noexcept;
+	[[nodiscard]] const bool Demo(); //TODO: Remove once event system is implemented.
 };

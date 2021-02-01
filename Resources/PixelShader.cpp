@@ -23,17 +23,17 @@ const bool PixelShader::Create(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, con
 #if defined( DEBUG ) || defined( _DEBUG )
 	flags |= D3DCOMPILE_DEBUG;
 #endif
-	//HR_E(D3DCompileFromFile(fileName,
-	//						nullptr,
-	//						D3D_COMPILE_STANDARD_FILE_INCLUDE,
-	//						"ps_main",
-	//						"ps_5_0",
-	//						flags,
-	//						0u,
-	//						&m_pShaderBlob,
-	//						&pErrorBlob),
-	//						pErrorBlob,
-	//						"D3DCompileFromFile");
+	HR_E(D3DCompileFromFile(fileName,
+							nullptr,
+							D3D_COMPILE_STANDARD_FILE_INCLUDE,
+							"ps_main",
+							"ps_5_0",
+							flags,
+							0u,
+							&m_pShaderBlob,
+							&pErrorBlob),
+							pErrorBlob,
+							"D3DCompileFromFile");
 
 	HR(pDevice->CreatePixelShader(m_pShaderBlob->GetBufferPointer(),
 								  m_pShaderBlob->GetBufferSize(),

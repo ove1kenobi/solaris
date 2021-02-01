@@ -22,34 +22,17 @@ const bool VertexShader::Create(Microsoft::WRL::ComPtr<ID3D11Device> pDevice,con
 #if defined( DEBUG ) || defined( _DEBUG )
 	flags |= D3DCOMPILE_DEBUG;
 #endif
-	//HR_E(D3DCompileFromFile(fileName,
-	//						nullptr,
-	//						D3D_COMPILE_STANDARD_FILE_INCLUDE,
-	//						"vs_main",
-	//						"vs_5_0",
-	//						flags,
-	//						0u,
-	//						&m_pShaderBlob,
-	//						&pErrorBlob), 
-	//						pErrorBlob, 
-	//						"D3DCompileFromFile");
-
-	//HRESULT hr = D3DCompileFromFile(
-	//	L"VertexShader_Minimalistic.hlsl",
-	//	nullptr,
-	//	D3D_COMPILE_STANDARD_FILE_INCLUDE,
-	//	"vs_main",
-	//	"vs_5_0",
-	//	flags,
-	//	0,
-	//	&m_pShaderBlob,
-	//	&pErrorBlob);
-	//if (FAILED(hr)) {
-	//	if (pErrorBlob) {
-	//		OutputDebugStringA((char*)pErrorBlob->GetBufferPointer());
-	//	}
-	//	assert(false);
-	//}
+	HR_E(D3DCompileFromFile(fileName,
+							nullptr,
+							D3D_COMPILE_STANDARD_FILE_INCLUDE,
+							"vs_main",
+							"vs_5_0",
+							flags,
+							0u,
+							&m_pShaderBlob,
+							&pErrorBlob), 
+							pErrorBlob, 
+							"D3DCompileFromFile");
 
 	HR(pDevice->CreateVertexShader(m_pShaderBlob->GetBufferPointer(), 
 								   m_pShaderBlob->GetBufferSize(),
