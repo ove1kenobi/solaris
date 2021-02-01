@@ -4,6 +4,7 @@
 #include "ForwardRenderer.h"
 #include "Time.h"
 #include "Scene.h"
+#include "ModelFactory.h"
 
 class Engine
 {

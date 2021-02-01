@@ -8,6 +8,9 @@ Engine::Engine() noexcept
 
 const bool Engine::Initialize()
 {
+	ModelFactory* mf = ModelFactory::GetInstance();
+	mf->GetModel(std::string("models/moon.obj"));
+
 	//DirectX Core
 	if (!m_DXCore.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_Window.GetHandle()))
 	{
