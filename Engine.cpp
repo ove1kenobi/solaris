@@ -75,7 +75,5 @@ void Engine::Render()
 
 	//Followed by presentation of everything (backbuffer):
 	m_ForwardRenderer.RenderFrame();
-	//HRESULT HR = m_DXCore.GetSwapChain()->Present(1, 0); //TODO: implement 3rd macro for debugging support (Emil F)
-	//assert(SUCCEEDED(HR));
 	HR_A(m_DXCore.GetSwapChain()->Present(1, 0), "Present");
 }
