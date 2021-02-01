@@ -6,6 +6,30 @@ Scene::Scene() noexcept
 
 }
 
+Scene::~Scene() {
+	for (auto r : this->m_gameObjects) {
+		delete r;
+	}
+}
+
+//All events that Scene are listening to.
+void Scene::OnEvent(IEvent& event) noexcept {
+	switch (event.GetEventType()) {
+		case EventType::AskForRenderObjectsEvent:
+			sendObjects();
+			break;
+
+		default:
+			break;
+	}
+}
+
+//Send gameObjects for rendering after being asked.
+void Scene::sendObjects() {
+	SendRenderObjectsEvent event(&this->m_gameObjects);
+	EventBuss::Get().Delegate(event);
+}
+
 bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	//Orthographic camera. Over the sun.
 	if (!this->m_orthoCamera.init(screenWidth, screenHeight, 1000)) {
@@ -42,8 +66,8 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
 	
 	for(int i = 0; i < this->m_numPlanets; i++){
-		CosmicBody planet;
-		if(!planet.init(0/*static_cast<float>(i * 1000)*/, 0, 1500, static_cast<float>(distributionRadius(generator)))){
+		CosmicBody* planet = new CosmicBody();
+		if(!planet->init(0/*static_cast<float>(i * 1000)*/, 0, 1500, static_cast<float>(distributionRadius(generator)))){
 			//Throw
 			return 0;
 		}

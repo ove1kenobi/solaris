@@ -1,6 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
-
+#include <vector>
 #include "Time.h"
 class GameObject
 {
@@ -16,6 +16,10 @@ protected:
 	float m_yaw;
 
 	Time m_timer;
+
+	std::vector<float> m_vertexBuffer;
+	std::vector<int> m_indexBuffer;
+
 public:
 	GameObject() noexcept;
 	~GameObject() = default;
@@ -23,5 +27,7 @@ public:
 	virtual bool update() = 0;
 
 	void getWMatrix(DirectX::XMMATRIX& wMatrix);
+	std::vector<float> getVertexBuffer();
+	std::vector<int> getIndexBuffer();
 };
 

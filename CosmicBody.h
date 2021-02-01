@@ -2,7 +2,6 @@
 #include <DirectXMath.h>
 
 #include <cmath>
-#include <vector>
 
 #include "GameObject.h"
 #include "ourMath.h"
@@ -23,9 +22,6 @@ private:
 public:
 	CosmicBody() noexcept;
 	~CosmicBody() = default;
-
-	std::vector<float> m_vertexBuffer;
-	std::vector<int> m_indexBuffer;
 
 	bool init(float x, float y, float z, float r);
 	bool update();

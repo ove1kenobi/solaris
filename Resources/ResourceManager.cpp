@@ -68,7 +68,7 @@ const bool ResourceManager::Demo(std::vector<float> vertexArray, std::vector<int
 										 &stride,
 										 &offset);
 
-	ID3D11Buffer* pIndexBuffer = NULL;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer = NULL;
 
 	D3D11_BUFFER_DESC indexBufferDescriptor = {};
 	indexBufferDescriptor.ByteWidth = sizeof(unsigned int) * indexBuffer.size();
@@ -89,11 +89,11 @@ const bool ResourceManager::Demo(std::vector<float> vertexArray, std::vector<int
 	
 
 	// Set the buffer.
-	m_pDeviceContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	m_pDeviceContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	//Matrixbuffer for shader
 	D3D11_BUFFER_DESC matrixBufferDesc;
-	ID3D11Buffer* matrixBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> matrixBuffer = NULL;
 
 	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	matrixBufferDesc.ByteWidth = sizeof(MatrixBuffer);
@@ -112,7 +112,7 @@ const bool ResourceManager::Demo(std::vector<float> vertexArray, std::vector<int
 	PMatrix = DirectX::XMMatrixTranspose(PMatrix);
 
 	m_pDeviceContext->Map(
-		matrixBuffer,
+		matrixBuffer.Get(),
 		0,
 		D3D11_MAP_WRITE_DISCARD,
 		0,
@@ -125,7 +125,7 @@ const bool ResourceManager::Demo(std::vector<float> vertexArray, std::vector<int
 	data->VMatrix = VMatrix;
 	data->PMatrix = PMatrix;
 
-	m_pDeviceContext->Unmap(matrixBuffer, 0);
-	m_pDeviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
+	m_pDeviceContext->Unmap(matrixBuffer.Get(), 0);
+	m_pDeviceContext->VSSetConstantBuffers(0, 1, matrixBuffer.GetAddressOf());
 	return true;
 }

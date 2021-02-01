@@ -5,9 +5,12 @@
 //#include "Sun.h"
 //#include "Player.h"
 #include "GameObject.h"
+#include "EventSystem/IEventListener.h"
+#include "EventSystem/EventPublisher.h"
+#include "EventSystem/RenderEvents.h"
 #include <random>
 
-class Scene
+class Scene : public EventPublisher, IEventListener
 {
 private:
 	//GameObjects include planets, moons, asteroids and the sun.
@@ -20,12 +23,15 @@ private:
 	//ModelFactory m_factory;
 public:
 	Scene() noexcept;
-	~Scene() = default;
+	~Scene();
 
-	std::vector<CosmicBody> m_gameObjects;
+	std::vector<GameObject*> m_gameObjects;
 
 	bool init(unsigned int screenWidth, unsigned int screenHeight);
 	bool update();
+
+	void OnEvent(IEvent& event) noexcept;
+	void sendObjects();
 
 	PlayerCamera m_perspectiveCamera;
 };

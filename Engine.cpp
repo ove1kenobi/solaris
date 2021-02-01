@@ -24,11 +24,11 @@ const bool Engine::Initialize()
 	DirectX::XMMATRIX WMatrix;
 	DirectX::XMMATRIX VMatrix;
 	DirectX::XMMATRIX PMatrix;
-	this->m_scene.m_gameObjects[0].getWMatrix(WMatrix);
+	this->m_scene.m_gameObjects[0]->getWMatrix(WMatrix);
 	this->m_scene.m_perspectiveCamera.getVMatrix(VMatrix);
 	this->m_scene.m_perspectiveCamera.getPMatrix(PMatrix);
 	//Resource Manager
-	if (!m_ResourceManager.Initialize(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext(), this->m_scene.m_gameObjects[0].m_vertexBuffer, this->m_scene.m_gameObjects[0].m_indexBuffer, WMatrix, VMatrix, PMatrix))
+	if (!m_ResourceManager.Initialize(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext(), this->m_scene.m_gameObjects[0]->getVertexBuffer(), this->m_scene.m_gameObjects[0]->getIndexBuffer(), WMatrix, VMatrix, PMatrix))
 		return false;
 
 	return true;
@@ -52,7 +52,7 @@ void Engine::Run()
 	}
 }
 
-void Engine::OnEvent(const IEvent& event) noexcept
+void Engine::OnEvent(IEvent& event) noexcept
 {
 	switch (event.GetEventType())
 	{
@@ -70,18 +70,8 @@ void Engine::Update()
 
 void Engine::Render()
 {
-	/*m_ForwardRenderer.BeginFrame() exempelvis */ //Will set up everything and ready rendering pass.
-	/*m_ForwardRenderer.Submit(Ett g�ng med cullade modeller...) exempelvis*/
-	/*m_ForwardRenderer.EndFrame() exempelvis */
-
-	//Annat tankes�tt �n ovan �r att h�r bara k�ra m_ForwardRenderer.RenderFrame() 
-	//och l�ta ovan funktioner vara privata till bara m_ForwardRenderer.
-	//this->m_ForwardRenderer.RenderFrame(this->m_DXCore.GetDeviceContext().Get());
-	//Followed by 2D-render...
 
 	//Followed by presentation of everything (backbuffer):
-	m_ForwardRenderer.RenderFrame(this->m_scene.m_gameObjects[0].m_indexBuffer);
-	//HRESULT HR = m_DXCore.GetSwapChain()->Present(1, 0); //TODO: implement 3rd macro for debugging support (Emil F)
-	//assert(SUCCEEDED(HR));
+	m_ForwardRenderer.RenderFrame(this->m_scene.m_gameObjects[0]->getIndexBuffer());
 	HR_A(m_DXCore.GetSwapChain()->Present(1, 0), "Present");
 }
