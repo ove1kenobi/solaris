@@ -52,21 +52,18 @@ Model* ModelFactory::GetModel(std::string filePath)
 				
 				for (UINT i = 0u; i < 3u; ++i)
 				{
-					vertex vtx;
-					vtx.position[i] = mesh->mVertices[i];
-					if (mesh->HasTextureCoords(iMesh) && i < 2) vtx.texcoord[i] = mesh->mTextureCoords[i];
-					if (mesh->HasNormals()) vtx.normal[i] = mesh->mNormals[i];
-					if (mesh->HasTangentsAndBitangents())
-					{
-						vtx.tangent[i] = mesh->mTangents[i];
-						vtx.bitangent[i] = mesh->mBitangents[i];
-					}
-					model.AddVertex(vtx);
+					//vertex_tex vtx;
+					//vtx.position[i] = mesh->mVertices[i];
+					//if (mesh->HasTextureCoords(iMesh) && i < 2) vtx.texcoord[i] = mesh->mTextureCoords[i];
+					//if (mesh->HasNormals()) vtx.normal[i] = mesh->mNormals[i];
+					//if (mesh->HasTangentsAndBitangents())
+					//{
+					//	vtx.tangent[i] = mesh->mTangents[i];
+					//	vtx.bitangent[i] = mesh->mBitangents[i];
+					//}
+					//model.AddVertex(vtx);
 
 				}
-
-				for (UINT iFace = 0u; iFace < mesh->)
-				aiFace* face = mesh->
 			}
 			loadDebug += std::string("=======================================\n");
 			OutputDebugStringA(loadDebug.c_str());

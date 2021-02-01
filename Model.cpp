@@ -10,7 +10,7 @@ bool Model::NotLoaded()
 	return m_notLoaded;
 }
 
-void Model::AddVertex(vertex v)
+void Model::AddVertex(vertex_tex v)
 {
 	m_vertices.push_back(v);
 }
