@@ -16,7 +16,7 @@ public:
 		return "WindowCloseEvent";
 	}
 };
-
+/*FOR TESTING PURPOSES ONLY*/
 class TestEvent : public IEvent
 {
 private:

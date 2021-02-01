@@ -18,6 +18,9 @@ private:
 public:
 	[[nodiscard]] static EventBuss& Get() noexcept;
 	void AddListener(IEventListener* eventListener, const EventType& eventType) noexcept;
+	void AddListener(IEventListener* eventListener, const EventType& eventType, const EventType& eventType2) noexcept;
+	void AddListener(IEventListener* eventListener, const EventType& eventType, const EventType& eventType2, const EventType& eventType3) noexcept;
+	void AddListener(IEventListener* eventListener, const std::vector<EventType>& eventTypes) noexcept;
 	void RemoveListener(IEventListener* eventListener, const EventType& eventType) noexcept;
 	void Delegate(const IEvent& event);
 };
