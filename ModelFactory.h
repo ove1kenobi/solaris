@@ -15,9 +15,9 @@ private:
 	std::unordered_map<std::string, Model> m_loadedModels;
 private:
 	ModelFactory();
-	~ModelFactory();
 	ModelFactory& operator=(const ModelFactory& other) = delete;
 public:
+	~ModelFactory();
 	static ModelFactory* GetInstance();
 	Model* GetModel(std::string filePath);
 };

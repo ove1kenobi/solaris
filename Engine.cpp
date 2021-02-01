@@ -37,6 +37,8 @@ void Engine::Run()
 			DispatchMessageA(&message);
 			if (message.message == WM_QUIT)
 			{
+				ModelFactory* mf = ModelFactory::GetInstance();
+				delete mf;
 				m_Running = false;			//Could use future event system to stop running as an event instead (Emil F);	
 			}					
 		}

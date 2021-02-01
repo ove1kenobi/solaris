@@ -26,10 +26,12 @@ class Model
 private:
 	bool m_notLoaded;
 	std::vector<vertex_tex> m_vertices;
-	std::vector<DWORD> m_indices;
+	std::vector<UINT> m_indices;
 public:
 	Model();
 	~Model() = default;
 	bool NotLoaded();
 	void AddVertex(vertex_tex v);
+	void AddIndex(UINT i);
+	void Loaded();
 };

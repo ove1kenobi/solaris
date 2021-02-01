@@ -9,7 +9,7 @@ ModelFactory::ModelFactory()
 
 ModelFactory::~ModelFactory()
 {
-
+	m_me = nullptr;
 }
 
 ModelFactory* ModelFactory::GetInstance()
@@ -50,19 +50,42 @@ Model* ModelFactory::GetModel(std::string filePath)
 				const aiMesh* mesh = scene->mMeshes[iMesh];
 				loadDebug += std::string("Mesh: #") + std::to_string(iMesh) + std::string("\tVertices: ") + std::to_string(mesh->mNumVertices) + std::string("\n");
 				
-				for (UINT i = 0u; i < 3u; ++i)
+				for (UINT i = 0u; i < mesh->mNumVertices; ++i)
 				{
-					//vertex_tex vtx;
-					//vtx.position[i] = mesh->mVertices[i];
-					//if (mesh->HasTextureCoords(iMesh) && i < 2) vtx.texcoord[i] = mesh->mTextureCoords[i];
-					//if (mesh->HasNormals()) vtx.normal[i] = mesh->mNormals[i];
-					//if (mesh->HasTangentsAndBitangents())
-					//{
-					//	vtx.tangent[i] = mesh->mTangents[i];
-					//	vtx.bitangent[i] = mesh->mBitangents[i];
-					//}
-					//model.AddVertex(vtx);
+					vertex_tex vtx = {};
+					vtx.position.x = mesh->mVertices[i].x;
+					vtx.position.y = mesh->mVertices[i].y;
+					vtx.position.z = mesh->mVertices[i].z;
+					if (mesh->HasTextureCoords(iMesh))
+					{
+						vtx.texcoord.x = mesh->mTextureCoords[iMesh][i].x;
+						vtx.texcoord.y = mesh->mTextureCoords[iMesh][i].y;
+					}
+					if (mesh->HasNormals())
+					{
+						vtx.normal.x = mesh->mNormals[i].x;
+						vtx.normal.y = mesh->mNormals[i].y;
+						vtx.normal.z = mesh->mNormals[i].z;
+					}
+					if (mesh->HasTangentsAndBitangents())
+					{
+						vtx.tangent.x = mesh->mTangents[i].x;
+						vtx.tangent.y = mesh->mTangents[i].y;
+						vtx.tangent.z = mesh->mTangents[i].z;
+						vtx.bitangent.x = mesh->mBitangents[i].x;
+						vtx.bitangent.y = mesh->mBitangents[i].y;
+						vtx.bitangent.z = mesh->mBitangents[i].z;
+					}
+					model.AddVertex(vtx);
 
+					for (UINT i = 0u; i < mesh->mNumFaces; ++i)
+					{
+						aiFace face = mesh->mFaces[i];
+						for (UINT j = 0u; j < face.mNumIndices; ++j)
+						{
+							model.AddIndex(face.mIndices[j]);
+						}
+					}
 				}
 			}
 			loadDebug += std::string("=======================================\n");
