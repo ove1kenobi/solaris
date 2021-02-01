@@ -21,9 +21,15 @@ const bool Engine::Initialize()
 	//Scene
 	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
 		return false;
-	
+
+	DirectX::XMMATRIX WMatrix;
+	DirectX::XMMATRIX VMatrix;
+	DirectX::XMMATRIX PMatrix;
+	this->m_scene.m_gameObjects[0].getWMatrix(WMatrix);
+	this->m_scene.m_perspectiveCamera.getVMatrix(VMatrix);
+	this->m_scene.m_perspectiveCamera.getPMatrix(PMatrix);
 	//Resource Manager
-	if (!m_ResourceManager.Initialize(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext()))
+	if (!m_ResourceManager.Initialize(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext(), this->m_scene.m_gameObjects[0].m_vertexBuffer, this->m_scene.m_gameObjects[0].m_indexBuffer, WMatrix, VMatrix, PMatrix))
 		return false;
 
 	return true;
@@ -76,7 +82,7 @@ void Engine::Render()
 	//Followed by 2D-render...
 
 	//Followed by presentation of everything (backbuffer):
-	m_ForwardRenderer.RenderFrame();
+	m_ForwardRenderer.RenderFrame(this->m_scene.m_gameObjects[0].m_indexBuffer);
 	HRESULT HR = m_DXCore.GetSwapChain()->Present(1, 0); //TODO: implement 3rd macro for debugging support (Emil F)
 	assert(SUCCEEDED(HR));
 }

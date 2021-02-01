@@ -21,5 +21,7 @@ public:
 	~GameObject() = default;
 
 	virtual bool update() = 0;
+
+	void getWMatrix(DirectX::XMMATRIX& wMatrix);
 };
 

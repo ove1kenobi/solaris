@@ -16,3 +16,7 @@ GameObject::GameObject() noexcept
 {
 
 }
+
+void GameObject::getWMatrix(DirectX::XMMATRIX& wMatrix) {
+	wMatrix = DirectX::XMLoadFloat4x4(&this->m_wMatrix);
+}

@@ -11,11 +11,9 @@ class Scene
 {
 private:
 	//GameObjects include planets, moons, asteroids and the sun.
-	std::vector<GameObject*> m_gameObjects;
 	int m_numPlanets;
 
 	Camera m_orthoCamera;
-	PlayerCamera m_perspectiveCamera;
 
 	//Player m_player;
 
@@ -24,6 +22,10 @@ public:
 	Scene() noexcept;
 	~Scene() = default;
 
+	std::vector<CosmicBody> m_gameObjects;
+
 	bool init(unsigned int screenWidth, unsigned int screenHeight);
 	bool update();
+
+	PlayerCamera m_perspectiveCamera;
 };

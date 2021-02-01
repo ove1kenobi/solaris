@@ -43,11 +43,11 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	
 	for(int i = 0; i < this->m_numPlanets; i++){
 		CosmicBody planet;
-		if(!planet.init(static_cast<float>(i * 1000), 0, 0, static_cast<float>(distributionRadius(generator)))){
+		if(!planet.init(0/*static_cast<float>(i * 1000)*/, 0, 1500, static_cast<float>(distributionRadius(generator)))){
 			//Throw
 			return 0;
 		}
-		this->m_gameObjects.push_back(&planet);
+		this->m_gameObjects.push_back(planet);
 	}
 	
 

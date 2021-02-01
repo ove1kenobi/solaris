@@ -11,6 +11,10 @@ bool CosmicBody::init(float x, float y, float z, float r) {
 	this->m_center.x = x;
 	this->m_center.y = y;
 	this->m_center.z = z;
+	DirectX::XMStoreFloat4x4(&this->m_wMatrix, DirectX::XMMatrixIdentity());
+	this->m_wMatrix._41 = x;
+	this->m_wMatrix._42 = y;
+	this->m_wMatrix._43 = z;
 
 	/*
 	if(!this->m_model.init()){
@@ -31,9 +35,9 @@ void CosmicBody::createSphere() {
 	//Starting octahedron points.
 	DirectX::XMFLOAT3 p0, p1, p2, p3, p4, p5;
 	//So that the triangles have the same length on all 3 sides.
-	float x = this->m_radius + this->m_center.x;
-	float z = this->m_radius + this->m_center.z;
-	float yOffset = ((this->m_radius * this->m_radius) * 2) + this->m_center.y;
+	float x = this->m_radius;
+	float z = this->m_radius;
+	float yOffset = ((this->m_radius * this->m_radius) * 2);
 	//Points of the octahedron
 	p0 = {  0,  sqrt(yOffset)	,  0 };	//Top
 	p1 = { -x,  0				, -z };	//Front left
@@ -93,7 +97,7 @@ void CosmicBody::createSphere() {
 	std::vector<std::vector<int>> completeEdges;
 	for (int i = 0; i < lines.size(); i++) {
 		DirectX::XMFLOAT3 startVert = vertices[lines[i][0]];
-		DirectX::XMFLOAT3 endVert = vertices[lines[i][0]];
+		DirectX::XMFLOAT3 endVert = vertices[lines[i][1]];
 
 		std::vector<int> edgeVertexIndices;
 		//Add the first vertex
@@ -117,7 +121,12 @@ void CosmicBody::createSphere() {
 		createTriangleFace(completeEdges[baseTriangles[i][0]], completeEdges[baseTriangles[i][1]], completeEdges[baseTriangles[i][2]], reverse, vertices, triangles);
 	}
 
-	this->m_vertexBuffer = vertices;
+	for (int i = 0; i < vertices.size(); i++) {
+		this->m_vertexBuffer.push_back(vertices[i].x);
+		this->m_vertexBuffer.push_back(vertices[i].y);
+		this->m_vertexBuffer.push_back(vertices[i].z);
+	}
+	
 	this->m_indexBuffer = triangles;
 }
 

@@ -11,6 +11,8 @@ Den senare är mer granulär.*/
 #include "PixelShader.h"
 #include "PrimitiveTopology.h"
 #include "InputLayout.h"
+#include <vector>
+#include <DirectXMath.h>
 class ResourceManager
 {
 private:
@@ -23,6 +25,12 @@ private:
 public:
 	ResourceManager() noexcept;
 	virtual ~ResourceManager() noexcept = default;
-	[[nodiscard]] const bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext) noexcept;
-	[[nodiscard]] const bool Demo(); //TODO: Remove once event system is implemented.
+	[[nodiscard]] const bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext, std::vector<float> vertexBuffer, std::vector<int> indexBuffer, DirectX::XMMATRIX WMatrix, DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix) noexcept;
+	[[nodiscard]] const bool Demo(std::vector<float> vertexArray, std::vector<int> indexBuffer, DirectX::XMMATRIX WMatrix, DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix); //TODO: Remove once event system is implemented.
+
+	struct MatrixBuffer {
+		DirectX::XMMATRIX WMatrix;
+		DirectX::XMMATRIX VMatrix;
+		DirectX::XMMATRIX PMatrix;
+	};
 };

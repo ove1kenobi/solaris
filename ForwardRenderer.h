@@ -20,7 +20,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
 
 	//Render functions
-	ID3D11RenderTargetView* BeginFrame(/*ID3D11RenderTargetView* renderTarget*/);
+	ID3D11RenderTargetView* BeginFrame(/*ID3D11RenderTargetView* renderTarget*/std::vector<int> indexBuffer);
 	ID3D11RenderTargetView* SubmitObject(ID3D11RenderTargetView* renderTarget, std::vector<GameObject*> gameObjects);
 	ID3D11RenderTargetView* EndFrame(ID3D11RenderTargetView* renderTarget);
 public:
@@ -29,5 +29,5 @@ public:
 	[[nodiscard]] const bool Initialize(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext, 
 										Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pBackBuffer, 
 										Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView) noexcept;
-	ID3D11RenderTargetView* RenderFrame(/*ID3D11RenderTargetView* renderTarget, std::vector<GameObject*> gameObjects*/);
+	ID3D11RenderTargetView* RenderFrame(/*ID3D11RenderTargetView* renderTarget, std::vector<GameObject*> gameObjects*/std::vector<int> indexBuffer);
 };
