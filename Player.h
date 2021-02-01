@@ -1,31 +1,34 @@
 #pragma once
+#define _USE_MATH_DEFINES
+
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <cmath>
+#include "time.h"
+#include "PlayerCamera.h"
+#include "GameObject.h"
 
-class Player
+class Player : public GameObject
 {
 private:
 	// Model
-	// PlayerCamera* camera;
-	// Timer 
-	float deltaTime;
+	PlayerCamera* m_camera;
+	Time m_time;
 
 	DirectX::XMFLOAT3 m_forwardVector;
 	DirectX::XMFLOAT3 m_rightVector;
 	DirectX::XMFLOAT3 m_upVector;
-	DirectX::XMFLOAT3 m_pos;
 
 	float m_speed, m_roation;
-	float m_pitch, m_roll, m_yaw;
 
-	void Move(DirectX::XMFLOAT3 direction);
-	void YawRotation();
+	void move(DirectX::XMFLOAT3 direction);
+	void yawRotation();
 
 public:
 	Player();
 	~Player();
 
-	void Init(DirectX::XMFLOAT3 position);
+	void init(DirectX::XMFLOAT3 position, PlayerCamera* camera);
+	bool update();
 };
 
