@@ -54,7 +54,7 @@ void Engine::Render()
 
 	//Annat tankesätt än ovan är att här bara köra m_ForwardRenderer.RenderFrame() 
 	//och låta ovan funktioner vara privata till bara m_ForwardRenderer.
-
+	//this->m_ForwardRenderer.RenderFrame(this->m_DXCore.GetDeviceContext().Get());
 	//Followed by 2D-render...
 
 
