@@ -13,12 +13,10 @@ bool CosmicBody::init(float x, float y, float z, float r) {
 	this->m_center.z = z;
 
 	/*
-	Model model;
 	if(!this->m_model.init()){
 		//Throw
 		return 0;
 	}
-	this->m_model = model;
 	*/
 	createSphere();
 

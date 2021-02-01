@@ -1,10 +1,11 @@
 #include "PlayerCamera.h"
 
-bool PlayerCamera::init(int screenWidth, int screenHeight, float screenNear, float screenFar, float FOVvalue) {
-	float FOV = 3.141592654f / FOVvalue;
+bool PlayerCamera::init(int screenWidth, int screenHeight) {
+	this->m_screenFar = 1000;
+	float FOV = 3.141592654f / this->m_FOVvalue;
 	float screenAspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
 
-	DirectX::XMStoreFloat4x4(&this->m_pMatrix, DirectX::XMMatrixPerspectiveFovLH(FOV, screenAspect, screenNear, screenFar));
+	DirectX::XMStoreFloat4x4(&this->m_pMatrix, DirectX::XMMatrixPerspectiveFovLH(FOV, screenAspect, this->m_screenNear, this->m_screenFar));
 	return true;			// TODO: added by Ove due to "missing return value" error
 }
 

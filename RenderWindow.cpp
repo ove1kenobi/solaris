@@ -46,6 +46,8 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         case WM_DESTROY:
         {
             PostQuitMessage(0);
+            WindowCloseEvent ce;
+            EventBuss::Get().Delegate(ce);
             return 0;
         }
         case WM_PAINT:
@@ -62,6 +64,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 DestroyWindow(hwnd);
             else
                 return 0;
+            break;
         }
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);

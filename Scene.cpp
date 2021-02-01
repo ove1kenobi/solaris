@@ -6,18 +6,15 @@ Scene::Scene() noexcept
 
 }
 
-bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, float screenNear, float screenFar, float FOVvalue) {
+bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	//Orthographic camera. Over the sun.
-	Camera orthoCamera;
-	this->m_orthoCamera = orthoCamera;
-	if (!this->m_orthoCamera.init(screenWidth, screenHeight, screenNear, screenFar, FOVvalue)) {
-
+	if (!this->m_orthoCamera.init(screenWidth, screenHeight, 1000)) {
+		//Throw
+		return 0;
 	}
 
 	//Perspective Camera. Bound to player.
-	PlayerCamera playerCamera;
-	this->m_perspectiveCamera = playerCamera;
-	if (!this->m_perspectiveCamera.init(screenWidth, screenHeight, screenNear, screenFar, FOVvalue)) {
+	if (!this->m_perspectiveCamera.init(screenWidth, screenHeight)) {
 		//Throw
 		return 0;
 	}
@@ -30,7 +27,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, float scre
 		return -1;
 	}
 
-	this->m_gameObjects.push_back(sun);
+	this->m_gameObjects.push_back(&sun);
 	*/
 
 	//Get the factory to create the planets.

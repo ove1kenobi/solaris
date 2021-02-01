@@ -1,16 +1,22 @@
 #pragma once
+#include <functional>
 #include "DXCore.h"
 #include "RenderWindow.h"
 #include "ForwardRenderer.h"
 #include "Time.h"
-class Engine
+#include "Scene.h"
+#include "Resources/ResourceManager.h"
+#include "EventSystem\IEventListener.h"
+class Engine : IEventListener
 {
 private:
 	RenderWindow m_Window;
 	DXCore m_DXCore;
 	ForwardRenderer m_ForwardRenderer;
+	ResourceManager m_ResourceManager;
 	bool m_Running;
 	Time m_gameTime;
+	Scene m_scene;
 private:
 	void Update();
 	void Render();
@@ -19,4 +25,5 @@ public:
 	virtual ~Engine() = default;
 	const bool Initialize();
 	void Run();
+	void OnEvent(const IEvent& event) noexcept;
 };

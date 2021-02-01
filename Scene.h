@@ -24,6 +24,6 @@ public:
 	Scene() noexcept;
 	~Scene() = default;
 
-	bool init(unsigned int screenWidth, unsigned int screenHeight, float screenNear, float screenFar, float FOVvalue);
+	bool init(unsigned int screenWidth, unsigned int screenHeight);
 	bool update();
 };
