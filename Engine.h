@@ -7,10 +7,9 @@
 #include "Scene.h"
 #include "Resources/ResourceManager.h"
 #include "EventSystem\IEventListener.h"
-class Engine : IEventListener
 #include "ModelFactory.h"
 
-class Engine
+class Engine : IEventListener
 {
 private:
 	RenderWindow m_Window;

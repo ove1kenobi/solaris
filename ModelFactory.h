@@ -11,13 +11,13 @@ class ModelFactory
 {
 private:
 	Assimp::Importer m_importer;
-	static ModelFactory* m_me;
+	static ModelFactory m_me;
 	std::unordered_map<std::string, Model> m_loadedModels;
 private:
-	ModelFactory();
+	ModelFactory() noexcept = default;
+	~ModelFactory() noexcept = default;
 	ModelFactory& operator=(const ModelFactory& other) = delete;
 public:
-	~ModelFactory();
-	static ModelFactory* GetInstance();
+	static ModelFactory* Get() noexcept;
 	Model* GetModel(std::string filePath);
 };

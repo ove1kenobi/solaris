@@ -1,24 +1,10 @@
 #include "ModelFactory.h"
 
-ModelFactory* ModelFactory::m_me = nullptr;
+ModelFactory ModelFactory::m_me;
 
-ModelFactory::ModelFactory()
+ModelFactory* ModelFactory::Get() noexcept
 {
-
-}
-
-ModelFactory::~ModelFactory()
-{
-	m_me = nullptr;
-}
-
-ModelFactory* ModelFactory::GetInstance()
-{
-	if (m_me == nullptr)
-	{
-		m_me = new ModelFactory();
-	}
-	return m_me;
+	return &m_me;
 }
 
 Model* ModelFactory::GetModel(std::string filePath)
@@ -40,16 +26,18 @@ Model* ModelFactory::GetModel(std::string filePath)
 		}
 		else
 		{
+#ifdef _DEBUG
 			std::string loadDebug = std::string("=======================================\nLoading model: ") + filePath + std::string("\n");
 			loadDebug += std::string("Meshes: ") + std::to_string(scene->mNumMeshes) + std::string("\t");
 			loadDebug += std::string("Materials: ") + std::to_string(scene->mNumMaterials) + std::string("\t");
 			loadDebug += std::string("Textures: ") + std::to_string(scene->mNumMaterials) + std::string("\n");
-
+#endif
 			for (UINT iMesh = 0u; iMesh < scene->mNumMeshes; ++iMesh)
 			{
 				const aiMesh* mesh = scene->mMeshes[iMesh];
+#ifdef _DEBUG
 				loadDebug += std::string("Mesh: #") + std::to_string(iMesh) + std::string("\tVertices: ") + std::to_string(mesh->mNumVertices) + std::string("\n");
-				
+#endif	
 				for (UINT i = 0u; i < mesh->mNumVertices; ++i)
 				{
 					vertex_tex vtx = {};
@@ -88,8 +76,10 @@ Model* ModelFactory::GetModel(std::string filePath)
 					}
 				}
 			}
+#ifdef _DEBUG
 			loadDebug += std::string("=======================================\n");
 			OutputDebugStringA(loadDebug.c_str());
+#endif
 		}
 	}
 	return nullptr;

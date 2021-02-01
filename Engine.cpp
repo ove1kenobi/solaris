@@ -9,7 +9,7 @@ Engine::Engine() noexcept
 const bool Engine::Initialize()
 {
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
-	ModelFactory* mf = ModelFactory::GetInstance();
+	ModelFactory* mf = ModelFactory::Get();
 	mf->GetModel(std::string("models/moon.obj"));
 
 	//DirectX Core
