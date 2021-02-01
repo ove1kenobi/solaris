@@ -46,7 +46,7 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 	swapChainDescriptor.BufferDesc.Height = clientWindowHeight;
 	swapChainDescriptor.BufferDesc.RefreshRate.Numerator = 60u;								//TODO: Get actual monitor refreshrate (Emil F)
 	swapChainDescriptor.BufferDesc.RefreshRate.Denominator = 1u;							//*-*
-	swapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;						//TODO: Research whether modern monitors support more than 24-bit color.
+	swapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDescriptor.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	swapChainDescriptor.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 	swapChainDescriptor.SampleDesc.Count = 4u;
@@ -112,7 +112,7 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 										 nullptr, 
 										 &m_pDepthStencilView), 
 										 "CreateDepthStencilView");
-	m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
+	m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), nullptr);
 
 	m_DefaultViewport.TopLeftX = 0.0f;
 	m_DefaultViewport.TopLeftY = 0.0f;
@@ -137,4 +137,14 @@ const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& DXCore::GetDeviceContext() co
 const Microsoft::WRL::ComPtr<IDXGISwapChain>& DXCore::GetSwapChain() const noexcept
 {
 	return m_pSwapChain;
+}
+
+const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& DXCore::GetBackBuffer() const noexcept
+{
+	return m_pBackBuffer;
+}
+
+const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& DXCore::GetDepthStencilView() const noexcept
+{
+	return m_pDepthStencilView;
 }
