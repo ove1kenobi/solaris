@@ -16,6 +16,7 @@ bool CosmicBody::init(float x, float y, float z, float r) {
 	this->m_wMatrix._42 = y;
 	this->m_wMatrix._43 = z;
 
+	this->m_divisions = 100; //INTE MER ÄN 100
 	/*
 	if(!this->m_model.init()){
 		//Throw
@@ -79,7 +80,7 @@ void CosmicBody::createSphere() {
 	};
 
 	//Calculate the number of divisions that are to be made of each edge. 100 easily changable.
-	unsigned int divisions = static_cast<int>(std::ceil(this->m_radius / 100));
+	unsigned int divisions = this->m_divisions;/*static_cast<int>(std::ceil(this->m_radius / 100));*/
 	//Number of vertices on 1 face.
 	unsigned int vertsPerTriangle = ((divisions + 3) * (divisions + 3) - (divisions + 3)) / 2;
 	//Number of triangles on 1 face.
@@ -141,26 +142,48 @@ void CosmicBody::createTriangleFace(std::vector<int> edge1, std::vector<int> edg
 		vertexMap.push_back(edge1[i]);
 
 		//Middle vertices
-		DirectX::XMFLOAT3 edge1Vertex = vertices[edge1[i]];
-		DirectX::XMFLOAT3 edge2Vertex = vertices[edge2[i]];
+		DirectX::XMFLOAT3 edge1Vertex;
+		DirectX::XMFLOAT3 edge2Vertex;
+
+		if (!reverse) {
+			edge1Vertex = vertices[edge1[i]];
+			edge2Vertex = vertices[edge3[i]];
+		}
+		else {
+			edge1Vertex = vertices[edge1[i]];
+			edge2Vertex = vertices[edge2[i]];
+		}
 		int innerPoints = i - 1;
 		for (int j = 0; j < innerPoints; j++) {
 			float t = (j + 1.0f) / (innerPoints + 1.0f);
 			vertexMap.push_back(static_cast<int>(vertices.size()));
 			vertices.push_back(slerp(edge1Vertex, edge2Vertex, t));
 		}
-
 		//2nd side's vertex
-		vertexMap.push_back(edge2[i]);
+		if (!reverse) {
+			vertexMap.push_back(edge3[i]);
+		}
+		else {
+			vertexMap.push_back(edge2[i]);
+		}
+		
 	}
 
-	//Add bottom edge vertices
-	for (int i = 0; i < pointsOnEdge; i++)
-		vertexMap.push_back(edge3[i]);
+	if (!reverse) {
+		//Add bottom edge vertices
+		for (int i = 0; i < pointsOnEdge; i++)
+			vertexMap.push_back(edge2[i]);
+	}
+	else {
+		//Add bottom edge vertices
+		for (int i = 0; i < pointsOnEdge; i++)
+			vertexMap.push_back(edge3[i]);
+	}
+	
 
 	//Triangulate
 	//Same as divisions at the start of the createSphere function. + 1
-	int rows = static_cast<int>(std::ceil(this->m_radius / 100)) + 1;
+	int rows = this->m_divisions + 1;/*static_cast<int>(std::ceil(this->m_radius / 100)) + 1;*/
 	for (int row = 0; row < rows; row++) {
 		//Vertices that are on down-left edge follow quadratic sequence.
 		//Calculate by: (n^2 - n) / 2

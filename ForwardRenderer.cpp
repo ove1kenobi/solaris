@@ -28,8 +28,7 @@ ID3D11RenderTargetView* ForwardRenderer::BeginFrame()
 	//Set shaders that will be used during this render pass here
 
 	//Return frame for post processing
-	//LOL: This should probably be changed:
-	m_pDeviceContext->DrawIndexed(static_cast<UINT>(m_gameObjects[0][0]->getIndexBuffer().size()), 0u, 0u);
+	m_pDeviceContext->DrawIndexed(static_cast<UINT>((*m_gameObjects)[0]->getIndexBuffer().size()), 0u, 0u);
 	return nullptr;
 }
 
