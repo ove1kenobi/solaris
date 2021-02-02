@@ -5,6 +5,7 @@
 #include <vector>
 #include <DirectXMath.h>
 #include "Bloom.h"
+#include "ModelFactory.h"
 
 class ForwardRenderer {
 private:

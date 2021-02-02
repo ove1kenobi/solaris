@@ -18,9 +18,25 @@ void Model::Loaded()
 void Model::AddVertex(vertex_tex v)
 {
 	m_vertices.push_back(v);
+	positions.push_back(v.position);
 }
 
 void Model::AddIndex(UINT i)
 {
 	m_indices.push_back(i);
+}
+
+float* Model::PosData()
+{
+	return (float*)positions.data();
+}
+
+UINT Model::DataLength()
+{
+	return positions.size() * sizeof(DirectX::XMFLOAT3);
+}
+
+UINT Model::NumVertices()
+{
+	return positions.size();
 }

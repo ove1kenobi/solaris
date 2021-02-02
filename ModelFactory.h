@@ -18,6 +18,6 @@ private:
 	~ModelFactory() noexcept = default;
 	ModelFactory& operator=(const ModelFactory& other) = delete;
 public:
-	static ModelFactory* Get() noexcept;
+	static ModelFactory& Get() noexcept;
 	Model* GetModel(std::string filePath);
 };

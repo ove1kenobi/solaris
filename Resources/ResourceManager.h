@@ -11,6 +11,7 @@ Den senare är mer granulär.*/
 #include "PixelShader.h"
 #include "PrimitiveTopology.h"
 #include "InputLayout.h"
+#include "../ModelFactory.h"
 class ResourceManager
 {
 private:

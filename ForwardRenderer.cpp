@@ -11,6 +11,9 @@ ForwardRenderer::ForwardRenderer() noexcept
 //Sets everything up for forward rendering, takes information from the event handler as input
 ID3D11RenderTargetView* ForwardRenderer::BeginFrame(/*ID3D11RenderTargetView* renderTarget*/)
 {
+	/* DEMO MODEL (0ve) */
+	Model* model = ModelFactory::Get().GetModel(std::string("models/cubes.obj"));
+
 	/*information that is needed from the event handler and resource manager:
 	* - what buffers will be used during this render? (Example: WVP and light buffers)
 	* - what shaders will be used during this render? (Example: vertex, geometry, pixel)
@@ -28,7 +31,7 @@ ID3D11RenderTargetView* ForwardRenderer::BeginFrame(/*ID3D11RenderTargetView* re
 	//Set shaders that will be used during this render pass here
 
 	//Return frame for post processing
-	m_pDeviceContext->Draw(3u, 0u);
+	m_pDeviceContext->Draw(model->NumVertices(), 0u);
 	return nullptr;
 }
 

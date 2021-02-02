@@ -16,6 +16,9 @@ const bool ResourceManager::Initialize(Microsoft::WRL::ComPtr<ID3D11Device> pDev
 
 const bool ResourceManager::Demo()
 {
+	/* DEMO MODEL (0ve) */
+	Model* model = ModelFactory::Get().GetModel(std::string("models/cubes.obj"));
+
 	/*DEMO INITIALIZATION. THIS IS ONLY TEMPORARY (Emil F) */
 	if (!m_VertexShaderDemo.Create(m_pDevice, L"VertexShader_Minimalistic.hlsl"))
 		return false;
@@ -33,24 +36,24 @@ const bool ResourceManager::Demo()
 		return false;
 	m_TopologyDemo.Bind(m_pDeviceContext);
 
-	float vertexArray[] =
-	{
-		0.0f, 0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f
-	};
+	//float vertexArray[] =
+	//{
+	//	0.0f, 0.5f, 0.0f,
+	//	0.5f, -0.5f, 0.0f,
+	//	-0.5f, -0.5f, 0.0f
+	//};
 	UINT stride = 3u * sizeof(float);
 	UINT offset = 0u;
-	UINT nrOfVertices = 3u;
+	UINT nrOfVertices = model->NumVertices(); // 3u;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
 
 	D3D11_BUFFER_DESC vertexBufferDescriptor = {};
-	vertexBufferDescriptor.ByteWidth = sizeof(vertexArray);
+	vertexBufferDescriptor.ByteWidth = model->DataLength(); // sizeof(vertexArray);
 	vertexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	D3D11_SUBRESOURCE_DATA sr_data = { 0 };
-	sr_data.pSysMem = vertexArray;
+	sr_data.pSysMem = model->PosData(); // vertexArray;
 	HR(m_pDevice->CreateBuffer(&vertexBufferDescriptor,
 							   &sr_data,
 							   &pVertexBuffer),
