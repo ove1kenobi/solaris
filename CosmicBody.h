@@ -10,16 +10,16 @@
 class CosmicBody : public GameObject
 {
 private:
+	/*
 	//Called in init to create the sphere.
 	void createSphere();
 	//Called in createSphere to create a new triangle.
 	void createTriangleFace(std::vector<int> edge1, std::vector<int> edge2, std::vector<int> edge3, bool reverse, std::vector<DirectX::XMFLOAT3> &vertices, std::vector<int>& triangles);
-
+	*/
 	float m_radius;
 
 	unsigned int m_divisions;
-	//Where the buffers are stored
-	//Model m_model;
+	
 public:
 	CosmicBody() noexcept;
 	~CosmicBody() = default;

@@ -9,8 +9,8 @@ ResourceManager::ResourceManager() noexcept
 const bool ResourceManager::Initialize(
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice, 
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext,
-	std::vector<float> vertexBuffer,
-	std::vector<int> indexBuffer,
+	std::vector<vertex> vertexBuffer,
+	std::vector<UINT> indexBuffer,
 	DirectX::XMMATRIX WMatrix,
 	DirectX::XMMATRIX VMatrix,
 	DirectX::XMMATRIX PMatrix
@@ -69,22 +69,21 @@ void ResourceManager::UnbindPipeline()
 	m_pDeviceContext->HSSetConstantBuffers(0u, 0u, nullptr);
 }
 
-const bool ResourceManager::Demo(std::vector<float> vertexArray, std::vector<int> indexBuffer, DirectX::XMMATRIX WMatrix, DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix)
+const bool ResourceManager::Demo(std::vector<vertex> vertexArray, std::vector<UINT> indexBuffer, DirectX::XMMATRIX WMatrix, DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix)
 {
 	/*DEMO INITIALIZATION. THIS IS ONLY TEMPORARY (Emil F) */
 	m_VertexShaderMinimal.Bind(m_pDeviceContext);
 	m_PixelShaderMinimal.Bind(m_pDeviceContext);
 	m_InputLayoutDefault.Bind(m_pDeviceContext);
 	m_TopologyTriList.Bind(m_pDeviceContext);
-	
-	UINT stride = 3u * sizeof(float);
+	std::vector<vertex_col&> newVertexArray = static_cast<std::vector<vertex_col&>>(vertexArray);
+	UINT stride = sizeof(vertex_col);
 	UINT offset = 0u;
-	UINT nrOfVertices = 3u;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
 
 	D3D11_BUFFER_DESC vertexBufferDescriptor = {};
-	vertexBufferDescriptor.ByteWidth = sizeof(float) * vertexArray.size();
+	vertexBufferDescriptor.ByteWidth = sizeof(vertex_col) * vertexArray.size();
 	vertexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	D3D11_SUBRESOURCE_DATA sr_data = { 0 };
@@ -102,7 +101,7 @@ const bool ResourceManager::Demo(std::vector<float> vertexArray, std::vector<int
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer = NULL;
 
 	D3D11_BUFFER_DESC indexBufferDescriptor = {};
-	indexBufferDescriptor.ByteWidth = sizeof(unsigned int) * indexBuffer.size();
+	indexBufferDescriptor.ByteWidth = sizeof(UINT) * indexBuffer.size();
 	indexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
 	indexBufferDescriptor.BindFlags = D3D11_BIND_INDEX_BUFFER;
 

@@ -21,17 +21,20 @@ protected:
 
 	Time m_timer;
 
-	std::vector<float> m_vertexBuffer;
-	std::vector<int> m_indexBuffer;
+	//Where the buffers are stored
+	Model m_model;
+
+	//std::vector<float> m_vertexBuffer;
+	//std::vector<int> m_indexBuffer;
 
 public:
 	GameObject() noexcept;
 	~GameObject() = default;
 
 	virtual bool update() = 0;
-
+	virtual void bindUniques() = 0;
 	void getWMatrix(DirectX::XMMATRIX& wMatrix);
-	std::vector<float> getVertexBuffer();
-	std::vector<int> getIndexBuffer();
+	std::vector<vertex> getVertexBuffer();
+	std::vector<UINT> getIndexBuffer();
 };
 

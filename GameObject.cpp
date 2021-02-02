@@ -21,10 +21,10 @@ void GameObject::getWMatrix(DirectX::XMMATRIX& wMatrix) {
 	wMatrix = DirectX::XMLoadFloat4x4(&this->m_wMatrix);
 }
 
-std::vector<float> GameObject::getVertexBuffer() {
-	return this->m_vertexBuffer;
+std::vector<vertex> GameObject::getVertexBuffer() {
+	return this->m_model.getVertexBuffer();
 }
 
-std::vector<int> GameObject::getIndexBuffer() {
-	return this->m_indexBuffer;
+std::vector<UINT> GameObject::getIndexBuffer() {
+	return this->m_model.getIndexBuffer();
 }
