@@ -37,6 +37,10 @@ RenderWindow::RenderWindow()
         nullptr                                         // Additional application data
     );
     ShowWindow(m_winHandle, SW_SHOWNORMAL);
+
+    AllocConsole();                                        // Remove
+    freopen("CONOUT$", "w", stdout);                       // Remove
+    std::cout << "Debug console is open" << std::endl;     // Remove
 }
 
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -65,6 +69,59 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             else
                 return 0;
             break;
+        }
+        case WM_MOUSEMOVE:
+        {
+            // mouse moved within window
+            int xPos = GET_X_LPARAM(lParam);
+            int yPos = GET_Y_LPARAM(lParam);
+            std::cout << xPos << " " << yPos << std::endl;
+            return true;
+        }
+        case WM_LBUTTONDOWN:
+        {
+            // left mouse butten down
+            int xPos = GET_X_LPARAM(lParam);
+            int yPos = GET_Y_LPARAM(lParam);
+            std::cout << "Left mouse butten down at " << xPos << " " << yPos << std::endl;
+            return true;
+        }
+        case WM_LBUTTONUP:
+        {
+            // left mouse butten up
+            int xPos = GET_X_LPARAM(lParam);
+            int yPos = GET_Y_LPARAM(lParam);
+            std::cout << "Left mouse butten up at " << xPos << " " << yPos << std::endl;
+            return true;
+        }
+        case WM_RBUTTONDOWN:
+        {
+            // right mouse butten down
+            int xPos = GET_X_LPARAM(lParam);
+            int yPos = GET_Y_LPARAM(lParam);
+            std::cout << "Right mouse butten down at " << xPos << " " << yPos << std::endl;
+            return true;
+        }
+        case WM_RBUTTONUP:
+        {
+            // right mouse butten up
+            int xPos = GET_X_LPARAM(lParam);
+            int yPos = GET_Y_LPARAM(lParam);
+            std::cout << "Right mouse butten up at " << xPos << " " << yPos << std::endl;
+            return true;
+        }
+        case WM_KEYDOWN:
+        {
+            // keypress
+            if ((lParam & 0x40000000) == 0) std::cout << "Key press " << wParam << std::endl;
+            else std::cout << "Key repeat " << wParam << std::endl;
+            return true;
+        }
+        case WM_KEYUP:
+        {
+            // keyrelease
+            std::cout << "Key release " << wParam << std::endl;
+            return true;
         }
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);

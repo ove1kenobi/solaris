@@ -2,8 +2,13 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
+#include <windowsx.h>
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem\WindowEvents.h"
+
+#include <iostream>					// Remove
+#pragma warning(disable : 4996)		// Remove
+
 class RenderWindow : public EventPublisher
 {
 private:

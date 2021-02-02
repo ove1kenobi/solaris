@@ -19,14 +19,17 @@ Player::~Player()
 
 
 
-void Player::init(DirectX::XMFLOAT3 position, PlayerCamera* camera)
+void Player::Initialize(DirectX::XMFLOAT3 position, PlayerCamera* camera)
 {
+	//EventBuss::Get().AddListener(this, EventType::MouseMoveEvent);
+	//EventBuss::Get().AddListener(this, EventType::KeyEvent);
+
 	m_camera = camera;
 	m_center = position;
 	//m_upVector = {0.0f, 1.0f, 0.0f};
 }
 
-void Player::move(DirectX::XMFLOAT3 direction)
+void Player::Move(DirectX::XMFLOAT3 direction)
 {
 	float step = m_speed * (float)m_time.DeltaTime();
 	DirectX::XMFLOAT3 offset(direction.x * step, direction.y * step, direction.z * step);
@@ -35,14 +38,14 @@ void Player::move(DirectX::XMFLOAT3 direction)
 	m_center.y += offset.y;
 	m_center.z += offset.z;
 
-	DirectX::XMVECTOR offsetVec;
-	DirectX::XMStoreFloat3(&offset, offsetVec);
-	m_camera->move(offsetVec);
+	//DirectX::XMVECTOR offsetVec;
+	//DirectX::XMStoreFloat3(&offset, offsetVec);
+	//m_camera->move(offsetVec);
 
 	// move model
 }
 
-void Player::yawRotation()
+void Player::YawRotation()
 {
 	float step = m_roation * (float)m_time.DeltaTime();
 
@@ -56,14 +59,16 @@ void Player::yawRotation()
 	// rotate model
 }
 
-bool Player::update()
+bool Player::Update()
 {
-	// check event message for input 
-	// if relevent input is recived, move or rotate player, model and camera
-
-	DirectX::XMVECTOR positionVec;
-	DirectX::XMStoreFloat3(&m_center, positionVec);
-	m_camera->update(positionVec);
+	//DirectX::XMVECTOR positionVec;
+	//DirectX::XMStoreFloat3(&m_center, positionVec);
+	//m_camera->update(positionVec);
 
 	return false;
 }
+
+/*void Player::OnEvent(const IEvent& event)
+{
+
+}*/

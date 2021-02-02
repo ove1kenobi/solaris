@@ -7,8 +7,10 @@
 #include "time.h"
 #include "PlayerCamera.h"
 #include "GameObject.h"
+#include "EventSystem/IEventListener.h"
+#include "EventSystem/EventBuss.h"
 
-class Player : public GameObject
+class Player : public GameObject//, public IEventListener
 {
 private:
 	// Model
@@ -21,14 +23,15 @@ private:
 
 	float m_speed, m_roation;
 
-	void move(DirectX::XMFLOAT3 direction);
-	void yawRotation();
+	void Move(DirectX::XMFLOAT3 direction);
+	void YawRotation();
 
 public:
 	Player();
 	~Player();
 
-	void init(DirectX::XMFLOAT3 position, PlayerCamera* camera);
-	bool update();
+	void Initialize(DirectX::XMFLOAT3 position, PlayerCamera* camera);
+	bool Update();
+	//void OnEvent(const IEvent& event);
 };
 
