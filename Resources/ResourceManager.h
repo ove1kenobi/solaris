@@ -1,11 +1,11 @@
 #pragma once
-/*Resource managern skall kunna ta emot beställningar på vad för bindables
-den skall binda och därefter utföra detta. (Ex: För varje beställd bindable -> bind.)
-Den kommer kunna ta emot en sådan beställning via ett event som antingen innehåller en övergripande
-beställning (Ge mig alla bindables som motsvarar mot detta ENDA ID), eller kanske istället
-kan man tänka beställningen mer som en kundvagn: "Här är alla de varor jag vill ha, samla ihop och bind dessa",
-Vi får då kanske en bit-masked beställning istället. Jag vet EJ vilken strategi som är lämpligast.
-Den senare är mer granulär.*/
+/*Resource managern skall kunna ta emot best?llningar p? vad f?r bindables
+den skall binda och d?refter utf?ra detta. (Ex: F?r varje best?lld bindable -> bind.)
+Den kommer kunna ta emot en s?dan best?llning via ett event som antingen inneh?ller en ?vergripande
+best?llning (Ge mig alla bindables som motsvarar mot detta ENDA ID), eller kanske ist?llet
+kan man t?nka best?llningen mer som en kundvagn: "H?r ?r alla de varor jag vill ha, samla ihop och bind dessa",
+Vi f?r d? kanske en bit-masked best?llning ist?llet. Jag vet EJ vilken strategi som ?r l?mpligast.
+Den senare ?r mer granul?r.*/
 #include "IBindable.h"
 #include "VertexShader.h"
 #include "PixelShader.h"

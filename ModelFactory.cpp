@@ -2,15 +2,15 @@
 
 ModelFactory ModelFactory::m_me;
 
-ModelFactory* ModelFactory::Get() noexcept
+ModelFactory& ModelFactory::Get() noexcept
 {
-	return &m_me;
+	return m_me;
 }
 
 Model* ModelFactory::GetModel(std::string filePath)
 {
-	Model model = m_loadedModels[filePath];
-	if (model.NotLoaded())
+	Model* model = &m_loadedModels[filePath];
+	if (model->NotLoaded())
 	{
 		const aiScene* scene = m_importer.ReadFile(filePath.c_str(),
 			  aiProcess_Triangulate
@@ -64,26 +64,27 @@ Model* ModelFactory::GetModel(std::string filePath)
 						vtx.bitangent.y = mesh->mBitangents[i].y;
 						vtx.bitangent.z = mesh->mBitangents[i].z;
 					}
-					model.AddVertex(vtx);
+					model->AddVertex(vtx);
 
 					for (UINT i = 0u; i < mesh->mNumFaces; ++i)
 					{
 						aiFace face = mesh->mFaces[i];
 						for (UINT j = 0u; j < face.mNumIndices; ++j)
 						{
-							model.AddIndex(face.mIndices[j]);
+							model->AddIndex(face.mIndices[j]);
 						}
 					}
 				}
 			}
+
 #ifdef _DEBUG
 			loadDebug += std::string("=======================================\n");
 			OutputDebugStringA(loadDebug.c_str());
 #endif
-			model.Loaded();
 		}
+		model->Loaded();
 	}
-	return &model;
+	return model;
 }
 
 Model ModelFactory::GenerateSphere(float x, float y, float z, float r) {

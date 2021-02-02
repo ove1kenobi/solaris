@@ -32,7 +32,7 @@ private:
 		unsigned int divisions
 	);
 public:
-	static ModelFactory* Get() noexcept;
+	static ModelFactory& Get() noexcept;
 	Model* GetModel(std::string filePath);
 	Model GenerateSphere(float x, float y, float z, float r);
 };
