@@ -77,12 +77,13 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	return 1;
 }
 
-bool Scene::update() {
-	/*
+bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
+	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
+	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
+	
 	for (auto r : this->m_gameObjects) {
-		r.update();
+		r->update(vMatrix, pMatrix, deviceContext);
 	}
-	*/
 
 	//Cull Objects HERE at the end or as response to AskForObjectsEvent? (Emil F)
 	return 1;

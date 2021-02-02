@@ -5,6 +5,7 @@
 #include "Time.h"
 #include "ModelFactory.h"
 #include "Model.h"
+#include "DXDebug.h"
 
 class GameObject
 {
@@ -22,19 +23,19 @@ protected:
 	Time m_timer;
 
 	//Where the buffers are stored
-	Model m_model;
+	Model* m_model;
 
 	//std::vector<float> m_vertexBuffer;
 	//std::vector<int> m_indexBuffer;
 
 public:
 	GameObject() noexcept;
-	~GameObject() = default;
+	~GameObject();
 
-	virtual bool update() = 0;
-	virtual void bindUniques() = 0;
+	virtual bool update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
+	virtual void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
 	void getWMatrix(DirectX::XMMATRIX& wMatrix);
-	std::vector<vertex> getVertexBuffer();
-	std::vector<UINT> getIndexBuffer();
+	UINT getVertexBufferSize();
+	UINT getIndexBufferSize();
 };
 

@@ -28,10 +28,10 @@ private:
 public:
 	ResourceManager() noexcept;
 	virtual ~ResourceManager() noexcept = default;
-	[[nodiscard]] const bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext, std::vector<vertex> vertexBuffer, std::vector<UINT> indexBuffer, DirectX::XMMATRIX WMatrix, DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix) noexcept;
+	[[nodiscard]] const bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext) noexcept;
 	[[nodiscard]] const bool CreateAllBindables();
 	void UnbindPipeline();
-	[[nodiscard]] const bool Demo(std::vector<vertex> vertexArray, std::vector<UINT> indexBuffer, DirectX::XMMATRIX WMatrix, DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix); //TODO: Remove once event system is implemented.
+	[[nodiscard]] const bool Demo(); //TODO: Remove once event system is implemented.
 	void OnEvent(IEvent& event) noexcept override;
 	struct MatrixBuffer {
 		DirectX::XMMATRIX WMatrix;

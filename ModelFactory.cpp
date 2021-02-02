@@ -9,6 +9,7 @@ ModelFactory& ModelFactory::Get() noexcept
 
 Model* ModelFactory::GetModel(std::string filePath)
 {
+	/*
 	Model* model = &m_loadedModels[filePath];
 	if (model->NotLoaded())
 	{
@@ -85,44 +86,48 @@ Model* ModelFactory::GetModel(std::string filePath)
 		model->Loaded();
 	}
 	return model;
+	*/
+	return nullptr;
 }
 
-Model ModelFactory::GenerateSphere(float x, float y, float z, float r) {
+Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
 	
-	Model model;
-	std::vector<float> vertexBuffer;
-	std::vector<int> indexBuffer;
-	createSphere(r, vertexBuffer, indexBuffer);
+	Model* model = new Model();
+	std::vector<float> vertexPositionValues;
+	std::vector<int> indices;
+	createSphere(r, vertexPositionValues, indices);
 
-	for (unsigned int i = 0; i < vertexBuffer.size(); i += 3) {
+	std::vector<vertex_col> vertices;
+	for (unsigned int i = 0; i < vertexPositionValues.size(); i += 3) {
 		vertex_col newVertex;
-		newVertex.position.x = vertexBuffer[i];
-		newVertex.position.y = vertexBuffer[i + 1];
-		newVertex.position.z = vertexBuffer[i + 2];
+		newVertex.position.x = vertexPositionValues[i];
+		newVertex.position.y = vertexPositionValues[i + 1];
+		newVertex.position.z = vertexPositionValues[i + 2];
 
-		newVertex.color.x = 0.5;
-		newVertex.color.y = 0.5;
-		newVertex.color.z = 0.5;
+		newVertex.color.x = 0.5f;
+		newVertex.color.y = 0.5f;
+		newVertex.color.z = 0.5f;
+		newVertex.color.w = 1.0f;
 
-		newVertex.bitangent.x = 0;
-		newVertex.bitangent.y = 0;
-		newVertex.bitangent.z = 0;
+		newVertex.bitangent.x = 1.0f;
+		newVertex.bitangent.y = 1.0f;
+		newVertex.bitangent.z = 1.0f;
 
-		newVertex.tangent.x = 0;
-		newVertex.tangent.y = 0;
-		newVertex.tangent.z = 0;
+		newVertex.tangent.x = 1.0f;
+		newVertex.tangent.y = 1.0f;
+		newVertex.tangent.z = 1.0f;
 
-		newVertex.normal.x = 0;
-		newVertex.normal.y = 0;
-		newVertex.normal.z = 0;
+		newVertex.normal.x = 1.0f;
+		newVertex.normal.y = 1.0f;
+		newVertex.normal.z = 1.0f;
 
-		model.AddVertex(newVertex);
+		vertices.push_back(newVertex);
 	}
 
-	for (unsigned int i = 0; i < indexBuffer.size(); i++) {
-		model.AddIndex(indexBuffer[i]);
-	}
+	model->setVertexBufferSize(static_cast<UINT>(vertices.size()));
+	model->setIndexBufferSize(static_cast<UINT>(indices.size()));
 
+	createBuffers(vertices, indices, model);
 	return model;
 }
 
@@ -316,4 +321,56 @@ void ModelFactory::createTriangleFace(
 			triangles.push_back(vertexMap[(reverse) ? v1 : v2]);
 		}
 	}
+}
+
+void ModelFactory::createBuffers(const std::vector<vertex_col>& vertexBuffer, const std::vector<int>& indexBuffer, Model* model) {
+
+	model->setStride(sizeof(vertex_col));
+	model->setOffset(0u);
+
+	//vertexbuffer
+	D3D11_BUFFER_DESC vertexBufferDescriptor = {};
+	vertexBufferDescriptor.ByteWidth = sizeof(vertex_col) * vertexBuffer.size();
+	vertexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
+	vertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	D3D11_SUBRESOURCE_DATA sr_data = { 0 };
+	sr_data.pSysMem =vertexBuffer.data();
+
+	this->m_device->CreateBuffer(
+		&vertexBufferDescriptor,
+		&sr_data,
+		model->getVertexBuffer().GetAddressOf()
+	);
+
+	//Indexbuffer
+	D3D11_BUFFER_DESC indexBufferDescriptor = {};
+	indexBufferDescriptor.ByteWidth = sizeof(UINT) * indexBuffer.size();
+	indexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDescriptor.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	// Define the resource data.
+	D3D11_SUBRESOURCE_DATA InitData;
+	InitData.pSysMem = indexBuffer.data();
+	InitData.SysMemPitch = 0;
+	InitData.SysMemSlicePitch = 0;
+
+	// Create the buffer with the device.
+	this->m_device->CreateBuffer(
+		&indexBufferDescriptor,
+		&InitData,
+		&model->getIndexBuffer()
+	);
+
+	//Matrixbuffer for shader
+	D3D11_BUFFER_DESC matrixBufferDesc;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> matrixBuffer = NULL;
+
+	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	matrixBufferDesc.ByteWidth = sizeof(MatrixBuffer);
+	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	matrixBufferDesc.MiscFlags = 0;
+	matrixBufferDesc.StructureByteStride = 0;
+
+	this->m_device->CreateBuffer(&matrixBufferDesc, NULL, &matrixBuffer);
 }

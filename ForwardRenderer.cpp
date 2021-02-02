@@ -16,7 +16,8 @@ void ForwardRenderer::BeginFrame()
 	AskForRenderObjectsEvent event;
 	EventBuss::Get().Delegate(event);
 
-	m_pDeviceContext->DrawIndexed(static_cast<UINT>((*m_gameObjects)[0]->getIndexBuffer().size()), 0u, 0u);
+	(*m_gameObjects)[0]->bindUniques(m_pDeviceContext);
+	m_pDeviceContext->DrawIndexed((*m_gameObjects)[0]->getIndexBufferSize(), 0u, 0u);
 }
 
 //Cleans up for the next frame and applies post processing effects

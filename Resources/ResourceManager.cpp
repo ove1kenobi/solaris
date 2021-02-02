@@ -8,12 +8,7 @@ ResourceManager::ResourceManager() noexcept
 
 const bool ResourceManager::Initialize(
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice, 
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext,
-	std::vector<vertex> vertexBuffer,
-	std::vector<UINT> indexBuffer,
-	DirectX::XMMATRIX WMatrix,
-	DirectX::XMMATRIX VMatrix,
-	DirectX::XMMATRIX PMatrix
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext
 	) noexcept
 {
 	m_pDevice = pDevice;
@@ -23,7 +18,7 @@ const bool ResourceManager::Initialize(
 	if (!CreateAllBindables())
 		return false;
 
-	return Demo(vertexBuffer, indexBuffer, WMatrix, VMatrix, PMatrix);
+	return Demo();
 }
 
 const bool ResourceManager::CreateAllBindables()
@@ -69,13 +64,15 @@ void ResourceManager::UnbindPipeline()
 	m_pDeviceContext->HSSetConstantBuffers(0u, 0u, nullptr);
 }
 
-const bool ResourceManager::Demo(std::vector<vertex> vertexArray, std::vector<UINT> indexBuffer, DirectX::XMMATRIX WMatrix, DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix)
+const bool ResourceManager::Demo()
 {
+	
 	/*DEMO INITIALIZATION. THIS IS ONLY TEMPORARY (Emil F) */
 	m_VertexShaderMinimal.Bind(m_pDeviceContext);
 	m_PixelShaderMinimal.Bind(m_pDeviceContext);
 	m_InputLayoutDefault.Bind(m_pDeviceContext);
 	m_TopologyTriList.Bind(m_pDeviceContext);
+	/*
 	std::vector<vertex_col&> newVertexArray = static_cast<std::vector<vertex_col&>>(vertexArray);
 	UINT stride = sizeof(vertex_col);
 	UINT offset = 0u;
@@ -156,6 +153,7 @@ const bool ResourceManager::Demo(std::vector<vertex> vertexArray, std::vector<UI
 
 	m_pDeviceContext->Unmap(matrixBuffer.Get(), 0);
 	m_pDeviceContext->VSSetConstantBuffers(0, 1, matrixBuffer.GetAddressOf());
+	*/
 	return true;
 }
 
