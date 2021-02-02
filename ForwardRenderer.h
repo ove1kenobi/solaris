@@ -26,8 +26,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
 
 	//Render functions
-	ID3D11RenderTargetView* BeginFrame();
-	ID3D11RenderTargetView* EndFrame(ID3D11RenderTargetView* renderTarget);
+	void BeginFrame();
+	void EndFrame();
 public:
 	ForwardRenderer() noexcept;
 	virtual ~ForwardRenderer() = default;

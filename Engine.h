@@ -25,5 +25,5 @@ public:
 	virtual ~Engine() = default;
 	const bool Initialize();
 	void Run();
-	void OnEvent(IEvent& event) noexcept;
+	void OnEvent(IEvent& event) noexcept override;
 };
