@@ -74,8 +74,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 		}
 		this->m_gameObjects.push_back(planet);
 	}
-	
-
 	return 1;
 }
 
@@ -85,5 +83,7 @@ bool Scene::update() {
 		r.update();
 	}
 	*/
+
+	//Cull Objects HERE at the end or as response to AskForObjectsEvent? (Emil F)
 	return 1;
 }

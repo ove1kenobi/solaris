@@ -66,6 +66,17 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 return 0;
             break;
         }
+        case WM_KEYDOWN :
+            switch (wParam)
+            {
+                //P Key
+            case 0x50:
+            {
+                ToggleWireFrameEvent event;
+                EventBuss::Get().Delegate(event);
+            }
+                break;
+            }
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

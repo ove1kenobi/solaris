@@ -37,12 +37,48 @@ public:
 	AskForRenderObjectsEvent() noexcept = default;
 	virtual ~AskForRenderObjectsEvent() noexcept = default;
 
-	[[nodiscard]] const EventType GetEventType() const noexcept
+	[[nodiscard]] const EventType GetEventType() const noexcept override
 	{
 		return EventType::AskForRenderObjectsEvent;
 	}
-	[[nodiscard]] const std::string GetDebugName() const noexcept
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
 	{
 		return "AskForRenderObjectsEvent";
+	}
+};
+
+class UnbindPipelineEvent : public IEvent
+{
+private:
+
+public:
+	UnbindPipelineEvent() noexcept = default;
+	virtual ~UnbindPipelineEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::UnbindPipelineEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "UnbindPipelineEvent";
+	}
+};
+
+class ToggleWireFrameEvent : public IEvent
+{
+private:
+
+public:
+	ToggleWireFrameEvent() noexcept = default;
+	virtual ~ToggleWireFrameEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::ToggleWireFrameEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "ToggleWireFrameEvent";
 	}
 };

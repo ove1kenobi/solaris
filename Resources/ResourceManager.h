@@ -11,23 +11,27 @@ Den senare är mer granulär.*/
 #include "PixelShader.h"
 #include "PrimitiveTopology.h"
 #include "InputLayout.h"
+#include "..\EventSystem\EventBuss.h"
+#include "..\EventSystem\IEventListener.h"
 #include <vector>
 #include <DirectXMath.h>
-class ResourceManager
+class ResourceManager : public IEventListener
 {
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
-	VertexShader m_VertexShaderDemo;
-	PixelShader m_PixelShaderDemo;
-	InputLayout m_InputLayoutDemo;
-	PrimitiveTopology m_TopologyDemo;
+	VertexShader m_VertexShaderMinimal;
+	PixelShader m_PixelShaderMinimal;
+	InputLayout m_InputLayoutDefault;
+	PrimitiveTopology m_TopologyTriList;
 public:
 	ResourceManager() noexcept;
 	virtual ~ResourceManager() noexcept = default;
 	[[nodiscard]] const bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext, std::vector<float> vertexBuffer, std::vector<int> indexBuffer, DirectX::XMMATRIX WMatrix, DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix) noexcept;
+	[[nodiscard]] const bool CreateAllBindables();
+	void UnbindPipeline();
 	[[nodiscard]] const bool Demo(std::vector<float> vertexArray, std::vector<int> indexBuffer, DirectX::XMMATRIX WMatrix, DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix); //TODO: Remove once event system is implemented.
-
+	void OnEvent(IEvent& event) noexcept override;
 	struct MatrixBuffer {
 		DirectX::XMMATRIX WMatrix;
 		DirectX::XMMATRIX VMatrix;

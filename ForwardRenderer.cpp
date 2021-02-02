@@ -7,41 +7,26 @@ ForwardRenderer::ForwardRenderer() noexcept
 }
 
 //Sets everything up for forward rendering, takes information from the event handler as input
-ID3D11RenderTargetView* ForwardRenderer::BeginFrame()
+void ForwardRenderer::BeginFrame()
 {
-	/*information that is needed from the event handler and resource manager:
-	* - what buffers will be used during this render? (Example: WVP and light buffers)
-	* - what shaders will be used during this render? (Example: vertex, geometry, pixel)
-	* - what renderTarget should we write to? (Will be the one that gets returned as well)
-	*/
 	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), 0u, 1.0f, 0u);
 	m_pDeviceContext->ClearRenderTargetView(m_pBackBuffer.Get(), m_Background);
 
+	//Request-event for game objects 
 	AskForRenderObjectsEvent event;
 	EventBuss::Get().Delegate(event);
-	//Clear the render target and set background here
 
-	//techniques that need to apply before render happens here
-
-	//Set buffers that will be used during this render pass here
-
-	//Set shaders that will be used during this render pass here
-
-	//Return frame for post processing
 	m_pDeviceContext->DrawIndexed(static_cast<UINT>((*m_gameObjects)[0]->getIndexBuffer().size()), 0u, 0u);
-	return nullptr;
 }
 
 //Cleans up for the next frame and applies post processing effects
-ID3D11RenderTargetView* ForwardRenderer::EndFrame(ID3D11RenderTargetView* renderTarget) {
+void ForwardRenderer::EndFrame() 
+{
 	/*information that is needed from the event handler and resource manager:
 	* - what renderTarget should we write to? (Will be the one that gets returned as well)
 	*/
 
 	//Apply the post processing effects to the renderTarget here
-
-	//Return the finished frame
-	return renderTarget;
 }
 
 const bool ForwardRenderer::Initialize(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext,
@@ -62,7 +47,7 @@ const bool ForwardRenderer::Initialize(Microsoft::WRL::ComPtr<ID3D11DeviceContex
 ID3D11RenderTargetView* ForwardRenderer::RenderFrame()
 {
 	//return the finished render to the Engine after applying BeginFrame, SubmitObjects, and then Endframe to it.
-	ID3D11RenderTargetView* target = this->BeginFrame();
+	BeginFrame();
 	//return this->EndFrame(target);
 
 	//return this->EndFrame(this->SubmitObject(this->BeginFrame(renderTarget), gameObjects));

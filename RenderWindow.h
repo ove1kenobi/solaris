@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem\WindowEvents.h"
+#include "EventSystem\RenderEvents.h"
 class RenderWindow : public EventPublisher
 {
 private:

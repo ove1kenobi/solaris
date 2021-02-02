@@ -18,34 +18,65 @@ const bool ResourceManager::Initialize(
 {
 	m_pDevice = pDevice;
 	m_pDeviceContext = pDeviceContext;
+	EventBuss::Get().AddListener(this, EventType::UnbindPipelineEvent);
+
+	if (!CreateAllBindables())
+		return false;
+
 	return Demo(vertexBuffer, indexBuffer, WMatrix, VMatrix, PMatrix);
+}
+
+const bool ResourceManager::CreateAllBindables()
+{
+	//Vertex Shaders:
+	if (!m_VertexShaderMinimal.Create(m_pDevice, L"VertexShader_Minimalistic.hlsl"))
+		return false;
+	//Pixel Shaders:
+	if (!m_PixelShaderMinimal.Create(m_pDevice, L"PixelShader_Minimalistic.hlsl"))
+		return false;
+	//Geometry Shaders:
+
+	//Hull Shaders:
+
+	//Domain Shaders:
+
+	//InputLayouts:
+	if (!m_InputLayoutDefault.Create(m_pDevice, m_VertexShaderMinimal))
+		return false;
+	//Primitive topologies:
+	if (!m_TopologyTriList.Create(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST))
+		return false;
+	//Samplers:
+
+	return true;
+}
+
+void ResourceManager::UnbindPipeline()
+{
+	m_pDeviceContext->VSSetShader(nullptr, nullptr, 0u);
+	m_pDeviceContext->VSSetConstantBuffers(0u, 0u, nullptr);
+	m_pDeviceContext->PSSetShader(nullptr, nullptr, 0u);
+	m_pDeviceContext->PSSetSamplers(0u, 0u, nullptr);
+	m_pDeviceContext->PSSetShaderResources(0u, 0u, nullptr);
+	m_pDeviceContext->DSSetShader(nullptr, nullptr, 0u);
+	m_pDeviceContext->DSSetShaderResources(0u, 0u, nullptr);
+	m_pDeviceContext->DSSetConstantBuffers(0u, 0u, nullptr);
+	m_pDeviceContext->HSSetShader(nullptr, nullptr, 0u);
+	m_pDeviceContext->HSSetShaderResources(0u, 0u, nullptr);
+	m_pDeviceContext->HSSetConstantBuffers(0u, 0u, nullptr);
+	m_pDeviceContext->GSSetShader(nullptr, nullptr, 0u);
+	m_pDeviceContext->GSSetShaderResources(0u, 0u, nullptr);
+	m_pDeviceContext->HSSetConstantBuffers(0u, 0u, nullptr);
 }
 
 const bool ResourceManager::Demo(std::vector<float> vertexArray, std::vector<int> indexBuffer, DirectX::XMMATRIX WMatrix, DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix)
 {
 	/*DEMO INITIALIZATION. THIS IS ONLY TEMPORARY (Emil F) */
-	if (!m_VertexShaderDemo.Create(m_pDevice, L"VertexShader_Minimalistic.hlsl"))
-		return false;
-	m_VertexShaderDemo.Bind(m_pDeviceContext);
+	m_VertexShaderMinimal.Bind(m_pDeviceContext);
+	m_PixelShaderMinimal.Bind(m_pDeviceContext);
+	m_InputLayoutDefault.Bind(m_pDeviceContext);
+	m_TopologyTriList.Bind(m_pDeviceContext);
 	
-	if (!m_PixelShaderDemo.Create(m_pDevice, L"PixelShader_Minimalistic.hlsl"))
-		return false;
-	m_PixelShaderDemo.Bind(m_pDeviceContext);
-
-	if (!m_InputLayoutDemo.Create(m_pDevice, m_VertexShaderDemo))
-		return false;
-	m_InputLayoutDemo.Bind(m_pDeviceContext);
-	
-	if (!m_TopologyDemo.Create(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST))
-		return false;
-	m_TopologyDemo.Bind(m_pDeviceContext);
-	/*
-	float vertexArray[] =
-	{
-		0.0f, 0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f
-	};*/
 	UINT stride = 3u * sizeof(float);
 	UINT offset = 0u;
 	UINT nrOfVertices = 3u;
@@ -87,7 +118,6 @@ const bool ResourceManager::Demo(std::vector<float> vertexArray, std::vector<int
 								&pIndexBuffer),
 								"CreateBuffer");
 	
-
 	// Set the buffer.
 	m_pDeviceContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
@@ -128,4 +158,14 @@ const bool ResourceManager::Demo(std::vector<float> vertexArray, std::vector<int
 	m_pDeviceContext->Unmap(matrixBuffer.Get(), 0);
 	m_pDeviceContext->VSSetConstantBuffers(0, 1, matrixBuffer.GetAddressOf());
 	return true;
+}
+
+void ResourceManager::OnEvent(IEvent& event) noexcept
+{
+	switch (event.GetEventType())
+	{
+	case EventType::UnbindPipelineEvent :
+		UnbindPipeline();
+			break;
+	}
 }
