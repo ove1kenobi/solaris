@@ -18,7 +18,7 @@ const bool ResourceManager::Initialize(
 {
 	m_pDevice = pDevice;
 	m_pDeviceContext = pDeviceContext;
-	EventBuss::Get().AddListener(this, EventType::UnbindPipelineEvent);
+	EventBuss::Get().AddListener(this, EventType::UnbindPipelineEvent, EventType::BindIDEvent);
 
 	if (!CreateAllBindables())
 		return false;
@@ -48,6 +48,10 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	//Samplers:
 
+	//Arrange:
+	//Minimal:
+	m_BindablesMinimalistic.insert(m_BindablesMinimalistic.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutDefault, &m_TopologyTriList });
+
 	return true;
 }
 
@@ -69,14 +73,25 @@ void ResourceManager::UnbindPipeline()
 	m_pDeviceContext->HSSetConstantBuffers(0u, 0u, nullptr);
 }
 
+void ResourceManager::BindToPipeline(IEvent& event)
+{
+	BindIDEvent& derivedEvent = static_cast<BindIDEvent&>(event);
+	switch (derivedEvent.GetBindID())
+	{
+	case BindID::ID_Minimal :
+		for (auto bindables : m_BindablesMinimalistic)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		break;
+	}
+}
+
 const bool ResourceManager::Demo(std::vector<float> vertexArray, std::vector<int> indexBuffer, DirectX::XMMATRIX WMatrix, DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix)
 {
-	/*DEMO INITIALIZATION. THIS IS ONLY TEMPORARY (Emil F) */
-	m_VertexShaderMinimal.Bind(m_pDeviceContext);
-	m_PixelShaderMinimal.Bind(m_pDeviceContext);
-	m_InputLayoutDefault.Bind(m_pDeviceContext);
-	m_TopologyTriList.Bind(m_pDeviceContext);
-	
 	UINT stride = 3u * sizeof(float);
 	UINT offset = 0u;
 	UINT nrOfVertices = 3u;
@@ -84,7 +99,7 @@ const bool ResourceManager::Demo(std::vector<float> vertexArray, std::vector<int
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
 
 	D3D11_BUFFER_DESC vertexBufferDescriptor = {};
-	vertexBufferDescriptor.ByteWidth = sizeof(float) * vertexArray.size();
+	vertexBufferDescriptor.ByteWidth = sizeof(float) * static_cast<UINT>(vertexArray.size());
 	vertexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	D3D11_SUBRESOURCE_DATA sr_data = { 0 };
@@ -102,7 +117,7 @@ const bool ResourceManager::Demo(std::vector<float> vertexArray, std::vector<int
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer = NULL;
 
 	D3D11_BUFFER_DESC indexBufferDescriptor = {};
-	indexBufferDescriptor.ByteWidth = sizeof(unsigned int) * indexBuffer.size();
+	indexBufferDescriptor.ByteWidth = sizeof(unsigned int) * static_cast<UINT>(indexBuffer.size());
 	indexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
 	indexBufferDescriptor.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
@@ -167,5 +182,9 @@ void ResourceManager::OnEvent(IEvent& event) noexcept
 	case EventType::UnbindPipelineEvent :
 		UnbindPipeline();
 			break;
+
+	case EventType::BindIDEvent :
+		BindToPipeline(event);
+		break;
 	}
 }

@@ -127,6 +127,7 @@
     <ClInclude Include="PlayerCamera.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="PointLight.h" />
+    <ClInclude Include="Resources\BindIDs.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="ourMath.h" />
     <ClInclude Include="CosmicBody.h" />

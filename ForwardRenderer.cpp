@@ -12,6 +12,10 @@ void ForwardRenderer::BeginFrame()
 	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), 0u, 1.0f, 0u);
 	m_pDeviceContext->ClearRenderTargetView(m_pBackBuffer.Get(), m_Background);
 
+	//Bind minimalistic:
+	BindIDEvent bindEvent(BindID::ID_Minimal);
+	EventBuss::Get().Delegate(bindEvent);
+
 	//Request-event for game objects 
 	AskForRenderObjectsEvent event;
 	EventBuss::Get().Delegate(event);
