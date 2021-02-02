@@ -72,6 +72,6 @@ void Engine::Render()
 {
 
 	//Followed by presentation of everything (backbuffer):
-	m_ForwardRenderer.RenderFrame(this->m_scene.m_gameObjects[0]->getIndexBuffer());
+	m_ForwardRenderer.RenderFrame();
 	HR_A(m_DXCore.GetSwapChain()->Present(1, 0), "Present");
 }

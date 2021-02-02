@@ -6,12 +6,12 @@
 class SendRenderObjectsEvent : public IEvent
 {
 private:
-	std::vector<GameObject*> &m_gameObjects;
+	std::vector<GameObject*>* m_gameObjects;
 
 public:
-	SendRenderObjectsEvent(std::vector<GameObject*> &gameObjects) noexcept
+	SendRenderObjectsEvent(std::vector<GameObject*> *gameObjects) noexcept
 	{
-		this->m_gameObjects = *gameObjects;
+		this->m_gameObjects = gameObjects;
 	};
 	virtual ~SendRenderObjectsEvent() noexcept = default;
 
@@ -24,7 +24,7 @@ public:
 		return "SendRenderObjectsEvent";
 	}
 
-	std::vector<GameObject*> &getGameObjectVector() {
+	std::vector<GameObject*> *getGameObjectVector() {
 		return this->m_gameObjects;
 	}
 };

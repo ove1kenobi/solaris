@@ -1,33 +1,20 @@
 #include "ForwardRenderer.h"
 
-//NOTE: pointers probably are gonna have to be adjusted to be handled by the functions correctly,
-//can also be removed completely based on the structure of the event handler. -steph
-
 ForwardRenderer::ForwardRenderer() noexcept
-	: m_Background{ 0.0f, 0.0f, 0.0f, 1.0f }
+	: m_Background{ 0.0f, 0.0f, 0.0f, 1.0f },
+	  m_gameObjects{ nullptr }
 {
 }
 
-void ForwardRenderer::OnEvent(IEvent& event) noexcept {
-	switch (event.GetEventType()) {
-		case EventType::SendRenderObjectsEvent:
-			//Do something with objects.
-			SendRenderObjectsEvent &derivedEvent = static_cast<SendRenderObjectsEvent&>(event);
-			this->m_gameObjects = derivedEvent.getGameObjectVector();
-			break;
-	}
-}
-
-
 //Sets everything up for forward rendering, takes information from the event handler as input
-ID3D11RenderTargetView* ForwardRenderer::BeginFrame(/*ID3D11RenderTargetView* renderTarget*/std::vector<int> indexBuffer)
+ID3D11RenderTargetView* ForwardRenderer::BeginFrame()
 {
 	/*information that is needed from the event handler and resource manager:
 	* - what buffers will be used during this render? (Example: WVP and light buffers)
 	* - what shaders will be used during this render? (Example: vertex, geometry, pixel)
 	* - what renderTarget should we write to? (Will be the one that gets returned as well)
 	*/
-	//m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), 0u, 1.0f, 0u);
+	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), 0u, 1.0f, 0u);
 	m_pDeviceContext->ClearRenderTargetView(m_pBackBuffer.Get(), m_Background);
 
 	AskForRenderObjectsEvent event;
@@ -41,7 +28,8 @@ ID3D11RenderTargetView* ForwardRenderer::BeginFrame(/*ID3D11RenderTargetView* re
 	//Set shaders that will be used during this render pass here
 
 	//Return frame for post processing
-	m_pDeviceContext->DrawIndexed(m_gameObjects->getIndexBuffer(), 0u, 0u);
+	//LOL: This should probably be changed:
+	m_pDeviceContext->DrawIndexed(static_cast<UINT>(m_gameObjects[0][0]->getIndexBuffer().size()), 0u, 0u);
 	return nullptr;
 }
 
@@ -61,6 +49,7 @@ const bool ForwardRenderer::Initialize(Microsoft::WRL::ComPtr<ID3D11DeviceContex
 									   Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pBackBuffer,
 									   Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView) noexcept
 {
+	EventBuss::Get().AddListener(this, EventType::SendRenderObjectsEvent);
 	m_pDeviceContext = pDeviceContext;
 	m_pBackBuffer = pBackBuffer;
 	m_pDepthStencilView = pDepthStencilView;
@@ -71,13 +60,24 @@ const bool ForwardRenderer::Initialize(Microsoft::WRL::ComPtr<ID3D11DeviceContex
 }
 
 //Calls private functions to render the frame
-ID3D11RenderTargetView* ForwardRenderer::RenderFrame(std::vector<int> indexBuffer/*ID3D11RenderTargetView* renderTarget, std::vector<GameObject*> gameObjects*/)
+ID3D11RenderTargetView* ForwardRenderer::RenderFrame()
 {
 	//return the finished render to the Engine after applying BeginFrame, SubmitObjects, and then Endframe to it.
-	ID3D11RenderTargetView* target = this->BeginFrame(indexBuffer/*renderTarget*/);
-	//target = this->SubmitObject(target, gameObjects);
+	ID3D11RenderTargetView* target = this->BeginFrame();
 	//return this->EndFrame(target);
 
 	//return this->EndFrame(this->SubmitObject(this->BeginFrame(renderTarget), gameObjects));
 	return nullptr;
+}
+
+void ForwardRenderer::OnEvent(IEvent& event) noexcept 
+{
+	switch (event.GetEventType())
+	{
+	case EventType::SendRenderObjectsEvent:
+		//Do something with objects.
+		SendRenderObjectsEvent& derivedEvent = static_cast<SendRenderObjectsEvent&>(event);
+		this->m_gameObjects = derivedEvent.getGameObjectVector();
+		break;
+	}
 }

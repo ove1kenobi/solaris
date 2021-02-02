@@ -31,6 +31,7 @@ void Scene::sendObjects() {
 }
 
 bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
+	EventBuss::Get().AddListener(this, EventType::AskForRenderObjectsEvent);
 	//Orthographic camera. Over the sun.
 	if (!this->m_orthoCamera.init(screenWidth, screenHeight, 1000)) {
 		//Throw

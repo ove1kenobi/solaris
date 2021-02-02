@@ -18,7 +18,7 @@ private:
 	//Techniques that will be applied
 	Bloom m_Bloom;
 
-	std::vector<GameObject*> &m_gameObjects;
+	std::vector<GameObject*>* m_gameObjects;
 
 	//Emil F:s edits:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
@@ -26,7 +26,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
 
 	//Render functions
-	ID3D11RenderTargetView* BeginFrame(/*ID3D11RenderTargetView* renderTarget*/std::vector<int> indexBuffer);
+	ID3D11RenderTargetView* BeginFrame();
 	ID3D11RenderTargetView* EndFrame(ID3D11RenderTargetView* renderTarget);
 public:
 	ForwardRenderer() noexcept;
@@ -34,7 +34,7 @@ public:
 	[[nodiscard]] const bool Initialize(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext, 
 										Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pBackBuffer, 
 										Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView) noexcept;
-	ID3D11RenderTargetView* RenderFrame(/*ID3D11RenderTargetView* renderTarget, std::vector<GameObject*> gameObjects*/std::vector<int> indexBuffer);
+	ID3D11RenderTargetView* RenderFrame();
 
 	void OnEvent(IEvent& event) noexcept;
 };
