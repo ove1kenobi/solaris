@@ -17,6 +17,8 @@ bool CosmicBody::init(float x, float y, float z, float r) {
 	this->m_wMatrix._43 = z;
 
 	this->m_divisions = 100; //INTE MER ÄN 100
+
+	ModelFactory::ModelFactory.GenerateSphere();
 	/*
 	if(!this->m_model.init()){
 		//Throw
@@ -32,6 +34,7 @@ bool CosmicBody::update() {
 	//this->m_model.update(this->m_timer.DeltaTime());
 	return 1;
 }
+
 void CosmicBody::createSphere() {
 	//Starting octahedron points.
 	DirectX::XMFLOAT3 p0, p1, p2, p3, p4, p5;

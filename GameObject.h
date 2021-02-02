@@ -1,7 +1,11 @@
 #pragma once
 #include <DirectXMath.h>
 #include <vector>
+
 #include "Time.h"
+#include "ModelFactory.h"
+#include "Model.h"
+
 class GameObject
 {
 protected:

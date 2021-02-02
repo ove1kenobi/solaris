@@ -17,7 +17,13 @@ private:
 	ModelFactory() noexcept = default;
 	~ModelFactory() noexcept = default;
 	ModelFactory& operator=(const ModelFactory& other) = delete;
+
+	//Called in GenerateSphere to create the sphere.
+	void createSphere(r);
+	//Called in createSphere to create a new triangle.
+	void createTriangleFace(std::vector<int> edge1, std::vector<int> edge2, std::vector<int> edge3, bool reverse, std::vector<DirectX::XMFLOAT3>& vertices, std::vector<int>& triangles);
 public:
 	static ModelFactory* Get() noexcept;
 	Model* GetModel(std::string filePath);
+	Model* GenerateSphere(float x, float y, float z, float r);
 };
