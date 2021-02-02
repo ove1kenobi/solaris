@@ -17,6 +17,7 @@ private:
 
 	float m_radius;
 
+	unsigned int m_divisions;
 	//Where the buffers are stored
 	//Model m_model;
 public:

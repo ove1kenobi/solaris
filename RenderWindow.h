@@ -1,6 +1,5 @@
 #pragma once
 #define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
 #include <Windows.h>
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem\WindowEvents.h"
@@ -17,6 +16,7 @@ public:
 	static const UINT DEFAULT_WIN_HEIGHT = 800u;
 public:
 	RenderWindow();
+	~RenderWindow() = default;
 	HWND GetHandle();
 	UINT GetWidth();
 	UINT GetHeight();
