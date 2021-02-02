@@ -9,6 +9,9 @@ Engine::Engine() noexcept
 const bool Engine::Initialize()
 {
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
+	ModelFactory* mf = ModelFactory::Get();
+	mf->GetModel(std::string("models/moon.obj"));
+
 	//DirectX Core
 	if (!m_DXCore.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_Window.GetHandle()))
 		return false;
