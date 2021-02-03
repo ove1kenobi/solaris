@@ -15,16 +15,17 @@
 
 #include <iostream>					// Remove
 
-class Player : public GameObject, public IEventListener
+class Player : public IEventListener
 {
 private:
 	// Model
+	// Ship m_ship
+	PlayerCamera* m_camera;
 
 	bool m_moveForwards, m_moveBackwards;
 	bool m_moveUp, m_moveDown;
 	bool m_rotateRight, m_rotateLeft;
-
-	PlayerCamera* m_camera;
+	
 	Time m_time;
 
 	DirectX::XMFLOAT3 m_forwardVector;

@@ -12,7 +12,7 @@ Player::Player()
 	m_rotateLeft = false;
 
 	m_camera = nullptr;
-	m_speed = 1000.0f;
+	m_speed = 100000000.0f;
 	m_rotation = (float)M_PI_4;
 
 	m_forwardVector = { 0.0f, 0.0f, 1.0f };
@@ -42,15 +42,15 @@ bool Player::Initialize(/*DirectX::XMFLOAT3 position,*/ PlayerCamera* camera)
 void Player::Move(DirectX::XMFLOAT3 direction)
 {
 	float step = m_speed * (float)m_time.DeltaTime();
-	DirectX::XMFLOAT3 offset(direction.x * step, direction.y * step, direction.z * step);
+	DirectX::XMFLOAT4 offset(direction.x * step, direction.y * step, direction.z * step, 0.0f);
 
-	m_center.x += offset.x;
-	m_center.y += offset.y;
-	m_center.z += offset.z;
+	//m_center.x += offset.x;
+	//m_center.y += offset.y;
+	//m_center.z += offset.z;
+	// m_ship.move(offset);
 
-	//DirectX::XMVECTOR offsetVec;
-	//DirectX::XMStoreFloat3(&offset, offsetVec);
-	//m_camera->move(offsetVec);
+	DirectX::XMVECTOR offsetVec = DirectX::XMLoadFloat4(&offset);
+	m_camera->move(offsetVec);
 
 	// move model
 }
