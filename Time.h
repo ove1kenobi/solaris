@@ -11,6 +11,7 @@ private:
 	static t_moment m_loopBegin;
 public:
 	Time();
+	~Time() = default;
 	long double SinceStart();
 	long double DeltaTime();
 	void Update();

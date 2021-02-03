@@ -40,6 +40,6 @@ public:
 	DirectX::XMFLOAT3 getRot();
 
 	//Send in the view & projection matrices that you want to put the cameras matrices in.
-	void getVMatrix(DirectX::XMMATRIX& vMatrix);
-	void getPMatrix(DirectX::XMMATRIX& pMatrix);
+	DirectX::XMMATRIX getVMatrix();
+	DirectX::XMMATRIX getPMatrix();
 };

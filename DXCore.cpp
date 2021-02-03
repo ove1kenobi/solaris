@@ -5,8 +5,11 @@ DXCore::DXCore() noexcept
 	  m_pSwapChain{ nullptr },
 	  m_pBackBuffer{ nullptr },
 	  m_pDepthStencilView{ nullptr },
+	  m_pRasterizerStateFill{ nullptr},
+	  m_pRasterizerStateWireFrame{ nullptr },
 	  m_DefaultViewport { 0 },
-	  m_MSAAQuality{ 4u }
+	  m_MSAAQuality{ 4u },
+	  m_WireFrameEnabled{ false }
 {
 
 }
@@ -15,6 +18,8 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 							  const unsigned int& clientWindowHeight, 
 							  const HWND& windowHandle)
 {
+	EventBuss::Get().AddListener(this, EventType::ToggleWireFrameEvent);
+
 	UINT flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
 	#if defined(DEBUG) || defined(_DEBUG)
 		flags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -121,7 +126,46 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 	m_DefaultViewport.MinDepth = 0.0f;
 	m_DefaultViewport.MaxDepth = 1.0f;
 	m_pDeviceContext->RSSetViewports(1u, &m_DefaultViewport);
+
+	D3D11_RASTERIZER_DESC rasterizerDesc = {};
+	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	rasterizerDesc.CullMode = D3D11_CULL_BACK;
+	rasterizerDesc.DepthBias = 0u;
+	rasterizerDesc.DepthBiasClamp = 0.0f;
+	rasterizerDesc.SlopeScaledDepthBias = 0.0f;
+	rasterizerDesc.DepthClipEnable = true;
+	rasterizerDesc.ScissorEnable = false;
+	rasterizerDesc.MultisampleEnable = true;
+	rasterizerDesc.AntialiasedLineEnable = false;
+	HR(m_pDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerStateFill), "CreateRasterizerState");
+	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+	HR(m_pDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerStateWireFrame), "CreateRasterizerState");
+	m_pDeviceContext->RSSetState(m_pRasterizerStateFill.Get());
 	return true;
+}
+
+void DXCore::OnEvent(IEvent& event) noexcept
+{
+	switch (event.GetEventType())
+	{
+	case EventType::ToggleWireFrameEvent:
+			ToggleWireFrame();
+			break;
+	}
+}
+
+void DXCore::ToggleWireFrame() noexcept
+{
+	if (m_WireFrameEnabled)
+	{
+		m_pDeviceContext->RSSetState(m_pRasterizerStateFill.Get());
+		m_WireFrameEnabled = false;
+	}
+	else
+	{
+		m_pDeviceContext->RSSetState(m_pRasterizerStateWireFrame.Get());
+		m_WireFrameEnabled = true;
+	}
 }
 
 const Microsoft::WRL::ComPtr<ID3D11Device>& DXCore::GetDevice() const noexcept

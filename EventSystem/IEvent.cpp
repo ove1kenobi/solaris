@@ -10,3 +10,8 @@ const bool& IEvent::IsHandled() const noexcept
 {
 	return m_Handled;
 }
+
+void IEvent::SetAsHandled() noexcept
+{
+	m_Handled = true;
+}
