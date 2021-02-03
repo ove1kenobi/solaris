@@ -9,7 +9,7 @@
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/RenderEvents.h"
 #include <random>
-
+#include "Time.h"
 class Scene : public EventPublisher, IEventListener
 {
 private:
