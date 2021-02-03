@@ -2,7 +2,13 @@
 
 SpaceShip::SpaceShip()
 {
-	this->m_model = ModelFactory::Get().GetModel(std::string("models/cubes.obj"));
+	this->m_model = ModelFactory::Get().GetModel(std::string("models/SciFi_Fighter_AK5.obj"));
+	this->m_wMatrix = {
+		0.03, 0, 0, 0,
+		0, 0.03, 0, 0,
+		0, 0, 0.03, 0,
+		0, 0, 100, 1
+	};
 }
 
 bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)

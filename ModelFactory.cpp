@@ -121,9 +121,9 @@ Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
 		newVertex.position.y = vertexPositionValues[i + 1];
 		newVertex.position.z = vertexPositionValues[i + 2];
 
-		newVertex.color.x = 0.5f;
+		newVertex.color.x = 0.0f;
 		newVertex.color.y = 0.5f;
-		newVertex.color.z = 0.5f;
+		newVertex.color.z = 0.8f;
 		newVertex.color.w = 1.0f;
 
 		newVertex.bitangent.x = 1.0f;

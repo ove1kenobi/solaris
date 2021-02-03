@@ -66,15 +66,18 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	this->m_numPlanets = distributionPlanets(generator);
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
 	
-	//for(int i = 0; i < /*this->m_numPlanets*/1; i++){
-	//	CosmicBody* planet = new CosmicBody();
-	//	if(!planet->init(0/*static_cast<float>(i * 1000)*/, 0, 1500, static_cast<float>(distributionRadius(generator)))){
-	//		//Throw
-	//		return 0;
-	//	}
-	//	this->m_gameObjects.push_back(planet);
-	//}
+	for(int i = 0; i < /*this->m_numPlanets*/1; i++){
+		CosmicBody* planet = new CosmicBody();
+		if(!planet->init(0/*static_cast<float>(i * 1000)*/, 0, 1500, static_cast<float>(distributionRadius(generator)))){
+			//Throw
+			return 0;
+		}
+		this->m_gameObjects.push_back(planet);
+	}
+
+	// Add the Space Ship
 	this->m_gameObjects.push_back(new SpaceShip());
+
 	return 1;
 }
 
