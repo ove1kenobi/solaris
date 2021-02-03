@@ -9,9 +9,12 @@ Engine::Engine() noexcept
 const bool Engine::Initialize()
 {
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
+
 	//DirectX Core
 	if (!m_DXCore.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_Window.GetHandle()))
 		return false;
+
+	ModelFactory::Get().setDevice(m_DXCore.GetDevice());
 
 	//Forward Renderer:
 	if (!m_ForwardRenderer.Initialize(m_DXCore.GetDeviceContext(), m_DXCore.GetBackBuffer(), m_DXCore.GetDepthStencilView()))
@@ -20,7 +23,7 @@ const bool Engine::Initialize()
 	//Scene
 	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
 		return false;
-	
+
 	//Resource Manager
 	if (!m_ResourceManager.Initialize(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext()))
 		return false;
@@ -46,7 +49,7 @@ void Engine::Run()
 	}
 }
 
-void Engine::OnEvent(const IEvent& event) noexcept
+void Engine::OnEvent(IEvent& event) noexcept
 {
 	switch (event.GetEventType())
 	{
@@ -59,19 +62,13 @@ void Engine::OnEvent(const IEvent& event) noexcept
 void Engine::Update()
 {
 	m_gameTime.Update();
+
+	m_scene.update(m_DXCore.GetDeviceContext());
 	//Here we will update entire scene, though note that the eventsystem is part of doing that for us
 }
 
 void Engine::Render()
 {
-	/*m_ForwardRenderer.BeginFrame() exempelvis */ //Will set up everything and ready rendering pass.
-	/*m_ForwardRenderer.Submit(Ett g�ng med cullade modeller...) exempelvis*/
-	/*m_ForwardRenderer.EndFrame() exempelvis */
-
-	//Annat tankes�tt �n ovan �r att h�r bara k�ra m_ForwardRenderer.RenderFrame() 
-	//och l�ta ovan funktioner vara privata till bara m_ForwardRenderer.
-	//this->m_ForwardRenderer.RenderFrame(this->m_DXCore.GetDeviceContext().Get());
-	//Followed by 2D-render...
 
 	//Followed by presentation of everything (backbuffer):
 	m_ForwardRenderer.RenderFrame();

@@ -1,6 +1,17 @@
 #include "ourMath.h"
 
 float dot(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
+	//Normalize the vectors.
+	float aLen = std::sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
+	float bLen = std::sqrt(b.x * b.x + b.y * b.y + b.z * b.z);
+	a.x = a.x / aLen;
+	a.y = a.y / aLen;
+	a.z = a.z / aLen;
+
+	b.x = b.x / bLen;
+	b.y = b.y / bLen;
+	b.z = b.z / bLen;
+	
 	return a.x * b.x + a.y * b.y + a.z * b.z;
 };
 

@@ -5,25 +5,33 @@
 //#include "Sun.h"
 //#include "Player.h"
 #include "GameObject.h"
+#include "EventSystem/IEventListener.h"
+#include "EventSystem/EventPublisher.h"
+#include "EventSystem/RenderEvents.h"
 #include <random>
 
-class Scene
+class Scene : public EventPublisher, IEventListener
 {
 private:
 	//GameObjects include planets, moons, asteroids and the sun.
-	std::vector<GameObject*> m_gameObjects;
 	int m_numPlanets;
 
 	Camera m_orthoCamera;
-	PlayerCamera m_perspectiveCamera;
 
 	//Player m_player;
 
 	//ModelFactory m_factory;
 public:
 	Scene() noexcept;
-	~Scene() = default;
+	~Scene();
+
+	std::vector<GameObject*> m_gameObjects;
 
 	bool init(unsigned int screenWidth, unsigned int screenHeight);
-	bool update();
+	bool update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext);
+
+	void OnEvent(IEvent& event) noexcept;
+	void sendObjects();
+
+	PlayerCamera m_perspectiveCamera;
 };

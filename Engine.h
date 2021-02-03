@@ -7,6 +7,8 @@
 #include "Scene.h"
 #include "Resources/ResourceManager.h"
 #include "EventSystem\IEventListener.h"
+//#include "ModelFactory.h"
+
 class Engine : IEventListener
 {
 private:
@@ -25,5 +27,5 @@ public:
 	virtual ~Engine() = default;
 	const bool Initialize();
 	void Run();
-	void OnEvent(const IEvent& event) noexcept;
+	void OnEvent(IEvent& event) noexcept override;
 };
