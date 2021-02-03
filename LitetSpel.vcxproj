@@ -141,6 +141,7 @@
     <ClInclude Include="Resources\PrimitiveTopology.h" />
     <ClInclude Include="Resources\ResourceManager.h" />
     <ClInclude Include="Resources\VertexShader.h" />
+    <ClInclude Include="vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader_Minimalistic.hlsl">

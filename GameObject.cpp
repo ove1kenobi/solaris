@@ -4,10 +4,10 @@ GameObject::GameObject() noexcept
 	:	m_velocity{ 0, 0, 0 },
 		m_center{ 0, 0, 0 },
 		m_wMatrix{
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 0
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
 		},
 		m_mass{ 0 },
 		m_pitch{ 0 },

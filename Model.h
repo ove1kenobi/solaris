@@ -4,24 +4,8 @@
 #include <Windows.h>
 #include <DirectXMath.h>
 #include "DXDebug.h"
+#include "vertex.h"
 
-struct vertex {
-	DirectX::XMFLOAT3 position;
-	DirectX::XMFLOAT3 normal;
-	DirectX::XMFLOAT3 tangent;
-	DirectX::XMFLOAT3 bitangent;
-};
-
-struct vertex_tex : public vertex
-{
-	DirectX::XMFLOAT2 texcoord;
-	DirectX::XMFLOAT2 padding;
-};
-
-struct vertex_col : public vertex
-{
-	DirectX::XMFLOAT4 color;
-};
 
 class Model
 {

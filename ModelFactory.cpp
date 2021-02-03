@@ -58,12 +58,16 @@ Model* ModelFactory::GetModel(std::string filePath)
 						vtx.texcoord.x = mesh->mTextureCoords[iMesh][i].x;
 						vtx.texcoord.y = mesh->mTextureCoords[iMesh][i].y;
 					}
-					if (mesh->HasNormals())
-					{
-						vtx.normal.x = mesh->mNormals[i].x;
-						vtx.normal.y = mesh->mNormals[i].y;
-						vtx.normal.z = mesh->mNormals[i].z;
-					}
+					vtx.normal.x = 1.0;	// temporary for
+					vtx.normal.y = 0.3;	// vertex color
+					vtx.normal.z = 0.1;	// use section below.
+
+					//if (mesh->HasNormals())
+					//{
+					//	vtx.normal.x = mesh->mNormals[i].x;
+					//	vtx.normal.y = mesh->mNormals[i].y;
+					//	vtx.normal.z = mesh->mNormals[i].z;
+					//}
 					if (mesh->HasTangentsAndBitangents())
 					{
 						vtx.tangent.x = mesh->mTangents[i].x;
