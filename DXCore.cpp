@@ -14,6 +14,11 @@ DXCore::DXCore() noexcept
 
 }
 
+DXCore::~DXCore() noexcept
+{
+
+}
+
 const bool DXCore::Initialize(const unsigned int& clientWindowWidth, 
 							  const unsigned int& clientWindowHeight, 
 							  const HWND& windowHandle)
@@ -141,6 +146,8 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
 	HR(m_pDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerStateWireFrame), "CreateRasterizerState");
 	m_pDeviceContext->RSSetState(m_pRasterizerStateFill.Get());
+
+	ImGui_ImplDX11_Init(m_pDevice.Get(), m_pDeviceContext.Get());
 	return true;
 }
 

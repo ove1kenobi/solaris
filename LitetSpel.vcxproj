@@ -87,6 +87,9 @@
     <ClCompile Include="EventSystem\IEvent.cpp" />
     <ClCompile Include="ForwardRenderer.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="ImGui\ImGuiManager.cpp" />
+    <ClCompile Include="ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelFactory.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
@@ -120,6 +123,9 @@
     <ClInclude Include="EventSystem\WindowEvents.h" />
     <ClInclude Include="ForwardRenderer.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="ImGui\ImGuiManager.h" />
+    <ClInclude Include="ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="ImGui\imgui_impl_win32.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelFactory.h" />
     <ClInclude Include="RenderWindow.h" />

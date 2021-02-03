@@ -4,6 +4,7 @@
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem\WindowEvents.h"
 #include "EventSystem\RenderEvents.h"
+#include "ImGui\imgui_impl_win32.h"
 class RenderWindow : public EventPublisher
 {
 private:
@@ -16,7 +17,7 @@ public:
 	static const UINT DEFAULT_WIN_HEIGHT = 800u;
 public:
 	RenderWindow();
-	~RenderWindow() = default;
+	virtual ~RenderWindow();
 	HWND GetHandle();
 	UINT GetWidth();
 	UINT GetHeight();

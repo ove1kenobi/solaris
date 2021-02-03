@@ -1,5 +1,7 @@
 #include "RenderWindow.h"
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 RenderWindow::RenderWindow()
 {
     LPCWSTR className = L"Window Class";
@@ -7,15 +9,15 @@ RenderWindow::RenderWindow()
     m_clientWinWidth = DEFAULT_WIN_WIDTH;
     m_clientWinHeight = DEFAULT_WIN_HEIGHT;
     WNDCLASSEX wc = { 0 };
-    wc.style = CS_HREDRAW | CS_VREDRAW;                  //Flags [Redraw on width/height change from resize/movement] See: https://msdn.microsoft.com/en-us/library/windows/desktop/ff729176(v=vs.85).aspx
+    wc.style = CS_OWNDC;                                 //Flags [Redraw on width/height change from resize/movement] See: https://msdn.microsoft.com/en-us/library/windows/desktop/ff729176(v=vs.85).aspx
     wc.lpfnWndProc = WindowProc;                         //Pointer to Window Proc function for handling messages from this window
     wc.cbClsExtra = 0;                                   //# of extra bytes to allocate following the window-class structure. We are not currently using this.
     wc.cbWndExtra = 0;                                   //# of extra bytes to allocate following the window instance. We are not currently using this.
     wc.hInstance = (HINSTANCE)GetModuleHandle(nullptr);  //Handle to the instance that contains the Window Procedure
     wc.hIcon = nullptr;                                  //Handle to the class icon. Must be a handle to an icon resource. We are not currently assigning an icon, so this is null.
     wc.hIconSm = nullptr;                                //Handle to small icon for this class. We are not currently assigning an icon, so this is null.
-    wc.hCursor = LoadCursor(nullptr, IDC_ARROW);         //Default Cursor - If we leave this null, we have to explicitly set the cursor's shape each time it enters the window.
-    wc.hbrBackground = (HBRUSH)COLOR_WINDOW;             //Handle to the class background brush for the window's background color - we will leave this blank for now and later set this to black. For stock brushes, see: https://msdn.microsoft.com/en-us/library/windows/desktop/dd144925(v=vs.85).aspx
+    wc.hCursor = nullptr;                                //Default Cursor - If we leave this null, we have to explicitly set the cursor's shape each time it enters the window.
+    wc.hbrBackground = nullptr;                          //Handle to the class background brush for the window's background color - we will leave this blank for now and later set this to black. For stock brushes, see: https://msdn.microsoft.com/en-us/library/windows/desktop/dd144925(v=vs.85).aspx
     wc.lpszMenuName = nullptr;                           //Pointer to a null terminated character string for the menu. We are not using a menu yet, so this will be NULL.
     wc.lpszClassName = className;                        //Pointer to null terminated string of our class name for this window.
     wc.cbSize = sizeof(WNDCLASSEX);                      //Need to fill in the size of our struct for cbSize
@@ -23,24 +25,34 @@ RenderWindow::RenderWindow()
     RegisterClassEx(&wc);
 
     RECT winRect = {0, 0, static_cast<LONG>(m_clientWinWidth), static_cast<LONG>(m_clientWinHeight)};
+    winRect.left = 100;
+    winRect.right = m_clientWinWidth + winRect.left;
+    winRect.top = 100;
+    winRect.bottom = m_clientWinHeight + winRect.top;
+    AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
 
-    m_winHandle = CreateWindowEx(
-        0,                                              // Optional window style
-        className,
-        windowTitle,
-        WS_OVERLAPPEDWINDOW,                            // Window style
-        // x positoin, y positoin, width, height
-        CW_USEDEFAULT, CW_USEDEFAULT, winRect.right - winRect.left, winRect.bottom - winRect.top,
-        nullptr,                                        // Parent window
-        nullptr,                                        // Menu
-        (HINSTANCE)GetModuleHandle(nullptr),            // Instance handle
-        nullptr                                         // Additional application data
-    );
+    m_winHandle = CreateWindowEx(0,                                              // Optional window style
+                                 className,
+                                 windowTitle,
+                                 WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,       // Window style
+                                 CW_USEDEFAULT, CW_USEDEFAULT, winRect.right - winRect.left, winRect.bottom - winRect.top,
+                                 nullptr,                                        // Parent window
+                                 nullptr,                                        // Menu
+                                 (HINSTANCE)GetModuleHandle(nullptr),            // Instance handle
+                                 nullptr);                                         // Additional application data
     ShowWindow(m_winHandle, SW_SHOWNORMAL);
+}
+
+RenderWindow::~RenderWindow()
+{
+    
 }
 
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
+        return true;
+
     switch (uMsg)
     {
         case WM_DESTROY:
@@ -50,14 +62,14 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             EventBuss::Get().Delegate(ce);
             return 0;
         }
-        case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hwnd, &ps);
-            FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW));
-            EndPaint(hwnd, &ps);
-            break;
-        }
+        //case WM_PAINT:
+        //{
+        //    //PAINTSTRUCT ps;
+        //    //HDC hdc = BeginPaint(hwnd, &ps);
+        //    //FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW));
+        //    //EndPaint(hwnd, &ps);
+        //    //break;
+        //}
         case WM_CLOSE:
         {
             if (MessageBox(hwnd, L"Quit?", L"Exit", MB_YESNO) == IDYES)
