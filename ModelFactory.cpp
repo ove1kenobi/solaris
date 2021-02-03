@@ -13,7 +13,6 @@ void ModelFactory::setDevice(Microsoft::WRL::ComPtr<ID3D11Device> device) {
 
 Model* ModelFactory::GetModel(std::string filePath)
 {
-	/*
 	Model* model = &m_loadedModels[filePath];
 	if (model->NotLoaded())
 	{
@@ -27,10 +26,15 @@ Model* ModelFactory::GetModel(std::string filePath)
 
 		if (scene == nullptr)
 		{
-			OutputDebugString(L"Error retrieving data from model file");
+			OutputDebugString(L"\n\n!!! Error retrieving data from model file !!!\n\n");
+#ifdef _DEBUG
+			assert(false);
+#endif
 		}
 		else
 		{
+			std::vector<vertex_tex> vertices;
+			std::vector<int> indices;
 #ifdef _DEBUG
 			std::string loadDebug = std::string("=======================================\nLoading model: ") + filePath + std::string("\n");
 			loadDebug += std::string("Meshes: ") + std::to_string(scene->mNumMeshes) + std::string("\t");
@@ -69,15 +73,16 @@ Model* ModelFactory::GetModel(std::string filePath)
 						vtx.bitangent.y = mesh->mBitangents[i].y;
 						vtx.bitangent.z = mesh->mBitangents[i].z;
 					}
-					model->AddVertex(vtx);
+					vertices.push_back(vtx);
 
-					for (UINT i = 0u; i < mesh->mNumFaces; ++i)
+
+				}
+				for (UINT i = 0u; i < mesh->mNumFaces; ++i)
+				{
+					aiFace face = mesh->mFaces[i];
+					for (UINT j = 0u; j < face.mNumIndices; ++j)
 					{
-						aiFace face = mesh->mFaces[i];
-						for (UINT j = 0u; j < face.mNumIndices; ++j)
-						{
-							model->AddIndex(face.mIndices[j]);
-						}
+						indices.push_back(face.mIndices[j]);
 					}
 				}
 			}
@@ -86,12 +91,16 @@ Model* ModelFactory::GetModel(std::string filePath)
 			loadDebug += std::string("=======================================\n");
 			OutputDebugStringA(loadDebug.c_str());
 #endif
+			model->setVertexBufferSize(static_cast<UINT>(vertices.size()));
+			model->setIndexBufferSize(static_cast<UINT>(indices.size()));
+			createBuffers(sizeof(vertex_tex), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
+			model->Loaded();
 		}
-		model->Loaded();
 	}
+#ifdef _DEBUG
+	assert(model->NotLoaded() == false);
+#endif
 	return model;
-	*/
-	return nullptr;
 }
 
 Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
@@ -131,7 +140,7 @@ Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
 	model->setVertexBufferSize(static_cast<UINT>(vertices.size()));
 	model->setIndexBufferSize(static_cast<UINT>(indices.size()));
 
-	createBuffers(vertices, indices, model);
+	createBuffers(sizeof(vertex_col), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
 	return model;
 }
 
@@ -326,17 +335,17 @@ void ModelFactory::createTriangleFace(
 	}
 }
 
-void ModelFactory::createBuffers(const std::vector<vertex_col>& vertices, const std::vector<int>& indices, Model* model) {
-	model->setStride(sizeof(vertex_col));
+void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std::vector<int>& indices, Model* model) {
+	model->setStride(stride);
 	model->setOffset(0u);
 
 	//vertexbuffer
 	D3D11_BUFFER_DESC vertexBufferDescriptor = {};
-	vertexBufferDescriptor.ByteWidth = sizeof(vertex_col) * static_cast<UINT>(vertices.size());
+	vertexBufferDescriptor.ByteWidth = sizeof(vertex_col) * static_cast<UINT>(size);
 	vertexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	D3D11_SUBRESOURCE_DATA sr_data = { 0 };
-	sr_data.pSysMem = vertices.data();
+	sr_data.pSysMem = data;
 
 	HR_X(this->m_device->CreateBuffer(&vertexBufferDescriptor,
 									  &sr_data,

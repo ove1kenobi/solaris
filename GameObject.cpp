@@ -19,7 +19,7 @@ GameObject::GameObject() noexcept
 }
 
 GameObject::~GameObject() {
-	if (this->m_model) {
+	if (this->m_model->NotLoaded()) {
 		delete this->m_model;
 	}
 }

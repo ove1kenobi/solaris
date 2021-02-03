@@ -1,5 +1,6 @@
 #pragma once
 #include "CosmicBody.h"
+#include "SpaceShip.h"
 #include "PlayerCamera.h"
 //#include "ModelFactory.h"
 //#include "Sun.h"

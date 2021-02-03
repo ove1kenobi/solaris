@@ -96,6 +96,7 @@
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="ourMath.cpp" />
     <ClCompile Include="CosmicBody.cpp" />
+    <ClCompile Include="SpaceShip.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Resources\IBindable.cpp" />
@@ -128,6 +129,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Resources\BindIDs.h" />
+    <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="ourMath.h" />
     <ClInclude Include="CosmicBody.h" />
