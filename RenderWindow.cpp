@@ -72,8 +72,10 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 //P Key
             case 0x50:
             {
+#if defined(DEBUG) | defined(_DEBUG)
                 ToggleWireFrameEvent event;
                 EventBuss::Get().Delegate(event);
+#endif
             }
                 break;
             }

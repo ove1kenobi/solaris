@@ -93,6 +93,9 @@
     <ClInclude Include="EventSystem\RenderEvents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\BindIDs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Light.cpp">

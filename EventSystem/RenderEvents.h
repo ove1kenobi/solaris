@@ -1,13 +1,13 @@
 #pragma once
 #include "IEvent.h"
 #include "../GameObject.h"
+#include "../Resources/BindIDs.h"
 #include <vector>
 
 class SendRenderObjectsEvent : public IEvent
 {
 private:
 	std::vector<GameObject*>* m_gameObjects;
-
 public:
 	SendRenderObjectsEvent(std::vector<GameObject*> *gameObjects) noexcept
 	{
@@ -23,7 +23,6 @@ public:
 	{
 		return "SendRenderObjectsEvent";
 	}
-
 	std::vector<GameObject*> *getGameObjectVector() {
 		return this->m_gameObjects;
 	}
@@ -80,5 +79,30 @@ public:
 	[[nodiscard]] const std::string GetDebugName() const noexcept override
 	{
 		return "ToggleWireFrameEvent";
+	}
+};
+
+class BindIDEvent : public IEvent
+{
+private:
+	BindID m_BindID;
+public:
+	BindIDEvent(const BindID& bindID)
+	{
+		m_BindID = bindID;
+	}
+	virtual ~BindIDEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::BindIDEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "BindIDEvent";
+	}
+	[[nodiscard]] const BindID& GetBindID() const noexcept
+	{
+		return m_BindID;
 	}
 };
