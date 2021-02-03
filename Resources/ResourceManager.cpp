@@ -6,10 +6,8 @@ ResourceManager::ResourceManager() noexcept
 
 }
 
-const bool ResourceManager::Initialize(
-	Microsoft::WRL::ComPtr<ID3D11Device> pDevice, 
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext
-	) noexcept
+const bool ResourceManager::Initialize(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, 
+									   Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext) noexcept
 {
 	m_pDevice = pDevice;
 	m_pDeviceContext = pDeviceContext;
@@ -36,35 +34,48 @@ const bool ResourceManager::CreateAllBindables()
 	//Domain Shaders:
 
 	//InputLayouts:
-	if (!m_InputLayoutDefault.Create(m_pDevice, m_VertexShaderMinimal))
+	if (!m_InputLayoutMinimal.Create(m_pDevice, m_VertexShaderMinimal, LAYOUT_MINIMAL))
 		return false;
+	//if (!m_InputLayoutCosmicBody.Create(m_pDevice, m_VertexShaderCosmic, LAYOUT_COSMIC))
+	//	return false;
+	//if (!m_InputLayoutPlayerModel.Create(m_pDevice, m_VertexShaderPlayer, LAYOUT_PLAYER))
+	//	return false;
+
 	//Primitive topologies:
 	if (!m_TopologyTriList.Create(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST))
+		return false;
+	if (!m_TopologyPatchList.Create(D3D11_PRIMITIVE_TOPOLOGY_11_CONTROL_POINT_PATCHLIST))
 		return false;
 	//Samplers:
 
 	//Arrange:
 	//Minimal:
-	m_BindablesMinimalistic.insert(m_BindablesMinimalistic.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutDefault, &m_TopologyTriList });
-
+	m_BindablesMinimalistic.insert(m_BindablesMinimalistic.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList });
 	return true;
 }
 
 void ResourceManager::UnbindPipeline()
 {
+	ID3D11ShaderResourceView* nullSRV[3] = { nullptr };
+
 	m_pDeviceContext->VSSetShader(nullptr, nullptr, 0u);
 	m_pDeviceContext->VSSetConstantBuffers(0u, 0u, nullptr);
+	m_pDeviceContext->VSSetShaderResources(0u, 3u, nullSRV);
+
 	m_pDeviceContext->PSSetShader(nullptr, nullptr, 0u);
 	m_pDeviceContext->PSSetSamplers(0u, 0u, nullptr);
-	m_pDeviceContext->PSSetShaderResources(0u, 0u, nullptr);
+	m_pDeviceContext->PSSetShaderResources(0u, 3u, nullSRV);
+
 	m_pDeviceContext->DSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->DSSetShaderResources(0u, 0u, nullptr);
+	m_pDeviceContext->DSSetShaderResources(0u, 3u, nullSRV);
 	m_pDeviceContext->DSSetConstantBuffers(0u, 0u, nullptr);
+
 	m_pDeviceContext->HSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->HSSetShaderResources(0u, 0u, nullptr);
+	m_pDeviceContext->HSSetShaderResources(0u, 3u, nullSRV);
 	m_pDeviceContext->HSSetConstantBuffers(0u, 0u, nullptr);
+
 	m_pDeviceContext->GSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->GSSetShaderResources(0u, 0u, nullptr);
+	m_pDeviceContext->GSSetShaderResources(0u, 3u, nullSRV);
 	m_pDeviceContext->HSSetConstantBuffers(0u, 0u, nullptr);
 }
 
@@ -75,6 +86,24 @@ void ResourceManager::BindToPipeline(IEvent& event)
 	{
 	case BindID::ID_Minimal :
 		for (auto bindables : m_BindablesMinimalistic)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		break;
+	case BindID::ID_Cosmic :
+		for (auto bindables : m_BindablesCosmic)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		break;
+	case BindID::ID_Player :
+		for (auto bindables : m_BindablesPlayer)
 		{
 			if (!bindables->IsBound())
 			{
