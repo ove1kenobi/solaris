@@ -2,10 +2,16 @@
 #include <string>
 
 #include "Camera.h"
+#include "EventSystem\IEventListener.h"
+#include "EventSystem/EventBuss.h"
+#include "EventSystem/MouseMoveEvent.h"
 
-class PlayerCamera : public Camera {
+class PlayerCamera : public IEventListener, public Camera {
 private:
 	float m_FOVvalue = 4.0f;
+
+	void OnEvent(IEvent& event) noexcept;
+
 public:
 	PlayerCamera() = default;
 	~PlayerCamera() = default;

@@ -12,7 +12,7 @@ Player::Player()
 	m_rotateLeft = false;
 
 	m_camera = nullptr;
-	m_speed = 100.0f;
+	m_speed = 500.0f;
 	m_rotation = (float)M_PI_4;
 
 	m_forwardVector = { 0.0f, 0.0f, 1.0f };
