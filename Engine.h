@@ -6,6 +6,7 @@
 #include "Scene.h"
 #include "Resources/ResourceManager.h"
 #include "EventSystem\IEventListener.h"
+#include "ImGui\ImGuiManager.h"
 
 class Engine : IEventListener
 {
@@ -16,13 +17,14 @@ private:
 	ResourceManager m_ResourceManager;
 	Time m_gameTime;
 	Scene m_scene;
+	ImGuiManager m_imguiManager;
 	bool m_Running;
 private:
 	void Update();
 	void Render();
 public:
 	Engine() noexcept;
-	virtual ~Engine() = default;
+	virtual ~Engine();
 	const bool Initialize();
 	void Run();
 	void OnEvent(IEvent& event) noexcept override;
