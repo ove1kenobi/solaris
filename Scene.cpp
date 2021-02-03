@@ -61,14 +61,26 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 
 	//Behöver ändras pga factory senare.
 	//Generate planets.
-	std::default_random_engine generator;
+	using t_clock = std::chrono::high_resolution_clock;
+	//std::seed_seq seed = {  };
+	
+	std::default_random_engine generator(t_clock::now().time_since_epoch().count());
 	std::uniform_int_distribution<int> distributionPlanets(12, 15);
 	this->m_numPlanets = distributionPlanets(generator);
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
-	
-	for(int i = 0; i < /*this->m_numPlanets*/1; i++){
+	std::uniform_int_distribution<int> distributionX(-3000, 3000);
+	std::uniform_int_distribution<int> distributionY(-300, 300);
+	std::uniform_int_distribution<int> distributionZ(1500, 5000);
+
+	for(int i = 0; i < this->m_numPlanets; i++){
 		CosmicBody* planet = new CosmicBody();
-		if(!planet->init(0/*static_cast<float>(i * 1000)*/, 0, 1500, static_cast<float>(distributionRadius(generator)))){
+		if(!planet->init(
+			static_cast<float>(distributionX(generator)),
+			static_cast<float>(distributionY(generator)),
+			static_cast<float>(distributionZ(generator)),
+			static_cast<float>(distributionRadius(generator))
+			))
+		{
 			//Throw
 			return 0;
 		}
