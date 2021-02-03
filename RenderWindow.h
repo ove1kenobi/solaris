@@ -1,6 +1,5 @@
 #pragma once
 #define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
 #include <Windows.h>
 #include <windowsx.h>
 #include "EventSystem\EventPublisher.h"
@@ -12,6 +11,7 @@
 #include <iostream>					// Remove
 #pragma warning(disable : 4996)		// Remove
 
+#include "EventSystem\RenderEvents.h"
 class RenderWindow : public EventPublisher
 {
 private:
@@ -24,6 +24,7 @@ public:
 	static const UINT DEFAULT_WIN_HEIGHT = 800u;
 public:
 	RenderWindow();
+	~RenderWindow() = default;
 	HWND GetHandle();
 	UINT GetWidth();
 	UINT GetHeight();

@@ -6,7 +6,32 @@ Scene::Scene() noexcept
 
 }
 
+Scene::~Scene() {
+	for (auto r : this->m_gameObjects) {
+		delete r;
+	}
+}
+
+//All events that Scene are listening to.
+void Scene::OnEvent(IEvent& event) noexcept {
+	switch (event.GetEventType()) {
+		case EventType::AskForRenderObjectsEvent:
+			sendObjects();
+			break;
+
+		default:
+			break;
+	}
+}
+
+//Send gameObjects for rendering after being asked.
+void Scene::sendObjects() {
+	SendRenderObjectsEvent event(&this->m_gameObjects);
+	EventBuss::Get().Delegate(event);
+}
+
 bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
+	EventBuss::Get().AddListener(this, EventType::AskForRenderObjectsEvent);
 	//Orthographic camera. Over the sun.
 	if (!this->m_orthoCamera.init(screenWidth, screenHeight, 1000)) {
 		//Throw
@@ -39,33 +64,32 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	//this->m_factory = ModelFactory::getInstance();
 
 
-	//Behöver ändras pga factory senare.
+	//Beh?ver ?ndras pga factory senare.
 	//Generate planets.
 	std::default_random_engine generator;
 	std::uniform_int_distribution<int> distributionPlanets(12, 15);
 	this->m_numPlanets = distributionPlanets(generator);
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
 	
-	for(int i = 0; i < this->m_numPlanets; i++){
-		CosmicBody planet;
-		if(!planet.init(static_cast<float>(i * 1000), 0, 0, static_cast<float>(distributionRadius(generator)))){
+	for(int i = 0; i < /*this->m_numPlanets*/1; i++){
+		CosmicBody* planet = new CosmicBody();
+		if(!planet->init(0/*static_cast<float>(i * 1000)*/, 0, 1500, static_cast<float>(distributionRadius(generator)))){
 			//Throw
 			return 0;
 		}
-		this->m_gameObjects.push_back(&planet);
+		this->m_gameObjects.push_back(planet);
 	}
-	
-
 	return 1;
 }
 
-bool Scene::update() {
-	/*
+bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
+	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
+	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
+	
 	for (auto r : this->m_gameObjects) {
-		r.update();
+		r->update(vMatrix, pMatrix, deviceContext);
 	}
-	*/
-	m_player.update();
 
+	//Cull Objects HERE at the end or as response to AskForObjectsEvent? (Emil F)
 	return 1;
 }

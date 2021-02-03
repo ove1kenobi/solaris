@@ -1,8 +1,3 @@
 #pragma once
-enum class EventType { 
-	WindowCloseEvent = 0, 
-	TestEvent, 
-	MouseMoveEvent,
-	MouseButtenEvent,
-	KeyboardEvent
-};
+enum class EventType { WindowCloseEvent = 0, TestEvent, GetRenderObjectsEvent, SendRenderObjectsEvent, AskForRenderObjectsEvent,
+					   UnbindPipelineEvent, ToggleWireFrameEvent, BindIDEvent, MouseMoveEvent, MouseButtenEvent, KeyboardEvent };

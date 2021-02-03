@@ -54,6 +54,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>-DNOMINMAX %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -68,6 +69,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>-DNOMINMAX %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -85,6 +87,8 @@
     <ClCompile Include="EventSystem\IEvent.cpp" />
     <ClCompile Include="ForwardRenderer.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelFactory.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -113,6 +117,7 @@
     <ClInclude Include="EventSystem\EventType.h" />
     <ClInclude Include="EventSystem\IEvent.h" />
     <ClInclude Include="EventSystem\IEventListener.h" />
+    <ClInclude Include="EventSystem\RenderEvents.h" />
     <ClInclude Include="EventSystem\KeyboardEvent.h" />
     <ClInclude Include="EventSystem\KeyState.h" />
     <ClInclude Include="EventSystem\MouseButtenEvent.h" />
@@ -120,12 +125,15 @@
     <ClInclude Include="EventSystem\WindowEvents.h" />
     <ClInclude Include="ForwardRenderer.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="ModelFactory.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="PlayerCamera.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="PointLight.h" />
+    <ClInclude Include="Resources\BindIDs.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="ourMath.h" />
     <ClInclude Include="CosmicBody.h" />

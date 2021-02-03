@@ -9,117 +9,194 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Bloom.cpp" />
-    <ClCompile Include="DXCore.cpp" />
-    <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="ForwardRenderer.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="RenderWindow.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="PlayerCamera.cpp" />
-    <ClCompile Include="Light.cpp" />
-    <ClCompile Include="PointLight.cpp" />
-    <ClCompile Include="ourMath.cpp" />
-    <ClCompile Include="CosmicBody.cpp" />
-    <ClCompile Include="Time.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="EventSystem\EventBuss.cpp">
-      <Filter>EventSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="EventSystem\IEvent.cpp">
-      <Filter>EventSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\IBindable.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\InputLayout.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\PixelShader.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\VertexShader.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\ResourceManager.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\PrimitiveTopology.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="EntryPoint.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Bloom.h" />
-    <ClInclude Include="DXCore.h" />
-    <ClInclude Include="DXDebug.h" />
-    <ClInclude Include="Engine.h" />
-    <ClInclude Include="ForwardRenderer.h" />
-    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="PointLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Player.h" />
-    <ClInclude Include="RenderWindow.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="PlayerCamera.h" />
-    <ClInclude Include="Light.h" />
-    <ClInclude Include="PointLight.h" />
-    <ClInclude Include="Time.h" />
-    <ClInclude Include="ourMath.h" />
-    <ClInclude Include="CosmicBody.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="EventSystem\EventBuss.h">
-      <Filter>EventSystem</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EventSystem\EventCategory.h">
-      <Filter>EventSystem</Filter>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EventSystem\EventPublisher.h">
-      <Filter>EventSystem</Filter>
+    <ClInclude Include="Time.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EventSystem\EventType.h">
-      <Filter>EventSystem</Filter>
+    <ClInclude Include="Bloom.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EventSystem\IEvent.h">
-      <Filter>EventSystem</Filter>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EventSystem\IEventListener.h">
-      <Filter>EventSystem</Filter>
+    <ClInclude Include="CosmicBody.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EventSystem\WindowEvents.h">
-      <Filter>EventSystem</Filter>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resources\IBindable.h">
-      <Filter>Resources</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resources\InputLayout.h">
-      <Filter>Resources</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resources\IShader.h">
-      <Filter>Resources</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resources\PixelShader.h">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\VertexShader.h">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\ResourceManager.h">
-      <Filter>Resources</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resources\PrimitiveTopology.h">
-      <Filter>Resources</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\VertexShader.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EventSystem\KeyboardEvent.h">
       <Filter>EventSystem</Filter>
     </ClInclude>
-    <ClInclude Include="EventSystem\MouseMoveEvent.h">
-      <Filter>EventSystem</Filter>
+    <ClInclude Include="DXDebug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\EventBuss.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\EventType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\IEventListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\IEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\WindowEvents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\EventPublisher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\EventCategory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\RenderEvents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\BindIDs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Bloom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CosmicBody.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\IBindable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\InputLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\PixelShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\PrimitiveTopology.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\VertexShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EventSystem\EventBuss.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EventSystem\IEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="EntryPoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DXCore.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ForwardRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Engine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DXCore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ForwardRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EventSystem\KeyState.h">
       <Filter>EventSystem</Filter>
     </ClInclude>
     <ClInclude Include="EventSystem\MouseButtenEvent.h">
       <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ourMath.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
