@@ -38,9 +38,10 @@ RenderWindow::RenderWindow()
     );
     ShowWindow(m_winHandle, SW_SHOWNORMAL);
 
-    AllocConsole();                                        // Remove
-    freopen("CONOUT$", "w", stdout);                       // Remove
-    std::cout << "Debug console is open" << std::endl;     // Remove
+    // Debug console
+    //AllocConsole();                                   
+    //freopen("CONOUT$", "w", stdout);                  
+    //std::cout << "Debug console is open" << std::endl;
 }
 
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

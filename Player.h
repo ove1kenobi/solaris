@@ -13,8 +13,6 @@
 #include "EventSystem/MouseButtenEvent.h"
 #include "EventSystem/KeyboardEvent.h"
 
-#include <iostream>					// Remove
-
 class Player : public IEventListener
 {
 private:

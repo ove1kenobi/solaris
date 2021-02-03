@@ -8,8 +8,9 @@
 #include "EventSystem/MouseButtenEvent.h"
 #include "EventSystem/KeyboardEvent.h"
 
-#include <iostream>					// Remove
-#pragma warning(disable : 4996)		// Remove
+// Debug console
+//#include <iostream>			
+//#pragma warning(disable : 4996)
 
 #include "EventSystem\RenderEvents.h"
 class RenderWindow : public EventPublisher
