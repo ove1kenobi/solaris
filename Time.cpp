@@ -1,6 +1,7 @@
 #include "Time.h"
 
 Time::t_moment Time::m_loopBegin = Time::t_clock::now();
+Time::t_dSec Time::m_deltaTime = Time::m_loopBegin - Time::m_loopBegin;
 
 Time::Time() : m_start{ t_clock::now() }
 {
@@ -15,11 +16,11 @@ long double Time::SinceStart()
 
 long double Time::DeltaTime()
 {
-	t_dSec elapsed = t_clock::now() - m_loopBegin;
-	return elapsed.count();
+	return m_deltaTime.count();
 }
 
 void Time::Update()
 {
+	m_deltaTime = t_clock::now() - m_loopBegin;
 	m_loopBegin = t_clock::now();
 }

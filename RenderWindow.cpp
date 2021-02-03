@@ -30,7 +30,7 @@ RenderWindow::RenderWindow()
         windowTitle,
         WS_OVERLAPPEDWINDOW,                            // Window style
         // x positoin, y positoin, width, height
-        CW_USEDEFAULT, CW_USEDEFAULT, winRect.right - winRect.left, winRect.bottom - winRect.top,
+        0u, 0u, winRect.right - winRect.left, winRect.bottom - winRect.top,
         nullptr,                                        // Parent window
         nullptr,                                        // Menu
         (HINSTANCE)GetModuleHandle(nullptr),            // Instance handle
@@ -118,6 +118,13 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         case WM_KEYDOWN:
         {
             // key press
+#if defined(DEBUG) | defined(_DEBUG)
+            if (wParam == 'P') {
+                ToggleWireFrameEvent event;
+                EventBuss::Get().Delegate(event);
+            }
+#endif
+
             KeyState keyState;
             if ((lParam & 0x40000000) == 0) keyState = KeyState::KeyPress;
             else keyState = KeyState::KeyRepeat;
@@ -139,10 +146,10 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 //P Key
             case 0x50:
             {
-#if defined(DEBUG) | defined(_DEBUG)
+                #if defined(DEBUG) | defined(_DEBUG)
                 ToggleWireFrameEvent event;
                 EventBuss::Get().Delegate(event);
-#endif
+                #endif
             }
                 break;
             }*/

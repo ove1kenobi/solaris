@@ -62,15 +62,11 @@ void Engine::OnEvent(IEvent& event) noexcept
 void Engine::Update()
 {
 	m_gameTime.Update();
-
 	m_scene.update(m_DXCore.GetDeviceContext());
-	//Here we will update entire scene, though note that the eventsystem is part of doing that for us
 }
 
 void Engine::Render()
 {
-
-	//Followed by presentation of everything (backbuffer):
 	m_ForwardRenderer.RenderFrame();
 	HR_A(m_DXCore.GetSwapChain()->Present(1, 0), "Present");
 }
