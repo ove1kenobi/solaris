@@ -41,6 +41,11 @@ RenderWindow::RenderWindow()
                                  (HINSTANCE)GetModuleHandle(nullptr),            // Instance handle
                                  nullptr);                                         // Additional application data
     ShowWindow(m_winHandle, SW_SHOWNORMAL);
+
+    // Debug console
+    //AllocConsole();                                   
+    //freopen("CONOUT$", "w", stdout);                  
+    //std::cout << "Debug console is open" << std::endl;
 }
 
 RenderWindow::~RenderWindow()
@@ -78,6 +83,76 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 return 0;
             break;
         }
+        case WM_MOUSEMOVE:
+        {
+            // mouse moved within window
+            int xPos = GET_X_LPARAM(lParam);
+            int yPos = GET_Y_LPARAM(lParam);
+            MouseMoveEvent me(xPos, yPos);
+            EventBuss::Get().Delegate(me);
+            return 0;
+        }
+        case WM_LBUTTONDOWN:
+        {
+            // left mouse butten down
+            int xPos = GET_X_LPARAM(lParam);
+            int yPos = GET_Y_LPARAM(lParam);
+            MouseButtenEvent be(KeyState::KeyPress, VK_LBUTTON, xPos, yPos);
+            EventBuss::Get().Delegate(be);
+            return 0;
+        }
+        case WM_LBUTTONUP:
+        {
+            // left mouse butten up
+            int xPos = GET_X_LPARAM(lParam);
+            int yPos = GET_Y_LPARAM(lParam);
+            MouseButtenEvent be(KeyState::KeyRelease, VK_LBUTTON, xPos, yPos);
+            EventBuss::Get().Delegate(be);
+            return 0;
+        }
+        case WM_RBUTTONDOWN:
+        {
+            // right mouse butten down
+            int xPos = GET_X_LPARAM(lParam);
+            int yPos = GET_Y_LPARAM(lParam);
+            MouseButtenEvent be(KeyState::KeyPress, VK_RBUTTON, xPos, yPos);
+            EventBuss::Get().Delegate(be);
+            return 0;
+        }
+        case WM_RBUTTONUP:
+        {
+            // right mouse butten up
+            int xPos = GET_X_LPARAM(lParam);
+            int yPos = GET_Y_LPARAM(lParam);
+            MouseButtenEvent be(KeyState::KeyRelease, VK_RBUTTON, xPos, yPos);
+            EventBuss::Get().Delegate(be);
+            return 0;
+        }
+        case WM_KEYDOWN:
+        {
+            // key press
+#if defined(DEBUG) | defined(_DEBUG)
+            if (wParam == 'P') {
+                ToggleWireFrameEvent event;
+                EventBuss::Get().Delegate(event);
+            }
+#endif
+
+            KeyState keyState;
+            if ((lParam & 0x40000000) == 0) keyState = KeyState::KeyPress;
+            else keyState = KeyState::KeyRepeat;
+            KeyboardEvent ke(keyState, (int)wParam);
+            EventBuss::Get().Delegate(ke);
+            return 0;
+        }
+        case WM_KEYUP:
+        {
+            // key release
+            KeyboardEvent ke(KeyState::KeyRelease, (int)wParam);
+            EventBuss::Get().Delegate(ke);
+            return 0;
+        }
+        /*
         case WM_KEYDOWN :
             switch (wParam)
             {
@@ -90,7 +165,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 #endif
             }
                 break;
-            }
+            }*/
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

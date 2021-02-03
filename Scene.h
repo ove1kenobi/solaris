@@ -1,6 +1,6 @@
 #pragma once
 #include "CosmicBody.h"
-#include "PlayerCamera.h"
+#include "Player.h"
 //#include "ModelFactory.h"
 //#include "Sun.h"
 //#include "Player.h"
@@ -9,7 +9,7 @@
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/RenderEvents.h"
 #include <random>
-
+#include "Time.h"
 class Scene : public EventPublisher, IEventListener
 {
 private:
@@ -18,7 +18,7 @@ private:
 
 	Camera m_orthoCamera;
 
-	//Player m_player;
+	Player m_player;
 
 	//ModelFactory m_factory;
 public:
