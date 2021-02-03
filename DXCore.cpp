@@ -18,7 +18,7 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 							  const unsigned int& clientWindowHeight, 
 							  const HWND& windowHandle)
 {
-	EventBuss::Get().AddListener(this, EventType::ToggleWireFrameEvent);
+	EventBuss::Get().AddListener(this, EventType::ToggleWireFrameEvent, EventType::WindowResizeEvent);
 
 	UINT flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
 	#if defined(DEBUG) || defined(_DEBUG)
@@ -151,6 +151,9 @@ void DXCore::OnEvent(IEvent& event) noexcept
 	case EventType::ToggleWireFrameEvent:
 			ToggleWireFrame();
 			break;
+
+	case EventType::WindowResizeEvent :
+		break;
 	}
 }
 

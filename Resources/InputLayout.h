@@ -1,4 +1,7 @@
 #pragma once
+#define LAYOUT_COSMIC 0
+#define LAYOUT_PLAYER 1
+#define LAYOUT_MINIMAL 2
 #include "IBindable.h"
 #include "VertexShader.h"
 class InputLayout : public IBindable
@@ -10,5 +13,5 @@ public:
 	virtual ~InputLayout() = default;
 	void Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext) override;
 	void Unbind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext) override;
-	[[nodiscard]] const bool Create(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, const VertexShader& vertexShader);
+	[[nodiscard]] const bool Create(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, const VertexShader& vertexShader, unsigned int type);
 };

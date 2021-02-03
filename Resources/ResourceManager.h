@@ -16,9 +16,13 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
 	VertexShader m_VertexShaderMinimal;
 	PixelShader m_PixelShaderMinimal;
-	InputLayout m_InputLayoutDefault;
+	InputLayout m_InputLayoutCosmicBody;
+	InputLayout m_InputLayoutPlayerModel;
+	InputLayout m_InputLayoutMinimal;
 	PrimitiveTopology m_TopologyTriList;
 	std::vector<IBindable*> m_BindablesMinimalistic;
+	std::vector<IBindable*> m_BindablesCosmic;
+	std::vector<IBindable*> m_BindablesPlayer;
 public:
 	ResourceManager() noexcept;
 	virtual ~ResourceManager() noexcept = default;
