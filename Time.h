@@ -10,6 +10,7 @@ class Time
 private:
 	t_moment m_start;
 	static t_moment m_loopBegin;
+	static t_dSec m_deltaTime;
 public:
 	Time();
 	~Time() = default;
