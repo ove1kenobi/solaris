@@ -132,6 +132,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             EventBuss::Get().Delegate(ke);
             return 0;
         }
+        /*
         case WM_KEYDOWN :
             switch (wParam)
             {
@@ -144,7 +145,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 #endif
             }
                 break;
-            }
+            }*/
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
