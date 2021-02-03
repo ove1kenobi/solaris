@@ -1,7 +1,7 @@
 ﻿#include "Engine.h"
 
 Engine::Engine() noexcept
-	: m_Running{ true }, t_sum{ 0 }
+	: m_Running{ true }
 {
 	m_gameTime.Update();
 }
