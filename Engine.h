@@ -19,6 +19,7 @@ private:
 	bool m_Running;
 	Time m_gameTime;
 	Scene m_scene;
+	long double t_sum;
 private:
 	void Update();
 	void Render();

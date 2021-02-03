@@ -1,7 +1,7 @@
 ﻿#include "Engine.h"
 
 Engine::Engine() noexcept
-	: m_Running{ true }
+	: m_Running{ true }, t_sum{ 0 }
 {
 	m_gameTime.Update();
 }
@@ -62,7 +62,8 @@ void Engine::OnEvent(IEvent& event) noexcept
 void Engine::Update()
 {
 	m_gameTime.Update();
-
+	t_sum += m_gameTime.DeltaTime();
+	OutputDebugString((std::to_wstring(t_sum) + std::wstring(L"\n")).c_str());
 	m_scene.update(m_DXCore.GetDeviceContext());
 	//Here we will update entire scene, though note that the eventsystem is part of doing that for us
 }
