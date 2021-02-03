@@ -14,6 +14,8 @@ const bool Engine::Initialize()
 	if (!m_DXCore.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_Window.GetHandle()))
 		return false;
 
+	ModelFactory::Get().setDevice(m_DXCore.GetDevice());
+
 	//Forward Renderer:
 	if (!m_ForwardRenderer.Initialize(m_DXCore.GetDeviceContext(), m_DXCore.GetBackBuffer(), m_DXCore.GetDepthStencilView()))
 		return false;

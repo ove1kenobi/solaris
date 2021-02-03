@@ -7,6 +7,10 @@ ModelFactory& ModelFactory::Get() noexcept
 	return m_me;
 }
 
+void ModelFactory::setDevice(Microsoft::WRL::ComPtr<ID3D11Device> device) {
+	this->m_device = device;
+}
+
 Model* ModelFactory::GetModel(std::string filePath)
 {
 	/*
@@ -179,7 +183,7 @@ void ModelFactory::createSphere(float r, std::vector<float> &vertexBuffer, std::
 	};
 
 	//Calculate the number of divisions that are to be made of each edge. 100 easily changable.
-	unsigned int divisions = 0/*static_cast<int>(std::ceil(r / 10))*/;
+	unsigned int divisions = static_cast<int>(std::ceil(r / 10));
 	//Number of vertices on 1 face.
 	unsigned int vertsPerTriangle = ((divisions + 3) * (divisions + 3) - (divisions + 3)) / 2;
 	//Number of triangles on 1 face.
@@ -323,34 +327,34 @@ void ModelFactory::createTriangleFace(
 	}
 }
 
-void ModelFactory::createBuffers(const std::vector<vertex_col>& vertexBuffer, const std::vector<int>& indexBuffer, Model* model) {
+void ModelFactory::createBuffers(const std::vector<vertex_col>& vertices, const std::vector<int>& indices, Model* model) {
 
 	model->setStride(sizeof(vertex_col));
 	model->setOffset(0u);
 
 	//vertexbuffer
 	D3D11_BUFFER_DESC vertexBufferDescriptor = {};
-	vertexBufferDescriptor.ByteWidth = sizeof(vertex_col) * vertexBuffer.size();
+	vertexBufferDescriptor.ByteWidth = sizeof(vertex_col) * vertices.size();
 	vertexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	D3D11_SUBRESOURCE_DATA sr_data = { 0 };
-	sr_data.pSysMem =vertexBuffer.data();
+	sr_data.pSysMem = vertices.data();
 
 	this->m_device->CreateBuffer(
 		&vertexBufferDescriptor,
 		&sr_data,
-		model->getVertexBuffer().GetAddressOf()
+		&model->getVertexBuffer()
 	);
 
 	//Indexbuffer
 	D3D11_BUFFER_DESC indexBufferDescriptor = {};
-	indexBufferDescriptor.ByteWidth = sizeof(UINT) * indexBuffer.size();
+	indexBufferDescriptor.ByteWidth = sizeof(UINT) * indices.size();
 	indexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
 	indexBufferDescriptor.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 	// Define the resource data.
 	D3D11_SUBRESOURCE_DATA InitData;
-	InitData.pSysMem = indexBuffer.data();
+	InitData.pSysMem = indices.data();
 	InitData.SysMemPitch = 0;
 	InitData.SysMemSlicePitch = 0;
 
@@ -363,7 +367,7 @@ void ModelFactory::createBuffers(const std::vector<vertex_col>& vertexBuffer, co
 
 	//Matrixbuffer for shader
 	D3D11_BUFFER_DESC matrixBufferDesc;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> matrixBuffer = NULL;
+	
 
 	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	matrixBufferDesc.ByteWidth = sizeof(MatrixBuffer);
@@ -372,5 +376,5 @@ void ModelFactory::createBuffers(const std::vector<vertex_col>& vertexBuffer, co
 	matrixBufferDesc.MiscFlags = 0;
 	matrixBufferDesc.StructureByteStride = 0;
 
-	this->m_device->CreateBuffer(&matrixBufferDesc, NULL, &matrixBuffer);
+	this->m_device->CreateBuffer(&matrixBufferDesc, NULL, &model->getMatrixBuffer());
 }

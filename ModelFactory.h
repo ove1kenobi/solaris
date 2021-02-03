@@ -15,7 +15,6 @@ private:
 	static ModelFactory m_me;
 	std::unordered_map<std::string, Model> m_loadedModels;
 	Microsoft::WRL::ComPtr<ID3D11Device> m_device;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_deviceContext;
 private:
 	ModelFactory() noexcept = default;
 	~ModelFactory() noexcept = default;
@@ -39,6 +38,7 @@ public:
 	static ModelFactory& Get() noexcept;
 	Model* GetModel(std::string filePath);
 	Model* GenerateSphere(float x, float y, float z, float r);
+	void setDevice(Microsoft::WRL::ComPtr<ID3D11Device> device);
 
 	struct MatrixBuffer {
 		DirectX::XMMATRIX WMatrix;
