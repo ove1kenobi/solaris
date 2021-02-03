@@ -77,8 +77,6 @@ void ResourceManager::UnbindPipeline()
 	m_pDeviceContext->GSSetShader(nullptr, nullptr, 0u);
 	m_pDeviceContext->GSSetShaderResources(0u, 3u, nullSRV);
 	m_pDeviceContext->HSSetConstantBuffers(0u, 0u, nullptr);
-
-	m_pDeviceContext->
 }
 
 void ResourceManager::BindToPipeline(IEvent& event)
