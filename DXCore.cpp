@@ -14,11 +14,16 @@ DXCore::DXCore() noexcept
 
 }
 
+DXCore::~DXCore() noexcept
+{
+
+}
+
 const bool DXCore::Initialize(const unsigned int& clientWindowWidth, 
 							  const unsigned int& clientWindowHeight, 
 							  const HWND& windowHandle)
 {
-	EventBuss::Get().AddListener(this, EventType::ToggleWireFrameEvent);
+	EventBuss::Get().AddListener(this, EventType::ToggleWireFrameEvent, EventType::WindowResizeEvent);
 
 	UINT flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
 	#if defined(DEBUG) || defined(_DEBUG)
@@ -141,6 +146,8 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
 	HR(m_pDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerStateWireFrame), "CreateRasterizerState");
 	m_pDeviceContext->RSSetState(m_pRasterizerStateFill.Get());
+
+	ImGui_ImplDX11_Init(m_pDevice.Get(), m_pDeviceContext.Get());
 	return true;
 }
 
@@ -151,6 +158,9 @@ void DXCore::OnEvent(IEvent& event) noexcept
 	case EventType::ToggleWireFrameEvent:
 			ToggleWireFrame();
 			break;
+
+	case EventType::WindowResizeEvent :
+		break;
 	}
 }
 

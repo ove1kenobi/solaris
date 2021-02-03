@@ -3,6 +3,7 @@
 #include "DXDebug.h"
 #include "EventSystem\IEventListener.h"
 #include "EventSystem\EventBuss.h"
+#include "ImGui\imgui_impl_dx11.h"
 
 class DXCore : public IEventListener
 {
@@ -19,7 +20,7 @@ private:
 	bool m_WireFrameEnabled;
 public:
 	DXCore() noexcept;
-	virtual ~DXCore() = default;
+	virtual ~DXCore() noexcept;
 	const bool Initialize(const unsigned int& clientWindowWidth, const unsigned int& clientWindowHeight, const HWND& windowHandle);
 	void OnEvent(IEvent& event) noexcept override;
 	void ToggleWireFrame() noexcept;

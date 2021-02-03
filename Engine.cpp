@@ -6,6 +6,11 @@ Engine::Engine() noexcept
 	m_gameTime.Update();
 }
 
+Engine::~Engine()
+{
+	
+}
+
 const bool Engine::Initialize()
 {
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
@@ -14,6 +19,7 @@ const bool Engine::Initialize()
 	if (!m_DXCore.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_Window.GetHandle()))
 		return false;
 
+	ImGui_ImplWin32_Init(m_Window.GetHandle());
 	ModelFactory::Get().setDevice(m_DXCore.GetDevice());
 
 	//Forward Renderer:
@@ -62,15 +68,24 @@ void Engine::OnEvent(IEvent& event) noexcept
 void Engine::Update()
 {
 	m_gameTime.Update();
-
 	m_scene.update(m_DXCore.GetDeviceContext());
-	//Here we will update entire scene, though note that the eventsystem is part of doing that for us
 }
 
 void Engine::Render()
 {
-
-	//Followed by presentation of everything (backbuffer):
 	m_ForwardRenderer.RenderFrame();
+
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	static bool show_demo_window = true;
+	if (show_demo_window)
+	{
+		ImGui::ShowDemoWindow(&show_demo_window);
+	}
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
 	HR_A(m_DXCore.GetSwapChain()->Present(1, 0), "Present");
 }
