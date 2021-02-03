@@ -30,7 +30,7 @@ RenderWindow::RenderWindow()
         windowTitle,
         WS_OVERLAPPEDWINDOW,                            // Window style
         // x positoin, y positoin, width, height
-        CW_USEDEFAULT, CW_USEDEFAULT, winRect.right - winRect.left, winRect.bottom - winRect.top,
+        0u, 0u, winRect.right - winRect.left, winRect.bottom - winRect.top,
         nullptr,                                        // Parent window
         nullptr,                                        // Menu
         (HINSTANCE)GetModuleHandle(nullptr),            // Instance handle
