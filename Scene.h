@@ -28,7 +28,7 @@ public:
 	std::vector<GameObject*> m_gameObjects;
 
 	bool init(unsigned int screenWidth, unsigned int screenHeight);
-	bool update();
+	bool update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext);
 
 	void OnEvent(IEvent& event) noexcept;
 	void sendObjects();

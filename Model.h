@@ -1,37 +1,59 @@
 #pragma once
 #include <vector>
+#include <string>
 #include <Windows.h>
 #include <DirectXMath.h>
+#include "DXDebug.h"
 
-struct vertex_tex
-{
+struct vertex {
 	DirectX::XMFLOAT3 position;
-	DirectX::XMFLOAT2 texcoord;
 	DirectX::XMFLOAT3 normal;
 	DirectX::XMFLOAT3 tangent;
 	DirectX::XMFLOAT3 bitangent;
 };
 
-struct vertex_col
+struct vertex_tex : public vertex
 {
-	DirectX::XMFLOAT3 position;
+	DirectX::XMFLOAT2 texcoord;
+	DirectX::XMFLOAT2 padding;
+};
+
+struct vertex_col : public vertex
+{
 	DirectX::XMFLOAT4 color;
-	DirectX::XMFLOAT3 normal;
-	DirectX::XMFLOAT3 tangent;
-	DirectX::XMFLOAT3 bitangent;
 };
 
 class Model
 {
 private:
 	bool m_notLoaded;
-	std::vector<vertex_tex> m_vertices;
-	std::vector<UINT> m_indices;
+	
+	UINT m_stride;
+	UINT m_offset;
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_matrixBuffer;
+
+	UINT m_vertexBufferSize;
+	UINT m_indexBufferSize;
 public:
 	Model();
 	~Model() = default;
 	bool NotLoaded();
-	void AddVertex(vertex_tex v);
-	void AddIndex(UINT i);
 	void Loaded();
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer>& getVertexBuffer();
+	Microsoft::WRL::ComPtr<ID3D11Buffer>& getIndexBuffer();
+	Microsoft::WRL::ComPtr<ID3D11Buffer>& getMatrixBuffer();
+
+	void setIndexBufferSize(UINT size);
+	void setVertexBufferSize(UINT size);
+	UINT getIndexBufferSize();
+	UINT getVertexBufferSize();
+
+	void setStride(UINT stride);
+	void setOffset(UINT offset);
+	UINT& getStride();
+	UINT& getOffset();
 };

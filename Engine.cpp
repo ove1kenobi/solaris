@@ -9,12 +9,12 @@ Engine::Engine() noexcept
 const bool Engine::Initialize()
 {
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
-	ModelFactory* mf = ModelFactory::Get();
-	mf->GetModel(std::string("models/moon.obj"));
 
 	//DirectX Core
 	if (!m_DXCore.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_Window.GetHandle()))
 		return false;
+
+	ModelFactory::Get().setDevice(m_DXCore.GetDevice());
 
 	//Forward Renderer:
 	if (!m_ForwardRenderer.Initialize(m_DXCore.GetDeviceContext(), m_DXCore.GetBackBuffer(), m_DXCore.GetDepthStencilView()))
@@ -24,14 +24,8 @@ const bool Engine::Initialize()
 	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
 		return false;
 
-	DirectX::XMMATRIX WMatrix;
-	DirectX::XMMATRIX VMatrix;
-	DirectX::XMMATRIX PMatrix;
-	this->m_scene.m_gameObjects[0]->getWMatrix(WMatrix);
-	this->m_scene.m_perspectiveCamera.getVMatrix(VMatrix);
-	this->m_scene.m_perspectiveCamera.getPMatrix(PMatrix);
 	//Resource Manager
-	if (!m_ResourceManager.Initialize(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext(), this->m_scene.m_gameObjects[0]->getVertexBuffer(), this->m_scene.m_gameObjects[0]->getIndexBuffer(), WMatrix, VMatrix, PMatrix))
+	if (!m_ResourceManager.Initialize(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext()))
 		return false;
 
 	return true;
@@ -68,6 +62,8 @@ void Engine::OnEvent(IEvent& event) noexcept
 void Engine::Update()
 {
 	m_gameTime.Update();
+
+	m_scene.update(m_DXCore.GetDeviceContext());
 	//Here we will update entire scene, though note that the eventsystem is part of doing that for us
 }
 

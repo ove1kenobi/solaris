@@ -16,36 +16,57 @@ bool CosmicBody::init(float x, float y, float z, float r) {
 	this->m_wMatrix._42 = y;
 	this->m_wMatrix._43 = z;
 
-	this->m_divisions = 100; //INTE MER ÄN 100
-	/*
-	if(!this->m_model.init()){
-		//Throw
-		return 0;
-	}
-	*/
-	createSphere();
+	this->m_divisions = 10; //INTE MER ÄN 100
+
+	this->m_model = ModelFactory::Get().GenerateSphere(x, y, z, r);
+	
+	//createSphere();
 
 	return 1;
 }
 
-bool CosmicBody::update() {
-	//this->m_model.update(this->m_timer.DeltaTime());
+bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
+	//Update the matrixBuffer.
+
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+	ModelFactory::MatrixBuffer* data;
+
+	DirectX::XMMATRIX WMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&this->m_wMatrix));
+	VMatrix = DirectX::XMMatrixTranspose(VMatrix);
+	PMatrix = DirectX::XMMatrixTranspose(PMatrix);
+
+	deviceContext->Map(
+		this->m_model->getMatrixBuffer().Get(),
+		0,
+		D3D11_MAP_WRITE_DISCARD,
+		0,
+		&mappedSubresource
+	);
+
+	data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
+
+	data->WMatrix = WMatrix;
+	data->VMatrix = VMatrix;
+	data->PMatrix = PMatrix;
+
+	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
 	return 1;
 }
+/*
 void CosmicBody::createSphere() {
 	//Starting octahedron points.
 	DirectX::XMFLOAT3 p0, p1, p2, p3, p4, p5;
 	//So that the triangles have the same length on all 3 sides.
-	float x = this->m_radius;
-	float z = this->m_radius;
-	float yOffset = ((this->m_radius * this->m_radius) * 2);
+	float x = sqrt((this->m_radius * this->m_radius) / 2);
+	float y = this->m_radius;
+	float z = sqrt((this->m_radius * this->m_radius) / 2);
 	//Points of the octahedron
-	p0 = {  0,  sqrt(yOffset)	,  0 };	//Top
+	p0 = {  0,  y	,  0 };	//Top
 	p1 = { -x,  0				, -z };	//Front left
 	p2 = { -x,  0				,  z }; //Back left
 	p3 = {  x,  0				,  z }; //Back right
 	p4 = {  x,  0				, -z }; //Front right
-	p5 = {  0, -sqrt(yOffset)	,  0 }; //Bottom
+	p5 = {  0, -y	,  0 }; //Bottom
 
 	std::vector<DirectX::XMFLOAT3> octVertices = { p0, p1, p2, p3, p4, p5 };
 
@@ -80,7 +101,7 @@ void CosmicBody::createSphere() {
 	};
 
 	//Calculate the number of divisions that are to be made of each edge. 100 easily changable.
-	unsigned int divisions = this->m_divisions;/*static_cast<int>(std::ceil(this->m_radius / 100));*/
+	unsigned int divisions = this->m_divisions;/*static_cast<int>(std::ceil(this->m_radius / 100));
 	//Number of vertices on 1 face.
 	unsigned int vertsPerTriangle = ((divisions + 3) * (divisions + 3) - (divisions + 3)) / 2;
 	//Number of triangles on 1 face.
@@ -183,7 +204,7 @@ void CosmicBody::createTriangleFace(std::vector<int> edge1, std::vector<int> edg
 
 	//Triangulate
 	//Same as divisions at the start of the createSphere function. + 1
-	int rows = this->m_divisions + 1;/*static_cast<int>(std::ceil(this->m_radius / 100)) + 1;*/
+	int rows = this->m_divisions + 1;/*static_cast<int>(std::ceil(this->m_radius / 100)) + 1;
 	for (int row = 0; row < rows; row++) {
 		//Vertices that are on down-left edge follow quadratic sequence.
 		//Calculate by: (n^2 - n) / 2
@@ -214,4 +235,21 @@ void CosmicBody::createTriangleFace(std::vector<int> edge1, std::vector<int> edg
 			triangles.push_back(vertexMap[(reverse) ? v1 : v2]);
 		}
 	}
+}
+*/
+
+void CosmicBody::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
+
+	deviceContext->IASetVertexBuffers(
+		0u,
+		1u,
+		this->m_model->getVertexBuffer().GetAddressOf(),
+		&this->m_model->getStride(),
+		&this->m_model->getOffset()
+	);
+
+	// Set the buffer.
+	deviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+
+	deviceContext->VSSetConstantBuffers(0, 1, this->m_model->getMatrixBuffer().GetAddressOf());
 }
