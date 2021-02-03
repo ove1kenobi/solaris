@@ -5,6 +5,9 @@
 #include <windowsx.h>
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem\WindowEvents.h"
+#include "EventSystem/MouseMoveEvent.h"
+#include "EventSystem/MouseButtenEvent.h"
+#include "EventSystem/KeyboardEvent.h"
 
 #include <iostream>					// Remove
 #pragma warning(disable : 4996)		// Remove

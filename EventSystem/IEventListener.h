@@ -8,5 +8,5 @@ private:
 public:
 	IEventListener() noexcept = default;
 	virtual ~IEventListener() noexcept = default;
-	virtual void OnEvent(const IEvent& event) noexcept = 0;
+	virtual void OnEvent(IEvent& event) noexcept = 0;
 };

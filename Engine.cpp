@@ -48,7 +48,7 @@ void Engine::Run()
 	}
 }
 
-void Engine::OnEvent(const IEvent& event) noexcept
+void Engine::OnEvent(IEvent& event) noexcept
 {
 	switch (event.GetEventType())
 	{
@@ -61,6 +61,7 @@ void Engine::OnEvent(const IEvent& event) noexcept
 void Engine::Update()
 {
 	m_gameTime.Update();
+	m_scene.update();
 	//Here we will update entire scene, though note that the eventsystem is part of doing that for us
 }
 

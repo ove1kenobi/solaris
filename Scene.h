@@ -17,7 +17,7 @@ private:
 	Camera m_orthoCamera;
 	PlayerCamera m_perspectiveCamera;
 
-	//Player m_player;
+	Player m_player;
 
 	//ModelFactory m_factory;
 public:

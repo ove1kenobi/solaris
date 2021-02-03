@@ -9,11 +9,21 @@
 #include "GameObject.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventBuss.h"
+#include "EventSystem/MouseMoveEvent.h"
+#include "EventSystem/MouseButtenEvent.h"
+#include "EventSystem/KeyboardEvent.h"
 
-class Player : public GameObject//, public IEventListener
+#include <iostream>					// Remove
+
+class Player : public GameObject, public IEventListener
 {
 private:
 	// Model
+
+	bool m_moveForwards, m_moveBackwards;
+	bool m_moveUp, m_moveDown;
+	bool m_rotateRight, m_rotateLeft;
+
 	PlayerCamera* m_camera;
 	Time m_time;
 
@@ -21,17 +31,17 @@ private:
 	DirectX::XMFLOAT3 m_rightVector;
 	DirectX::XMFLOAT3 m_upVector;
 
-	float m_speed, m_roation;
+	float m_speed, m_rotation;
 
 	void Move(DirectX::XMFLOAT3 direction);
-	void YawRotation();
+	void YawRotation(float rotation);
 
 public:
 	Player();
 	~Player();
 
-	void Initialize(DirectX::XMFLOAT3 position, PlayerCamera* camera);
-	bool Update();
-	//void OnEvent(const IEvent& event);
+	bool Initialize(/*DirectX::XMFLOAT3 position,*/ PlayerCamera* camera);
+	bool update();
+	void OnEvent(IEvent& event) noexcept;
 };
 

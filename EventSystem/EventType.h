@@ -2,6 +2,7 @@
 enum class EventType { 
 	WindowCloseEvent = 0, 
 	TestEvent, 
-	MouseEvent,
+	MouseMoveEvent,
+	MouseButtenEvent,
 	KeyboardEvent
 };

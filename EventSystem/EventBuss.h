@@ -19,5 +19,5 @@ public:
 	[[nodiscard]] static EventBuss& Get() noexcept;
 	void AddListener(IEventListener* eventListener, const EventType& eventType) noexcept;
 	void RemoveListener(IEventListener* eventListener, const EventType& eventType) noexcept;
-	void Delegate(const IEvent& event);
+	void Delegate(IEvent& event);
 };

@@ -75,53 +75,62 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             // mouse moved within window
             int xPos = GET_X_LPARAM(lParam);
             int yPos = GET_Y_LPARAM(lParam);
-            std::cout << xPos << " " << yPos << std::endl;
-            return true;
+            MouseMoveEvent me(xPos, yPos);
+            EventBuss::Get().Delegate(me);
+            return 0;
         }
         case WM_LBUTTONDOWN:
         {
             // left mouse butten down
             int xPos = GET_X_LPARAM(lParam);
             int yPos = GET_Y_LPARAM(lParam);
-            std::cout << "Left mouse butten down at " << xPos << " " << yPos << std::endl;
-            return true;
+            MouseButtenEvent be(KeyState::KeyPress, VK_LBUTTON, xPos, yPos);
+            EventBuss::Get().Delegate(be);
+            return 0;
         }
         case WM_LBUTTONUP:
         {
             // left mouse butten up
             int xPos = GET_X_LPARAM(lParam);
             int yPos = GET_Y_LPARAM(lParam);
-            std::cout << "Left mouse butten up at " << xPos << " " << yPos << std::endl;
-            return true;
+            MouseButtenEvent be(KeyState::KeyRelease, VK_LBUTTON, xPos, yPos);
+            EventBuss::Get().Delegate(be);
+            return 0;
         }
         case WM_RBUTTONDOWN:
         {
             // right mouse butten down
             int xPos = GET_X_LPARAM(lParam);
             int yPos = GET_Y_LPARAM(lParam);
-            std::cout << "Right mouse butten down at " << xPos << " " << yPos << std::endl;
-            return true;
+            MouseButtenEvent be(KeyState::KeyPress, VK_RBUTTON, xPos, yPos);
+            EventBuss::Get().Delegate(be);
+            return 0;
         }
         case WM_RBUTTONUP:
         {
             // right mouse butten up
             int xPos = GET_X_LPARAM(lParam);
             int yPos = GET_Y_LPARAM(lParam);
-            std::cout << "Right mouse butten up at " << xPos << " " << yPos << std::endl;
-            return true;
+            MouseButtenEvent be(KeyState::KeyRelease, VK_RBUTTON, xPos, yPos);
+            EventBuss::Get().Delegate(be);
+            return 0;
         }
         case WM_KEYDOWN:
         {
-            // keypress
-            if ((lParam & 0x40000000) == 0) std::cout << "Key press " << wParam << std::endl;
-            else std::cout << "Key repeat " << wParam << std::endl;
-            return true;
+            // key press
+            KeyState keyState;
+            if ((lParam & 0x40000000) == 0) keyState = KeyState::KeyPress;
+            else keyState = KeyState::KeyRepeat;
+            KeyboardEvent ke(keyState, (int)wParam);
+            EventBuss::Get().Delegate(ke);
+            return 0;
         }
         case WM_KEYUP:
         {
-            // keyrelease
-            std::cout << "Key release " << wParam << std::endl;
-            return true;
+            // key release
+            KeyboardEvent ke(KeyState::KeyRelease, (int)wParam);
+            EventBuss::Get().Delegate(ke);
+            return 0;
         }
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);

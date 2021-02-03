@@ -50,7 +50,7 @@ void EventBuss::RemoveListener(IEventListener* eventListener, const EventType& e
 	}
 }
 
-void EventBuss::Delegate(const IEvent& event)
+void EventBuss::Delegate(IEvent& event)
 {
 	/*NOTE: IF DONE CORRECTLY, THIS SHOULD NEVER THROW AN EXCEPTION!*/
 	std::vector<IEventListener*>* eventListeners = nullptr;

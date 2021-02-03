@@ -19,6 +19,11 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 		return 0;
 	}
 
+	if (!m_player.Initialize(&m_perspectiveCamera)) {
+		//Throw
+		return 0;
+	}
+
 	//Generate sun.
 	/*
 	Sun sun;
@@ -60,5 +65,7 @@ bool Scene::update() {
 		r.update();
 	}
 	*/
+	m_player.update();
+
 	return 1;
 }

@@ -109,7 +109,16 @@
     <ClInclude Include="Resources\PrimitiveTopology.h">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="EventSystem\MouseEvent.h">
+    <ClInclude Include="EventSystem\KeyboardEvent.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\MouseMoveEvent.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\KeyState.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\MouseButtenEvent.h">
       <Filter>EventSystem</Filter>
     </ClInclude>
   </ItemGroup>

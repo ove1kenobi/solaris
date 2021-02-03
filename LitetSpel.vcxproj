@@ -113,7 +113,10 @@
     <ClInclude Include="EventSystem\EventType.h" />
     <ClInclude Include="EventSystem\IEvent.h" />
     <ClInclude Include="EventSystem\IEventListener.h" />
-    <ClInclude Include="EventSystem\MouseEvent.h" />
+    <ClInclude Include="EventSystem\KeyboardEvent.h" />
+    <ClInclude Include="EventSystem\KeyState.h" />
+    <ClInclude Include="EventSystem\MouseButtenEvent.h" />
+    <ClInclude Include="EventSystem\MouseMoveEvent.h" />
     <ClInclude Include="EventSystem\WindowEvents.h" />
     <ClInclude Include="ForwardRenderer.h" />
     <ClInclude Include="GameObject.h" />
