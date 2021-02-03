@@ -6,10 +6,8 @@ ResourceManager::ResourceManager() noexcept
 
 }
 
-const bool ResourceManager::Initialize(
-	Microsoft::WRL::ComPtr<ID3D11Device> pDevice, 
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext
-	) noexcept
+const bool ResourceManager::Initialize(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, 
+									   Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext) noexcept
 {
 	m_pDevice = pDevice;
 	m_pDeviceContext = pDeviceContext;
@@ -45,6 +43,8 @@ const bool ResourceManager::CreateAllBindables()
 
 	//Primitive topologies:
 	if (!m_TopologyTriList.Create(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST))
+		return false;
+	if (!m_TopologyPatchList.Create(D3D11_PRIMITIVE_TOPOLOGY_11_CONTROL_POINT_PATCHLIST))
 		return false;
 	//Samplers:
 

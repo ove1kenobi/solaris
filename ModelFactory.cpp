@@ -338,9 +338,10 @@ void ModelFactory::createBuffers(const std::vector<vertex_col>& vertices, const 
 	D3D11_SUBRESOURCE_DATA sr_data = { 0 };
 	sr_data.pSysMem = vertices.data();
 
-	this->m_device->CreateBuffer(&vertexBufferDescriptor,
-								 &sr_data,
-								 &model->getVertexBuffer());
+	HR_X(this->m_device->CreateBuffer(&vertexBufferDescriptor,
+									  &sr_data,
+									  &model->getVertexBuffer()), 
+									  "CreateBuffer");
 	//Indexbuffer
 	D3D11_BUFFER_DESC indexBufferDescriptor = {};
 	indexBufferDescriptor.ByteWidth = sizeof(UINT) * static_cast<UINT>(indices.size());
@@ -354,10 +355,10 @@ void ModelFactory::createBuffers(const std::vector<vertex_col>& vertices, const 
 	InitData.SysMemSlicePitch = 0;
 
 	// Create the buffer with the device.
-	this->m_device->CreateBuffer(&indexBufferDescriptor,
-								 &InitData,
-								 &model->getIndexBuffer());
-
+	HR_X(this->m_device->CreateBuffer(&indexBufferDescriptor,
+									  &InitData,
+									  &model->getIndexBuffer()), 
+									  "CreateBuffer");
 	//Matrixbuffer for shader
 	D3D11_BUFFER_DESC matrixBufferDesc = {};
 	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -366,5 +367,8 @@ void ModelFactory::createBuffers(const std::vector<vertex_col>& vertices, const 
 	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	matrixBufferDesc.MiscFlags = 0;
 	matrixBufferDesc.StructureByteStride = 0;
-	this->m_device->CreateBuffer(&matrixBufferDesc, NULL, &model->getMatrixBuffer());
+	HR_X(this->m_device->CreateBuffer(&matrixBufferDesc, 
+									  nullptr, 
+									  &model->getMatrixBuffer()), 
+									  "CreateBuffer");
 }

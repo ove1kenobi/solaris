@@ -1,5 +1,4 @@
 #pragma once
-#include <functional>
 #include "DXCore.h"
 #include "RenderWindow.h"
 #include "ForwardRenderer.h"
@@ -7,7 +6,6 @@
 #include "Scene.h"
 #include "Resources/ResourceManager.h"
 #include "EventSystem\IEventListener.h"
-//#include "ModelFactory.h"
 
 class Engine : IEventListener
 {
@@ -16,9 +14,9 @@ private:
 	DXCore m_DXCore;
 	ForwardRenderer m_ForwardRenderer;
 	ResourceManager m_ResourceManager;
-	bool m_Running;
 	Time m_gameTime;
 	Scene m_scene;
+	bool m_Running;
 private:
 	void Update();
 	void Render();

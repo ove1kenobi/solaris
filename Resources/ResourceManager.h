@@ -21,6 +21,7 @@ private:
 	InputLayout m_InputLayoutPlayerModel;
 	InputLayout m_InputLayoutMinimal;
 	PrimitiveTopology m_TopologyTriList;
+	PrimitiveTopology m_TopologyPatchList;
 	std::vector<IBindable*> m_BindablesMinimalistic;
 	std::vector<IBindable*> m_BindablesCosmic;
 	std::vector<IBindable*> m_BindablesPlayer;
