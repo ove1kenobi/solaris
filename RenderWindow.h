@@ -26,7 +26,7 @@ public:
 	static const UINT DEFAULT_WIN_HEIGHT = 800u;
 public:
 	RenderWindow();
-	virtual ~RenderWindow();
+	virtual ~RenderWindow() = default;
 	HWND GetHandle();
 	UINT GetWidth();
 	UINT GetHeight();

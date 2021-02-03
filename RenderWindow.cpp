@@ -48,11 +48,6 @@ RenderWindow::RenderWindow()
     //std::cout << "Debug console is open" << std::endl;
 }
 
-RenderWindow::~RenderWindow()
-{
-    
-}
-
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
@@ -67,14 +62,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             EventBuss::Get().Delegate(ce);
             return 0;
         }
-        //case WM_PAINT:
-        //{
-        //    //PAINTSTRUCT ps;
-        //    //HDC hdc = BeginPaint(hwnd, &ps);
-        //    //FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW));
-        //    //EndPaint(hwnd, &ps);
-        //    //break;
-        //}
         case WM_CLOSE:
         {
             if (MessageBox(hwnd, L"Quit?", L"Exit", MB_YESNO) == IDYES)
@@ -137,7 +124,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 EventBuss::Get().Delegate(event);
             }
 #endif
-
             KeyState keyState;
             if ((lParam & 0x40000000) == 0) keyState = KeyState::KeyPress;
             else keyState = KeyState::KeyRepeat;
@@ -152,20 +138,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             EventBuss::Get().Delegate(ke);
             return 0;
         }
-        /*
-        case WM_KEYDOWN :
-            switch (wParam)
-            {
-                //P Key
-            case 0x50:
-            {
-                #if defined(DEBUG) | defined(_DEBUG)
-                ToggleWireFrameEvent event;
-                EventBuss::Get().Delegate(event);
-                #endif
-            }
-                break;
-            }*/
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
