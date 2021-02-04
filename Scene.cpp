@@ -50,15 +50,13 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	}
 
 	//Generate sun.
-	Sun sun;
-	/*
-	if(!sun.init()){
+	Sun *sun = new Sun();
+	if(!sun->Initialize()){
 		//Throw
 		return -1;
 	}
 
-	this->m_gameObjects.push_back(&sun);
-	*/
+	this->m_gameObjects.push_back(sun);
 
 	//Get the factory to create the planets.
 	//this->m_factory = ModelFactory::getInstance();
@@ -77,6 +75,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	std::uniform_int_distribution<int> distributionY(-5000, 5000);
 	std::uniform_int_distribution<int> distributionZ(-5000, 5000);
 
+	/*
 	CosmicBody* planetmiddle = new CosmicBody();
 	if (!planetmiddle->init(
 		0,
@@ -88,7 +87,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 		//Throw
 		return 0;
 	}
-	this->m_gameObjects.push_back(planetmiddle);
+	this->m_gameObjects.push_back(planetmiddle);*/
 
 	for(int i = 0; i < this->m_numPlanets; i++){
 		CosmicBody* planet = new CosmicBody();

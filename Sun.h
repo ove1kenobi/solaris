@@ -3,25 +3,14 @@
 #include "CosmicBody.h"
 #include "PointLight.h"
 
+//Sun is of the type CosmicBody, as it needs the same properties
 class Sun : public CosmicBody {
 private:
+	//But it also contains a light source
 	PointLight light;
 public:
 	Sun();
 	~Sun();
-	bool init();
+	//Uses the CosmicBody init() and light init() to set everything up related to the sun
+	bool Initialize();
 };
-
-/*What does the sun need?
-* - GameObject: mass
-* - GameObject: centre point
-* - GameObject: world matrix
-* - CosmicBody: radius
-* - ModelFactory: vertex buffer (if generated)
-* - ModelFactory: index buffer (if generated)
-* 
-* What does the point light need?
-* - position (GameObject)
-* - range
-* - attenuation
-*/
