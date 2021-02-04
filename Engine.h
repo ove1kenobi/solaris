@@ -19,6 +19,8 @@ private:
 	Scene m_scene;
 	ImGuiManager m_imguiManager;
 	bool m_Running;
+	float m_time;
+	int fps;
 private:
 	void Update();
 	void Render();

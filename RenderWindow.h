@@ -2,6 +2,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <windowsx.h>
+#include <sstream>
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem\WindowEvents.h"
 #include "EventSystem/MouseMoveEvent.h"
@@ -21,6 +22,7 @@ private:
 	HWND m_winHandle;
 	static UINT m_clientWinWidth, m_clientWinHeight;
 	std::unique_ptr<DirectX::Mouse> m_mouse;
+	LPCWSTR windowTitle;
 private:
 	RenderWindow& operator=(const RenderWindow&) = delete;
 public:
@@ -32,5 +34,6 @@ public:
 	HWND GetHandle();
 	UINT GetWidth();
 	UINT GetHeight();
+	void SetFPS(int fps);
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };
