@@ -22,7 +22,7 @@ bool CosmicBody::init(float x, float y, float z, float r) {
 	
 	//createSphere();
 
-	return 1;
+	return true;
 }
 
 bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
@@ -50,7 +50,7 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	data->PMatrix = PMatrix;
 
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
-	return 1;
+	return true;
 }
 /*
 void CosmicBody::createSphere() {
