@@ -13,15 +13,15 @@ public:
 };
 
 /*What does the sun need?
-* - mass
-* - radius
-* - centre point
-* - world matrix
-* - vertex buffer (if generated)
-* - index buffer (if generated)
+* - GameObject: mass
+* - GameObject: centre point
+* - GameObject: world matrix
+* - CosmicBody: radius
+* - ModelFactory: vertex buffer (if generated)
+* - ModelFactory: index buffer (if generated)
 * 
 * What does the point light need?
-* - position
+* - position (GameObject)
 * - range
 * - attenuation
 */
