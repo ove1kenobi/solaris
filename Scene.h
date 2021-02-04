@@ -2,7 +2,7 @@
 #include "CosmicBody.h"
 #include "Player.h"
 //#include "ModelFactory.h"
-//#include "Sun.h"
+#include "Sun.h"
 //#include "Player.h"
 #include "GameObject.h"
 #include "EventSystem/IEventListener.h"

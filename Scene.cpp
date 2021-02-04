@@ -50,8 +50,8 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	}
 
 	//Generate sun.
-	/*
 	Sun sun;
+	/*
 	if(!sun.init()){
 		//Throw
 		return -1;

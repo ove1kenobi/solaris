@@ -1,17 +1,26 @@
 #include "PointLight.h"
 
-PointLight::PointLight(DirectX::XMVECTOR position, DirectX::XMFLOAT3 attenuation, float range, DirectX::XMVECTOR ambient, DirectX::XMVECTOR diffuse)
-	: Light(ambient, diffuse) {
-	this->m_Position = position;
-	this->m_Attenuation = attenuation;
-	this->m_Range = range;
+PointLight::PointLight() {
+	//TODO: look how position is handled in cosmic body
+	this->m_Position = {0,0,0};
+	this->m_Range = 100.0f;
+	this->m_Attenuation = {25.0f, 50.0f, 75.0f};
 }
 
 PointLight::~PointLight() {
 
 }
 
-DirectX::XMVECTOR PointLight::GetPosition() {
+bool PointLight::Init(DirectX::XMVECTOR ambient, DirectX::XMVECTOR diffuse, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 attenuation, float range) {
+	this->m_Ambient = ambient;
+	this->m_Diffuse = diffuse;
+	this->m_Position = position;
+	this->m_Attenuation = attenuation;
+	this->m_Range = range;
+	return true;
+}
+
+DirectX::XMFLOAT3 PointLight::GetPosition() {
 	return this->m_Position;
 }
 
@@ -20,7 +29,7 @@ DirectX::XMFLOAT3 PointLight::GetAttenuation() {
 }
 
 //changes position of the point light
-void PointLight::SetPosition(DirectX::XMVECTOR position) {
+void PointLight::SetPosition(DirectX::XMFLOAT3 position) {
 	this->m_Position = position;
 }
 
