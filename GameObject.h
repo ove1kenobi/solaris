@@ -25,9 +25,6 @@ protected:
 	//Where the buffers are stored
 	Model* m_model;
 
-	//std::vector<float> m_vertexBuffer;
-	//std::vector<int> m_indexBuffer;
-
 public:
 	GameObject() noexcept;
 	~GameObject();
@@ -37,5 +34,7 @@ public:
 	void getWMatrix(DirectX::XMMATRIX& wMatrix);
 	UINT getVertexBufferSize();
 	UINT getIndexBufferSize();
+
+	DirectX::XMFLOAT3 getTransVector();
 };
 

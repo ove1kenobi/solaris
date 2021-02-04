@@ -4,10 +4,10 @@ GameObject::GameObject() noexcept
 	:	m_velocity{ 0, 0, 0 },
 		m_center{ 0, 0, 0 },
 		m_wMatrix{
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 0
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
 		},
 		m_mass{ 0 },
 		m_pitch{ 0 },
@@ -19,7 +19,7 @@ GameObject::GameObject() noexcept
 }
 
 GameObject::~GameObject() {
-	if (this->m_model) {
+	if (this->m_model->NotLoaded()) {
 		delete this->m_model;
 	}
 }
@@ -34,4 +34,13 @@ UINT GameObject::getVertexBufferSize() {
 
 UINT GameObject::getIndexBufferSize() {
 	return this->m_model->getIndexBufferSize();
+}
+
+DirectX::XMFLOAT3 GameObject::getTransVector() {
+	DirectX::XMFLOAT3 transVector;
+	transVector.x = this->m_wMatrix._41;
+	transVector.y = this->m_wMatrix._42;
+	transVector.z = this->m_wMatrix._43;
+
+	return transVector;
 }

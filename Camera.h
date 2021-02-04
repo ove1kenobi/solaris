@@ -1,5 +1,5 @@
 #pragma once
-
+#include "time.h"
 #include <directxmath.h>
 
 //Orthographic camera.
@@ -21,7 +21,7 @@ protected:
 	float m_screenNear = 0.1f;
 	float m_screenFar;
 	
-
+	Time m_time;
 public:
 	Camera() noexcept;
 	~Camera();

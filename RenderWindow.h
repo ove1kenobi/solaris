@@ -7,6 +7,7 @@
 #include "EventSystem/MouseMoveEvent.h"
 #include "EventSystem/MouseButtenEvent.h"
 #include "EventSystem/KeyboardEvent.h"
+#include "DirectXTK/Mouse.h"
 
 // Debug console
 //#include <iostream>			
@@ -18,7 +19,8 @@ class RenderWindow : public EventPublisher
 {
 private:
 	HWND m_winHandle;
-	UINT m_clientWinWidth, m_clientWinHeight;
+	static UINT m_clientWinWidth, m_clientWinHeight;
+	std::unique_ptr<DirectX::Mouse> m_mouse;
 private:
 	RenderWindow& operator=(const RenderWindow&) = delete;
 public:
