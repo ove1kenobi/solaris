@@ -2,10 +2,17 @@
 #include <string>
 
 #include "Camera.h"
+#include "EventSystem\IEventListener.h"
+#include "EventSystem/EventBuss.h"
+#include "EventSystem/MouseMoveEvent.h"
+#include "DirectXTK/Mouse.h"
 
-class PlayerCamera : public Camera {
+class PlayerCamera : public IEventListener, public Camera {
 private:
 	float m_FOVvalue = 4.0f;
+	float m_distanceFromShip;
+	void OnEvent(IEvent& event) noexcept;
+
 public:
 	PlayerCamera() = default;
 	~PlayerCamera() = default;
@@ -17,5 +24,5 @@ public:
 	//Move the camera the same amount that the spaceship moved.
 	void move(DirectX::XMVECTOR shipCoordsDiff);
 	//Mouse movement
-	void mouseRot(int mouseX, int mouseY);
+	void mouseRot();
 };
