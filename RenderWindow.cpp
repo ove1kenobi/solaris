@@ -132,6 +132,8 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         {
             MouseMoveEvent me;
             EventBuss::Get().Delegate(me);
+            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+            break;
         }
         case WM_LBUTTONDOWN:
         case WM_LBUTTONUP:
@@ -140,6 +142,12 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         case WM_MBUTTONDOWN:
         case WM_MBUTTONUP:
         case WM_MOUSEWHEEL:
+        {
+            MouseScrollEvent me;
+            EventBuss::Get().Delegate(me);
+            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+            break;
+        }
         case WM_XBUTTONDOWN:
         case WM_XBUTTONUP:
         case WM_MOUSEHOVER:

@@ -81,5 +81,7 @@
     <ClInclude Include="Resources\VertexShader.h" />
     <ClInclude Include="Sun.h" />
     <ClInclude Include="SpaceShip.h" />
+    <ClInclude Include="vertex.h" />
+    <ClInclude Include="EventSystem\MouseScrollEvent.h" />
   </ItemGroup>
 </Project>
