@@ -4,10 +4,10 @@ SpaceShip::SpaceShip()
 {
 	this->m_model = ModelFactory::Get().GetModel(std::string("models/SciFi_Fighter_AK5.obj"));
 	this->m_wMatrix = {
-		0.03, 0, 0, 0,
-		0, 0.03, 0, 0,
-		0, 0, 0.03, 0,
-		0, 0, 100, 1
+		0.03f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.03f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.03f, 0.0f,
+		0.0f, 0.0f, 100.0f, 1.0f
 	};
 }
 

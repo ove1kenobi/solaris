@@ -1,11 +1,10 @@
 #pragma once
 #include "CosmicBody.h"
 #include "Player.h"
-#include "SpaceShip.h"
-#include "PlayerCamera.h"
 //#include "ModelFactory.h"
 #include "Sun.h"
 //#include "Player.h"
+#include "SpaceShip.h"
 #include "GameObject.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
