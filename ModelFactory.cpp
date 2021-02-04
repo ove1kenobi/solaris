@@ -332,9 +332,9 @@ void ModelFactory::createTriangleFace(
 				v1 = bottomVertex;
 				v2 = topVertex - 1;
 			}
-			triangles.push_back(vertexMap[v0]);
-			triangles.push_back(vertexMap[(reverse) ? v2 : v1]);
 			triangles.push_back(vertexMap[(reverse) ? v1 : v2]);
+			triangles.push_back(vertexMap[(reverse) ? v2 : v1]);
+			triangles.push_back(vertexMap[v0]);
 		}
 	}
 }

@@ -44,31 +44,60 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 		return 0;
 	}
 
+	if (!m_player.Initialize(&m_perspectiveCamera)) {
+		//Throw
+		return 0;
+	}
+
 	//Generate sun.
-	/*
-	Sun sun;
-	if(!sun.init()){
+	Sun *sun = new Sun();
+	if(!sun->Initialize()){
 		//Throw
 		return -1;
 	}
 
-	this->m_gameObjects.push_back(&sun);
-	*/
+	this->m_gameObjects.push_back(sun);
 
 	//Get the factory to create the planets.
 	//this->m_factory = ModelFactory::getInstance();
 
 
-	//Behöver ändras pga factory senare.
+	//Beh?ver ?ndras pga factory senare.
 	//Generate planets.
-	std::default_random_engine generator;
-	std::uniform_int_distribution<int> distributionPlanets(12, 15);
+	using t_clock = std::chrono::high_resolution_clock;
+	//std::seed_seq seed = {  };
+	
+	std::default_random_engine generator(t_clock::now().time_since_epoch().count());
+	std::uniform_int_distribution<int> distributionPlanets(30, 50);
 	this->m_numPlanets = distributionPlanets(generator);
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
-	
-	for(int i = 0; i < /*this->m_numPlanets*/1; i++){
+	std::uniform_int_distribution<int> distributionX(-5000, 5000);
+	std::uniform_int_distribution<int> distributionY(-5000, 5000);
+	std::uniform_int_distribution<int> distributionZ(-5000, 5000);
+
+	/*
+	CosmicBody* planetmiddle = new CosmicBody();
+	if (!planetmiddle->init(
+		0,
+		0,
+		0,
+		50
+	))
+	{
+		//Throw
+		return 0;
+	}
+	this->m_gameObjects.push_back(planetmiddle);*/
+
+	for(int i = 0; i < this->m_numPlanets; i++){
 		CosmicBody* planet = new CosmicBody();
-		if(!planet->init(0/*static_cast<float>(i * 1000)*/, 0, 1500, static_cast<float>(distributionRadius(generator)))){
+		if(!planet->init(
+			static_cast<float>(distributionX(generator)),
+			static_cast<float>(distributionY(generator)),
+			static_cast<float>(distributionZ(generator)),
+			static_cast<float>(distributionRadius(generator))
+			))
+		{
 			//Throw
 			return 0;
 		}
@@ -82,6 +111,9 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 }
 
 bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
+	DirectX::XMFLOAT4 a = {0.0f, 0.0f, 0.0f, 0.0f};
+	m_perspectiveCamera.update(DirectX::XMLoadFloat4(&a));
+	m_player.update();
 	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
 	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
 	

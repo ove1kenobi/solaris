@@ -1,16 +1,21 @@
 #include "Light.h"
 
-Light::Light(DirectX::XMVECTOR ambient, DirectX::XMVECTOR diffuse) {
-	this->m_Ambient = ambient;
-	this->m_Diffuse = diffuse;
+Light::Light() {
+	this->m_Ambient = { 1.0f ,1.0f ,1.0f , 0.0f };
+	this->m_Diffuse = { 1.0f ,1.0f ,1.0f , 0.0f };
 }
 
 Light::~Light() {
 
 }
 
-DirectX::XMVECTOR Light::GetAmbient()
-{
+bool Light::Init(DirectX::XMVECTOR ambient, DirectX::XMVECTOR diffuse) {
+	this->m_Ambient = ambient;
+	this->m_Diffuse = diffuse;
+	return true;
+}
+
+DirectX::XMVECTOR Light::GetAmbient() {
 	return this->m_Ambient;
 }
 
