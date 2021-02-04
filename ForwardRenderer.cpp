@@ -19,15 +19,11 @@ void ForwardRenderer::BeginFrame()
 	//Request-event for game objects 
 	AskForRenderObjectsEvent event;
 	EventBuss::Get().Delegate(event);
-	
-	for (int i = 0; i < (*m_gameObjects).size(); i++) {
+
+	for (size_t i = 0; i < (*m_gameObjects).size(); ++i) {
 		(*m_gameObjects)[i]->bindUniques(m_pDeviceContext);
 		m_pDeviceContext->DrawIndexed((*m_gameObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
-	/*
-	(*m_gameObjects)[0]->bindUniques(m_pDeviceContext);
-	m_pDeviceContext->DrawIndexed((*m_gameObjects)[0]->getIndexBufferSize(), 0u, 0u);
-	*/
 }
 
 //Cleans up for the next frame and applies post processing effects

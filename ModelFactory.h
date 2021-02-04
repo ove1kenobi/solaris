@@ -34,7 +34,7 @@ private:
 		unsigned int divisions
 	);
 
-	void createBuffers(const std::vector<vertex_col>& vertexBuffer, const std::vector<int>& indexBuffer, Model* model);
+	void createBuffers(UINT stride, size_t size, void* data, const std::vector<int>& indexBuffer, Model* model);
 public:
 	static ModelFactory& Get() noexcept;
 	Model* GetModel(std::string filePath);

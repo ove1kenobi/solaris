@@ -35,30 +35,28 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	//Orthographic camera. Over the sun.
 	if (!this->m_orthoCamera.init(screenWidth, screenHeight, 1000)) {
 		//Throw
-		return 0;
+		return false;
 	}
 
 	//Perspective Camera. Bound to player.
 	if (!this->m_perspectiveCamera.init(screenWidth, screenHeight)) {
 		//Throw
-		return 0;
+		return false;
 	}
 
 	if (!m_player.Initialize(&m_perspectiveCamera)) {
 		//Throw
-		return 0;
+		return false;
 	}
 
 	//Generate sun.
-	/*
-	Sun sun;
-	if(!sun.init()){
+	Sun *sun = new Sun();
+	if(!sun->Initialize()){
 		//Throw
-		return -1;
+		return false;
 	}
 
-	this->m_gameObjects.push_back(&sun);
-	*/
+	this->m_gameObjects.push_back(sun);
 
 	//Get the factory to create the planets.
 	//this->m_factory = ModelFactory::getInstance();
@@ -69,7 +67,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	using t_clock = std::chrono::high_resolution_clock;
 	//std::seed_seq seed = {  };
 	
-	std::default_random_engine generator(t_clock::now().time_since_epoch().count());
+	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
 	std::uniform_int_distribution<int> distributionPlanets(30, 50);
 	this->m_numPlanets = distributionPlanets(generator);
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
@@ -88,7 +86,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	))
 	{
 		//Throw
-		return 0;
+		return false;
 	}
 	this->m_gameObjects.push_back(planetmiddle);
 	
@@ -104,12 +102,14 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 			))
 		{
 			//Throw
-			return 0;
+			return false;
 		}
 		this->m_gameObjects.push_back(planet);
 	}
-	
-	return 1;
+
+	this->m_gameObjects.push_back(new SpaceShip());
+
+	return true;
 }
 
 bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
