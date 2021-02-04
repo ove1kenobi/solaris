@@ -32,7 +32,7 @@ void PlayerCamera::mouseRot() {
 	float yValue = static_cast<float>(r.y);
 	float xValue = static_cast<float>(r.x);
 	
-	float pi = (atan(1) * 4);
+	float pi = static_cast<float>((atan(1) * 4));
 
 	this->m_yaw -= xValue * (float)m_time.DeltaTime() / this->m_sensitivity;
 

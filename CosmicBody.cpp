@@ -70,7 +70,7 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	//wMatrix = DirectX::XMMatrixTranslation(this->m_wMatrix._41, this->m_wMatrix._42, this->m_wMatrix._43);
 	DirectX::XMMATRIX result = scaleMatrix * rotMatrix * transMatrix;
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, result);
-	angle += 0.001 * this->m_timer.DeltaTime();
+	angle += 0.001f * static_cast<float>(this->m_timer.DeltaTime());
 
 	//Update the matrixBuffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
