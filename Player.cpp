@@ -32,6 +32,7 @@ bool Player::Initialize(/*DirectX::XMFLOAT3 position,*/ PlayerCamera* camera)
 	EventBuss::Get().AddListener(this, EventType::MouseButtenEvent);
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);
 
+	m_ship = new SpaceShip();
 	m_camera = camera;
 	//m_center = position;
 	//m_upVector = {0.0f, 1.0f, 0.0f};
@@ -47,10 +48,10 @@ void Player::Move(DirectX::XMFLOAT3 direction)
 	//m_center.x += offset.x;
 	//m_center.y += offset.y;
 	//m_center.z += offset.z;
-	// m_ship.move(offset);
+	m_ship->move(offset);
 
-	DirectX::XMVECTOR offsetVec = DirectX::XMLoadFloat4(&offset);
-	m_camera->move(offsetVec);
+	//DirectX::XMVECTOR offsetVec = DirectX::XMLoadFloat4(&offset);
+	//m_camera->move(offsetVec);
 
 	// move model
 }
@@ -67,6 +68,10 @@ void Player::YawRotation(float rotation)
 	m_forwardVector.z = sin(step)*m_forwardVector.x + cos(step)*m_forwardVector.z;
 
 	// rotate model
+	this->m_ship->rotate(step);
+
+	//rotate camera
+	this->m_camera->shipRot(step);
 }
 
 bool Player::update()
@@ -101,6 +106,10 @@ bool Player::update()
 	//m_camera->update(positionVec);
 
 	return false;
+}
+
+SpaceShip* Player::getShip() {
+	return this->m_ship;
 }
 
 void Player::OnEvent(IEvent& event) noexcept

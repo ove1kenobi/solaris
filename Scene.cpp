@@ -62,19 +62,19 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	//this->m_factory = ModelFactory::getInstance();
 
 
-	//Beh?ver ?ndras pga factory senare.
+	
 	//Generate planets.
 	using t_clock = std::chrono::high_resolution_clock;
-	//std::seed_seq seed = {  };
-	
 	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
 	std::uniform_int_distribution<int> distributionPlanets(30, 50);
 	this->m_numPlanets = distributionPlanets(generator);
+
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
 	std::uniform_int_distribution<int> distributionX(-5000, 5000);
 	std::uniform_int_distribution<int> distributionY(-5000, 5000);
 	std::uniform_int_distribution<int> distributionZ(-5000, 5000);
 	std::uniform_int_distribution<int> distributionXZRot(-30, 30);
+	/*
 	CosmicBody* planetmiddle = new CosmicBody();
 	if (!planetmiddle->init(
 		0,
@@ -89,7 +89,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 		return false;
 	}
 	this->m_gameObjects.push_back(planetmiddle);
-	
+	*/
 	for(int i = 0; i < this->m_numPlanets; i++){
 		CosmicBody* planet = new CosmicBody();
 		if(!planet->init(
@@ -107,14 +107,15 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 		this->m_gameObjects.push_back(planet);
 	}
 
-	this->m_gameObjects.push_back(new SpaceShip());
+	this->m_gameObjects.push_back(this->m_player.getShip());
 
 	return true;
 }
 
 bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
-	DirectX::XMFLOAT4 a = {0.0f, 0.0f, 0.0f, 0.0f};
-	m_perspectiveCamera.update(DirectX::XMLoadFloat4(&a));
+	DirectX::XMFLOAT3 a = this->m_player.getShip()->getCenter();
+	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
+	m_perspectiveCamera.update(DirectX::XMLoadFloat4(&shipCenter));
 	m_player.update();
 	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
 	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
