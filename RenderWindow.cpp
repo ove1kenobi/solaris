@@ -123,6 +123,11 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 ToggleWireFrameEvent event;
                 EventBuss::Get().Delegate(event);
             }
+            if (wParam == 'I')
+            {
+                ToggleImGuiDemoWindowEvent imEvent;
+                EventBuss::Get().Delegate(imEvent);
+            }
 #endif
             KeyState keyState;
             if ((lParam & 0x40000000) == 0) keyState = KeyState::KeyPress;

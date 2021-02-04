@@ -69,15 +69,14 @@ Model* ModelFactory::GetModel(std::string filePath)
 						vtx.bitangent.y = mesh->mBitangents[i].y;
 						vtx.bitangent.z = mesh->mBitangents[i].z;
 					}
-					model->AddVertex(vtx);
-
-					for (UINT i = 0u; i < mesh->mNumFaces; ++i)
+					vertices.push_back(vtx);
+				}
+				for (UINT i = 0u; i < mesh->mNumFaces; ++i)
+				{
+					aiFace face = mesh->mFaces[i];
+					for (UINT j = 0u; j < face.mNumIndices; ++j)
 					{
-						aiFace face = mesh->mFaces[i];
-						for (UINT j = 0u; j < face.mNumIndices; ++j)
-						{
-							model->AddIndex(face.mIndices[j]);
-						}
+						indices.push_back(face.mIndices[j]);
 					}
 				}
 			}
@@ -108,9 +107,9 @@ Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
 		newVertex.position.y = vertexPositionValues[i + 1];
 		newVertex.position.z = vertexPositionValues[i + 2];
 
-		newVertex.color.x = 0.5f;
-		newVertex.color.y = 0.5f;
-		newVertex.color.z = 0.5f;
+		newVertex.color.x = 1.0f;
+		newVertex.color.y = 0.0f;
+		newVertex.color.z = 0.0f;
 		newVertex.color.w = 1.0f;
 
 		newVertex.bitangent.x = 1.0f;

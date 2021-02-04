@@ -41,6 +41,7 @@ void Engine::Run()
 {
 	while (m_Running)
 	{
+		m_imguiManager.BeginFrame();
 		MSG message = {};
 		while (PeekMessageA(&message, nullptr, 0u, 0u, PM_REMOVE))
 		{
@@ -74,18 +75,6 @@ void Engine::Update()
 void Engine::Render()
 {
 	m_ForwardRenderer.RenderFrame();
-
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-
-	static bool show_demo_window = true;
-	if (show_demo_window)
-	{
-		ImGui::ShowDemoWindow(&show_demo_window);
-	}
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
+	m_imguiManager.Render();
 	HR_A(m_DXCore.GetSwapChain()->Present(1, 0), "Present");
 }
