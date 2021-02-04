@@ -14,6 +14,8 @@
     <ClCompile Include="ForwardRenderer.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ImGui\ImGuiManager.cpp" />
+    <ClCompile Include="ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelFactory.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -32,8 +34,8 @@
     <ClCompile Include="Resources\PrimitiveTopology.cpp" />
     <ClCompile Include="Resources\ResourceManager.cpp" />
     <ClCompile Include="Resources\VertexShader.cpp" />
-    <ClCompile Include="ImGui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="Sun.cpp" />
+    <ClCompile Include="SpaceShip.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -55,6 +57,8 @@
     <ClInclude Include="ForwardRenderer.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="ImGui\ImGuiManager.h" />
+    <ClInclude Include="ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="ImGui\imgui_impl_win32.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelFactory.h" />
     <ClInclude Include="Player.h" />
@@ -75,7 +79,7 @@
     <ClInclude Include="Resources\PrimitiveTopology.h" />
     <ClInclude Include="Resources\ResourceManager.h" />
     <ClInclude Include="Resources\VertexShader.h" />
-    <ClInclude Include="ImGui\imgui_impl_dx11.h" />
-    <ClInclude Include="ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="Sun.h" />
+    <ClInclude Include="SpaceShip.h" />
   </ItemGroup>
 </Project>

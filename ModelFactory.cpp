@@ -13,7 +13,6 @@ void ModelFactory::setDevice(Microsoft::WRL::ComPtr<ID3D11Device> device) {
 
 Model* ModelFactory::GetModel(std::string filePath)
 {
-	/*
 	Model* model = &m_loadedModels[filePath];
 	if (model->NotLoaded())
 	{
@@ -27,10 +26,15 @@ Model* ModelFactory::GetModel(std::string filePath)
 
 		if (scene == nullptr)
 		{
-			OutputDebugString(L"Error retrieving data from model file");
+			OutputDebugString(L"\n\n!!! Error retrieving data from model file !!!\n\n");
+#ifdef _DEBUG
+			assert(false);
+#endif
 		}
 		else
 		{
+			std::vector<vertex_tex> vertices;
+			std::vector<int> indices;
 #ifdef _DEBUG
 			std::string loadDebug = std::string("=======================================\nLoading model: ") + filePath + std::string("\n");
 			loadDebug += std::string("Meshes: ") + std::to_string(scene->mNumMeshes) + std::string("\t");
@@ -54,12 +58,16 @@ Model* ModelFactory::GetModel(std::string filePath)
 						vtx.texcoord.x = mesh->mTextureCoords[iMesh][i].x;
 						vtx.texcoord.y = mesh->mTextureCoords[iMesh][i].y;
 					}
-					if (mesh->HasNormals())
-					{
-						vtx.normal.x = mesh->mNormals[i].x;
-						vtx.normal.y = mesh->mNormals[i].y;
-						vtx.normal.z = mesh->mNormals[i].z;
-					}
+					vtx.normal.x = 1.0f;	// temporary for
+					vtx.normal.y = 0.3f;	// vertex color
+					vtx.normal.z = 0.1f;	// use section below.
+
+					//if (mesh->HasNormals())
+					//{
+					//	vtx.normal.x = mesh->mNormals[i].x;
+					//	vtx.normal.y = mesh->mNormals[i].y;
+					//	vtx.normal.z = mesh->mNormals[i].z;
+					//}
 					if (mesh->HasTangentsAndBitangents())
 					{
 						vtx.tangent.x = mesh->mTangents[i].x;
@@ -70,6 +78,8 @@ Model* ModelFactory::GetModel(std::string filePath)
 						vtx.bitangent.z = mesh->mBitangents[i].z;
 					}
 					vertices.push_back(vtx);
+
+
 				}
 				for (UINT i = 0u; i < mesh->mNumFaces; ++i)
 				{
@@ -85,12 +95,16 @@ Model* ModelFactory::GetModel(std::string filePath)
 			loadDebug += std::string("=======================================\n");
 			OutputDebugStringA(loadDebug.c_str());
 #endif
+			model->setVertexBufferSize(static_cast<UINT>(vertices.size()));
+			model->setIndexBufferSize(static_cast<UINT>(indices.size()));
+			createBuffers(sizeof(vertex_tex), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
+			model->Loaded();
 		}
-		model->Loaded();
 	}
+#ifdef _DEBUG
+	assert(model->NotLoaded() == false);
+#endif
 	return model;
-	*/
-	return nullptr;
 }
 
 Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
@@ -107,9 +121,9 @@ Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
 		newVertex.position.y = vertexPositionValues[i + 1];
 		newVertex.position.z = vertexPositionValues[i + 2];
 
-		newVertex.color.x = 1.0f;
-		newVertex.color.y = 0.0f;
-		newVertex.color.z = 0.0f;
+		newVertex.color.x = 0.0f;
+		newVertex.color.y = 0.5f;
+		newVertex.color.z = 0.8f;
 		newVertex.color.w = 1.0f;
 
 		newVertex.bitangent.x = 1.0f;
@@ -130,7 +144,7 @@ Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
 	model->setVertexBufferSize(static_cast<UINT>(vertices.size()));
 	model->setIndexBufferSize(static_cast<UINT>(indices.size()));
 
-	createBuffers(vertices, indices, model);
+	createBuffers(sizeof(vertex_col), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
 	return model;
 }
 
@@ -318,24 +332,24 @@ void ModelFactory::createTriangleFace(
 				v1 = bottomVertex;
 				v2 = topVertex - 1;
 			}
-			triangles.push_back(vertexMap[v0]);
-			triangles.push_back(vertexMap[(reverse) ? v2 : v1]);
 			triangles.push_back(vertexMap[(reverse) ? v1 : v2]);
+			triangles.push_back(vertexMap[(reverse) ? v2 : v1]);
+			triangles.push_back(vertexMap[v0]);
 		}
 	}
 }
 
-void ModelFactory::createBuffers(const std::vector<vertex_col>& vertices, const std::vector<int>& indices, Model* model) {
-	model->setStride(sizeof(vertex_col));
+void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std::vector<int>& indices, Model* model) {
+	model->setStride(stride);
 	model->setOffset(0u);
 
 	//vertexbuffer
 	D3D11_BUFFER_DESC vertexBufferDescriptor = {};
-	vertexBufferDescriptor.ByteWidth = sizeof(vertex_col) * static_cast<UINT>(vertices.size());
+	vertexBufferDescriptor.ByteWidth = sizeof(vertex_col) * static_cast<UINT>(size);
 	vertexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	D3D11_SUBRESOURCE_DATA sr_data = { 0 };
-	sr_data.pSysMem = vertices.data();
+	sr_data.pSysMem = data;
 
 	HR_X(this->m_device->CreateBuffer(&vertexBufferDescriptor,
 									  &sr_data,

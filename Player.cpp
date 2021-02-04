@@ -12,7 +12,7 @@ Player::Player()
 	m_rotateLeft = false;
 
 	m_camera = nullptr;
-	m_speed = 100.0f;
+	m_speed = 500.0f;
 	m_rotation = (float)M_PI_4;
 
 	m_forwardVector = { 0.0f, 0.0f, 1.0f };
@@ -108,6 +108,7 @@ void Player::OnEvent(IEvent& event) noexcept
 	//std::cout << "Event recived" << std::endl;
 	switch (event.GetEventType())
 	{
+		/*
 		case EventType::MouseMoveEvent:
 		{
 			int xCoord = static_cast<MouseMoveEvent*>(&event)->GetXCoord();
@@ -116,6 +117,7 @@ void Player::OnEvent(IEvent& event) noexcept
 			//std::cout << "Mouse moved to " << xCoord << " " << yCoord << std::endl;
 			break;
 		}
+		*/
 		case EventType::MouseButtenEvent:
 		{
 			KeyState state = static_cast<MouseButtenEvent*>(&event)->GetKeyState();
