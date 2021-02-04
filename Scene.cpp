@@ -50,15 +50,13 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	}
 
 	//Generate sun.
-	/*
-	Sun sun;
-	if(!sun.init()){
+	Sun *sun = new Sun();
+	if(!sun->Initialize()){
 		//Throw
 		return -1;
 	}
 
-	this->m_gameObjects.push_back(&sun);
-	*/
+	this->m_gameObjects.push_back(sun);
 
 	//Get the factory to create the planets.
 	//this->m_factory = ModelFactory::getInstance();
@@ -70,12 +68,26 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	//std::seed_seq seed = {  };
 	
 	std::default_random_engine generator(t_clock::now().time_since_epoch().count());
-	std::uniform_int_distribution<int> distributionPlanets(12, 15);
+	std::uniform_int_distribution<int> distributionPlanets(30, 50);
 	this->m_numPlanets = distributionPlanets(generator);
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
-	std::uniform_int_distribution<int> distributionX(-3000, 3000);
-	std::uniform_int_distribution<int> distributionY(-300, 300);
-	std::uniform_int_distribution<int> distributionZ(1500, 5000);
+	std::uniform_int_distribution<int> distributionX(-5000, 5000);
+	std::uniform_int_distribution<int> distributionY(-5000, 5000);
+	std::uniform_int_distribution<int> distributionZ(-5000, 5000);
+
+	/*
+	CosmicBody* planetmiddle = new CosmicBody();
+	if (!planetmiddle->init(
+		0,
+		0,
+		0,
+		50
+	))
+	{
+		//Throw
+		return 0;
+	}
+	this->m_gameObjects.push_back(planetmiddle);*/
 
 	for(int i = 0; i < this->m_numPlanets; i++){
 		CosmicBody* planet = new CosmicBody();
@@ -95,10 +107,9 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 }
 
 bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
-	m_player.update();
-	DirectX::XMFLOAT4 a = {0.0f, 0.0f, 500.0f, 0.0f};
+	DirectX::XMFLOAT4 a = {0.0f, 0.0f, 0.0f, 0.0f};
 	m_perspectiveCamera.update(DirectX::XMLoadFloat4(&a));
-
+	m_player.update();
 	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
 	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
 	

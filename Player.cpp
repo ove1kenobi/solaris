@@ -108,6 +108,7 @@ void Player::OnEvent(IEvent& event) noexcept
 	//std::cout << "Event recived" << std::endl;
 	switch (event.GetEventType())
 	{
+		/*
 		case EventType::MouseMoveEvent:
 		{
 			int xCoord = static_cast<MouseMoveEvent*>(&event)->GetXCoord();
@@ -116,6 +117,7 @@ void Player::OnEvent(IEvent& event) noexcept
 			//std::cout << "Mouse moved to " << xCoord << " " << yCoord << std::endl;
 			break;
 		}
+		*/
 		case EventType::MouseButtenEvent:
 		{
 			KeyState state = static_cast<MouseButtenEvent*>(&event)->GetKeyState();
