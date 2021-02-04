@@ -5,12 +5,14 @@
 #include "EventSystem\IEventListener.h"
 #include "EventSystem/EventBuss.h"
 #include "EventSystem/MouseMoveEvent.h"
+#include "EventSystem/MouseScrollEvent.h"
 #include "DirectXTK/Mouse.h"
 
 class PlayerCamera : public IEventListener, public Camera {
 private:
 	float m_FOVvalue = 4.0f;
 	float m_distanceFromShip;
+	float m_sensitivity;
 	void OnEvent(IEvent& event) noexcept;
 
 public:
@@ -25,4 +27,8 @@ public:
 	void move(DirectX::XMVECTOR shipCoordsDiff);
 	//Mouse movement
 	void mouseRot();
+	//Zoom
+	void mouseScroll();
+	//Rotates camera when ship rotates.
+	void shipRot(float step);
 };
