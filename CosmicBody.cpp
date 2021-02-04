@@ -1,22 +1,32 @@
 #include "CosmicBody.h"
 
 CosmicBody::CosmicBody() noexcept
-	:	m_radius{ 0 }
+	:	m_radius{ 0.0f }, m_yAxis{ 0.0f, 1.0f, 0.0f, 0.0f }
 {
 	
 }
 
-bool CosmicBody::init(float x, float y, float z, float r) {
+bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot) {
 	this->m_radius = r;
 	this->m_center.x = x;
 	this->m_center.y = y;
 	this->m_center.z = z;
-	DirectX::XMStoreFloat4x4(&this->m_wMatrix, DirectX::XMMatrixIdentity());
-	this->m_wMatrix._41 = x;
-	this->m_wMatrix._42 = y;
-	this->m_wMatrix._43 = z;
+	this->m_pitch = xRot;
+	this->m_roll = zRot;
 
-	this->m_divisions = 10; //INTE MER ÄN 100
+	DirectX::XMMATRIX rotX = DirectX::XMMatrixRotationX(this->m_pitch);
+	DirectX::XMMATRIX rotZ = DirectX::XMMatrixRotationZ(this->m_roll);
+	DirectX::XMVECTOR resultY = DirectX::XMLoadFloat4(&this->m_yAxis);
+	resultY = DirectX::XMVector4Transform(resultY, rotX);
+	resultY = DirectX::XMVector4Transform(resultY, rotZ);
+	DirectX::XMStoreFloat4(&this->m_yAxis, resultY);
+
+	DirectX::XMStoreFloat4x4(&this->m_wMatrix, DirectX::XMMatrixIdentity());
+	DirectX::XMMATRIX trans = DirectX::XMMatrixTranslation(x, y, z);
+	DirectX::XMMATRIX final = trans;
+
+	DirectX::XMStoreFloat4x4(&this->m_wMatrix, final);
+	
 
 	this->m_model = ModelFactory::Get().GenerateSphere(x, y, z, r);
 	
@@ -26,8 +36,43 @@ bool CosmicBody::init(float x, float y, float z, float r) {
 }
 
 bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
-	//Update the matrixBuffer.
+	DirectX::XMFLOAT4 yAxis;
+	
+	yAxis.x = this->m_wMatrix._12;
+	yAxis.y = this->m_wMatrix._22;
+	yAxis.z = this->m_wMatrix._32;
+	
+	//DirectX::XMMATRIX wMatrix = DirectX::XMLoadFloat4x4(&this->m_wMatrix);
+	/*
+	DirectX::XMFLOAT4X4 zero;
+	DirectX::XMStoreFloat4x4(&zero, DirectX::XMMatrixIdentity());
+	
+	zero._41 = 0;
+	zero._42 = 0;
+	zero._43 = 0;
+	zero._44 = 0;
+	DirectX::XMMATRIX zeroMatrix = DirectX::XMLoadFloat4x4(&zero);
+	wMatrix = DirectX::XMMatrixMultiply(zeroMatrix, wMatrix);
+	*/
+	
+	static float angle = 0.0f;
+	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixIdentity();
+	DirectX::XMMATRIX rotMatrix = DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat4(&yAxis), (1000 / this->m_radius) * angle);
+	
+	DirectX::XMMATRIX transMatrix = DirectX::XMMatrixIdentity();
+	DirectX::XMFLOAT4X4 transMatrixFloats;
+	DirectX::XMStoreFloat4x4(&transMatrixFloats, transMatrix);
+	transMatrixFloats._41 = getTransVector().x;
+	transMatrixFloats._42 = getTransVector().y;
+	transMatrixFloats._43 = getTransVector().z;
+	transMatrix = DirectX::XMLoadFloat4x4(&transMatrixFloats);
 
+	//wMatrix = DirectX::XMMatrixTranslation(this->m_wMatrix._41, this->m_wMatrix._42, this->m_wMatrix._43);
+	DirectX::XMMATRIX result = scaleMatrix * rotMatrix * transMatrix;
+	DirectX::XMStoreFloat4x4(&this->m_wMatrix, result);
+	angle += 0.0005 * this->m_timer.DeltaTime();
+
+	//Update the matrixBuffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
 	ModelFactory::MatrixBuffer* data;
 

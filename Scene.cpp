@@ -76,27 +76,31 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	std::uniform_int_distribution<int> distributionX(-5000, 5000);
 	std::uniform_int_distribution<int> distributionY(-5000, 5000);
 	std::uniform_int_distribution<int> distributionZ(-5000, 5000);
-
+	std::uniform_int_distribution<int> distributionXZRot(-30, 30);
 	CosmicBody* planetmiddle = new CosmicBody();
 	if (!planetmiddle->init(
 		0,
 		0,
 		0,
-		50
+		50,
+		5,
+		0
 	))
 	{
 		//Throw
 		return 0;
 	}
 	this->m_gameObjects.push_back(planetmiddle);
-
+	
 	for(int i = 0; i < this->m_numPlanets; i++){
 		CosmicBody* planet = new CosmicBody();
 		if(!planet->init(
 			static_cast<float>(distributionX(generator)),
 			static_cast<float>(distributionY(generator)),
 			static_cast<float>(distributionZ(generator)),
-			static_cast<float>(distributionRadius(generator))
+			static_cast<float>(distributionRadius(generator)),
+			static_cast<float>(distributionXZRot(generator)),
+			static_cast<float>(distributionXZRot(generator))
 			))
 		{
 			//Throw
@@ -104,6 +108,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 		}
 		this->m_gameObjects.push_back(planet);
 	}
+	
 	return 1;
 }
 

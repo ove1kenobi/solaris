@@ -35,3 +35,12 @@ UINT GameObject::getVertexBufferSize() {
 UINT GameObject::getIndexBufferSize() {
 	return this->m_model->getIndexBufferSize();
 }
+
+DirectX::XMFLOAT3 GameObject::getTransVector() {
+	DirectX::XMFLOAT3 transVector;
+	transVector.x = this->m_wMatrix._41;
+	transVector.y = this->m_wMatrix._42;
+	transVector.z = this->m_wMatrix._43;
+
+	return transVector;
+}
