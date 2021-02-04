@@ -2,12 +2,13 @@
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+UINT RenderWindow::m_clientWinWidth = DEFAULT_WIN_WIDTH;
+UINT RenderWindow::m_clientWinHeight = DEFAULT_WIN_HEIGHT;
+
 RenderWindow::RenderWindow()
 {
     LPCWSTR className = L"Window Class";
     LPCWSTR windowTitle = L"Window";
-    m_clientWinWidth = DEFAULT_WIN_WIDTH;
-    m_clientWinHeight = DEFAULT_WIN_HEIGHT;
     WNDCLASSEX wc = { 0 };
     wc.style = CS_OWNDC;                                 //Flags [Redraw on width/height change from resize/movement] See: https://msdn.microsoft.com/en-us/library/windows/desktop/ff729176(v=vs.85).aspx
     wc.lpfnWndProc = WindowProc;                         //Pointer to Window Proc function for handling messages from this window
@@ -42,6 +43,8 @@ RenderWindow::RenderWindow()
                                  nullptr);                                         // Additional application data
     ShowWindow(m_winHandle, SW_SHOWNORMAL);
 
+    m_mouse = std::make_unique<DirectX::Mouse>();
+    m_mouse->SetWindow(m_winHandle);
     // Debug console
     //AllocConsole();                                   
     //freopen("CONOUT$", "w", stdout);                  
@@ -70,15 +73,20 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 return 0;
             break;
         }
+        /*
         case WM_MOUSEMOVE:
         {
             // mouse moved within window
             int xPos = GET_X_LPARAM(lParam);
             int yPos = GET_Y_LPARAM(lParam);
-            MouseMoveEvent me(xPos, yPos);
+
+            float xPosF = (static_cast<float>(xPos) / m_clientWinWidth) * 2 - 1;
+            float yPosF = (static_cast<float>(yPos) / m_clientWinHeight) * 2 - 1;
+            MouseMoveEvent me(xPosF, yPosF);
             EventBuss::Get().Delegate(me);
             return 0;
         }
+       
         case WM_LBUTTONDOWN:
         {
             // left mouse butten down
@@ -115,6 +123,28 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             EventBuss::Get().Delegate(be);
             return 0;
         }
+        */
+        case WM_ACTIVATEAPP:
+            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+            break;
+        case WM_INPUT:
+        case WM_MOUSEMOVE:
+        {
+            MouseMoveEvent me;
+            EventBuss::Get().Delegate(me);
+        }
+        case WM_LBUTTONDOWN:
+        case WM_LBUTTONUP:
+        case WM_RBUTTONDOWN:
+        case WM_RBUTTONUP:
+        case WM_MBUTTONDOWN:
+        case WM_MBUTTONUP:
+        case WM_MOUSEWHEEL:
+        case WM_XBUTTONDOWN:
+        case WM_XBUTTONUP:
+        case WM_MOUSEHOVER:
+            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+            break;
         case WM_KEYDOWN:
         {
             // key press
