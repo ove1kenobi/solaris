@@ -37,7 +37,7 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 	data->PMatrix = PMatrix;
 
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
-	return 1;
+	return true;
 }
 
 void SpaceShip::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
