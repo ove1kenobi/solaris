@@ -113,9 +113,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 }
 
 bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
-	DirectX::XMFLOAT3 a = this->m_player.getShip()->getCenter();
-	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
-	m_perspectiveCamera.update(DirectX::XMLoadFloat4(&shipCenter));
 	m_player.update();
 	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
 	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();

@@ -23,10 +23,6 @@ void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
 	DirectX::XMStoreFloat4x4(&this->m_vMatrix, DirectX::XMMatrixLookAtLH(this->m_posVector, this->m_forwardVector, this->m_upVector));
 }
 
-void PlayerCamera::move(DirectX::XMVECTOR shipCoordsDiff) {
-	this->m_posVector = DirectX::XMVectorAdd(shipCoordsDiff, this->m_posVector);
-}
-
 void PlayerCamera::mouseRot() {
 	auto r = DirectX::Mouse::Get().GetState();
 	float yValue = static_cast<float>(r.y);
@@ -56,7 +52,7 @@ void PlayerCamera::mouseScroll() {
 }
 
 void PlayerCamera::shipRot(float step) {
-	this->m_yaw +=  step;
+	this->m_yaw +=  step/* * 3 / 4*/;
 }
 
 void PlayerCamera::OnEvent(IEvent& event) noexcept {
