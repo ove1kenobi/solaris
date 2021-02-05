@@ -35,6 +35,7 @@ public:
 	UINT getVertexBufferSize();
 	UINT getIndexBufferSize();
 
+	[[nodiscard]] const DirectX::XMFLOAT3& GetCenter() const noexcept;
 	DirectX::XMFLOAT3 getTransVector();
 };
 

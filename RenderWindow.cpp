@@ -4,6 +4,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 UINT RenderWindow::m_clientWinWidth = DEFAULT_WIN_WIDTH;
 UINT RenderWindow::m_clientWinHeight = DEFAULT_WIN_HEIGHT;
+bool RenderWindow::m_DisableXTKMouse;
 
 RenderWindow::RenderWindow()
 {
@@ -17,7 +18,7 @@ RenderWindow::RenderWindow()
     wc.hInstance = (HINSTANCE)GetModuleHandle(nullptr);  //Handle to the instance that contains the Window Procedure
     wc.hIcon = nullptr;                                  //Handle to the class icon. Must be a handle to an icon resource. We are not currently assigning an icon, so this is null.
     wc.hIconSm = nullptr;                                //Handle to small icon for this class. We are not currently assigning an icon, so this is null.
-    wc.hCursor = nullptr;                                //Default Cursor - If we leave this null, we have to explicitly set the cursor's shape each time it enters the window.
+    wc.hCursor =  nullptr;                                //Default Cursor - If we leave this null, we have to explicitly set the cursor's shape each time it enters the window.
     wc.hbrBackground = nullptr;                          //Handle to the class background brush for the window's background color - we will leave this blank for now and later set this to black. For stock brushes, see: https://msdn.microsoft.com/en-us/library/windows/desktop/dd144925(v=vs.85).aspx
     wc.lpszMenuName = nullptr;                           //Pointer to a null terminated character string for the menu. We are not using a menu yet, so this will be NULL.
     wc.lpszClassName = className;                        //Pointer to null terminated string of our class name for this window.
@@ -40,15 +41,12 @@ RenderWindow::RenderWindow()
                                  nullptr,                                        // Parent window
                                  nullptr,                                        // Menu
                                  (HINSTANCE)GetModuleHandle(nullptr),            // Instance handle
-                                 nullptr);                                         // Additional application data
+                                 nullptr);                                       // Additional application data
     ShowWindow(m_winHandle, SW_SHOWNORMAL);
 
     m_mouse = std::make_unique<DirectX::Mouse>();
     m_mouse->SetWindow(m_winHandle);
-    // Debug console
-    //AllocConsole();                                   
-    //freopen("CONOUT$", "w", stdout);                  
-    //std::cout << "Debug console is open" << std::endl;
+    m_DisableXTKMouse = false;
 }
 
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -67,10 +65,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         }
         case WM_CLOSE:
         {
-            if (MessageBox(hwnd, L"Quit?", L"Exit", MB_YESNO) == IDYES)
-                DestroyWindow(hwnd);
-            else
-                return 0;
+            CloseWindow(hwnd);
             break;
         }
         /*
@@ -130,8 +125,16 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         case WM_INPUT:
         case WM_MOUSEMOVE:
         {
+        #if defined(DEBUG) | defined(_DEBUG)
+            if (m_DisableXTKMouse == false)
+            {
+                MouseMoveEvent me;
+                EventBuss::Get().Delegate(me);
+            }
+        #else
             MouseMoveEvent me;
             EventBuss::Get().Delegate(me);
+        #endif
         }
         case WM_LBUTTONDOWN:
         case WM_LBUTTONUP:
@@ -143,22 +146,30 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         case WM_XBUTTONDOWN:
         case WM_XBUTTONUP:
         case WM_MOUSEHOVER:
+        {
             DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+        }
             break;
         case WM_KEYDOWN:
         {
             // key press
-#if defined(DEBUG) | defined(_DEBUG)
+            #if defined(DEBUG) | defined(_DEBUG)
             if (wParam == 'P') {
                 ToggleWireFrameEvent event;
                 EventBuss::Get().Delegate(event);
             }
             if (wParam == 'I')
             {
+                ToggleXTKMouse();
                 ToggleImGuiDemoWindowEvent imEvent;
                 EventBuss::Get().Delegate(imEvent);
             }
-#endif
+            #endif
+            if (wParam == VK_ESCAPE)
+            {
+                CloseWindow(hwnd);
+                break;
+            }
             KeyState keyState;
             if ((lParam & 0x40000000) == 0) keyState = KeyState::KeyPress;
             else keyState = KeyState::KeyRepeat;
@@ -175,6 +186,26 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         }
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+void RenderWindow::ToggleXTKMouse() noexcept
+{
+    m_DisableXTKMouse = !m_DisableXTKMouse;
+    if (m_DisableXTKMouse == true)
+    {
+        DirectX::Mouse::Get().SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+    }
+    else
+    {
+        DirectX::Mouse::Get().SetMode(DirectX::Mouse::MODE_RELATIVE);
+        DirectX::Mouse::Get().SetVisible(true);
+    }
+}
+
+void RenderWindow::CloseWindow(const HWND& hwnd) noexcept
+{
+    if (MessageBox(hwnd, L"Quit?", L"Exit", MB_YESNO) == IDYES)
+        DestroyWindow(hwnd);
 }
 
 HWND RenderWindow::GetHandle()

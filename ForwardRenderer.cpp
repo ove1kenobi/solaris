@@ -4,6 +4,7 @@ ForwardRenderer::ForwardRenderer() noexcept
 	: m_Background{ 0.0f, 0.0f, 0.0f, 1.0f },
 	  m_gameObjects{ nullptr }
 {
+	EventBuss::Get().AddListener(this, EventType::SendRenderObjectsEvent, EventType::DelegateDXEvent);
 }
 
 //Sets everything up for forward rendering, takes information from the event handler as input
@@ -36,17 +37,19 @@ void ForwardRenderer::EndFrame()
 	//Apply the post processing effects to the renderTarget here
 }
 
-const bool ForwardRenderer::Initialize(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext,
-									   Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pBackBuffer,
-									   Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView) noexcept
+void ForwardRenderer::UpdateDXHandlers(IEvent& event) noexcept
 {
-	EventBuss::Get().AddListener(this, EventType::SendRenderObjectsEvent);
-	m_pDeviceContext = pDeviceContext;
-	m_pBackBuffer = pBackBuffer;
-	m_pDepthStencilView = pDepthStencilView;
+	DelegateDXEvent& derivedEvent = static_cast<DelegateDXEvent&>(event);
+	m_pDeviceContext = derivedEvent.GetDeviceContext();
+	m_pBackBuffer = derivedEvent.GetBackBuffer();
+	m_pDepthStencilView = derivedEvent.GetDepthStencilView();
 #if defined(DEBUG) | defined(_DEBUG)
 	assert(m_pDeviceContext && m_pBackBuffer && m_pDepthStencilView);
 #endif
+}
+
+const bool ForwardRenderer::Initialize() noexcept
+{
 	return true;
 }
 
@@ -66,9 +69,14 @@ void ForwardRenderer::OnEvent(IEvent& event) noexcept
 	switch (event.GetEventType())
 	{
 	case EventType::SendRenderObjectsEvent:
-		//Do something with objects.
+	{
 		SendRenderObjectsEvent& derivedEvent = static_cast<SendRenderObjectsEvent&>(event);
 		this->m_gameObjects = derivedEvent.getGameObjectVector();
 		break;
+	}
+	case EventType::DelegateDXEvent:
+	{
+		UpdateDXHandlers(event);
+	}
 	}
 }

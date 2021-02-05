@@ -118,11 +118,19 @@ bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceCont
 	m_player.update();
 	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
 	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
-	
+
 	for (auto r : this->m_gameObjects) {
 		r->update(vMatrix, pMatrix, deviceContext);
 	}
-
+#if defined(DEBUG) | defined(_DEBUG)
+	ImGui::Begin("Game Objects");
+	for (unsigned int i{ 0u }; i < m_gameObjects.size(); i++)
+	{
+		ImGui::Text("Game Object #%d", i + 1);
+		ImGui::Text("Center: (%.0f, %.0f, %.0f)", m_gameObjects[i]->GetCenter().x, m_gameObjects[i]->GetCenter().y, m_gameObjects[i]->GetCenter().z);
+	}
+	ImGui::End();
+#endif
 	//Cull Objects HERE at the end or as response to AskForObjectsEvent? (Emil F)
 	return 1;
 }

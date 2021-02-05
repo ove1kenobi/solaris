@@ -8,7 +8,6 @@
 #include "assimp/scene.h"
 #include "Model.h"
 #include "ourMath.h"
-
 class ModelFactory
 {
 private:

@@ -1,6 +1,6 @@
 #include "ImGuiManager.h"
 ImGuiManager::ImGuiManager() noexcept
-	: m_ShowDemoWindow{ true }
+	: m_ShowDemoWindow{ false }
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();

@@ -24,7 +24,7 @@ private:
 	void Render();
 public:
 	Engine() noexcept;
-	virtual ~Engine();
+	virtual ~Engine() = default;
 	const bool Initialize();
 	void Run();
 	void OnEvent(IEvent& event) noexcept override;

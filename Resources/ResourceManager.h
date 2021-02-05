@@ -5,6 +5,7 @@
 #include "PrimitiveTopology.h"
 #include "InputLayout.h"
 #include "../EventSystem/RenderEvents.h"
+#include "../EventSystem/UtilityEvents.h"
 #include "..\EventSystem\EventBuss.h"
 #include "..\EventSystem\IEventListener.h"
 #include "..\Model.h"
@@ -28,9 +29,10 @@ private:
 public:
 	ResourceManager() noexcept;
 	virtual ~ResourceManager() noexcept = default;
-	[[nodiscard]] const bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext) noexcept;
+	[[nodiscard]] const bool Initialize() noexcept;
 	[[nodiscard]] const bool CreateAllBindables();
 	void UnbindPipeline();
 	void BindToPipeline(IEvent& event);
+	void UpdateDXHandlers(IEvent& event) noexcept;
 	void OnEvent(IEvent& event) noexcept override;
 };

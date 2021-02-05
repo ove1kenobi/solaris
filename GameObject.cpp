@@ -36,6 +36,11 @@ UINT GameObject::getIndexBufferSize() {
 	return this->m_model->getIndexBufferSize();
 }
 
+const DirectX::XMFLOAT3& GameObject::GetCenter() const noexcept
+{
+	return m_center;
+}
+
 DirectX::XMFLOAT3 GameObject::getTransVector() {
 	DirectX::XMFLOAT3 transVector;
 	transVector.x = this->m_wMatrix._41;

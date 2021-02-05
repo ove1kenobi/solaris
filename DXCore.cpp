@@ -148,6 +148,8 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 	m_pDeviceContext->RSSetState(m_pRasterizerStateFill.Get());
 
 	ImGui_ImplDX11_Init(m_pDevice.Get(), m_pDeviceContext.Get());
+
+	DelegateDXHandles();
 	return true;
 }
 
@@ -176,6 +178,12 @@ void DXCore::ToggleWireFrame() noexcept
 		m_pDeviceContext->RSSetState(m_pRasterizerStateWireFrame.Get());
 		m_WireFrameEnabled = true;
 	}
+}
+
+void DXCore::DelegateDXHandles() noexcept
+{
+	DelegateDXEvent event(m_pDevice, m_pDeviceContext, m_pBackBuffer, m_pDepthStencilView);
+	EventBuss::Get().Delegate(event);
 }
 
 const Microsoft::WRL::ComPtr<ID3D11Device>& DXCore::GetDevice() const noexcept

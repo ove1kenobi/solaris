@@ -3,16 +3,11 @@
 ResourceManager::ResourceManager() noexcept
 	: m_pDevice{ nullptr }, m_pDeviceContext{ nullptr }
 {
-
+	EventBuss::Get().AddListener(this, EventType::UnbindPipelineEvent, EventType::BindIDEvent, EventType::DelegateDXEvent);
 }
 
-const bool ResourceManager::Initialize(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, 
-									   Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext) noexcept
+const bool ResourceManager::Initialize() noexcept
 {
-	m_pDevice = pDevice;
-	m_pDeviceContext = pDeviceContext;
-	EventBuss::Get().AddListener(this, EventType::UnbindPipelineEvent, EventType::BindIDEvent);
-
 	if (!CreateAllBindables())
 		return false;
 
@@ -114,6 +109,16 @@ void ResourceManager::BindToPipeline(IEvent& event)
 	}
 }
 
+void ResourceManager::UpdateDXHandlers(IEvent& event) noexcept
+{
+	DelegateDXEvent& derivedEvent = static_cast<DelegateDXEvent&>(event);
+	m_pDevice = derivedEvent.GetDevice();
+	m_pDeviceContext = derivedEvent.GetDeviceContext();
+#if defined(DEBUG) | defined(_DEBUG)
+	assert(m_pDevice && m_pDeviceContext);
+#endif
+}
+
 void ResourceManager::OnEvent(IEvent& event) noexcept
 {
 	switch (event.GetEventType())
@@ -124,6 +129,10 @@ void ResourceManager::OnEvent(IEvent& event) noexcept
 
 	case EventType::BindIDEvent :
 		BindToPipeline(event);
+		break;
+		
+	case EventType::DelegateDXEvent :
+		UpdateDXHandlers(event);
 		break;
 	}
 }

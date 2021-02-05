@@ -11,6 +11,7 @@
 #include "EventSystem/RenderEvents.h"
 #include <random>
 #include "Time.h"
+#include <imgui.h>
 class Scene : public EventPublisher, IEventListener
 {
 private:
