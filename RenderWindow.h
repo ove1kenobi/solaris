@@ -5,6 +5,7 @@
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem\WindowEvents.h"
 #include "EventSystem/MouseMoveEvent.h"
+#include "EventSystem/MouseScrollEvent.h"
 #include "EventSystem/MouseButtenEvent.h"
 #include "EventSystem/KeyboardEvent.h"
 #include "DirectXTK/Mouse.h"

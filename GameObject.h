@@ -1,7 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 #include <vector>
-
+#include <math.h>
 #include "Time.h"
 #include "ModelFactory.h"
 #include "Model.h"
@@ -12,6 +12,10 @@ class GameObject
 protected:
 	DirectX::XMFLOAT3 m_velocity;
 	DirectX::XMFLOAT3 m_center;
+
+	DirectX::XMFLOAT3 m_forwardVector;
+	DirectX::XMFLOAT3 m_rightVector;
+	DirectX::XMFLOAT3 m_upVector;
 
 	DirectX::XMFLOAT4X4 m_wMatrix;
 

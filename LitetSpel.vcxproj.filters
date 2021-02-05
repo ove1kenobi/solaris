@@ -81,7 +81,10 @@
     <ClInclude Include="Resources\PrimitiveTopology.h" />
     <ClInclude Include="Resources\ResourceManager.h" />
     <ClInclude Include="Resources\VertexShader.h" />
+    <ClInclude Include="Sun.h" />
+    <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="vertex.h" />
+    <ClInclude Include="EventSystem\MouseScrollEvent.h" />
     <ClInclude Include="EventSystem\UtilityEvents.h" />
   </ItemGroup>
 </Project>

@@ -122,6 +122,7 @@
     <ClInclude Include="EventSystem\EventType.h" />
     <ClInclude Include="EventSystem\IEvent.h" />
     <ClInclude Include="EventSystem\IEventListener.h" />
+    <ClInclude Include="EventSystem\MouseScrollEvent.h" />
     <ClInclude Include="EventSystem\RenderEvents.h" />
     <ClInclude Include="EventSystem\KeyboardEvent.h" />
     <ClInclude Include="EventSystem\KeyState.h" />
