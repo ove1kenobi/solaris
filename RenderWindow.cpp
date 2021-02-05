@@ -136,11 +136,23 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             break;
         }
         case WM_LBUTTONDOWN:
+            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+            break;
         case WM_LBUTTONUP:
+            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+            break;
         case WM_RBUTTONDOWN:
+            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+            break;
         case WM_RBUTTONUP:
+            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+            break;
         case WM_MBUTTONDOWN:
+            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+            break;
         case WM_MBUTTONUP:
+            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+            break;
         case WM_MOUSEWHEEL:
         {
             MouseScrollEvent me;
@@ -149,7 +161,11 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             break;
         }
         case WM_XBUTTONDOWN:
+            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+            break;
         case WM_XBUTTONUP:
+            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+            break;
         case WM_MOUSEHOVER:
             DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
             break;
