@@ -1,11 +1,8 @@
 #pragma once
-#include <string>
-
 #include "Camera.h"
 #include "EventSystem\IEventListener.h"
 #include "EventSystem/EventBuss.h"
-#include "EventSystem/MouseMoveEvent.h"
-#include "EventSystem/MouseScrollEvent.h"
+#include "EventSystem/InputEvents.h"
 #include "DirectXTK/Mouse.h"
 
 class PlayerCamera : public IEventListener, public Camera {

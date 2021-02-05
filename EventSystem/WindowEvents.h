@@ -17,18 +17,18 @@ public:
 	}
 };
 
-class ToggleImGuiDemoWindowEvent : public IEvent
+class ToggleImGuiEvent : public IEvent
 {
 private:
 public:
-	ToggleImGuiDemoWindowEvent() noexcept = default;
-	virtual ~ToggleImGuiDemoWindowEvent() noexcept = default;
+	ToggleImGuiEvent() noexcept = default;
+	virtual ~ToggleImGuiEvent() noexcept = default;
 	[[nodiscard]] const EventType GetEventType() const noexcept override
 	{
-		return EventType::ToggleImGuiDemoWindowEvent;
+		return EventType::ToggleImGuiEvent;
 	}
 	[[nodiscard]] const std::string GetDebugName() const noexcept override
 	{
-		return "ToggleImGuiDemoWindowEvent";
+		return "ToggleImGuiEvent";
 	}
 };

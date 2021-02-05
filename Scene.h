@@ -1,12 +1,9 @@
 #pragma once
 #include "CosmicBody.h"
 #include "Player.h"
-//#include "ModelFactory.h"
 #include "Sun.h"
-//#include "Player.h"
 #include "SpaceShip.h"
 #include "GameObject.h"
-#include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/RenderEvents.h"
 #include <random>
@@ -17,9 +14,7 @@ class Scene : public EventPublisher, IEventListener
 private:
 	//GameObjects include planets, moons, asteroids and the sun.
 	int m_numPlanets;
-
 	Camera m_orthoCamera;
-
 	Player m_player;
 
 	//ModelFactory m_factory;

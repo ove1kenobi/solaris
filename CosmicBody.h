@@ -1,7 +1,4 @@
 #pragma once
-#include <DirectXMath.h>
-#include <cmath>
-
 #include "GameObject.h"
 #include "ourMath.h"
 
@@ -14,10 +11,7 @@ private:
 public:
 	CosmicBody() noexcept;
 	~CosmicBody() = default;
-
 	bool init(float x, float y, float z, float r, float xRot, float zRot);
 	bool update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
-
 	void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
 };
-

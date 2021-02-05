@@ -5,7 +5,7 @@ ImGuiManager::ImGuiManager() noexcept
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
-	EventBuss::Get().AddListener(this, EventType::ToggleImGuiDemoWindowEvent);
+	EventBuss::Get().AddListener(this, EventType::ToggleImGuiEvent);
 }
 
 ImGuiManager::~ImGuiManager() noexcept
@@ -17,6 +17,7 @@ ImGuiManager::~ImGuiManager() noexcept
 
 void ImGuiManager::BeginFrame() noexcept
 {
+	
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
@@ -34,7 +35,7 @@ void ImGuiManager::OnEvent(IEvent& event) noexcept
 {
 	switch (event.GetEventType())
 	{
-	case EventType::ToggleImGuiDemoWindowEvent :
+	case EventType::ToggleImGuiEvent :
 	{
 		m_ShowDemoWindow = !m_ShowDemoWindow;
 	}

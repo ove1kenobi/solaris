@@ -61,7 +61,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             PostQuitMessage(0);
             WindowCloseEvent ce;
             EventBuss::Get().Delegate(ce);
-            return 0;
+            break;
         }
         case WM_CLOSE:
         {
@@ -119,10 +119,9 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             return 0;
         }
         */
-        case WM_ACTIVATEAPP:
+        case WM_INPUT:
             DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
             break;
-        case WM_INPUT:
         case WM_MOUSEMOVE:
         {
         #if defined(DEBUG) | defined(_DEBUG)
@@ -136,12 +135,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             EventBuss::Get().Delegate(me);
         #endif
         }
-        case WM_LBUTTONDOWN:
-        case WM_LBUTTONUP:
-        case WM_RBUTTONDOWN:
-        case WM_RBUTTONUP:
-        case WM_MBUTTONDOWN:
-        case WM_MBUTTONUP:
         case WM_MOUSEWHEEL:
         {
             MouseScrollEvent me;
@@ -149,8 +142,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
             break;
         }
-        case WM_XBUTTONDOWN:
-        case WM_XBUTTONUP:
         case WM_MOUSEHOVER:
         {
             DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
@@ -167,7 +158,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             if (wParam == 'I')
             {
                 ToggleXTKMouse();
-                ToggleImGuiDemoWindowEvent imEvent;
+                ToggleImGuiEvent imEvent;
                 EventBuss::Get().Delegate(imEvent);
             }
             #endif
@@ -181,14 +172,14 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             else keyState = KeyState::KeyRepeat;
             KeyboardEvent ke(keyState, (int)wParam);
             EventBuss::Get().Delegate(ke);
-            return 0;
+            break;
         }
         case WM_KEYUP:
         {
             // key release
             KeyboardEvent ke(KeyState::KeyRelease, (int)wParam);
             EventBuss::Get().Delegate(ke);
-            return 0;
+            break;
         }
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -200,6 +191,7 @@ void RenderWindow::ToggleXTKMouse() noexcept
     if (m_DisableXTKMouse == true)
     {
         DirectX::Mouse::Get().SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+        DirectX::Mouse::Get().SetVisible(false);
     }
     else
     {

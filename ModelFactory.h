@@ -1,8 +1,6 @@
 #pragma once
 #include "DXDebug.h"
 #include <unordered_map>
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"

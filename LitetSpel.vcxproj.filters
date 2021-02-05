@@ -49,10 +49,8 @@
     <ClInclude Include="EventSystem\IEvent.h" />
     <ClInclude Include="EventSystem\IEventListener.h" />
     <ClInclude Include="EventSystem\RenderEvents.h" />
-    <ClInclude Include="EventSystem\KeyboardEvent.h" />
     <ClInclude Include="EventSystem\KeyState.h" />
-    <ClInclude Include="EventSystem\MouseButtenEvent.h" />
-    <ClInclude Include="EventSystem\MouseMoveEvent.h" />
+    <ClInclude Include="EventSystem\UtilityEvents.h" />
     <ClInclude Include="EventSystem\WindowEvents.h" />
     <ClInclude Include="ForwardRenderer.h" />
     <ClInclude Include="GameObject.h" />
@@ -81,10 +79,7 @@
     <ClInclude Include="Resources\PrimitiveTopology.h" />
     <ClInclude Include="Resources\ResourceManager.h" />
     <ClInclude Include="Resources\VertexShader.h" />
-    <ClInclude Include="Sun.h" />
-    <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="vertex.h" />
-    <ClInclude Include="EventSystem\MouseScrollEvent.h" />
-    <ClInclude Include="EventSystem\UtilityEvents.h" />
+    <ClInclude Include="EventSystem\InputEvents.h" />
   </ItemGroup>
 </Project>

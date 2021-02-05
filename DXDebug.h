@@ -2,12 +2,11 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <string>
-
 #include <wrl.h>
 #include <assert.h>
 #include <d3d11.h>
 #include <dxgi.h>
-#include <d3dcompiler.h>	// Will probably be moved (Emil F)
+#include <d3dcompiler.h>
 
 #pragma comment(lib, "user32")
 #pragma comment(lib, "gdi32")

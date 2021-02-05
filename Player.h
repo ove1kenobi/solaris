@@ -1,6 +1,5 @@
 #pragma once
 #define _USE_MATH_DEFINES
-
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <cmath>
@@ -9,9 +8,7 @@
 #include "GameObject.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventBuss.h"
-#include "EventSystem/MouseMoveEvent.h"
-#include "EventSystem/MouseButtenEvent.h"
-#include "EventSystem/KeyboardEvent.h"
+#include "EventSystem/InputEvents.h"
 #include "SpaceShip.h"
 class Player : public IEventListener
 {

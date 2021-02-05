@@ -73,16 +73,12 @@ DirectX::XMFLOAT3 SpaceShip::getCenter() {
 
 void SpaceShip::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
-	deviceContext->IASetVertexBuffers(
-		0u,
-		1u,
-		this->m_model->getVertexBuffer().GetAddressOf(),
-		&this->m_model->getStride(),
-		&this->m_model->getOffset()
-	);
-
-	// Set the buffer.
+	deviceContext->IASetVertexBuffers(0u,
+									  1u,
+									  this->m_model->getVertexBuffer().GetAddressOf(),
+									  &this->m_model->getStride(),
+									  &this->m_model->getOffset());
+	// Set the buffers.
 	deviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
-
 	deviceContext->VSSetConstantBuffers(0, 1, this->m_model->getMatrixBuffer().GetAddressOf());
 }

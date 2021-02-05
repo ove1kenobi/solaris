@@ -4,12 +4,9 @@
 #include <windowsx.h>
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem\WindowEvents.h"
-#include "EventSystem/MouseMoveEvent.h"
-#include "EventSystem/MouseScrollEvent.h"
-#include "EventSystem/MouseButtenEvent.h"
-#include "EventSystem/KeyboardEvent.h"
-#include "DirectXTK/Mouse.h"
+#include "EventSystem/InputEvents.h"
 #include "EventSystem\RenderEvents.h"
+#include "DirectXTK/Mouse.h"
 #include "ImGui\imgui_impl_win32.h"
 
 class RenderWindow : public EventPublisher
