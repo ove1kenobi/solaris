@@ -7,7 +7,7 @@ bool PlayerCamera::init(int screenWidth, int screenHeight) {
 	float FOV = 3.141592654f / this->m_FOVvalue;
 	float screenAspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
 	this->m_distanceFromShip = 300.0f;
-	this->m_sensitivity = 1.0f;
+	this->m_sensitivity = 0.5f;
 	DirectX::XMStoreFloat4x4(&this->m_pMatrix, DirectX::XMMatrixPerspectiveFovLH(FOV, screenAspect, this->m_screenNear, this->m_screenFar));
 	return true;
 }
