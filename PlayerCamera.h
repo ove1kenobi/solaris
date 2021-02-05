@@ -23,8 +23,6 @@ public:
 	bool init(int screenWidth, int screenHeight);
 	//Updates the vMatrix
 	void update(DirectX::XMVECTOR shipCoords);
-	//Move the camera the same amount that the spaceship moved.
-	void move(DirectX::XMVECTOR shipCoordsDiff);
 	//Mouse movement
 	void mouseRot();
 	//Zoom
