@@ -12,12 +12,12 @@
 #include "EventSystem/MouseMoveEvent.h"
 #include "EventSystem/MouseButtenEvent.h"
 #include "EventSystem/KeyboardEvent.h"
-
+#include "SpaceShip.h"
 class Player : public IEventListener
 {
 private:
 	// Model
-	// Ship m_ship
+	SpaceShip* m_ship;
 	PlayerCamera* m_camera;
 
 	bool m_moveForwards, m_moveBackwards;
@@ -41,6 +41,8 @@ public:
 
 	bool Initialize(/*DirectX::XMFLOAT3 position,*/ PlayerCamera* camera);
 	bool update();
+	SpaceShip* getShip();
+
 	void OnEvent(IEvent& event) noexcept;
 };
 

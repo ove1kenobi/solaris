@@ -1,21 +1,21 @@
 #pragma once
 #include "IEvent.h"
 
-class MouseMoveEvent : public IEvent
+class MouseScrollEvent : public IEvent
 {
 private:
 
 public:
-	MouseMoveEvent() noexcept = default;
-	virtual ~MouseMoveEvent() noexcept = default;
+	MouseScrollEvent() noexcept = default;
+	virtual ~MouseScrollEvent() noexcept = default;
 
 	[[nodiscard]] const EventType GetEventType() const noexcept
 	{
-		return EventType::MouseMoveEvent;
+		return EventType::MouseScrollEvent;
 	}
 
 	[[nodiscard]] const std::string GetDebugName() const noexcept
 	{
-		return "MouseMoveEvent";
+		return "MouseScrollEvent";
 	}
 };

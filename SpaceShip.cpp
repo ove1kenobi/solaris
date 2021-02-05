@@ -9,10 +9,20 @@ SpaceShip::SpaceShip()
 		0.0f, 0.0f, 0.03f, 0.0f,
 		0.0f, 0.0f, 100.0f, 1.0f
 	};
+	pi = static_cast<float>(atan(1) * 4);
+	this->m_rotationAngle = pi;
 }
 
 bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
+	DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&this->m_upVector);
+	DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationAxis(up, this->m_rotationAngle);
+	DirectX::XMMATRIX trans = DirectX::XMMatrixTranslation(this->m_center.x, this->m_center.y, this->m_center.z);
+	DirectX::XMMATRIX final = scale * rot * trans;
+	DirectX::XMStoreFloat4x4(&this->m_wMatrix, final);
+	//DirectX::XMStoreFloat4x4(&this->m_wMatrix, DirectX::XMMatrixTranslation(this->m_center.x, this->m_center.y, this->m_center.z));
+
 	//Update the matrixBuffer.
 
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
@@ -38,6 +48,27 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
 	return true;
+}
+
+void SpaceShip::move(DirectX::XMFLOAT4 deltaPos) {
+	this->m_center.x += deltaPos.x;
+	this->m_center.y += deltaPos.y;
+	this->m_center.z += deltaPos.z;
+}
+
+void SpaceShip::rotate(float step) {
+	this->m_rotationAngle -= step;
+	
+	if (this->m_rotationAngle <= -2 * pi) {
+		this->m_rotationAngle += 2 * pi;
+	}
+	else if (this->m_rotationAngle >= 2*pi){
+		this->m_rotationAngle -= 2 * pi;
+	}
+}
+
+DirectX::XMFLOAT3 SpaceShip::getCenter() {
+	return this->m_center;
 }
 
 void SpaceShip::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
