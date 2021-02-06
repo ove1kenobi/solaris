@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "DXCore.h"
 DXCore::DXCore() noexcept
 	: m_pDevice{ nullptr }, 
@@ -14,16 +15,11 @@ DXCore::DXCore() noexcept
 
 }
 
-DXCore::~DXCore() noexcept
-{
-
-}
-
 const bool DXCore::Initialize(const unsigned int& clientWindowWidth, 
 							  const unsigned int& clientWindowHeight, 
 							  const HWND& windowHandle)
 {
-	EventBuss::Get().AddListener(this, EventType::ToggleWireFrameEvent, EventType::WindowResizeEvent);
+	EventBuss::Get().AddListener(this, EventType::ToggleWireFrameEvent);
 
 	UINT flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
 	#if defined(DEBUG) || defined(_DEBUG)
@@ -99,30 +95,46 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 										 &m_pBackBuffer), 
 										 "CreateRenderTargetView");
 
-	D3D11_TEXTURE2D_DESC texture2DDescriptor = {};
-	texture2DDescriptor.Width = clientWindowWidth;
-	texture2DDescriptor.Height = clientWindowHeight;
-	texture2DDescriptor.MipLevels = 1u;
-	texture2DDescriptor.ArraySize = 1u;
-	texture2DDescriptor.Format = DXGI_FORMAT_D32_FLOAT;				//No stencil part used if technique won't be used (Emil F)
-	texture2DDescriptor.SampleDesc.Count = 4u;
-	texture2DDescriptor.SampleDesc.Quality = m_MSAAQuality - 1u;
-	texture2DDescriptor.Usage = D3D11_USAGE_DEFAULT;
-	texture2DDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	texture2DDescriptor.CPUAccessFlags = 0u;
-	texture2DDescriptor.MiscFlags = 0u;
+	D3D11_DEPTH_STENCIL_DESC depthStencilDescriptor = {};
+	depthStencilDescriptor.DepthEnable = true;
+	depthStencilDescriptor.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilDescriptor.DepthFunc = D3D11_COMPARISON_LESS;
+	depthStencilDescriptor.StencilEnable = false;
+	depthStencilDescriptor.StencilReadMask = 0u;
+	depthStencilDescriptor.StencilWriteMask = 0u;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDepthStencilState = nullptr;
+	HR(m_pDevice->CreateDepthStencilState(&depthStencilDescriptor, &pDepthStencilState), "CreateDepthStencilState");
+	m_pDeviceContext->OMSetDepthStencilState(pDepthStencilState.Get(), 1u);
 
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthStencilBuffer = nullptr; //Might need to hold on to as member variable (Emil F)
-	HR(m_pDevice->CreateTexture2D(&texture2DDescriptor, 
+	D3D11_TEXTURE2D_DESC depthStencilTextureDescriptor = {};
+	depthStencilTextureDescriptor.Width = clientWindowWidth;
+	depthStencilTextureDescriptor.Height = clientWindowHeight;
+	depthStencilTextureDescriptor.MipLevels = 1u;
+	depthStencilTextureDescriptor.ArraySize = 1u;
+	depthStencilTextureDescriptor.Format = DXGI_FORMAT_D32_FLOAT;			//No stencil part used if technique won't be used (Emil F)
+	depthStencilTextureDescriptor.SampleDesc.Count = 4u;
+	depthStencilTextureDescriptor.SampleDesc.Quality = m_MSAAQuality - 1u;
+	depthStencilTextureDescriptor.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilTextureDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilTextureDescriptor.CPUAccessFlags = 0u;
+	depthStencilTextureDescriptor.MiscFlags = 0u;
+
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthStencilTexture = nullptr; //Might need to hold on to as member variable (Emil F)
+	HR(m_pDevice->CreateTexture2D(&depthStencilTextureDescriptor,
 								  nullptr, 
-								  &pDepthStencilBuffer), 
+								  &pDepthStencilTexture), 
 								  "CreateTexture2D");
 
-	HR(m_pDevice->CreateDepthStencilView(pDepthStencilBuffer.Get(), 
-										 nullptr, 
+	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDescriptor = {};
+	depthStencilViewDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
+	depthStencilViewDescriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+	depthStencilViewDescriptor.Texture2D.MipSlice = 0u;
+
+	HR(m_pDevice->CreateDepthStencilView(pDepthStencilTexture.Get(), 
+										 &depthStencilViewDescriptor,
 										 &m_pDepthStencilView), 
 										 "CreateDepthStencilView");
-	m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), nullptr);
+	m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
 
 	m_DefaultViewport.TopLeftX = 0.0f;
 	m_DefaultViewport.TopLeftY = 0.0f;
@@ -160,9 +172,6 @@ void DXCore::OnEvent(IEvent& event) noexcept
 	case EventType::ToggleWireFrameEvent:
 			ToggleWireFrame();
 			break;
-
-	case EventType::WindowResizeEvent :
-		break;
 	}
 }
 

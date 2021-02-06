@@ -1,6 +1,4 @@
 #pragma once
-#include <DirectXMath.h>
-#include "DXDebug.h"
 #include "Bloom.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"

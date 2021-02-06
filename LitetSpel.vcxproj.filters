@@ -36,6 +36,8 @@
     <ClCompile Include="Resources\PrimitiveTopology.cpp" />
     <ClCompile Include="Resources\ResourceManager.cpp" />
     <ClCompile Include="Resources\VertexShader.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="DXDebug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -81,5 +83,6 @@
     <ClInclude Include="Resources\VertexShader.h" />
     <ClInclude Include="vertex.h" />
     <ClInclude Include="EventSystem\InputEvents.h" />
+    <ClInclude Include="pch.h" />
   </ItemGroup>
 </Project>

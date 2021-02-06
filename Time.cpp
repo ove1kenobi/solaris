@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Time.h"
 
 Time::t_moment Time::m_loopBegin = Time::t_clock::now();

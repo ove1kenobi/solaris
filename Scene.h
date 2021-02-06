@@ -2,12 +2,9 @@
 #include "CosmicBody.h"
 #include "Player.h"
 #include "Sun.h"
-#include "SpaceShip.h"
 #include "GameObject.h"
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/RenderEvents.h"
-#include <random>
-#include "Time.h"
 #include <imgui.h>
 class Scene : public EventPublisher, IEventListener
 {

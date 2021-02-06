@@ -1,9 +1,5 @@
 #pragma once
-#include <vector>
-#include <DirectXMath.h>
-#include "DXDebug.h"
 #include "vertex.h"
-
 class Model
 {
 private:

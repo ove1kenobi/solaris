@@ -1,3 +1,4 @@
+#include "..\pch.h"
 #include "InputLayout.h"
 
 void InputLayout::Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext)

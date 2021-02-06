@@ -1,15 +1,11 @@
 #pragma once
-#define _USE_MATH_DEFINES
-#include <d3d11.h>
-#include <DirectXMath.h>
-#include <cmath>
 #include "time.h"
 #include "PlayerCamera.h"
 #include "GameObject.h"
+#include "SpaceShip.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventBuss.h"
 #include "EventSystem/InputEvents.h"
-#include "SpaceShip.h"
 class Player : public IEventListener
 {
 private:

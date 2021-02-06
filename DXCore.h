@@ -1,10 +1,14 @@
-//TODO: Move includes to pch (Emil F)
 #pragma once
 #include "DXDebug.h"
 #include "EventSystem\IEventListener.h"
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem\UtilityEvents.h"
 #include "ImGui\imgui_impl_dx11.h"
+
+#pragma comment(lib, "user32")
+#pragma comment(lib, "gdi32")
+#pragma comment(lib, "d3d11")
+#pragma comment(lib, "d3dcompiler")
 
 class DXCore : public IEventListener, EventPublisher
 {
@@ -21,7 +25,7 @@ private:
 	bool			m_WireFrameEnabled;
 public:
 	DXCore() noexcept;
-	virtual ~DXCore() noexcept;
+	virtual ~DXCore() noexcept = default;
 	const bool Initialize(const unsigned int& clientWindowWidth, const unsigned int& clientWindowHeight, const HWND& windowHandle);
 	void OnEvent(IEvent& event) noexcept override;
 	void ToggleWireFrame() noexcept;

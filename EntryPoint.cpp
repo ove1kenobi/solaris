@@ -1,7 +1,5 @@
-//TODO: Move includes from EntryPoint to pch (Emil F) 
-#include <crtdbg.h>
+#include "pch.h"
 #include "Engine.h"
-
 int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPreviousInstance, 
 					 _In_ LPSTR lpCommandLine, _In_ int nCmdShow)
 {

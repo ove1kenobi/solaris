@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "ourMath.h"
 
 float dot(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {

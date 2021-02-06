@@ -1,14 +1,7 @@
+#include "pch.h"
 #include "Sun.h"
-
-Sun::Sun() {
-
-}
-
-Sun::~Sun() {
-
-}
-
-bool Sun::Initialize() {
+bool Sun::Initialize() 
+{
 	//The cosmic body
 	this->init(0.0f, 0.0f, 0.0f, 100.0f, 0.0f, 0.0f);
 	//The light

@@ -1,5 +1,4 @@
 #pragma once
-
 struct vertex_tex
 {
 	DirectX::XMFLOAT3 position;

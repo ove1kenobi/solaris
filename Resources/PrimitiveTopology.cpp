@@ -1,3 +1,4 @@
+#include "..\pch.h"
 #include "PrimitiveTopology.h"
 
 PrimitiveTopology::PrimitiveTopology() noexcept

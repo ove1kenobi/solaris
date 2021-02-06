@@ -1,6 +1,4 @@
 #pragma once
-#include <chrono>
-
 class Time
 {
 	using t_clock = std::chrono::high_resolution_clock;

@@ -2,7 +2,6 @@
 #include "IEvent.h"
 #include "../GameObject.h"
 #include "../Resources/BindIDs.h"
-#include <vector>
 
 class SendRenderObjectsEvent : public IEvent
 {

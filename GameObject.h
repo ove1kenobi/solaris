@@ -1,7 +1,4 @@
 #pragma once
-#include <DirectXMath.h>
-#include <vector>
-#include <math.h>
 #include "Time.h"
 #include "ModelFactory.h"
 

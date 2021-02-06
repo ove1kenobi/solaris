@@ -1,6 +1,4 @@
 #pragma once
-#include <DirectXMath.h>
-#include <cmath>
 
 //Dot product
 float dot(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b);

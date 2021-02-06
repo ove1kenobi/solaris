@@ -1,7 +1,5 @@
 #pragma once
 #include "time.h"
-#include <directxmath.h>
-
 //Orthographic camera.
 //sed as Base class for the PlayerCamera.
 class Camera {

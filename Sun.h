@@ -1,5 +1,4 @@
 #pragma once
-#include <DirectXMath.h>
 #include "CosmicBody.h"
 #include "PointLight.h"
 
@@ -9,8 +8,8 @@ private:
 	//But it also contains a light source
 	PointLight light;
 public:
-	Sun();
-	~Sun();
+	Sun() = default;
+	~Sun() = default;
 	//Uses the CosmicBody init() and light init() to set everything up related to the sun
 	bool Initialize();
 };

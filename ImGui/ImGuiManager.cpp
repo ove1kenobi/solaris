@@ -1,3 +1,4 @@
+#include "..\pch.h"
 #include "ImGuiManager.h"
 ImGuiManager::ImGuiManager() noexcept
 	: m_ShowDemoWindow{ false }

@@ -1,4 +1,5 @@
-﻿#include "Engine.h"
+﻿#include "pch.h"
+#include "Engine.h"
 
 Engine::Engine() noexcept
 	: m_Running{ true }

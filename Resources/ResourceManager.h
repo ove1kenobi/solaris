@@ -8,8 +8,6 @@
 #include "../EventSystem/UtilityEvents.h"
 #include "..\EventSystem\EventBuss.h"
 #include "..\EventSystem\IEventListener.h"
-#include <vector>
-#include <DirectXMath.h>
 class ResourceManager : public IEventListener
 {
 private:

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "RenderWindow.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -47,6 +48,7 @@ RenderWindow::RenderWindow()
     m_mouse = std::make_unique<DirectX::Mouse>();
     m_mouse->SetWindow(m_winHandle);
     m_DisableXTKMouse = false;
+    DirectX::Mouse::Get().SetMode(DirectX::Mouse::MODE_RELATIVE);
 }
 
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -127,16 +129,16 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         #if defined(DEBUG) | defined(_DEBUG)
             if (m_DisableXTKMouse == false)
             {
-                MouseMoveEvent me;
-                EventBuss::Get().Delegate(me);
+               MouseMoveEvent me;
+               EventBuss::Get().Delegate(me);
             }
         #else
             MouseMoveEvent me;
             EventBuss::Get().Delegate(me);
         #endif
-        }
             DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
             break;
+        }
         case WM_MOUSEWHEEL:
         {
             MouseScrollEvent me;
@@ -152,9 +154,11 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             break;
         case WM_MOUSEHOVER:
         {
+            MouseMoveEvent me;
+            EventBuss::Get().Delegate(me);
             DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
-        }
             break;
+        }
         case WM_KEYDOWN:
         {
             // key press
@@ -199,7 +203,7 @@ void RenderWindow::ToggleXTKMouse() noexcept
     if (m_DisableXTKMouse == true)
     {
         DirectX::Mouse::Get().SetMode(DirectX::Mouse::MODE_ABSOLUTE);
-        DirectX::Mouse::Get().SetVisible(false);
+        DirectX::Mouse::Get().SetVisible(true);
     }
     else
     {

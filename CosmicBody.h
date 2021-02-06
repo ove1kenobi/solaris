@@ -1,7 +1,5 @@
 #pragma once
 #include "GameObject.h"
-#include "ourMath.h"
-
 //Represents a planet, moon or asteroid.
 class CosmicBody : public GameObject
 {

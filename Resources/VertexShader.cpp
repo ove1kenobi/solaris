@@ -1,3 +1,4 @@
+#include "..\pch.h"
 #include "VertexShader.h"
 void VertexShader::Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext)
 {

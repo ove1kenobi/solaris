@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "ModelFactory.h"
 
 ModelFactory ModelFactory::m_me;

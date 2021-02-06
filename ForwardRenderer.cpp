@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "ForwardRenderer.h"
 
 ForwardRenderer::ForwardRenderer() noexcept
@@ -10,7 +11,7 @@ ForwardRenderer::ForwardRenderer() noexcept
 //Sets everything up for forward rendering, takes information from the event handler as input
 void ForwardRenderer::BeginFrame()
 {
-	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), 0u, 1.0f, 0u);
+	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 	m_pDeviceContext->ClearRenderTargetView(m_pBackBuffer.Get(), m_Background);
 
 	//Bind minimalistic:

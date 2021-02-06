@@ -2,7 +2,7 @@
 #define LAYOUT_COSMIC 0
 #define LAYOUT_PLAYER 1
 #define LAYOUT_MINIMAL 2
-#include "IBindable.h"
+class IBindable;
 #include "VertexShader.h"
 class InputLayout : public IBindable
 {
