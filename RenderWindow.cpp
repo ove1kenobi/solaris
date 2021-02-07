@@ -45,6 +45,7 @@ RenderWindow::RenderWindow()
                                  nullptr);                                       // Additional application data
     ShowWindow(m_winHandle, SW_SHOWNORMAL);
 
+    //DirectXTK mouse
     m_mouse = std::make_unique<DirectX::Mouse>();
     m_mouse->SetWindow(m_winHandle);
     m_DisableXTKMouse = false;

@@ -23,11 +23,14 @@ public:
 	GameObject() noexcept;
 	~GameObject();
 
+	//Forces all GameObjects (planets, sun, ship) to have an update function and a function to bind their buffers.
 	virtual bool update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
 	virtual void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
+
 	void getWMatrix(DirectX::XMMATRIX& wMatrix);
 	UINT getVertexBufferSize();
 	UINT getIndexBufferSize();
 	[[nodiscard]] const DirectX::XMFLOAT3& GetCenter() const noexcept;
+	//Returns the translation of the object in the world.
 	DirectX::XMFLOAT3 getTransVector();
 };

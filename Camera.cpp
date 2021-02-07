@@ -38,16 +38,14 @@ bool Camera::init(int screenWidth, int screenHeight, float cameraHeight) {
 	//Above the sun.
 	this->setPos(0.0f, cameraHeight, 0.0f);
 	//Look down
-	this->setRot(-90.0f, 0.0f, 0.0f);
+	this->setRot(M_PI, 0.0f, 0.0f); //Might be wrong. Will have to test when implementing minimap.
 
 	//Setting the view matrix. Doing it in init since it will not have to be updated for the static ortho camera.
-	DirectX::XMMATRIX rotMatrixX;
-	float pRad = this->m_pitch * 0.0174532925f; //Pitch in radians.
-
 	//Create the rotation matrix.
-	rotMatrixX = DirectX::XMMatrixRotationX(pRad);
+	DirectX::XMMATRIX rotMatrixX;
+	rotMatrixX = DirectX::XMMatrixRotationX(this->m_pitch);
 
-	//Rotate the two axis that get affected by the pitch change.
+	//Rotate the axis that get affected by the pitch change.
 	this->m_forwardVector = DirectX::XMVector3TransformCoord(this->m_forwardVector, rotMatrixX);
 
 	DirectX::XMStoreFloat4x4(&this->m_vMatrix, DirectX::XMMatrixLookAtLH(this->m_posVector, this->m_forwardVector, this->m_upVector));

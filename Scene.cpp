@@ -33,7 +33,8 @@ void Scene::sendObjects() {
 
 bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	EventBuss::Get().AddListener(this, EventType::AskForRenderObjectsEvent);
-	//Orthographic camera. Over the sun.
+
+	//Orthographic camera. Over the sun. Last parameter is how high above the sun.
 	if (!this->m_orthoCamera.init(screenWidth, screenHeight, 1000)) {
 		//Throw
 		return false;
@@ -45,36 +46,39 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 		return false;
 	}
 
+	//Create the player
 	if (!m_player.Initialize(&m_perspectiveCamera)) {
 		//Throw
 		return false;
 	}
 
 	//Generate sun.
+	
 	Sun *sun = new Sun();
 	if(!sun->Initialize()){
 		//Throw
 		return false;
 	}
-
 	this->m_gameObjects.push_back(sun);
-
-	//Get the factory to create the planets.
-	//this->m_factory = ModelFactory::getInstance();
-
-
 	
-	//Generate planets.
+	
+	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
 	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
 	std::uniform_int_distribution<int> distributionPlanets(30, 50);
 	this->m_numPlanets = distributionPlanets(generator);
 
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
+	//World space coordinates
 	std::uniform_int_distribution<int> distributionX(-5000, 5000);
 	std::uniform_int_distribution<int> distributionY(-5000, 5000);
 	std::uniform_int_distribution<int> distributionZ(-5000, 5000);
-	std::uniform_int_distribution<int> distributionXZRot(-30, 30);
+	//Needs to be radians
+	std::uniform_real_distribution<float> distributionXZRot(-M_PI_2, M_PI_2);
+	//negative rotation direction if 0.
+	std::uniform_int_distribution<int> distributionRotDir(0, 1);
+
+	//Planet in the middle for testing.
 	/*
 	CosmicBody* planetmiddle = new CosmicBody();
 	if (!planetmiddle->init(
@@ -82,7 +86,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 		0,
 		0,
 		50,
-		5,
+		M_PI_2,
 		0
 	))
 	{
@@ -91,6 +95,8 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	}
 	this->m_gameObjects.push_back(planetmiddle);
 	*/
+
+	//Create all the planets using the distributions.
 	for(int i = 0; i < this->m_numPlanets; i++){
 		CosmicBody* planet = new CosmicBody();
 		if(!planet->init(
@@ -99,7 +105,8 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 			static_cast<float>(distributionZ(generator)),
 			static_cast<float>(distributionRadius(generator)),
 			static_cast<float>(distributionXZRot(generator)),
-			static_cast<float>(distributionXZRot(generator))
+			static_cast<float>(distributionXZRot(generator)),
+			static_cast<int>(distributionRotDir(generator))
 			))
 		{
 			//Throw
@@ -107,13 +114,15 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 		}
 		this->m_gameObjects.push_back(planet);
 	}
-
+	
+	//Add the ship to the gameObject vector.
 	this->m_gameObjects.push_back(this->m_player.getShip());
 
 	return true;
 }
 
 bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
+	//Update the player and all the game objects.
 	m_player.update();
 	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
 	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
