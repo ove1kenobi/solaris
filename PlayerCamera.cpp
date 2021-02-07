@@ -1,52 +1,72 @@
+#include "pch.h"
 #include "PlayerCamera.h"
 
-bool PlayerCamera::init(int screenWidth, int screenHeight, float screenNear, float screenFar, float FOVvalue) {
-	float FOV = 3.141592654f / FOVvalue;
+bool PlayerCamera::init(int screenWidth, int screenHeight) {
+	DirectX::Mouse::Get().SetMode(DirectX::Mouse::MODE_RELATIVE);
+	EventBuss::Get().AddListener(this, EventType::MouseMoveEvent, EventType::MouseScrollEvent);
+	this->m_screenFar = 100000.0f;
+	float FOV = 3.141592654f / this->m_FOVvalue;
 	float screenAspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
-
-	DirectX::XMStoreFloat4x4(&this->m_pMatrix, DirectX::XMMatrixPerspectiveFovLH(FOV, screenAspect, screenNear, screenFar));
-	return true;			// TODO: added by Ove due to "missing return value" error
+	this->m_distanceFromShip = 300.0f;
+	this->m_sensitivity = 0.2f;
+	DirectX::XMStoreFloat4x4(&this->m_pMatrix, DirectX::XMMatrixPerspectiveFovLH(FOV, screenAspect, this->m_screenNear, this->m_screenFar));
+	return true;
 }
 
 void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
-	//Lookat is same as forward atm.
-	DirectX::XMVECTOR lookAt = shipCoords;
-	DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	DirectX::XMVECTOR forward = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	DirectX::XMVECTOR right = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	this->m_forwardVector = shipCoords;
+	
+	this->m_posVector = DirectX::XMVectorSetX(this->m_posVector, sinf(this->m_pitch) * sinf(this->m_yaw) * this->m_distanceFromShip);
+	this->m_posVector = DirectX::XMVectorSetY(this->m_posVector, cosf(this->m_pitch) * this->m_distanceFromShip);
+	this->m_posVector = DirectX::XMVectorSetZ(this->m_posVector, -sinf(this->m_pitch) * cosf(this->m_yaw) * this->m_distanceFromShip);
 
-	float rad = 0.0174532925f;
-	float pitch = this->m_pitch * rad;
-	float roll = this->m_roll * rad;
-	float yaw = this->m_yaw * rad;
-
-	//Create the rotation matrices.
-	DirectX::XMMATRIX rotMatrix = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
-	DirectX::XMMATRIX rotMatrixX = DirectX::XMMatrixRotationX(pitch);
-	DirectX::XMMATRIX rotMatrixY = DirectX::XMMatrixRotationY(yaw);
-
-	//Update the cameras vectors.
-	this->m_forwardVector = DirectX::XMVector3TransformCoord(forward, rotMatrixY);
-	this->m_rightVector = DirectX::XMVector3TransformCoord(right, rotMatrixY);
-
-	//Update lookAt
-	lookAt = DirectX::XMVector3TransformCoord(lookAt, rotMatrix);
-	up = DirectX::XMVector3TransformCoord(up, rotMatrix);
-
-	//Oklart om denna behövs
-	lookAt = DirectX::XMVectorAdd(this->m_posVector, lookAt);
-
-	//Update the vMatrix
-	DirectX::XMStoreFloat4x4(&this->m_vMatrix, DirectX::XMMatrixLookAtLH(this->m_posVector, lookAt, up));
+	this->m_posVector = DirectX::XMVectorAdd(this->m_posVector, this->m_forwardVector);
+	DirectX::XMStoreFloat4x4(&this->m_vMatrix, DirectX::XMMatrixLookAtLH(this->m_posVector, this->m_forwardVector, this->m_upVector));
 }
 
-void PlayerCamera::move(DirectX::XMVECTOR shipCoordsDiff) {
-	this->m_posVector = DirectX::XMVectorAdd(shipCoordsDiff, this->m_posVector);
+void PlayerCamera::mouseRot() {
+	auto r = DirectX::Mouse::Get().GetState();
+	float yValue = static_cast<float>(r.y);
+	float xValue = static_cast<float>(r.x);
+	
+	float pi = static_cast<float>((atan(1) * 4));
+
+	this->m_yaw -= xValue * (float)m_time.DeltaTime() / this->m_sensitivity;
+
+	if (this->m_pitch < pi && this->m_pitch > 0.0f)
+		this->m_pitch -= yValue * (float)m_time.DeltaTime() / this->m_sensitivity;
+	if (this->m_pitch >= pi)
+		this->m_pitch = pi - 0.0001f;
+	if (this->m_pitch <= 0.0f)
+		this->m_pitch = 0.0001f;
 }
 
-void PlayerCamera::mouseRot(int mouseX, int mouseY) {
-	if (mouseY < 1000 && mouseY > -1000) {
-		this->m_pitch = mouseY * 0.1f;
+void PlayerCamera::mouseScroll() {
+	int scroll = DirectX::Mouse::Get().GetState().scrollWheelValue;
+	DirectX::Mouse::Get().ResetScrollWheelValue();
+	if(this->m_distanceFromShip < 600.0f && this->m_distanceFromShip > 50.0f)
+		this->m_distanceFromShip -= scroll  / 3;
+	if (this->m_distanceFromShip >= 600.0f)
+		this->m_distanceFromShip = 600.0f - 0.1f;
+	if (this->m_distanceFromShip <= 50.0f)
+		this->m_distanceFromShip = 50.0f + 0.1f;
+}
+
+void PlayerCamera::shipRot(float step) {
+	this->m_yaw +=  step/* * 3 / 4*/;
+}
+
+void PlayerCamera::OnEvent(IEvent& event) noexcept {
+	switch (event.GetEventType()) {
+	case EventType::MouseMoveEvent:
+	{
+		mouseRot();
+		break;
 	}
-	this->m_roll = mouseX * 0.1f;
+	case EventType::MouseScrollEvent:
+	{
+		mouseScroll();
+		break;
+	}
+	}
 }

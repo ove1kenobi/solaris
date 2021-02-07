@@ -1,3 +1,4 @@
+ï»¿#include "pch.h"
 #include "Engine.h"
 
 Engine::Engine() noexcept
@@ -8,10 +9,27 @@ Engine::Engine() noexcept
 
 const bool Engine::Initialize()
 {
+	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
+
+	//DirectX Core
 	if (!m_DXCore.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_Window.GetHandle()))
-	{
 		return false;
-	}
+
+	ImGui_ImplWin32_Init(m_Window.GetHandle());
+	ModelFactory::Get().setDevice(m_DXCore.GetDevice());
+
+	//Forward Renderer:
+	if (!m_ForwardRenderer.Initialize())
+		return false;
+		
+	//Scene
+	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
+		return false;
+	
+	//Resource Manager
+	if (!m_ResourceManager.Initialize())
+		return false;
+
 	return true;
 }
 
@@ -19,20 +37,13 @@ void Engine::Run()
 {
 	while (m_Running)
 	{
+		m_imguiManager.BeginFrame();
 		MSG message = {};
 		while (PeekMessageA(&message, nullptr, 0u, 0u, PM_REMOVE))
 		{
 			TranslateMessage(&message);
-			DispatchMessageA(&message);
-			if (message.message == WM_QUIT)
-			{
-				m_Running = false;			//Could use future event system to stop running as an event instead (Emil F);	
-			}					
+			DispatchMessageA(&message);				
 		}
-
-		//Here we will empty our own event queue:
-		/*EventHandler.ProcessEvents() or something */
-
 		//Regular Update:
 		Update();
 
@@ -41,23 +52,25 @@ void Engine::Run()
 	}
 }
 
+void Engine::OnEvent(IEvent& event) noexcept
+{
+	switch (event.GetEventType())
+	{
+	case EventType::WindowCloseEvent:
+		m_Running = false;
+		break;
+	}
+}
+
 void Engine::Update()
 {
 	m_gameTime.Update();
+	m_scene.update(m_DXCore.GetDeviceContext());
 }
 
 void Engine::Render()
 {
-	/*m_ForwardRenderer.BeginFrame() exempelvis */ //Will set up everything and ready rendering pass.
-	/*m_ForwardRenderer.Submit(Ett gäng med cullade modeller...) exempelvis*/
-	/*m_ForwardRenderer.EndFrame() exempelvis */
-
-	//Annat tankesätt än ovan är att här bara köra m_ForwardRenderer.RenderFrame() 
-	//och låta ovan funktioner vara privata till bara m_ForwardRenderer.
-	//this->m_ForwardRenderer.RenderFrame(this->m_DXCore.GetDeviceContext().Get());
-	//Followed by 2D-render...
-
-
-	//Followed by presentation of everything (backbuffer):
-	//m_DXCore.GetSwapChain()->Present(0, 0);
+	m_ForwardRenderer.RenderFrame();
+	m_imguiManager.Render();
+	HR_A(m_DXCore.GetSwapChain()->Present(0u, 0u), "Present");
 }

@@ -1,29 +1,31 @@
 #pragma once
 #include "CosmicBody.h"
-#include "PlayerCamera.h"
-//#include "ModelFactory.h"
-//#include "Sun.h"
-//#include "Player.h"
+#include "Player.h"
+#include "Sun.h"
 #include "GameObject.h"
-#include <random>
-
-class Scene
+#include "EventSystem/EventPublisher.h"
+#include "EventSystem/RenderEvents.h"
+#include <imgui.h>
+class Scene : public EventPublisher, IEventListener
 {
 private:
 	//GameObjects include planets, moons, asteroids and the sun.
-	std::vector<GameObject*> m_gameObjects;
 	int m_numPlanets;
-
 	Camera m_orthoCamera;
-	PlayerCamera m_perspectiveCamera;
-
-	//Player m_player;
+	Player m_player;
 
 	//ModelFactory m_factory;
 public:
 	Scene() noexcept;
-	~Scene() = default;
+	~Scene();
 
-	bool init(unsigned int screenWidth, unsigned int screenHeight, float screenNear, float screenFar, float FOVvalue);
-	bool update();
+	std::vector<GameObject*> m_gameObjects;
+
+	bool init(unsigned int screenWidth, unsigned int screenHeight);
+	bool update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext);
+
+	void OnEvent(IEvent& event) noexcept;
+	void sendObjects();
+
+	PlayerCamera m_perspectiveCamera;
 };

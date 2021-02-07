@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "DXCore.h"
 DXCore::DXCore() noexcept
 	: m_pDevice{ nullptr }, 
@@ -5,8 +6,11 @@ DXCore::DXCore() noexcept
 	  m_pSwapChain{ nullptr },
 	  m_pBackBuffer{ nullptr },
 	  m_pDepthStencilView{ nullptr },
+	  m_pRasterizerStateFill{ nullptr},
+	  m_pRasterizerStateWireFrame{ nullptr },
 	  m_DefaultViewport { 0 },
-	  m_MSAAQuality{ 4u }
+	  m_MSAAQuality{ 4u },
+	  m_WireFrameEnabled{ false }
 {
 
 }
@@ -15,6 +19,8 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 							  const unsigned int& clientWindowHeight, 
 							  const HWND& windowHandle)
 {
+	EventBuss::Get().AddListener(this, EventType::ToggleWireFrameEvent);
+
 	UINT flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
 	#if defined(DEBUG) || defined(_DEBUG)
 		flags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -46,7 +52,7 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 	swapChainDescriptor.BufferDesc.Height = clientWindowHeight;
 	swapChainDescriptor.BufferDesc.RefreshRate.Numerator = 60u;								//TODO: Get actual monitor refreshrate (Emil F)
 	swapChainDescriptor.BufferDesc.RefreshRate.Denominator = 1u;							//*-*
-	swapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;						//TODO: Research whether modern monitors support more than 24-bit color.
+	swapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDescriptor.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	swapChainDescriptor.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 	swapChainDescriptor.SampleDesc.Count = 4u;
@@ -89,27 +95,43 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 										 &m_pBackBuffer), 
 										 "CreateRenderTargetView");
 
-	D3D11_TEXTURE2D_DESC texture2DDescriptor = {};
-	texture2DDescriptor.Width = clientWindowWidth;
-	texture2DDescriptor.Height = clientWindowHeight;
-	texture2DDescriptor.MipLevels = 1u;
-	texture2DDescriptor.ArraySize = 1u;
-	texture2DDescriptor.Format = DXGI_FORMAT_D32_FLOAT;				//No stencil part used if technique won't be used (Emil F)
-	texture2DDescriptor.SampleDesc.Count = 4u;
-	texture2DDescriptor.SampleDesc.Quality = m_MSAAQuality - 1u;
-	texture2DDescriptor.Usage = D3D11_USAGE_DEFAULT;
-	texture2DDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	texture2DDescriptor.CPUAccessFlags = 0u;
-	texture2DDescriptor.MiscFlags = 0u;
+	D3D11_DEPTH_STENCIL_DESC depthStencilDescriptor = {};
+	depthStencilDescriptor.DepthEnable = true;
+	depthStencilDescriptor.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilDescriptor.DepthFunc = D3D11_COMPARISON_LESS;
+	depthStencilDescriptor.StencilEnable = false;
+	depthStencilDescriptor.StencilReadMask = 0u;
+	depthStencilDescriptor.StencilWriteMask = 0u;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDepthStencilState = nullptr;
+	HR(m_pDevice->CreateDepthStencilState(&depthStencilDescriptor, &pDepthStencilState), "CreateDepthStencilState");
+	m_pDeviceContext->OMSetDepthStencilState(pDepthStencilState.Get(), 1u);
 
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthStencilBuffer = nullptr; //Might need to hold on to as member variable (Emil F)
-	HR(m_pDevice->CreateTexture2D(&texture2DDescriptor, 
+	D3D11_TEXTURE2D_DESC depthStencilTextureDescriptor = {};
+	depthStencilTextureDescriptor.Width = clientWindowWidth;
+	depthStencilTextureDescriptor.Height = clientWindowHeight;
+	depthStencilTextureDescriptor.MipLevels = 1u;
+	depthStencilTextureDescriptor.ArraySize = 1u;
+	depthStencilTextureDescriptor.Format = DXGI_FORMAT_D32_FLOAT;			//No stencil part used if technique won't be used (Emil F)
+	depthStencilTextureDescriptor.SampleDesc.Count = 4u;
+	depthStencilTextureDescriptor.SampleDesc.Quality = m_MSAAQuality - 1u;
+	depthStencilTextureDescriptor.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilTextureDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilTextureDescriptor.CPUAccessFlags = 0u;
+	depthStencilTextureDescriptor.MiscFlags = 0u;
+
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthStencilTexture = nullptr; //Might need to hold on to as member variable (Emil F)
+	HR(m_pDevice->CreateTexture2D(&depthStencilTextureDescriptor,
 								  nullptr, 
-								  &pDepthStencilBuffer), 
+								  &pDepthStencilTexture), 
 								  "CreateTexture2D");
 
-	HR(m_pDevice->CreateDepthStencilView(pDepthStencilBuffer.Get(), 
-										 nullptr, 
+	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDescriptor = {};
+	depthStencilViewDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
+	depthStencilViewDescriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+	depthStencilViewDescriptor.Texture2D.MipSlice = 0u;
+
+	HR(m_pDevice->CreateDepthStencilView(pDepthStencilTexture.Get(), 
+										 &depthStencilViewDescriptor,
 										 &m_pDepthStencilView), 
 										 "CreateDepthStencilView");
 	m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
@@ -121,7 +143,56 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 	m_DefaultViewport.MinDepth = 0.0f;
 	m_DefaultViewport.MaxDepth = 1.0f;
 	m_pDeviceContext->RSSetViewports(1u, &m_DefaultViewport);
+
+	D3D11_RASTERIZER_DESC rasterizerDesc = {};
+	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	rasterizerDesc.CullMode = D3D11_CULL_BACK;
+	rasterizerDesc.DepthBias = 0u;
+	rasterizerDesc.DepthBiasClamp = 0.0f;
+	rasterizerDesc.SlopeScaledDepthBias = 0.0f;
+	rasterizerDesc.DepthClipEnable = true;
+	rasterizerDesc.ScissorEnable = false;
+	rasterizerDesc.MultisampleEnable = true;
+	rasterizerDesc.AntialiasedLineEnable = false;
+	HR(m_pDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerStateFill), "CreateRasterizerState");
+	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+	HR(m_pDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerStateWireFrame), "CreateRasterizerState");
+	m_pDeviceContext->RSSetState(m_pRasterizerStateFill.Get());
+
+	ImGui_ImplDX11_Init(m_pDevice.Get(), m_pDeviceContext.Get());
+
+	DelegateDXHandles();
 	return true;
+}
+
+void DXCore::OnEvent(IEvent& event) noexcept
+{
+	switch (event.GetEventType())
+	{
+	case EventType::ToggleWireFrameEvent:
+			ToggleWireFrame();
+			break;
+	}
+}
+
+void DXCore::ToggleWireFrame() noexcept
+{
+	if (m_WireFrameEnabled)
+	{
+		m_pDeviceContext->RSSetState(m_pRasterizerStateFill.Get());
+		m_WireFrameEnabled = false;
+	}
+	else
+	{
+		m_pDeviceContext->RSSetState(m_pRasterizerStateWireFrame.Get());
+		m_WireFrameEnabled = true;
+	}
+}
+
+void DXCore::DelegateDXHandles() noexcept
+{
+	DelegateDXEvent event(m_pDevice, m_pDeviceContext, m_pBackBuffer, m_pDepthStencilView);
+	EventBuss::Get().Delegate(event);
 }
 
 const Microsoft::WRL::ComPtr<ID3D11Device>& DXCore::GetDevice() const noexcept
@@ -137,4 +208,14 @@ const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& DXCore::GetDeviceContext() co
 const Microsoft::WRL::ComPtr<IDXGISwapChain>& DXCore::GetSwapChain() const noexcept
 {
 	return m_pSwapChain;
+}
+
+const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& DXCore::GetBackBuffer() const noexcept
+{
+	return m_pBackBuffer;
+}
+
+const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& DXCore::GetDepthStencilView() const noexcept
+{
+	return m_pDepthStencilView;
 }

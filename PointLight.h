@@ -3,12 +3,14 @@
 
 class PointLight : public Light {
 private:
-	DirectX::XMFLOAT3 position;
-	DirectX::XMFLOAT3 attenuation;
-	float range;
+	DirectX::XMFLOAT3 m_Position;
+	DirectX::XMFLOAT3 m_Attenuation;
+	float m_Range;
 public:
-	PointLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 attenuation, float range, DirectX::XMFLOAT4 ambient, DirectX::XMFLOAT4 diffuse);
+	PointLight();
 	~PointLight();
+	//bool Init();
+	bool Init(DirectX::XMVECTOR ambient, DirectX::XMVECTOR diffuse, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 attenuation, float range);
 	//For incorporation with the shaders
 	DirectX::XMFLOAT3 GetPosition();
 	DirectX::XMFLOAT3 GetAttenuation();

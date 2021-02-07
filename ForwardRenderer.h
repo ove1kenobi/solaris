@@ -1,20 +1,27 @@
 #pragma once
-#include <d3d11.h>
-//#include <d3dcompiler.h>
-#include <DirectXMath.h>
 #include "Bloom.h"
+#include "EventSystem/IEventListener.h"
+#include "EventSystem/EventPublisher.h"
+#include "EventSystem/RenderEvents.h"
+#include "EventSystem\UtilityEvents.h"
 
-class ForwardRenderer {
+class ForwardRenderer : public EventPublisher, IEventListener 
+{
 private:
-	DirectX::XMFLOAT4 m_Background;
-	Bloom m_Bloom;
-	//std::vector<GameObjects> m_GameObjects;
-	ID3D11RenderTargetView* BeginFrame(ID3D11RenderTargetView* renderTarget);
-	ID3D11RenderTargetView* EndFrame(ID3D11RenderTargetView* renderTarget);
+	//Color of the screen
+	FLOAT m_Background[4];
+	std::vector<GameObject*>* m_gameObjects;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pBackBuffer;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
+private:
+	void BeginFrame();
+	void EndFrame();
+	void UpdateDXHandlers(IEvent& event) noexcept;
 public:
 	ForwardRenderer() noexcept;
 	virtual ~ForwardRenderer() = default;
-
-	void SubmitObject();
-	ID3D11RenderTargetView* RenderFrame(ID3D11RenderTargetView* renderTarget);
+	[[nodiscard]] const bool Initialize() noexcept;
+	ID3D11RenderTargetView* RenderFrame();
+	void OnEvent(IEvent& event) noexcept;
 };

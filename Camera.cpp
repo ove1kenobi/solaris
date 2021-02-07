@@ -1,25 +1,27 @@
+#include "pch.h"
 #include "Camera.h"
 
 Camera::Camera() noexcept
-	:	m_pitch{ 0 },
-		m_roll{ 0 },
-		m_yaw{ 0 },
-		m_posVector{ DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f) },
-		m_rightVector{ DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f) },
-		m_upVector{ DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f) },
-		m_forwardVector{ DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f) },
-		m_vMatrix{
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 0
-		},
-		m_pMatrix{
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 0
-		}
+	: m_pitch{ 0 },
+	m_roll{ 0 },
+	m_yaw{ 0 },
+	m_posVector{ DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f) },
+	m_rightVector{ DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f) },
+	m_upVector{ DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f) },
+	m_forwardVector{ DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f) },
+	m_vMatrix{
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0
+	},
+	m_pMatrix{
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0
+	},
+	m_screenFar{ 0 }
 {
 	
 }
@@ -29,8 +31,9 @@ Camera::~Camera() {
 }
 
 //Init for an orthographic camera.
-bool Camera::init(int screenWidth, int screenHeight, float screenNear, float screenFar, float cameraHeight) {
-	DirectX::XMStoreFloat4x4(&this->m_pMatrix, DirectX::XMMatrixOrthographicLH(static_cast<float>(screenWidth), static_cast<float>(screenHeight), screenNear, screenFar));
+bool Camera::init(int screenWidth, int screenHeight, float cameraHeight) {
+	this->m_screenFar = 10000.0f;
+	DirectX::XMStoreFloat4x4(&this->m_pMatrix, DirectX::XMMatrixOrthographicLH(static_cast<float>(screenWidth), static_cast<float>(screenHeight), this->m_screenNear, this->m_screenFar));
 
 	//Above the sun.
 	this->setPos(0.0f, cameraHeight, 0.0f);
@@ -74,10 +77,10 @@ DirectX::XMFLOAT3 Camera::getRot() {
 	return DirectX::XMFLOAT3(this->m_pitch, this->m_roll, this->m_yaw);
 }
 
-void Camera::getVMatrix(DirectX::XMMATRIX& vMatrix) {
-	vMatrix = DirectX::XMLoadFloat4x4(&this->m_vMatrix);
+DirectX::XMMATRIX Camera::getVMatrix() {
+	return DirectX::XMLoadFloat4x4(&this->m_vMatrix);
 }
 
-void Camera::getPMatrix(DirectX::XMMATRIX& pMatrix) {
-	pMatrix = DirectX::XMLoadFloat4x4(&this->m_pMatrix);
+DirectX::XMMATRIX Camera::getPMatrix() {
+	return DirectX::XMLoadFloat4x4(&this->m_pMatrix);
 }

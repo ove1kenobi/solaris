@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Scene.h"
 
 Scene::Scene() noexcept
@@ -6,62 +7,129 @@ Scene::Scene() noexcept
 
 }
 
-bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, float screenNear, float screenFar, float FOVvalue) {
-	//Orthographic camera. Over the sun.
-	Camera orthoCamera;
-	this->m_orthoCamera = orthoCamera;
-	if (!this->m_orthoCamera.init(screenWidth, screenHeight, screenNear, screenFar, FOVvalue)) {
+Scene::~Scene() {
+	for (auto r : this->m_gameObjects) {
+		delete r;
+	}
+}
 
+//All events that Scene are listening to.
+void Scene::OnEvent(IEvent& event) noexcept {
+	switch (event.GetEventType()) {
+		case EventType::AskForRenderObjectsEvent:
+			sendObjects();
+			break;
+
+		default:
+			break;
+	}
+}
+
+//Send gameObjects for rendering after being asked.
+void Scene::sendObjects() {
+	SendRenderObjectsEvent event(&this->m_gameObjects);
+	EventBuss::Get().Delegate(event);
+}
+
+bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
+	EventBuss::Get().AddListener(this, EventType::AskForRenderObjectsEvent);
+	//Orthographic camera. Over the sun.
+	if (!this->m_orthoCamera.init(screenWidth, screenHeight, 1000)) {
+		//Throw
+		return false;
 	}
 
 	//Perspective Camera. Bound to player.
-	PlayerCamera playerCamera;
-	this->m_perspectiveCamera = playerCamera;
-	if (!this->m_perspectiveCamera.init(screenWidth, screenHeight, screenNear, screenFar, FOVvalue)) {
+	if (!this->m_perspectiveCamera.init(screenWidth, screenHeight)) {
 		//Throw
-		return 0;
+		return false;
+	}
+
+	if (!m_player.Initialize(&m_perspectiveCamera)) {
+		//Throw
+		return false;
 	}
 
 	//Generate sun.
-	/*
-	Sun sun;
-	if(!sun.init()){
+	Sun *sun = new Sun();
+	if(!sun->Initialize()){
 		//Throw
-		return -1;
+		return false;
 	}
 
 	this->m_gameObjects.push_back(sun);
-	*/
 
 	//Get the factory to create the planets.
 	//this->m_factory = ModelFactory::getInstance();
 
 
-	//Behöver ändras pga factory senare.
+	
 	//Generate planets.
-	std::default_random_engine generator;
-	std::uniform_int_distribution<int> distributionPlanets(12, 15);
+	using t_clock = std::chrono::high_resolution_clock;
+	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
+	std::uniform_int_distribution<int> distributionPlanets(30, 50);
 	this->m_numPlanets = distributionPlanets(generator);
-	std::uniform_int_distribution<int> distributionRadius(100, 500);
-	
-	for(int i = 0; i < this->m_numPlanets; i++){
-		CosmicBody planet;
-		if(!planet.init(static_cast<float>(i * 1000), 0, 0, static_cast<float>(distributionRadius(generator)))){
-			//Throw
-			return 0;
-		}
-		this->m_gameObjects.push_back(&planet);
-	}
-	
 
-	return 1;
+	std::uniform_int_distribution<int> distributionRadius(100, 500);
+	std::uniform_int_distribution<int> distributionX(-5000, 5000);
+	std::uniform_int_distribution<int> distributionY(-5000, 5000);
+	std::uniform_int_distribution<int> distributionZ(-5000, 5000);
+	std::uniform_int_distribution<int> distributionXZRot(-30, 30);
+	/*
+	CosmicBody* planetmiddle = new CosmicBody();
+	if (!planetmiddle->init(
+		0,
+		0,
+		0,
+		50,
+		5,
+		0
+	))
+	{
+		//Throw
+		return false;
+	}
+	this->m_gameObjects.push_back(planetmiddle);
+	*/
+	for(int i = 0; i < this->m_numPlanets; i++){
+		CosmicBody* planet = new CosmicBody();
+		if(!planet->init(
+			static_cast<float>(distributionX(generator)),
+			static_cast<float>(distributionY(generator)),
+			static_cast<float>(distributionZ(generator)),
+			static_cast<float>(distributionRadius(generator)),
+			static_cast<float>(distributionXZRot(generator)),
+			static_cast<float>(distributionXZRot(generator))
+			))
+		{
+			//Throw
+			return false;
+		}
+		this->m_gameObjects.push_back(planet);
+	}
+
+	this->m_gameObjects.push_back(this->m_player.getShip());
+
+	return true;
 }
 
-bool Scene::update() {
-	/*
+bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
+	m_player.update();
+	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
+	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
+
 	for (auto r : this->m_gameObjects) {
-		r.update();
+		r->update(vMatrix, pMatrix, deviceContext);
 	}
-	*/
+#if defined(DEBUG) | defined(_DEBUG)
+	ImGui::Begin("Game Objects");
+	for (unsigned int i{ 0u }; i < m_gameObjects.size(); i++)
+	{
+		ImGui::Text("Game Object #%d", i + 1);
+		ImGui::Text("Center: (%.0f, %.0f, %.0f)", m_gameObjects[i]->GetCenter().x, m_gameObjects[i]->GetCenter().y, m_gameObjects[i]->GetCenter().z);
+	}
+	ImGui::End();
+#endif
+	//Cull Objects HERE at the end or as response to AskForObjectsEvent? (Emil F)
 	return 1;
 }

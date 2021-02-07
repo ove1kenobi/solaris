@@ -1,13 +1,13 @@
 #pragma once
-#include <DirectXMath.h>
 
 class Light {
-private:
+protected:
 	DirectX::XMVECTOR m_Ambient;
 	DirectX::XMVECTOR m_Diffuse;
 public:
-	Light(DirectX::XMVECTOR ambient, DirectX::XMVECTOR diffuse);
+	Light();
 	~Light();
+	virtual bool Init(DirectX::XMVECTOR m_Ambient, DirectX::XMVECTOR m_Diffuse);
 	//For incorporation with the shaders
 	DirectX::XMVECTOR GetAmbient();
 	DirectX::XMVECTOR GetDiffuse();

@@ -1,7 +1,5 @@
 #pragma once
-
-#include <directxmath.h>
-
+#include "time.h"
 //Orthographic camera.
 //sed as Base class for the PlayerCamera.
 class Camera {
@@ -18,12 +16,16 @@ protected:
 	//Orientational vectors
 	DirectX::XMVECTOR m_forwardVector, m_upVector, m_rightVector;
 
+	float m_screenNear = 0.1f;
+	float m_screenFar;
+	
+	Time m_time;
 public:
 	Camera() noexcept;
 	~Camera();
 
 	//Initializes the pMatrix & vMatrix of the orthographic camera.
-	virtual bool init(int screenWidth, int screenHeight, float screenNear, float screenFar, float cameraHeight);
+	virtual bool init(int screenWidth, int screenHeight, float cameraHeight);
 
 	//Changes the position of the camera.
 	void setPos(float x, float y, float z);
@@ -36,6 +38,6 @@ public:
 	DirectX::XMFLOAT3 getRot();
 
 	//Send in the view & projection matrices that you want to put the cameras matrices in.
-	void getVMatrix(DirectX::XMMATRIX& vMatrix);
-	void getPMatrix(DirectX::XMMATRIX& pMatrix);
+	DirectX::XMMATRIX getVMatrix();
+	DirectX::XMMATRIX getPMatrix();
 };
