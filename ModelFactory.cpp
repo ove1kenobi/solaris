@@ -8,8 +8,9 @@ ModelFactory& ModelFactory::Get() noexcept
 	return m_me;
 }
 
-void ModelFactory::setDevice(Microsoft::WRL::ComPtr<ID3D11Device> device) {
+void ModelFactory::setDeviceAndContext(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext) {
 	this->m_device = device;
+	this->m_deviceContext = deviceContext;
 }
 
 Model* ModelFactory::GetModel(std::string filePath)
@@ -115,9 +116,11 @@ Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
 	std::vector<int> indices;
 	createSphere(r, vertexPositionValues, indices);
 
+	vertexPositionValues = createHeightOffset(vertexPositionValues.size(), static_cast<void*>(vertexPositionValues.data()));
+
 	//Convert the data to vertex_col.
 	std::vector<vertex_col> vertices;
-	for (unsigned int i = 0; i < vertexPositionValues.size(); i += 3) {
+	for (unsigned int i = 0; i < vertexPositionValues.size(); i += 4) {
 		vertex_col newVertex;
 		newVertex.position.x = vertexPositionValues[i];
 		newVertex.position.y = vertexPositionValues[i + 1];
@@ -198,7 +201,7 @@ void ModelFactory::createSphere(float r, std::vector<float> &vertexBuffer, std::
 	};
 
 	//Calculate the number of divisions that are to be made of each edge. 100 easily changable.
-	unsigned int divisions = static_cast<int>(std::ceil(r / 10));
+	unsigned int divisions = static_cast<int>(std::ceil(r / 5));
 	//Number of vertices on 1 face.
 	unsigned int vertsPerTriangle = ((divisions + 3) * (divisions + 3) - (divisions + 3)) / 2;
 	//Number of triangles on 1 face.
@@ -244,6 +247,7 @@ void ModelFactory::createSphere(float r, std::vector<float> &vertexBuffer, std::
 		vertexBuffer.push_back(vertices[i].x);
 		vertexBuffer.push_back(vertices[i].y);
 		vertexBuffer.push_back(vertices[i].z);
+		vertexBuffer.push_back(0.0f); //Trash value for compute shader
 	}
 
 	indexBuffer = triangles;
@@ -341,6 +345,129 @@ void ModelFactory::createTriangleFace(
 	}
 }
 
+std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data)
+{
+	ID3D11Buffer* srcDataGPUBuffer;
+	ID3D11Buffer* destDataGPUBuffer;
+	ID3D11Buffer* copyToBuffer;
+	ID3D11ShaderResourceView* srcDataGPUBufferView;
+	ID3D11UnorderedAccessView* destDataGPUBufferView;
+
+	//SOURCE
+	// First we create a buffer in GPU memory
+	D3D11_BUFFER_DESC descGPUBuffer;
+	ZeroMemory(&descGPUBuffer, sizeof(descGPUBuffer));
+	descGPUBuffer.BindFlags = D3D11_BIND_UNORDERED_ACCESS |
+		D3D11_BIND_SHADER_RESOURCE;
+	descGPUBuffer.ByteWidth = sizeof(float) * static_cast<UINT>(size);
+	descGPUBuffer.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	descGPUBuffer.StructureByteStride = 16;    // We assume the data is in the
+											  // RGB format, 6 bits per chan
+
+	D3D11_SUBRESOURCE_DATA InitData;
+	InitData.pSysMem = data;
+	HR_X(this->m_device->CreateBuffer(&descGPUBuffer, &InitData, &srcDataGPUBuffer), "CreateBuffer");
+
+	// Now we create a view on the resource. DX11 requires you to send the data
+	// to shaders using a "shader view"
+	D3D11_BUFFER_DESC descBuf;
+	ZeroMemory(&descBuf, sizeof(descBuf));
+	srcDataGPUBuffer->GetDesc(&descBuf);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC descView;
+	ZeroMemory(&descView, sizeof(descView));
+	descView.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
+	descView.BufferEx.FirstElement = 0;
+
+	descView.Format = DXGI_FORMAT_UNKNOWN;
+	descView.BufferEx.NumElements = descBuf.ByteWidth / descBuf.StructureByteStride;
+
+	HR_X(m_device->CreateShaderResourceView(srcDataGPUBuffer, &descView, &srcDataGPUBufferView), "CreateShaderResourceView");
+
+	//DEST
+	//------------------------------------------------------------------------------------------------------------------------
+
+	// The compute shader will need to output to some buffer so here 
+	// we create a GPU buffer for that.
+	D3D11_BUFFER_DESC descGPUBufferUAV;
+	ZeroMemory(&descGPUBufferUAV, sizeof(descGPUBufferUAV));
+	descGPUBufferUAV.BindFlags = D3D11_BIND_UNORDERED_ACCESS |
+		D3D11_BIND_SHADER_RESOURCE;
+	descGPUBufferUAV.ByteWidth = sizeof(float) * static_cast<UINT>(size);
+	descGPUBufferUAV.Usage = D3D11_USAGE_DEFAULT;
+	descGPUBufferUAV.CPUAccessFlags = 0;
+	descGPUBufferUAV.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	descGPUBufferUAV.StructureByteStride = 16;    // We assume the output data is 
+	// in the RGB format, 6 bits per channel
+
+	HR_X(m_device->CreateBuffer(&descGPUBufferUAV, NULL,
+		&destDataGPUBuffer), "CreateBuffer");
+
+	// The view we need for the output is an unordered access view. 
+	// This is to allow the compute shader to write anywhere in the buffer.
+	D3D11_BUFFER_DESC descBufUAV;
+	ZeroMemory(&descBufUAV, sizeof(descBufUAV));
+	destDataGPUBuffer->GetDesc(&descBufUAV);
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC descViewUAV;
+	ZeroMemory(&descViewUAV, sizeof(descViewUAV));
+	descViewUAV.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+	descViewUAV.Buffer.FirstElement = 0;
+
+	// Format must be must be DXGI_FORMAT_UNKNOWN, when creating 
+	// a View of a Structured Buffer
+	descViewUAV.Format = DXGI_FORMAT_UNKNOWN;
+	descViewUAV.Buffer.NumElements = descBufUAV.ByteWidth / descBufUAV.StructureByteStride;
+
+	HR_X(m_device->CreateUnorderedAccessView(destDataGPUBuffer,
+		&descViewUAV, &destDataGPUBufferView), "CreateUnorderedAccessView");
+
+	//Set everything
+	//------------------------------------------------------------------------------------
+
+	m_deviceContext->CSSetShaderResources(0, 1, &srcDataGPUBufferView);
+	m_deviceContext->CSSetUnorderedAccessViews(0, 1, &destDataGPUBufferView, NULL);
+	m_deviceContext->Dispatch(size, 1u, 1u);
+
+	ID3D11ShaderResourceView* nullSRV[] = { NULL };
+	m_deviceContext->CSSetShaderResources(0, 1, nullSRV);
+	ID3D11UnorderedAccessView* nullUAV[] = { NULL };
+	m_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
+
+	//Copy from dest to readable buffer.
+	//------------------------------------------------------------------------------------
+
+	//Create readable buffer
+	D3D11_BUFFER_DESC copyToBufferDesc;
+	ZeroMemory(&copyToBufferDesc, sizeof(copyToBufferDesc));
+	copyToBufferDesc.BindFlags = 0;
+	copyToBufferDesc.ByteWidth = sizeof(float) * static_cast<UINT>(size);
+	copyToBufferDesc.Usage = D3D11_USAGE_STAGING;
+	copyToBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	copyToBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	copyToBufferDesc.StructureByteStride = 16;    // We assume the output data is 
+	// in the RGB format, 6 bits per channel
+
+	HR_X(m_device->CreateBuffer(&copyToBufferDesc, NULL,
+		&copyToBuffer), "CreateBuffer");
+
+	m_deviceContext->CopyResource(copyToBuffer, destDataGPUBuffer);
+
+	D3D11_MAPPED_SUBRESOURCE doneVertices;
+	m_deviceContext->Map(copyToBuffer, 0, D3D11_MAP_READ, 0, &doneVertices);
+
+	float* doneData = (float*)doneVertices.pData;
+	std::vector<float> donePositionValues;
+	for (size_t i = 0; i < size; i++) {
+		donePositionValues.push_back(*doneData);
+		doneData++;
+	}
+
+	m_deviceContext->Unmap(copyToBuffer, 0);
+
+	return donePositionValues;
+}
+
 void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std::vector<int>& indices, Model* model) {
 	model->setStride(stride);
 	model->setOffset(0u);
@@ -386,4 +513,10 @@ void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std
 									  nullptr, 
 									  &model->getMatrixBuffer()), 
 									  "CreateBuffer");
+}
+
+
+void ModelFactory::PreparePlanetDisplacement() {
+	BindIDEvent me(BindID::ID_PlanetHeight);
+	EventBuss::Get().Delegate(me);
 }

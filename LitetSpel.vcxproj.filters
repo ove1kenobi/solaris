@@ -3,6 +3,7 @@
   <ItemGroup>
     <FxCompile Include="PixelShader_Minimalistic.hlsl" />
     <FxCompile Include="VertexShader_Minimalistic.hlsl" />
+    <FxCompile Include="ComputeShader_Planet.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bloom.cpp" />
@@ -38,6 +39,7 @@
     <ClCompile Include="Resources\VertexShader.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="DXDebug.cpp" />
+    <ClCompile Include="Resources\ComputeShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -84,5 +86,9 @@
     <ClInclude Include="vertex.h" />
     <ClInclude Include="EventSystem\InputEvents.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Resources\ComputeShader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SNoise.hlsli" />
   </ItemGroup>
 </Project>

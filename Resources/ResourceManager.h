@@ -2,6 +2,7 @@
 #include "IBindable.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "ComputeShader.h"
 #include "PrimitiveTopology.h"
 #include "InputLayout.h"
 #include "../EventSystem/RenderEvents.h"
@@ -15,6 +16,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
 	VertexShader m_VertexShaderMinimal;
 	PixelShader m_PixelShaderMinimal;
+	ComputeShader m_ComputeShaderPlanet;
 	InputLayout m_InputLayoutCosmicBody;
 	InputLayout m_InputLayoutPlayerModel;
 	InputLayout m_InputLayoutMinimal;

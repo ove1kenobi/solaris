@@ -66,7 +66,7 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	DirectX::XMMATRIX result = scaleMatrix * rotX * rotZ * rotMatrix  * transMatrix;
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, result);
 	//Angle change depends on planets radius (smaller planet = faster spin)
-	angle += 0.01f * static_cast<float>(this->m_timer.DeltaTime()) * (1000 / this->m_radius);
+	angle += 0.00f * static_cast<float>(this->m_timer.DeltaTime()) * (1000 / this->m_radius);
 
 	//Update the matrixBuffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
