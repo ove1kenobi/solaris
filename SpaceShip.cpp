@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "SpaceShip.h"
 
 SpaceShip::SpaceShip()
@@ -9,10 +10,21 @@ SpaceShip::SpaceShip()
 		0.0f, 0.0f, 0.03f, 0.0f,
 		0.0f, 0.0f, 100.0f, 1.0f
 	};
+	pi = static_cast<float>(atan(1) * 4);
+	this->m_rotationAngle = pi;
 }
 
 bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
+	//Updated the same way as a cosmicbody, with S * R * T. Rotation is around the ships up vector.
+	DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&this->m_upVector);
+	//100 times smaller. TODO: make variable?
+	DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationAxis(up, this->m_rotationAngle);
+	DirectX::XMMATRIX trans = DirectX::XMMatrixTranslation(this->m_center.x, this->m_center.y, this->m_center.z);
+	DirectX::XMMATRIX final = scale * rot * trans;
+	DirectX::XMStoreFloat4x4(&this->m_wMatrix, final);
+
 	//Update the matrixBuffer.
 
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
@@ -40,18 +52,35 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 	return true;
 }
 
+void SpaceShip::move(DirectX::XMFLOAT4 deltaPos) {
+	this->m_center.x += deltaPos.x;
+	this->m_center.y += deltaPos.y;
+	this->m_center.z += deltaPos.z;
+}
+
+void SpaceShip::rotate(float step) {
+	this->m_rotationAngle -= step;
+	
+	if (this->m_rotationAngle <= -2 * pi) {
+		this->m_rotationAngle += 2 * pi;
+	}
+	else if (this->m_rotationAngle >= 2*pi){
+		this->m_rotationAngle -= 2 * pi;
+	}
+}
+
+DirectX::XMFLOAT3 SpaceShip::getCenter() {
+	return this->m_center;
+}
+
 void SpaceShip::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
-	deviceContext->IASetVertexBuffers(
-		0u,
-		1u,
-		this->m_model->getVertexBuffer().GetAddressOf(),
-		&this->m_model->getStride(),
-		&this->m_model->getOffset()
-	);
-
-	// Set the buffer.
+	deviceContext->IASetVertexBuffers(0u,
+									  1u,
+									  this->m_model->getVertexBuffer().GetAddressOf(),
+									  &this->m_model->getStride(),
+									  &this->m_model->getOffset());
+	
 	deviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
-
 	deviceContext->VSSetConstantBuffers(0, 1, this->m_model->getMatrixBuffer().GetAddressOf());
 }

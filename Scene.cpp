@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Scene.h"
 
 Scene::Scene() noexcept
@@ -32,7 +33,8 @@ void Scene::sendObjects() {
 
 bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	EventBuss::Get().AddListener(this, EventType::AskForRenderObjectsEvent);
-	//Orthographic camera. Over the sun.
+
+	//Orthographic camera. Over the sun. Last parameter is how high above the sun.
 	if (!this->m_orthoCamera.init(screenWidth, screenHeight, 1000)) {
 		//Throw
 		return false;
@@ -44,58 +46,67 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 		return false;
 	}
 
+	//Create the player
 	if (!m_player.Initialize(&m_perspectiveCamera)) {
 		//Throw
 		return false;
 	}
 
 	//Generate sun.
+	
 	Sun *sun = new Sun();
 	if(!sun->Initialize()){
 		//Throw
 		return false;
 	}
-
 	this->m_gameObjects.push_back(sun);
-
-	//Get the factory to create the planets.
-	//this->m_factory = ModelFactory::getInstance();
-
-
-	//Beh?ver ?ndras pga factory senare.
-	//Generate planets.
-	using t_clock = std::chrono::high_resolution_clock;
-	//std::seed_seq seed = {  };
 	
+	
+	//Generator and distributions used for generating planet values.
+	using t_clock = std::chrono::high_resolution_clock;
 	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
 	std::uniform_int_distribution<int> distributionPlanets(30, 50);
 	this->m_numPlanets = distributionPlanets(generator);
+
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
+	//World space coordinates
 	std::uniform_int_distribution<int> distributionX(-5000, 5000);
 	std::uniform_int_distribution<int> distributionY(-5000, 5000);
 	std::uniform_int_distribution<int> distributionZ(-5000, 5000);
+	//Needs to be radians
+	std::uniform_real_distribution<float> distributionXZRot(-M_PI_2, M_PI_2);
+	//negative rotation direction if 0.
+	std::uniform_int_distribution<int> distributionRotDir(0, 1);
 
+	//Planet in the middle for testing.
 	/*
 	CosmicBody* planetmiddle = new CosmicBody();
 	if (!planetmiddle->init(
 		0,
 		0,
 		0,
-		50
+		50,
+		M_PI_2,
+		0
 	))
 	{
 		//Throw
 		return false;
 	}
-	this->m_gameObjects.push_back(planetmiddle);*/
+	this->m_gameObjects.push_back(planetmiddle);
+	*/
 
+	//Create all the planets using the distributions.
 	for(int i = 0; i < this->m_numPlanets; i++){
 		CosmicBody* planet = new CosmicBody();
 		if(!planet->init(
 			static_cast<float>(distributionX(generator)),
 			static_cast<float>(distributionY(generator)),
 			static_cast<float>(distributionZ(generator)),
-			static_cast<float>(distributionRadius(generator))
+			static_cast<float>(distributionRadius(generator)),
+			static_cast<float>(distributionXZRot(generator)),
+			static_cast<float>(distributionXZRot(generator)),
+			static_cast<int>(distributionRotDir(generator))
 			))
 		{
 			//Throw
@@ -103,23 +114,31 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 		}
 		this->m_gameObjects.push_back(planet);
 	}
-
-	this->m_gameObjects.push_back(new SpaceShip());
+	
+	//Add the ship to the gameObject vector.
+	this->m_gameObjects.push_back(this->m_player.getShip());
 
 	return true;
 }
 
 bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
-	DirectX::XMFLOAT4 a = {0.0f, 0.0f, 0.0f, 0.0f};
-	m_perspectiveCamera.update(DirectX::XMLoadFloat4(&a));
+	//Update the player and all the game objects.
 	m_player.update();
 	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
 	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
-	
+
 	for (auto r : this->m_gameObjects) {
 		r->update(vMatrix, pMatrix, deviceContext);
 	}
-
+#if defined(DEBUG) | defined(_DEBUG)
+	ImGui::Begin("Game Objects");
+	for (unsigned int i{ 0u }; i < m_gameObjects.size(); i++)
+	{
+		ImGui::Text("Game Object #%d", i + 1);
+		ImGui::Text("Center: (%.0f, %.0f, %.0f)", m_gameObjects[i]->GetCenter().x, m_gameObjects[i]->GetCenter().y, m_gameObjects[i]->GetCenter().z);
+	}
+	ImGui::End();
+#endif
 	//Cull Objects HERE at the end or as response to AskForObjectsEvent? (Emil F)
 	return 1;
 }

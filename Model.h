@@ -1,24 +1,14 @@
 #pragma once
-#include <vector>
-#include <string>
-#include <Windows.h>
-#include <DirectXMath.h>
-#include "DXDebug.h"
 #include "vertex.h"
-
-
 class Model
 {
 private:
 	bool m_notLoaded;
-	
 	UINT m_stride;
 	UINT m_offset;
-
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_matrixBuffer;
-
 	UINT m_vertexBufferSize;
 	UINT m_indexBufferSize;
 public:

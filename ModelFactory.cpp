@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "ModelFactory.h"
 
 ModelFactory ModelFactory::m_me;
@@ -108,12 +109,13 @@ Model* ModelFactory::GetModel(std::string filePath)
 }
 
 Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
-	
+	//Create the sphere vertices and indices. The vertices are just raw float values.
 	Model* model = new Model();
 	std::vector<float> vertexPositionValues;
 	std::vector<int> indices;
 	createSphere(r, vertexPositionValues, indices);
 
+	//Convert the data to vertex_col.
 	std::vector<vertex_col> vertices;
 	for (unsigned int i = 0; i < vertexPositionValues.size(); i += 3) {
 		vertex_col newVertex;

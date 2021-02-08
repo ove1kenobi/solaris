@@ -26,6 +26,8 @@
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="ourMath.cpp" />
     <ClCompile Include="CosmicBody.cpp" />
+    <ClCompile Include="Sun.cpp" />
+    <ClCompile Include="SpaceShip.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Resources\IBindable.cpp" />
@@ -34,8 +36,8 @@
     <ClCompile Include="Resources\PrimitiveTopology.cpp" />
     <ClCompile Include="Resources\ResourceManager.cpp" />
     <ClCompile Include="Resources\VertexShader.cpp" />
-    <ClCompile Include="Sun.cpp" />
-    <ClCompile Include="SpaceShip.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="DXDebug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -49,10 +51,8 @@
     <ClInclude Include="EventSystem\IEvent.h" />
     <ClInclude Include="EventSystem\IEventListener.h" />
     <ClInclude Include="EventSystem\RenderEvents.h" />
-    <ClInclude Include="EventSystem\KeyboardEvent.h" />
     <ClInclude Include="EventSystem\KeyState.h" />
-    <ClInclude Include="EventSystem\MouseButtenEvent.h" />
-    <ClInclude Include="EventSystem\MouseMoveEvent.h" />
+    <ClInclude Include="EventSystem\UtilityEvents.h" />
     <ClInclude Include="EventSystem\WindowEvents.h" />
     <ClInclude Include="ForwardRenderer.h" />
     <ClInclude Include="GameObject.h" />
@@ -68,6 +68,8 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Resources\BindIDs.h" />
+    <ClInclude Include="Sun.h" />
+    <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="ourMath.h" />
     <ClInclude Include="CosmicBody.h" />
@@ -79,7 +81,8 @@
     <ClInclude Include="Resources\PrimitiveTopology.h" />
     <ClInclude Include="Resources\ResourceManager.h" />
     <ClInclude Include="Resources\VertexShader.h" />
-    <ClInclude Include="Sun.h" />
-    <ClInclude Include="SpaceShip.h" />
+    <ClInclude Include="vertex.h" />
+    <ClInclude Include="EventSystem\InputEvents.h" />
+    <ClInclude Include="pch.h" />
   </ItemGroup>
 </Project>
