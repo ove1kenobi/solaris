@@ -1,23 +1,17 @@
 #pragma once
-#define _USE_MATH_DEFINES
-
-#include <d3d11.h>
-#include <DirectXMath.h>
-#include <cmath>
 #include "time.h"
 #include "PlayerCamera.h"
 #include "GameObject.h"
+#include "SpaceShip.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventBuss.h"
-#include "EventSystem/MouseMoveEvent.h"
-#include "EventSystem/MouseButtenEvent.h"
-#include "EventSystem/KeyboardEvent.h"
-#include "SpaceShip.h"
+#include "EventSystem/InputEvents.h"
 class Player : public IEventListener
 {
 private:
-	// Model
+	// Reference to the game object that is the ship and that has the model.
 	SpaceShip* m_ship;
+	// Reference to the camera that is connected to the player/ship.
 	PlayerCamera* m_camera;
 
 	bool m_moveForwards, m_moveBackwards;

@@ -1,18 +1,26 @@
+#include "pch.h"
 #include "PlayerCamera.h"
 
 bool PlayerCamera::init(int screenWidth, int screenHeight) {
+	//DirectXTK mouse
 	DirectX::Mouse::Get().SetMode(DirectX::Mouse::MODE_RELATIVE);
 	EventBuss::Get().AddListener(this, EventType::MouseMoveEvent, EventType::MouseScrollEvent);
+
 	this->m_screenFar = 100000.0f;
 	float FOV = 3.141592654f / this->m_FOVvalue;
 	float screenAspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
+
+	//Initial camera distance from the ship.
 	this->m_distanceFromShip = 300.0f;
-	this->m_sensitivity = 2.0f;
+
+	this->m_sensitivity = 0.2f;
+
 	DirectX::XMStoreFloat4x4(&this->m_pMatrix, DirectX::XMMatrixPerspectiveFovLH(FOV, screenAspect, this->m_screenNear, this->m_screenFar));
 	return true;
 }
 
 void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
+	//Orbit around the ship.
 	this->m_forwardVector = shipCoords;
 	
 	this->m_posVector = DirectX::XMVectorSetX(this->m_posVector, sinf(this->m_pitch) * sinf(this->m_yaw) * this->m_distanceFromShip);
@@ -21,10 +29,6 @@ void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
 
 	this->m_posVector = DirectX::XMVectorAdd(this->m_posVector, this->m_forwardVector);
 	DirectX::XMStoreFloat4x4(&this->m_vMatrix, DirectX::XMMatrixLookAtLH(this->m_posVector, this->m_forwardVector, this->m_upVector));
-}
-
-void PlayerCamera::move(DirectX::XMVECTOR shipCoordsDiff) {
-	this->m_posVector = DirectX::XMVectorAdd(shipCoordsDiff, this->m_posVector);
 }
 
 void PlayerCamera::mouseRot() {
@@ -36,6 +40,7 @@ void PlayerCamera::mouseRot() {
 
 	this->m_yaw -= xValue * (float)m_time.DeltaTime() / this->m_sensitivity;
 
+	//Limits camera rotation up and down.
 	if (this->m_pitch < pi && this->m_pitch > 0.0f)
 		this->m_pitch -= yValue * (float)m_time.DeltaTime() / this->m_sensitivity;
 	if (this->m_pitch >= pi)
@@ -47,6 +52,8 @@ void PlayerCamera::mouseRot() {
 void PlayerCamera::mouseScroll() {
 	int scroll = DirectX::Mouse::Get().GetState().scrollWheelValue;
 	DirectX::Mouse::Get().ResetScrollWheelValue();
+
+	//Limits scroll between 600 to 50 atm. TODO: Make variables.
 	if(this->m_distanceFromShip < 600.0f && this->m_distanceFromShip > 50.0f)
 		this->m_distanceFromShip -= scroll  / 3;
 	if (this->m_distanceFromShip >= 600.0f)
@@ -55,8 +62,9 @@ void PlayerCamera::mouseScroll() {
 		this->m_distanceFromShip = 50.0f + 0.1f;
 }
 
+//How much the camera rotates when the ship rotates
 void PlayerCamera::shipRot(float step) {
-	this->m_yaw +=  step;
+	this->m_yaw +=  step/* * 3 / 4*/;
 }
 
 void PlayerCamera::OnEvent(IEvent& event) noexcept {

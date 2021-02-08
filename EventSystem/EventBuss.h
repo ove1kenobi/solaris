@@ -1,11 +1,4 @@
 #pragma once
-#include <unordered_map>
-#include <vector>
-#include <stdexcept>
-#include <stdarg.h>
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#include "IEvent.h"
 #include "IEventListener.h"
 class EventBuss
 {

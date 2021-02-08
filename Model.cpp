@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Model.h"
 
 Model::Model() : m_notLoaded{ true }

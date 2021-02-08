@@ -1,6 +1,5 @@
+#include "pch.h"
 #include "Player.h"
-
-
 
 Player::Player()
 {
@@ -11,8 +10,9 @@ Player::Player()
 	m_rotateRight = false;
 	m_rotateLeft = false;
 
+	m_ship = nullptr;
 	m_camera = nullptr;
-	m_speed = 500.0f;
+	m_speed = 100.0f;
 	m_rotation = (float)M_PI_4;
 
 	m_forwardVector = { 0.0f, 0.0f, 1.0f };
@@ -23,8 +23,6 @@ Player::Player()
 Player::~Player()
 {
 }
-
-
 
 bool Player::Initialize(/*DirectX::XMFLOAT3 position,*/ PlayerCamera* camera)
 {
@@ -49,11 +47,10 @@ void Player::Move(DirectX::XMFLOAT3 direction)
 	//m_center.y += offset.y;
 	//m_center.z += offset.z;
 	m_ship->move(offset);
-
+	
+	
+	
 	//DirectX::XMVECTOR offsetVec = DirectX::XMLoadFloat4(&offset);
-	//m_camera->move(offsetVec);
-
-	// move model
 }
 
 void Player::YawRotation(float rotation)
@@ -98,6 +95,10 @@ bool Player::update()
 		DirectX::XMFLOAT3 downVector = { -m_upVector.x, -m_upVector.y, -m_upVector.z };
 		Move(downVector);
 	}
+
+	DirectX::XMFLOAT3 a = m_ship->getCenter();
+	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
+	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
 
 	//std::cout << "position: \t" << m_center.x << '\t' << m_center.y << '\t' << m_center.z << std::endl;
 

@@ -1,3 +1,4 @@
+#include "..\pch.h"
 #include "PixelShader.h"
 
 void PixelShader::Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext)

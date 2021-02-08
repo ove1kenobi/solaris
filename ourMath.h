@@ -1,8 +1,6 @@
 #pragma once
-#include <DirectXMath.h>
-#include <cmath>
 
-//Dot product
+//Dot product for XMFLOAT3's
 float dot(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b);
 
 //Spherical linear interpolation.

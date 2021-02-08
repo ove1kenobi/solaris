@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "GameObject.h"
 
 GameObject::GameObject() noexcept 
@@ -37,6 +38,11 @@ UINT GameObject::getVertexBufferSize() {
 
 UINT GameObject::getIndexBufferSize() {
 	return this->m_model->getIndexBufferSize();
+}
+
+const DirectX::XMFLOAT3& GameObject::GetCenter() const noexcept
+{
+	return m_center;
 }
 
 DirectX::XMFLOAT3 GameObject::getTransVector() {

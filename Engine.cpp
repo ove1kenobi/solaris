@@ -1,14 +1,10 @@
-﻿#include "Engine.h"
+﻿#include "pch.h"
+#include "Engine.h"
 
 Engine::Engine() noexcept
 	: m_Running{ true }
 {
 	m_gameTime.Update();
-}
-
-Engine::~Engine()
-{
-	
 }
 
 const bool Engine::Initialize()
@@ -23,15 +19,15 @@ const bool Engine::Initialize()
 	ModelFactory::Get().setDevice(m_DXCore.GetDevice());
 
 	//Forward Renderer:
-	if (!m_ForwardRenderer.Initialize(m_DXCore.GetDeviceContext(), m_DXCore.GetBackBuffer(), m_DXCore.GetDepthStencilView()))
+	if (!m_ForwardRenderer.Initialize())
 		return false;
 		
 	//Scene
 	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
 		return false;
-
+	
 	//Resource Manager
-	if (!m_ResourceManager.Initialize(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext()))
+	if (!m_ResourceManager.Initialize())
 		return false;
 
 	return true;
@@ -41,6 +37,7 @@ void Engine::Run()
 {
 	while (m_Running)
 	{
+		m_imguiManager.BeginFrame();
 		MSG message = {};
 		while (PeekMessageA(&message, nullptr, 0u, 0u, PM_REMOVE))
 		{
@@ -74,18 +71,6 @@ void Engine::Update()
 void Engine::Render()
 {
 	m_ForwardRenderer.RenderFrame();
-
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-
-	static bool show_demo_window = true;
-	if (show_demo_window)
-	{
-		ImGui::ShowDemoWindow(&show_demo_window);
-	}
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
-	HR_A(m_DXCore.GetSwapChain()->Present(1, 0), "Present");
+	m_imguiManager.Render();
+	HR_A(m_DXCore.GetSwapChain()->Present(0u, 0u), "Present");
 }
