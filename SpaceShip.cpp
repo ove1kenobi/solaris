@@ -16,13 +16,14 @@ SpaceShip::SpaceShip()
 
 bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
+	//Updated the same way as a cosmicbody, with S * R * T. Rotation is around the ships up vector.
 	DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&this->m_upVector);
+	//100 times smaller. TODO: make variable?
 	DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationAxis(up, this->m_rotationAngle);
 	DirectX::XMMATRIX trans = DirectX::XMMatrixTranslation(this->m_center.x, this->m_center.y, this->m_center.z);
 	DirectX::XMMATRIX final = scale * rot * trans;
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, final);
-	//DirectX::XMStoreFloat4x4(&this->m_wMatrix, DirectX::XMMatrixTranslation(this->m_center.x, this->m_center.y, this->m_center.z));
 
 	//Update the matrixBuffer.
 
@@ -79,7 +80,7 @@ void SpaceShip::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& d
 									  this->m_model->getVertexBuffer().GetAddressOf(),
 									  &this->m_model->getStride(),
 									  &this->m_model->getOffset());
-	// Set the buffers.
+	
 	deviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, this->m_model->getMatrixBuffer().GetAddressOf());
 }

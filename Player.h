@@ -9,8 +9,9 @@
 class Player : public IEventListener
 {
 private:
-	// Model
+	// Reference to the game object that is the ship and that has the model.
 	SpaceShip* m_ship;
+	// Reference to the camera that is connected to the player/ship.
 	PlayerCamera* m_camera;
 
 	bool m_moveForwards, m_moveBackwards;

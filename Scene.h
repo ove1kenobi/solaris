@@ -14,12 +14,15 @@ private:
 	int m_numPlanets;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
 	Camera m_orthoCamera;
+	PlayerCamera m_perspectiveCamera;
 	Player m_player;
+	std::vector<GameObject*> m_gameObjects;
+
 public:
 	Scene() noexcept;
 	~Scene();
 
-	std::vector<GameObject*> m_gameObjects;
+
 
 	bool init(unsigned int screenWidth, unsigned int screenHeight, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext);
 	void Update() noexcept override;
@@ -27,6 +30,4 @@ public:
 	void OnEvent(IEvent& event) noexcept override;
 	[[nodiscard]] const std::string GetDebugName() const noexcept override;
 	void sendObjects();
-
-	PlayerCamera m_perspectiveCamera;
 };

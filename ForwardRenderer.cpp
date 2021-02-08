@@ -21,7 +21,8 @@ void ForwardRenderer::BeginFrame()
 	//Request-event for game objects 
 	AskForRenderObjectsEvent event;
 	EventBuss::Get().Delegate(event);
-
+	
+	//Loop that renders and draws every GameObject.
 	for (size_t i = 0; i < (*m_gameObjects).size(); ++i) {
 		(*m_gameObjects)[i]->bindUniques(m_pDeviceContext);
 		m_pDeviceContext->DrawIndexed((*m_gameObjects)[i]->getIndexBufferSize(), 0u, 0u);
