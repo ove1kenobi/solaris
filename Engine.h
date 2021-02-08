@@ -7,6 +7,7 @@
 #include "Resources/ResourceManager.h"
 #include "EventSystem\IEventListener.h"
 #include "ImGui\ImGuiManager.h"
+#include "LayerStack.h"
 
 class Engine : IEventListener
 {
@@ -18,6 +19,7 @@ private:
 	Time m_gameTime;
 	Scene m_scene;
 	ImGuiManager m_imguiManager;
+	LayerStack m_LayerStack;
 	bool m_Running;
 private:
 	void Update();

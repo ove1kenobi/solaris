@@ -2,7 +2,7 @@
 #include "Scene.h"
 
 Scene::Scene() noexcept
-	:	m_numPlanets{ 0 }
+	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }
 {
 
 }
@@ -25,35 +25,37 @@ void Scene::OnEvent(IEvent& event) noexcept {
 	}
 }
 
+const std::string Scene::GetDebugName() const noexcept
+{
+	return "Scene";
+}
+
 //Send gameObjects for rendering after being asked.
 void Scene::sendObjects() {
 	SendRenderObjectsEvent event(&this->m_gameObjects);
 	EventBuss::Get().Delegate(event);
 }
 
-bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
+bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext) {
+	m_pDeviceContext = pDeviceContext;
 	EventBuss::Get().AddListener(this, EventType::AskForRenderObjectsEvent);
 	//Orthographic camera. Over the sun.
 	if (!this->m_orthoCamera.init(screenWidth, screenHeight, 1000)) {
-		//Throw
 		return false;
 	}
 
 	//Perspective Camera. Bound to player.
 	if (!this->m_perspectiveCamera.init(screenWidth, screenHeight)) {
-		//Throw
 		return false;
 	}
 
 	if (!m_player.Initialize(&m_perspectiveCamera)) {
-		//Throw
 		return false;
 	}
 
 	//Generate sun.
 	Sun *sun = new Sun();
 	if(!sun->Initialize()){
-		//Throw
 		return false;
 	}
 
@@ -113,13 +115,14 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	return true;
 }
 
-bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
+
+void Scene::Update() noexcept {
 	m_player.update();
 	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
 	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
 
 	for (auto r : this->m_gameObjects) {
-		r->update(vMatrix, pMatrix, deviceContext);
+		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
 #if defined(DEBUG) | defined(_DEBUG)
 	ImGui::Begin("Game Objects");
@@ -131,5 +134,4 @@ bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceCont
 	ImGui::End();
 #endif
 	//Cull Objects HERE at the end or as response to AskForObjectsEvent? (Emil F)
-	return 1;
 }

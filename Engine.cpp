@@ -23,13 +23,15 @@ const bool Engine::Initialize()
 		return false;
 		
 	//Scene
-	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
+	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
 		return false;
 	
 	//Resource Manager
 	if (!m_ResourceManager.Initialize())
 		return false;
 
+	m_LayerStack.Push(&m_scene);
+	m_LayerStack.PushOverlay(&m_imguiManager);
 	return true;
 }
 
@@ -65,7 +67,7 @@ void Engine::OnEvent(IEvent& event) noexcept
 void Engine::Update()
 {
 	m_gameTime.Update();
-	m_scene.update(m_DXCore.GetDeviceContext());
+	m_LayerStack.Update();
 }
 
 void Engine::Render()
