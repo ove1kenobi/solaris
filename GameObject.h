@@ -12,10 +12,15 @@ protected:
 	DirectX::XMFLOAT3 m_upVector;
 	DirectX::XMFLOAT4X4 m_wMatrix;
 	float m_mass;
+	float m_1byMass;
 	float m_pitch;
 	float m_roll;
 	float m_yaw;
 	Time m_timer;
+
+	// Physics
+	static const double G;
+	std::vector<DirectX::XMVECTOR> m_forces;
 
 	//Where the buffers are stored
 	Model* m_model;
@@ -33,4 +38,9 @@ public:
 	[[nodiscard]] const DirectX::XMFLOAT3& GetCenter() const noexcept;
 	//Returns the translation of the object in the world.
 	DirectX::XMFLOAT3 getTransVector();
+
+	// Pysics
+	void CalculateGravity(GameObject* other);
+	void AddForce(DirectX::XMVECTOR);
+	void UpdatePhysics();
 };

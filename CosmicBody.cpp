@@ -10,6 +10,8 @@ CosmicBody::CosmicBody() noexcept
 bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir) {
 	//Set initial values. All ranomized.
 	this->m_radius = r;
+	this->m_mass = r * 100000;
+	this->m_1byMass = 1 / m_mass;
 	this->m_center.x = x;
 	this->m_center.y = y;
 	this->m_center.z = z;

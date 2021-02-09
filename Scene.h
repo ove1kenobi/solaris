@@ -9,7 +9,7 @@
 class Scene : public EventPublisher, IEventListener
 {
 private:
-	//GameObjects include planets, moons, asteroids and the sun.
+	//GameObjects include planets, moons, asteroids, the Sun and the spaceship.
 	int m_numPlanets;
 	Camera m_orthoCamera;
 	PlayerCamera m_perspectiveCamera;

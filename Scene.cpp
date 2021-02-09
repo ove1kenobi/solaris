@@ -127,6 +127,20 @@ bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceCont
 	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
 	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
 
+	// Calculate gravity between each pair of GameObjects
+	for (size_t i = 0; i < m_gameObjects.size() - 1; ++i)
+	{
+		for (size_t j = i + 1; j < m_gameObjects.size(); ++j)
+		{
+			m_gameObjects[i]->CalculateGravity(m_gameObjects[j]);
+		}
+	}
+
+	for (size_t i = 0; i < m_gameObjects.size() - 1; ++i)
+	{
+		m_gameObjects[i]->UpdatePhysics();
+	}
+
 	for (auto r : this->m_gameObjects) {
 		r->update(vMatrix, pMatrix, deviceContext);
 	}
@@ -140,5 +154,5 @@ bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceCont
 	ImGui::End();
 #endif
 	//Cull Objects HERE at the end or as response to AskForObjectsEvent? (Emil F)
-	return 1;
+	return true;
 }
