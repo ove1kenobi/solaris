@@ -1,7 +1,9 @@
 #pragma once
 #include "IEvent.h"
-#include "../GameObject.h"
+//#include "../GameObject.h"
 #include "../Resources/BindIDs.h"
+
+class GameObject;
 
 class SendRenderObjectsEvent : public IEvent
 {
