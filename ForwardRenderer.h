@@ -8,7 +8,6 @@
 class ForwardRenderer : public EventPublisher, IEventListener 
 {
 private:
-	//Color of the screen
 	FLOAT m_Background[4];
 	std::vector<GameObject*>* m_gameObjects;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;

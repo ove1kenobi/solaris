@@ -18,9 +18,11 @@ const bool Engine::Initialize()
 	ImGui_ImplWin32_Init(m_Window.GetHandle());
 	ModelFactory::Get().setDevice(m_DXCore.GetDevice());
 
-	//Forward Renderer:
+	//Forward Renderer
 	if (!m_ForwardRenderer.Initialize())
 		return false;
+
+	//2D Renderer
 		
 	//Scene
 	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
@@ -71,6 +73,7 @@ void Engine::Update()
 void Engine::Render()
 {
 	m_ForwardRenderer.RenderFrame();
+	//2D render here
 	m_imguiManager.Render();
 	HR_A(m_DXCore.GetSwapChain()->Present(0u, 0u), "Present");
 }

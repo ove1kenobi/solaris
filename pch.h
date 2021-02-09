@@ -4,6 +4,10 @@
 #include <windowsx.h>
 #include <wrl.h>
 #include <d3d11.h>
+//For 2D rendering
+//---------------
+#include <d2d1.h>
+//---------------
 #include <dxgi.h>
 #include <d3dcompiler.h>
 #include <directxmath.h>

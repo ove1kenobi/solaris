@@ -38,6 +38,7 @@
     <ClCompile Include="Resources\VertexShader.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="DXDebug.cpp" />
+    <ClCompile Include="Render2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -84,5 +85,6 @@
     <ClInclude Include="vertex.h" />
     <ClInclude Include="EventSystem\InputEvents.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Render2D.h" />
   </ItemGroup>
 </Project>
