@@ -116,7 +116,8 @@ Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
 	std::vector<int> indices;
 	createSphere(r, vertexPositionValues, indices);
 
-	vertexPositionValues = createHeightOffset(vertexPositionValues.size(), static_cast<void*>(vertexPositionValues.data()));
+	DirectX::XMFLOAT3 center = { x, y, z };
+	vertexPositionValues = createHeightOffset(vertexPositionValues.size(), static_cast<void*>(vertexPositionValues.data()), center, r);
 
 	//Convert the data to vertex_col.
 	std::vector<vertex_col> vertices;
@@ -126,10 +127,30 @@ Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
 		newVertex.position.y = vertexPositionValues[i + 1];
 		newVertex.position.z = vertexPositionValues[i + 2];
 
-		newVertex.color.x = 0.0f;
-		newVertex.color.y = 0.5f;
-		newVertex.color.z = 0.8f;
-		newVertex.color.w = 1.0f;
+		DirectX::XMFLOAT3 distance;
+		distance.x = newVertex.position.x;
+		distance.y = newVertex.position.y;
+		distance.z = newVertex.position.z;
+
+		float len = sqrt(distance.x * distance.x + distance.y * distance.y + distance.z * distance.z);
+		if (len < r/*r - (r / 50)*/ ) {
+			newVertex.color.x = 0.0f;
+			newVertex.color.y = 0.0f;
+			newVertex.color.z = std::pow(len / r, 5);
+			newVertex.color.w = 1.0f;
+		}
+		else if (len >= r && len <= r + (r / 15)){
+			newVertex.color.x = 0.0f;
+			newVertex.color.y = 0.5f;
+			newVertex.color.z = 0.0f;
+			newVertex.color.w = 1.0f;
+		}
+		else {
+			newVertex.color.x = 1.0f - (0.5f * std::pow(((r + (r / 15)) / len), 10));
+			newVertex.color.y = 1.0f - (0.5f * std::pow(((r + (r / 15)) / len), 10));
+			newVertex.color.z = 1.0f - (0.5f * std::pow(((r + (r / 15)) / len), 10));
+			newVertex.color.w = 1.0f;
+		}
 
 		newVertex.bitangent.x = 1.0f;
 		newVertex.bitangent.y = 1.0f;
@@ -345,11 +366,12 @@ void ModelFactory::createTriangleFace(
 	}
 }
 
-std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data)
+std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, DirectX::XMFLOAT3 center, float r)
 {
 	ID3D11Buffer* srcDataGPUBuffer;
 	ID3D11Buffer* destDataGPUBuffer;
 	ID3D11Buffer* copyToBuffer;
+	ID3D11Buffer* planetConstantsBuffer;
 	ID3D11ShaderResourceView* srcDataGPUBufferView;
 	ID3D11UnorderedAccessView* destDataGPUBufferView;
 
@@ -422,12 +444,46 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data)
 	HR_X(m_device->CreateUnorderedAccessView(destDataGPUBuffer,
 		&descViewUAV, &destDataGPUBufferView), "CreateUnorderedAccessView");
 
+	//Constant buffer
+	//------------------------------------------------------------------------------------
+
+	D3D11_BUFFER_DESC planetConstantBufferDesc = {};
+	planetConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	planetConstantBufferDesc.ByteWidth = sizeof(PlanetConstants);
+	planetConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	planetConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	planetConstantBufferDesc.MiscFlags = 0;
+	planetConstantBufferDesc.StructureByteStride = 0;
+	HR_X(this->m_device->CreateBuffer(&planetConstantBufferDesc,
+		nullptr,
+		&planetConstantsBuffer),
+		"CreateBuffer");
+
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+	PlanetConstants* constantBufferData;
+
+	m_deviceContext->Map(
+		planetConstantsBuffer,
+		0,
+		D3D11_MAP_WRITE_DISCARD,
+		0,
+		&mappedSubresource
+	);
+
+	constantBufferData = (PlanetConstants*)mappedSubresource.pData;
+
+	constantBufferData->center = center;
+	constantBufferData->radius = r;
+
+	m_deviceContext->Unmap(planetConstantsBuffer, 0);
+
 	//Set everything
 	//------------------------------------------------------------------------------------
 
+	m_deviceContext->CSSetConstantBuffers(0, 1, &planetConstantsBuffer);
 	m_deviceContext->CSSetShaderResources(0, 1, &srcDataGPUBufferView);
 	m_deviceContext->CSSetUnorderedAccessViews(0, 1, &destDataGPUBufferView, NULL);
-	m_deviceContext->Dispatch(size, 1u, 1u);
+	m_deviceContext->Dispatch(size / 8, 2u, 1u);
 
 	ID3D11ShaderResourceView* nullSRV[] = { NULL };
 	m_deviceContext->CSSetShaderResources(0, 1, nullSRV);

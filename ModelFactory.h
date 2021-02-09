@@ -33,7 +33,7 @@ private:
 		unsigned int divisions
 	);
 
-	std::vector<float> createHeightOffset(size_t size, void* data);
+	std::vector<float> createHeightOffset(size_t size, void* data, DirectX::XMFLOAT3 center, float r);
 	void createBuffers(UINT stride, size_t size, void* data, const std::vector<int>& indexBuffer, Model* model);
 public:
 	static ModelFactory& Get() noexcept;
@@ -47,6 +47,12 @@ public:
 		DirectX::XMMATRIX VMatrix;
 		DirectX::XMMATRIX PMatrix;
 	};
+
+	struct PlanetConstants {
+		DirectX::XMFLOAT3 center;
+		float radius;
+	};
+
 	struct WorldPosition {
 		float x;
 		float y;
