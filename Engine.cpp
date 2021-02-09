@@ -66,6 +66,15 @@ void Engine::Update()
 {
 	m_gameTime.Update();
 	m_scene.update(m_DXCore.GetDeviceContext());
+
+	m_time += m_gameTime.DeltaTime();
+	fps++;
+
+	if (m_time >= 1.0f) {
+		m_time -= 1.0f;
+		m_Window.SetFPS(fps);
+		fps = 0;
+	}
 }
 
 void Engine::Render()

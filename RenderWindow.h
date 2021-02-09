@@ -1,4 +1,6 @@
 #pragma once
+
+#include <sstream>
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem\WindowEvents.h"
 #include "EventSystem/InputEvents.h"
@@ -12,6 +14,7 @@ private:
 	HWND m_winHandle;
 	static UINT m_clientWinWidth, m_clientWinHeight;
 	std::unique_ptr<DirectX::Mouse> m_mouse;
+	LPCWSTR windowTitle;
 	static bool m_DisableXTKMouse;
 private:
 	RenderWindow& operator=(const RenderWindow&) = delete;
@@ -26,5 +29,6 @@ public:
 	HWND GetHandle();
 	UINT GetWidth();
 	UINT GetHeight();
+	void SetFPS(int fps);
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

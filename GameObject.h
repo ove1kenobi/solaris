@@ -1,6 +1,8 @@
 #pragma once
 #include "Time.h"
 #include "ModelFactory.h"
+#include <imgui.h>
+
 
 class GameObject
 {
@@ -19,12 +21,12 @@ protected:
 	Time m_timer;
 
 	// Physics
-	static const double G;
-	std::vector<DirectX::XMVECTOR> m_forces;
+	static const float G;
 
 	//Where the buffers are stored
 	Model* m_model;
 public:
+	std::vector<DirectX::XMFLOAT3> m_forces;
 	GameObject() noexcept;
 	~GameObject();
 
@@ -41,6 +43,6 @@ public:
 
 	// Pysics
 	void CalculateGravity(GameObject* other);
-	void AddForce(DirectX::XMVECTOR);
+	void AddForce(DirectX::XMFLOAT3);
 	void UpdatePhysics();
 };

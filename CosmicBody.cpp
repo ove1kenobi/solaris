@@ -11,7 +11,7 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	//Set initial values. All ranomized.
 	this->m_radius = r;
 	this->m_mass = r * 100000;
-	this->m_1byMass = 1 / m_mass;
+	this->m_1byMass = 1.0f / m_mass;
 	this->m_center.x = x;
 	this->m_center.y = y;
 	this->m_center.z = z;
@@ -57,12 +57,13 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	
 	//Construct the translation matrix.
 	DirectX::XMMATRIX transMatrix = DirectX::XMMatrixIdentity();
-	DirectX::XMFLOAT4X4 transMatrixFloats;
-	DirectX::XMStoreFloat4x4(&transMatrixFloats, transMatrix);
-	transMatrixFloats._41 = getTransVector().x;
-	transMatrixFloats._42 = getTransVector().y;
-	transMatrixFloats._43 = getTransVector().z;
-	transMatrix = DirectX::XMLoadFloat4x4(&transMatrixFloats);
+	//DirectX::XMFLOAT4X4 transMatrixFloats;
+	//DirectX::XMStoreFloat4x4(&transMatrixFloats, transMatrix);
+	//transMatrixFloats._41 = getTransVector().x;
+	//transMatrixFloats._42 = getTransVector().y;
+	//transMatrixFloats._43 = getTransVector().z;
+	//transMatrix = DirectX::XMLoadFloat4x4(&transMatrixFloats);
+	transMatrix = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);
 
 	//Update the wMatrix and the angle.
 	DirectX::XMMATRIX result = scaleMatrix * rotX * rotZ * rotMatrix  * transMatrix;

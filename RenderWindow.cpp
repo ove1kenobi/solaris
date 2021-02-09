@@ -10,7 +10,7 @@ bool RenderWindow::m_DisableXTKMouse;
 RenderWindow::RenderWindow()
 {
     LPCWSTR className = L"Window Class";
-    LPCWSTR windowTitle = L"Window";
+    windowTitle = L"Window ";
     WNDCLASSEX wc = { 0 };
     wc.style = CS_OWNDC;                                 //Flags [Redraw on width/height change from resize/movement] See: https://msdn.microsoft.com/en-us/library/windows/desktop/ff729176(v=vs.85).aspx
     wc.lpfnWndProc = WindowProc;                         //Pointer to Window Proc function for handling messages from this window
@@ -232,4 +232,12 @@ UINT RenderWindow::GetWidth()
 UINT RenderWindow::GetHeight()
 {
     return m_clientWinHeight;
+}
+
+void RenderWindow::SetFPS(int fps)
+{
+    std::wstringstream wss;
+    wss << fps;
+    std::wstring title = std::wstring(windowTitle) + wss.str();
+    SetWindowText(m_winHandle, title.c_str());
 }
