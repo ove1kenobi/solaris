@@ -109,7 +109,7 @@ Model* ModelFactory::GetModel(std::string filePath)
 	return model;
 }
 
-Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
+Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 	//Create the sphere vertices and indices. The vertices are just raw float values.
 	Model* model = new Model();
 	std::vector<float> vertexPositionValues;
@@ -575,4 +575,45 @@ void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std
 void ModelFactory::PreparePlanetDisplacement() {
 	BindIDEvent me(BindID::ID_PlanetHeight);
 	EventBuss::Get().Delegate(me);
+}
+
+Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
+	//Create the sphere vertices and indices. The vertices are just raw float values.
+	Model* model = new Model();
+	std::vector<float> vertexPositionValues;
+	std::vector<int> indices;
+	createSphere(r, vertexPositionValues, indices);
+
+	std::vector<vertex_col> vertices;
+	for (unsigned int i = 0; i < vertexPositionValues.size(); i += 4) {
+		vertex_col newVertex;
+		newVertex.position.x = vertexPositionValues[i];
+		newVertex.position.y = vertexPositionValues[i + 1];
+		newVertex.position.z = vertexPositionValues[i + 2];
+
+		newVertex.color.x = 255.0f / 255.0f;
+		newVertex.color.y = 165.0f / 255.0f;
+		newVertex.color.z = 0.0f;
+		newVertex.color.w = 1.0f;
+
+		newVertex.bitangent.x = 1.0f;
+		newVertex.bitangent.y = 1.0f;
+		newVertex.bitangent.z = 1.0f;
+
+		newVertex.tangent.x = 1.0f;
+		newVertex.tangent.y = 1.0f;
+		newVertex.tangent.z = 1.0f;
+
+		newVertex.normal.x = 1.0f;
+		newVertex.normal.y = 1.0f;
+		newVertex.normal.z = 1.0f;
+
+		vertices.push_back(newVertex);
+	}
+
+	model->setVertexBufferSize(static_cast<UINT>(vertices.size()));
+	model->setIndexBufferSize(static_cast<UINT>(indices.size()));
+
+	createBuffers(sizeof(vertex_col), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
+	return model;
 }

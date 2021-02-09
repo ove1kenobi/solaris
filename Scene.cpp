@@ -81,7 +81,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 
 	//Planet in the middle for testing.
 	/*
-	CosmicBody* planetmiddle = new CosmicBody();
+	Planet* planetmiddle = new Planet();
 	if (!planetmiddle->init(
 		0,
 		0,
@@ -100,8 +100,8 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	
 	//Create all the planets using the distributions.
 	for(int i = 0; i < this->m_numPlanets; i++){
-		CosmicBody* planet = new CosmicBody();
-		if(!planet->init(
+		Planet* planet = new Planet();
+		if(!planet->Initialize(
 			static_cast<float>(distributionX(generator)),
 			static_cast<float>(distributionY(generator)),
 			static_cast<float>(distributionZ(generator)),

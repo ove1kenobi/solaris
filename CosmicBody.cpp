@@ -2,7 +2,7 @@
 #include "CosmicBody.h"
 
 CosmicBody::CosmicBody() noexcept
-	:	m_radius{ 0.0f }, m_yAxis{ 0.0f, 1.0f, 0.0f, 0.0f }
+	: m_radius{ 0.0f }, m_yAxis{ 0.0f, 1.0f, 0.0f, 0.0f }, m_rotationDir{ 0 }
 {
 	
 }
@@ -35,9 +35,6 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	DirectX::XMMATRIX final = rotX * rotZ * trans;
 
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, final);
-	
-	//Generate the sphere.
-	this->m_model = ModelFactory::Get().GenerateSphere(x, y, z, r);
 	
 	return true;
 }
