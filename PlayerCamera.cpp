@@ -4,7 +4,7 @@
 bool PlayerCamera::init(int screenWidth, int screenHeight) {
 	//DirectXTK mouse
 	EventBuss::Get().AddListener(this, EventType::MouseMoveRelativeEvent, EventType::MouseScrollEvent, EventType::ToggleImGuiEvent);
-
+	EventBuss::Get().AddListener(this, EventType::MouseMoveAbsoluteEvent);
 	this->m_screenFar = 100000.0f;
 	float FOV = 3.141592654f / this->m_FOVvalue;
 	float screenAspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
@@ -73,6 +73,10 @@ void PlayerCamera::OnEvent(IEvent& event) noexcept {
 			}
 			break;
 		}
+		case EventType::MouseMoveAbsoluteEvent:
+		{
+			break;
+		}
 		case EventType::MouseScrollEvent:
 		{
 			int wheelScroll = static_cast<MouseScrollEvent*>(&event)->GetWheelScroll();
@@ -83,6 +87,7 @@ void PlayerCamera::OnEvent(IEvent& event) noexcept {
 		{
 			if (m_orbitModeActive) m_orbitModeActive = false;
 			else m_orbitModeActive = true;
+			break;
 		}
 	}
 }
