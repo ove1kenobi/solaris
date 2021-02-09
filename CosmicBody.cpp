@@ -2,15 +2,20 @@
 #include "CosmicBody.h"
 
 CosmicBody::CosmicBody() noexcept
-	:	m_radius{ 0.0f }, m_yAxis{ 0.0f, 1.0f, 0.0f, 0.0f }
+	:	m_radius{ 0.0f }, m_yAxis{ 0.0f, 1.0f, 0.0f, 0.0f }, m_rotationDir{ 1u }
 {
 	
+}
+
+CosmicBody::~CosmicBody()
+{
+	//delete m_model;
 }
 
 bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir) {
 	//Set initial values. All ranomized.
 	this->m_radius = r;
-	this->m_mass = r * 100000;
+	this->m_mass = r * 10000000;
 	this->m_1byMass = 1.0f / m_mass;
 	this->m_center.x = x;
 	this->m_center.y = y;
@@ -44,7 +49,8 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	return true;
 }
 
-bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
+bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
+{
 	static float angle = 0.0f;
 
 	//Construct rotation matrices
@@ -56,13 +62,15 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	
 	//Construct the translation matrix.
 	DirectX::XMMATRIX transMatrix = DirectX::XMMatrixIdentity();
-	//DirectX::XMFLOAT4X4 transMatrixFloats;
-	//DirectX::XMStoreFloat4x4(&transMatrixFloats, transMatrix);
-	//transMatrixFloats._41 = getTransVector().x;
-	//transMatrixFloats._42 = getTransVector().y;
-	//transMatrixFloats._43 = getTransVector().z;
-	//transMatrix = DirectX::XMLoadFloat4x4(&transMatrixFloats);
-	transMatrix = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);
+
+	// Static or dynamic center coordinates
+	DirectX::XMFLOAT4X4 transMatrixFloats;
+	DirectX::XMStoreFloat4x4(&transMatrixFloats, transMatrix);
+	transMatrixFloats._41 = getTransVector().x;
+	transMatrixFloats._42 = getTransVector().y;
+	transMatrixFloats._43 = getTransVector().z;
+	transMatrix = DirectX::XMLoadFloat4x4(&transMatrixFloats);
+	//transMatrix = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);	// dynamic center coordinates
 
 	//Update the wMatrix and the angle.
 	DirectX::XMMATRIX result = scaleMatrix * rotX * rotZ * rotMatrix  * transMatrix;
@@ -93,6 +101,7 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	data->PMatrix = PMatrix;
 
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
+	
 	return true;
 }
 

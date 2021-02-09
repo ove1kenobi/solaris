@@ -9,7 +9,7 @@ private:
 	int m_rotationDir;
 public:
 	CosmicBody() noexcept;
-	~CosmicBody() = default;
+	~CosmicBody();
 	//Sets all the randomized values.
 	bool init(float x, float y, float z, float r, float xRot, float zRot, int rotDir);
 	bool update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;

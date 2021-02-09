@@ -21,12 +21,11 @@ protected:
 	Time m_timer;
 
 	// Physics
-	static const float G;
+	std::vector<DirectX::XMFLOAT3> m_forces;
 
 	//Where the buffers are stored
 	Model* m_model;
 public:
-	std::vector<DirectX::XMFLOAT3> m_forces;
 	GameObject() noexcept;
 	~GameObject();
 
@@ -40,9 +39,5 @@ public:
 	[[nodiscard]] const DirectX::XMFLOAT3& GetCenter() const noexcept;
 	//Returns the translation of the object in the world.
 	DirectX::XMFLOAT3 getTransVector();
-
-	// Pysics
-	void CalculateGravity(GameObject* other);
-	void AddForce(DirectX::XMFLOAT3);
-	void UpdatePhysics();
+	float GetMass();
 };
