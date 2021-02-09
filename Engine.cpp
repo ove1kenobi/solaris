@@ -16,18 +16,18 @@ const bool Engine::Initialize()
 		return false;
 
 	ImGui_ImplWin32_Init(m_Window.GetHandle());
-	ModelFactory::Get().setDevice(m_DXCore.GetDevice());
+	ModelFactory::Get().setDeviceAndContext(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext());
 
 	//Forward Renderer:
 	if (!m_ForwardRenderer.Initialize())
 		return false;
-		
-	//Scene
-	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
-		return false;
 	
 	//Resource Manager
 	if (!m_ResourceManager.Initialize())
+		return false;
+
+	//Scene
+	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
 		return false;
 
 	return true;

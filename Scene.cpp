@@ -53,7 +53,8 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	}
 
 	//Generate sun.
-	
+	ModelFactory::Get().PreparePlanetDisplacement();
+
 	Sun *sun = new Sun();
 	if(!sun->Initialize()){
 		//Throw
@@ -96,6 +97,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	this->m_gameObjects.push_back(planetmiddle);
 	*/
 
+	
 	//Create all the planets using the distributions.
 	for(int i = 0; i < this->m_numPlanets; i++){
 		CosmicBody* planet = new CosmicBody();
