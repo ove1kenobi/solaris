@@ -23,7 +23,9 @@ const bool Engine::Initialize()
 		return false;
 
 	//2D Renderer
-		
+	if (!m_Render2D.Initialize())
+		return false;
+
 	//Scene
 	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
 		return false;
@@ -73,7 +75,8 @@ void Engine::Update()
 void Engine::Render()
 {
 	m_ForwardRenderer.RenderFrame();
-	//2D render here
+	m_Render2D.RenderUI();
+
 	m_imguiManager.Render();
 	HR_A(m_DXCore.GetSwapChain()->Present(0u, 0u), "Present");
 }
