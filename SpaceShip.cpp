@@ -10,7 +10,7 @@ SpaceShip::SpaceShip()
 		0.0f, 0.0f, 0.03f, 0.0f,
 		0.0f, 0.0f, 100.0f, 1.0f
 	};
-	this->m_center = { 0.0f, 1500.0f, 0.0f };
+	this->m_center = { 0.0f, 2000.0f, 0.0f };
 	this->m_mass = 10000.0f;
 	pi = static_cast<float>(atan(1) * 4);
 	this->m_rotationAngle = pi;

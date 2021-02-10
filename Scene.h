@@ -1,5 +1,5 @@
 #pragma once
-#include "CosmicBody.h"
+#include "Planet.h"
 #include "Player.h"
 #include "Sun.h"
 #include "GameObject.h"

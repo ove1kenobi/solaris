@@ -38,7 +38,8 @@ private:
 public:
 	static ModelFactory& Get() noexcept;
 	Model* GetModel(std::string filePath);
-	Model* GenerateSphere(float x, float y, float z, float r);
+	Model* GeneratePlanet(float x, float y, float z, float r);
+	Model* GenerateSun(float x, float y, float z, float r);
 	void PreparePlanetDisplacement();
 	void setDeviceAndContext(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext);
 

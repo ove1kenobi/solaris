@@ -40,6 +40,7 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="DXDebug.cpp" />
     <ClCompile Include="Resources\ComputeShader.cpp" />
+    <ClCompile Include="Planet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -87,6 +88,7 @@
     <ClInclude Include="EventSystem\InputEvents.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resources\ComputeShader.h" />
+    <ClInclude Include="Planet.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

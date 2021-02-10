@@ -4,9 +4,10 @@
 class CosmicBody : public GameObject
 {
 private:
-	float m_radius;
 	DirectX::XMFLOAT4 m_yAxis;
 	int m_rotationDir;
+protected:
+	float m_radius;
 public:
 	CosmicBody() noexcept;
 	~CosmicBody();

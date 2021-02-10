@@ -10,5 +10,8 @@ bool Sun::Initialize()
 		{ 0.0f, 0.0f, 0.0f },
 		{ 100.0f, 200.0f, 300.0f },
 		2000.0f);
+
+	//Generate the Sun.
+	this->m_model = ModelFactory::Get().GenerateSun(this->m_center.x, this->m_center.y, this->m_center.z, this->m_radius);
 	return true;
 }

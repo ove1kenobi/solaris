@@ -5,12 +5,11 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 UINT RenderWindow::m_clientWinWidth = DEFAULT_WIN_WIDTH;
 UINT RenderWindow::m_clientWinHeight = DEFAULT_WIN_HEIGHT;
-bool RenderWindow::m_DisableXTKMouse;
 
 RenderWindow::RenderWindow()
 {
     LPCWSTR className = L"Window Class";
-    windowTitle = L"Window ";
+    windowTitle = L"Window, FPS: ";
     WNDCLASSEX wc = { 0 };
     wc.style = CS_OWNDC;                                 //Flags [Redraw on width/height change from resize/movement] See: https://msdn.microsoft.com/en-us/library/windows/desktop/ff729176(v=vs.85).aspx
     wc.lpfnWndProc = WindowProc;                         //Pointer to Window Proc function for handling messages from this window
@@ -38,18 +37,28 @@ RenderWindow::RenderWindow()
                                  className,
                                  windowTitle,
                                  WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,       // Window style
-                                 CW_USEDEFAULT, CW_USEDEFAULT, winRect.right - winRect.left, winRect.bottom - winRect.top,
+                                 0, 0, winRect.right - winRect.left, winRect.bottom - winRect.top,
                                  nullptr,                                        // Parent window
                                  nullptr,                                        // Menu
                                  (HINSTANCE)GetModuleHandle(nullptr),            // Instance handle
                                  nullptr);                                       // Additional application data
     ShowWindow(m_winHandle, SW_SHOWNORMAL);
+    //winRect.top += 62;
+    //winRect.left += 15;
+    //winRect.bottom += 23;
+    //ClipCursor(&winRect);
+    //ShowCursor(showCursor);
 
-    //DirectXTK mouse
-    m_mouse = std::make_unique<DirectX::Mouse>();
-    m_mouse->SetWindow(m_winHandle);
-    m_DisableXTKMouse = false;
-    DirectX::Mouse::Get().SetMode(DirectX::Mouse::MODE_RELATIVE);
+    // Register mouse as raw input device
+    RAWINPUTDEVICE rid;
+    rid.usUsagePage = 0x01;
+    rid.usUsage = 0x02;
+    rid.dwFlags = 0;
+    rid.hwndTarget = NULL;
+
+    if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE) {
+        // handle error
+    }
 }
 
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -72,18 +81,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             break;
         }
         /*
-        case WM_MOUSEMOVE:
-        {
-            // mouse moved within window
-            int xPos = GET_X_LPARAM(lParam);
-            int yPos = GET_Y_LPARAM(lParam);
-
-            float xPosF = (static_cast<float>(xPos) / m_clientWinWidth) * 2 - 1;
-            float yPosF = (static_cast<float>(yPos) / m_clientWinHeight) * 2 - 1;
-            MouseMoveEvent me(xPosF, yPosF);
-            EventBuss::Get().Delegate(me);
-            return 0;
-        }
        
         case WM_LBUTTONDOWN:
         {
@@ -123,41 +120,51 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         }
         */
         case WM_INPUT:
-            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
-            break;
+        {
+            UINT dataSize = 0;
+            GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &dataSize, sizeof(RAWINPUTHEADER));
+
+            if (dataSize > 0)
+            {
+                std::unique_ptr<BYTE[]> rawdata = std::make_unique<BYTE[]>(dataSize);
+                if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, rawdata.get(), &dataSize, sizeof(RAWINPUTHEADER)) == dataSize)
+                {
+                    RAWINPUT* raw = (RAWINPUT*)rawdata.get();
+                    if (raw->header.dwType == RIM_TYPEMOUSE)
+                    {
+                        int xDiff = raw->data.mouse.lLastX;
+                        int yDiff = raw->data.mouse.lLastY;
+                        MouseMoveRelativeEvent mre(xDiff, yDiff);
+                        EventBuss::Get().Delegate(mre);
+                    }
+                }
+            }
+
+            return DefWindowProc(hwnd, uMsg, wParam, lParam);
+        }
+        /*
         case WM_MOUSEMOVE:
         {
-        #if defined(DEBUG) | defined(_DEBUG)
-            if (m_DisableXTKMouse == false)
-            {
-               MouseMoveEvent me;
-               EventBuss::Get().Delegate(me);
-            }
-        #else
-            MouseMoveEvent me;
-            EventBuss::Get().Delegate(me);
-        #endif
-            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
-            break;
+            int xPos = GET_X_LPARAM(lParam);
+            int yPos = GET_Y_LPARAM(lParam);
+            MouseMoveAbsoluteEvent mae(xPos, yPos);
+            EventBuss::Get().Delegate(mae);
         }
+        */
         case WM_MOUSEWHEEL:
         {
-            MouseScrollEvent me;
-            EventBuss::Get().Delegate(me);
-            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+            int wheelScroll = GET_WHEEL_DELTA_WPARAM(wParam);
+            MouseScrollEvent se(wheelScroll);
+            EventBuss::Get().Delegate(se);
             break;
         }
-        case WM_XBUTTONDOWN:
-            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
-            break;
-        case WM_XBUTTONUP:
-            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
-            break;
+
         case WM_MOUSEHOVER:
         {
-            MouseMoveEvent me;
-            EventBuss::Get().Delegate(me);
-            DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+            int xPos = GET_X_LPARAM(lParam);
+            int yPos = GET_Y_LPARAM(lParam);
+            MouseMoveAbsoluteEvent mae(xPos, yPos);
+            EventBuss::Get().Delegate(mae);
             break;
         }
         case WM_KEYDOWN:
@@ -170,7 +177,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             }
             if (wParam == 'I')
             {
-                ToggleXTKMouse();
+
                 ToggleImGuiEvent imEvent;
                 EventBuss::Get().Delegate(imEvent);
             }
@@ -196,21 +203,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         }
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
-}
-
-void RenderWindow::ToggleXTKMouse() noexcept
-{
-    m_DisableXTKMouse = !m_DisableXTKMouse;
-    if (m_DisableXTKMouse == true)
-    {
-        DirectX::Mouse::Get().SetMode(DirectX::Mouse::MODE_ABSOLUTE);
-        DirectX::Mouse::Get().SetVisible(true);
-    }
-    else
-    {
-        DirectX::Mouse::Get().SetMode(DirectX::Mouse::MODE_RELATIVE);
-        DirectX::Mouse::Get().SetVisible(true);
-    }
 }
 
 void RenderWindow::CloseWindow(const HWND& hwnd) noexcept

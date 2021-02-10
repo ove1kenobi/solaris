@@ -26,8 +26,6 @@ Player::~Player()
 
 bool Player::Initialize(/*DirectX::XMFLOAT3 position,*/ PlayerCamera* camera)
 {
-	EventBuss::Get().AddListener(this, EventType::MouseMoveEvent);
-	EventBuss::Get().AddListener(this, EventType::MouseButtenEvent);
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);
 
 	m_ship = new SpaceShip();
@@ -115,37 +113,8 @@ SpaceShip* Player::getShip() {
 
 void Player::OnEvent(IEvent& event) noexcept
 {
-	//std::cout << "Event recived" << std::endl;
 	switch (event.GetEventType())
 	{
-		/*
-		case EventType::MouseMoveEvent:
-		{
-			int xCoord = static_cast<MouseMoveEvent*>(&event)->GetXCoord();
-			int yCoord = static_cast<MouseMoveEvent*>(&event)->GetYCoord();
-
-			//std::cout << "Mouse moved to " << xCoord << " " << yCoord << std::endl;
-			break;
-		}
-		*/
-		case EventType::MouseButtenEvent:
-		{
-			KeyState state = static_cast<MouseButtenEvent*>(&event)->GetKeyState();
-			int virKey = static_cast<MouseButtenEvent*>(&event)->GetVirtualKeyCode();
-			int xCoord = static_cast<MouseButtenEvent*>(&event)->GetXCoord();
-			int yCoord = static_cast<MouseButtenEvent*>(&event)->GetYCoord();
-
-			/*
-			std::cout << "Mouse butten " << virKey << " was ";
-			if (state == KeyState::KeyPress)
-				std::cout << "pressed";
-			else if (state == KeyState::KeyRelease)
-				std::cout << "releassed";
-			
-			std::cout << " at " << xCoord << " " << yCoord << std::endl;
-			*/
-			break;
-		}
 		case EventType::KeyboardEvent:
 		{
 			KeyState state = static_cast<KeyboardEvent*>(&event)->GetKeyState();
