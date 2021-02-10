@@ -9,6 +9,7 @@
 
 class Render2D : public EventPublisher, IEventListener {
 private:
+	// external window handle
 public:
 	Render2D() noexcept;
 	virtual ~Render2D() = default;

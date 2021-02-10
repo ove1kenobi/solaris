@@ -7,6 +7,7 @@
 //For 2D rendering
 //---------------
 #include <d2d1.h>
+#pragma comment(lib, "d2d1")
 //---------------
 #include <dxgi.h>
 #include <d3dcompiler.h>
