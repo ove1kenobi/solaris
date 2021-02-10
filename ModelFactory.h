@@ -32,8 +32,9 @@ private:
 		std::vector<int>& triangles,
 		unsigned int divisions
 	);
-
 	std::vector<float> createHeightOffset(size_t size, void* data, DirectX::XMFLOAT3 center, float r);
+	std::vector<DirectX::XMFLOAT3> calcNormals(std::vector<float> vertices, std::vector<int> indices);
+
 	void createBuffers(UINT stride, size_t size, void* data, const std::vector<int>& indexBuffer, Model* model);
 public:
 	static ModelFactory& Get() noexcept;

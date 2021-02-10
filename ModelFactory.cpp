@@ -119,6 +119,8 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 	DirectX::XMFLOAT3 center = { x, y, z };
 	vertexPositionValues = createHeightOffset(vertexPositionValues.size(), static_cast<void*>(vertexPositionValues.data()), center, r);
 
+	std::vector<DirectX::XMFLOAT3> normals = calcNormals(vertexPositionValues, indices);
+
 	//Convert the data to vertex_col.
 	std::vector<vertex_col> vertices;
 	for (unsigned int i = 0; i < vertexPositionValues.size(); i += 4) {
@@ -146,11 +148,15 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 			newVertex.color.w = 1.0f;
 		}
 		else {
-			newVertex.color.x = 1.0f - (0.5f * std::pow(((r + (r / 15)) / len), 10));
-			newVertex.color.y = 1.0f - (0.5f * std::pow(((r + (r / 15)) / len), 10));
-			newVertex.color.z = 1.0f - (0.5f * std::pow(((r + (r / 15)) / len), 10));
+			newVertex.color.x = 1.0f - (0.7f * std::pow(((r + (r / 15)) / len), 10));
+			newVertex.color.y = 1.0f - (0.7f * std::pow(((r + (r / 15)) / len), 10));
+			newVertex.color.z = 1.0f - (0.7f * std::pow(((r + (r / 15)) / len), 10));
 			newVertex.color.w = 1.0f;
 		}
+
+		newVertex.normal.x = 0;//normals[i / 4].x;
+		newVertex.normal.y = 0;//normals[i / 4].y;
+		newVertex.normal.z = 0;//normals[i / 4].z;
 
 		newVertex.bitangent.x = 1.0f;
 		newVertex.bitangent.y = 1.0f;
@@ -159,11 +165,7 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 		newVertex.tangent.x = 1.0f;
 		newVertex.tangent.y = 1.0f;
 		newVertex.tangent.z = 1.0f;
-
-		newVertex.normal.x = 1.0f;
-		newVertex.normal.y = 1.0f;
-		newVertex.normal.z = 1.0f;
-
+		
 		vertices.push_back(newVertex);
 	}
 
@@ -222,7 +224,7 @@ void ModelFactory::createSphere(float r, std::vector<float> &vertexBuffer, std::
 	};
 
 	//Calculate the number of divisions that are to be made of each edge. 100 easily changable.
-	unsigned int divisions = static_cast<int>(std::ceil(r / 5));
+	unsigned int divisions = static_cast<int>(std::ceil(r / 3));
 	//Number of vertices on 1 face.
 	unsigned int vertsPerTriangle = ((divisions + 3) * (divisions + 3) - (divisions + 3)) / 2;
 	//Number of triangles on 1 face.
@@ -571,6 +573,76 @@ void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std
 									  "CreateBuffer");
 }
 
+std::vector<DirectX::XMFLOAT3> ModelFactory::calcNormals(std::vector<float> vertices, std::vector<int> indices) {
+	
+	std::vector<DirectX::XMFLOAT3> faceNormals(0);
+	std::vector<DirectX::XMFLOAT3> vertexNormals(vertices.size() / 4, { 0, 0, 0 });
+	std::vector<int> vertexConnectingCount(vertices.size() / 4, 0);
+
+	//Indices.size() / 3 = number of triangle faces.
+	for (int i = 0; i < indices.size(); i += 3) {
+		//The 3 vertex points that represent the face.
+		DirectX::XMFLOAT3 v0 = { vertices[indices[i] * 4], vertices[indices[i] * 4 + 1], vertices[indices[i] * 4 + 2] };
+		DirectX::XMFLOAT3 v1 = { vertices[indices[i + 1] * 4], vertices[indices[i + 1] * 4 + 1], vertices[indices[i + 1] * 4 + 2] };
+		DirectX::XMFLOAT3 v2 = { vertices[indices[i + 2] * 4], vertices[indices[i + 2] * 4 + 1], vertices[indices[i + 2] * 4 + 2] };
+
+		DirectX::XMFLOAT3 dir0 = { v2.x - v0.x, v2.y - v0.y, v2.z - v0.z };
+		DirectX::XMFLOAT3 dir1 = { v1.x - v0.x, v1.y - v0.y, v1.z - v0.z };
+
+		//The face normal
+		DirectX::XMFLOAT3 faceNormal = cross(dir0, dir1);
+
+		vertexNormals[indices[i]].x += faceNormal.x;
+		vertexNormals[indices[i]].y += faceNormal.y;
+		vertexNormals[indices[i]].z += faceNormal.z;
+		vertexConnectingCount[indices[i]]++;
+
+		vertexNormals[indices[i + 1]].x += faceNormal.x;
+		vertexNormals[indices[i + 1]].y += faceNormal.y;
+		vertexNormals[indices[i + 1]].z += faceNormal.z;
+		vertexConnectingCount[indices[i + 1]]++;
+
+		vertexNormals[indices[i + 2]].x += faceNormal.x;
+		vertexNormals[indices[i + 2]].y += faceNormal.y;
+		vertexNormals[indices[i + 2]].z += faceNormal.z;
+		vertexConnectingCount[indices[i + 2]]++;
+
+	}
+
+
+	for (int i = 0; i < vertexNormals.size(); i++) {
+		vertexNormals[i].x = vertexNormals[i].x / vertexConnectingCount[i];
+		vertexNormals[i].y = vertexNormals[i].y / vertexConnectingCount[i];
+		vertexNormals[i].z = vertexNormals[i].z / vertexConnectingCount[i];
+	}
+	/*
+	std::vector<DirectX::XMFLOAT3> vertexNormals;
+	//Vertices.size() / 4 = number of vertices.
+	for (int i = 0; i < vertices.size(); i += 4) {
+		//Go through all the indices and find in what triangles this vertex is used.
+		std::vector<int> adjacentTriangles(0);
+		for (int j = 0; j < indices.size(); j++) {
+			if (indices[j] == i / 4) {
+				adjacentTriangles.push_back(std::floor(j / 3));
+			}
+		}
+		
+		//Go through the adjacentTriangles and add them all together and divide by the count to ge the average.
+		DirectX::XMFLOAT3 averageNormal = { 0, 0, 0 };
+		for (int j = 0; j < adjacentTriangles.size(); j++) {
+			averageNormal.x += faceNormals[adjacentTriangles[j]].x;
+			averageNormal.y += faceNormals[adjacentTriangles[j]].y;
+			averageNormal.z += faceNormals[adjacentTriangles[j]].z;
+		}
+		averageNormal.x = averageNormal.x / adjacentTriangles.size();
+		averageNormal.y = averageNormal.y / adjacentTriangles.size();
+		averageNormal.z = averageNormal.z / adjacentTriangles.size();
+
+		vertexNormals.push_back(averageNormal);
+	}
+	*/
+	return vertexNormals;
+}
 
 void ModelFactory::PreparePlanetDisplacement() {
 	BindIDEvent me(BindID::ID_PlanetHeight);
