@@ -13,7 +13,7 @@ private:
 	UINT m_indexBufferSize;
 public:
 	Model();
-	~Model();
+	~Model() = default;
 	bool NotLoaded();
 	void Loaded();
 

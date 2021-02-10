@@ -8,13 +8,6 @@ Model::Model()
 
 }
 
-Model::~Model()
-{
-	//m_indexBuffer->Release();
-	//m_vertexBuffer->Release();
-	//m_matrixBuffer->Release();
-}
-
 bool Model::NotLoaded()
 {
 	return m_notLoaded;

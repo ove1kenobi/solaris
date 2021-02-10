@@ -136,7 +136,7 @@ Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
 		if (len < r/*r - (r / 50)*/ ) {
 			newVertex.color.x = 0.0f;
 			newVertex.color.y = 0.0f;
-			newVertex.color.z = std::pow(len / r, 5);
+			newVertex.color.z = static_cast<float>(std::pow(len / r, 5));
 			newVertex.color.w = 1.0f;
 		}
 		else if (len >= r && len <= r + (r / 15)){
@@ -146,9 +146,9 @@ Model* ModelFactory::GenerateSphere(float x, float y, float z, float r) {
 			newVertex.color.w = 1.0f;
 		}
 		else {
-			newVertex.color.x = 1.0f - (0.5f * std::pow(((r + (r / 15)) / len), 10));
-			newVertex.color.y = 1.0f - (0.5f * std::pow(((r + (r / 15)) / len), 10));
-			newVertex.color.z = 1.0f - (0.5f * std::pow(((r + (r / 15)) / len), 10));
+			newVertex.color.x = 1.0f - (0.5f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
+			newVertex.color.y = 1.0f - (0.5f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
+			newVertex.color.z = 1.0f - (0.5f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
 			newVertex.color.w = 1.0f;
 		}
 
@@ -368,12 +368,12 @@ void ModelFactory::createTriangleFace(
 
 std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, DirectX::XMFLOAT3 center, float r)
 {
-	ID3D11Buffer* srcDataGPUBuffer;
-	ID3D11Buffer* destDataGPUBuffer;
-	ID3D11Buffer* copyToBuffer;
-	ID3D11Buffer* planetConstantsBuffer;
-	ID3D11ShaderResourceView* srcDataGPUBufferView;
-	ID3D11UnorderedAccessView* destDataGPUBufferView;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> srcDataGPUBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> destDataGPUBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> copyToBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> planetConstantsBuffer;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srcDataGPUBufferView;
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> destDataGPUBufferView;
 
 	//SOURCE
 	// First we create a buffer in GPU memory
@@ -404,7 +404,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	descView.Format = DXGI_FORMAT_UNKNOWN;
 	descView.BufferEx.NumElements = descBuf.ByteWidth / descBuf.StructureByteStride;
 
-	HR_X(m_device->CreateShaderResourceView(srcDataGPUBuffer, &descView, &srcDataGPUBufferView), "CreateShaderResourceView");
+	HR_X(m_device->CreateShaderResourceView(srcDataGPUBuffer.Get(), &descView, &srcDataGPUBufferView), "CreateShaderResourceView");
 
 	//DEST
 	//------------------------------------------------------------------------------------------------------------------------
@@ -441,7 +441,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	descViewUAV.Format = DXGI_FORMAT_UNKNOWN;
 	descViewUAV.Buffer.NumElements = descBufUAV.ByteWidth / descBufUAV.StructureByteStride;
 
-	HR_X(m_device->CreateUnorderedAccessView(destDataGPUBuffer,
+	HR_X(m_device->CreateUnorderedAccessView(destDataGPUBuffer.Get(),
 		&descViewUAV, &destDataGPUBufferView), "CreateUnorderedAccessView");
 
 	//Constant buffer
@@ -463,7 +463,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	PlanetConstants* constantBufferData;
 
 	m_deviceContext->Map(
-		planetConstantsBuffer,
+		planetConstantsBuffer.Get(),
 		0,
 		D3D11_MAP_WRITE_DISCARD,
 		0,
@@ -475,15 +475,15 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	constantBufferData->center = center;
 	constantBufferData->radius = r;
 
-	m_deviceContext->Unmap(planetConstantsBuffer, 0);
+	m_deviceContext->Unmap(planetConstantsBuffer.Get(), 0);
 
 	//Set everything
 	//------------------------------------------------------------------------------------
 
-	m_deviceContext->CSSetConstantBuffers(0, 1, &planetConstantsBuffer);
-	m_deviceContext->CSSetShaderResources(0, 1, &srcDataGPUBufferView);
-	m_deviceContext->CSSetUnorderedAccessViews(0, 1, &destDataGPUBufferView, NULL);
-	m_deviceContext->Dispatch(size / 8, 2u, 1u);
+	m_deviceContext->CSSetConstantBuffers(0, 1, planetConstantsBuffer.GetAddressOf());
+	m_deviceContext->CSSetShaderResources(0, 1, srcDataGPUBufferView.GetAddressOf());
+	m_deviceContext->CSSetUnorderedAccessViews(0, 1, destDataGPUBufferView.GetAddressOf(), NULL);
+	m_deviceContext->Dispatch(static_cast<UINT>(size) / 8, 2u, 1u);
 
 	ID3D11ShaderResourceView* nullSRV[] = { NULL };
 	m_deviceContext->CSSetShaderResources(0, 1, nullSRV);
@@ -507,10 +507,10 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	HR_X(m_device->CreateBuffer(&copyToBufferDesc, NULL,
 		&copyToBuffer), "CreateBuffer");
 
-	m_deviceContext->CopyResource(copyToBuffer, destDataGPUBuffer);
+	m_deviceContext->CopyResource(copyToBuffer.Get(), destDataGPUBuffer.Get());
 
 	D3D11_MAPPED_SUBRESOURCE doneVertices;
-	m_deviceContext->Map(copyToBuffer, 0, D3D11_MAP_READ, 0, &doneVertices);
+	m_deviceContext->Map(copyToBuffer.Get(), 0, D3D11_MAP_READ, 0, &doneVertices);
 
 	float* doneData = (float*)doneVertices.pData;
 	std::vector<float> donePositionValues;
@@ -519,7 +519,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 		doneData++;
 	}
 
-	m_deviceContext->Unmap(copyToBuffer, 0);
+	m_deviceContext->Unmap(copyToBuffer.Get(), 0);
 
 	return donePositionValues;
 }

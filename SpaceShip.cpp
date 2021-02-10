@@ -24,7 +24,7 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 	ImGui::Begin("Spaceship");
 	ImGui::Text("Center  : (%f, %f, %f)", m_center.x, m_center.y, m_center.z);
 	ImGui::Text("Velocity: (%f, %f, %f)", m_velocity.x, m_velocity.y, m_velocity.z);
-	ImGui::Text("Mass    : %f", m_mass);
+	ImGui::DragFloat("Mass", &m_mass, 500.0f);
 	ImGui::End();
 #endif
 
