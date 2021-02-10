@@ -20,9 +20,6 @@ protected:
 	float m_yaw;
 	Time m_timer;
 
-	// Physics
-	std::vector<DirectX::XMFLOAT3> m_forces;
-
 	//Where the buffers are stored
 	Model* m_model;
 public:

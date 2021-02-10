@@ -6,6 +6,10 @@ class SpaceShip : public GameObject
 private:
 	float m_rotationAngle;
 	float pi;
+
+	// Physics
+	std::vector<DirectX::XMFLOAT3> m_forces;
+	void UpdatePhysics();
 public:
 	SpaceShip();
 	~SpaceShip() = default;
@@ -18,5 +22,4 @@ public:
 	virtual void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
 	void CalculateGravity(GameObject* other);
 	void AddForce(DirectX::XMFLOAT3 f);
-	void UpdatePhysics();
 };
