@@ -25,6 +25,7 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 	#if defined(DEBUG) || defined(_DEBUG)
 		flags |= D3D11_CREATE_DEVICE_DEBUG;
 	#endif
+		flags |= D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
 	D3D_FEATURE_LEVEL pFeatureLevel[1] = { D3D_FEATURE_LEVEL_11_0 };
 	D3D_FEATURE_LEVEL verifiedFeatureLevel = {};
@@ -45,6 +46,7 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 											    4u,
 											    &m_MSAAQuality),
 											    "CheckMultiSampleQualityLevels");
+
 	assert(m_MSAAQuality > 0u);
 
 	DXGI_SWAP_CHAIN_DESC swapChainDescriptor = {};
