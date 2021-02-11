@@ -9,13 +9,14 @@
 
 class Render2D : public EventPublisher, IEventListener {
 private:
-	// external window handle
+	//Microsoft::WRL::ComPtr<HWND> m_pHWND;	Holds the window handler
+	//Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pBackBuffer;	Holds the backbuffer
 public:
 	Render2D() noexcept;
 	virtual ~Render2D() = default;
 
 	[[nodiscard]] const bool Initialize() noexcept;
-	void RenderUI();
+	void RenderUI(HWND hwnd);
 	void OnEvent(IEvent& event) noexcept;
 };
 
