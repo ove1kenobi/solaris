@@ -285,6 +285,7 @@ void ModelFactory::createTriangleFace(
 	std::vector<int>& triangles,
 	unsigned int divisions
 ) {
+	const std::lock_guard<std::mutex> lock(this->m_mutex);
 	int pointsOnEdge = static_cast<int>(edge1.size());
 	std::vector<int> vertexMap;
 	vertexMap.push_back(edge1[0]);
@@ -370,6 +371,8 @@ void ModelFactory::createTriangleFace(
 
 std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, DirectX::XMFLOAT3 center, float r)
 {
+	const std::lock_guard<std::mutex> lock(this->m_mutex);
+
 	ID3D11Buffer* srcDataGPUBuffer;
 	ID3D11Buffer* destDataGPUBuffer;
 	ID3D11Buffer* copyToBuffer;
@@ -485,7 +488,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	m_deviceContext->CSSetConstantBuffers(0, 1, &planetConstantsBuffer);
 	m_deviceContext->CSSetShaderResources(0, 1, &srcDataGPUBufferView);
 	m_deviceContext->CSSetUnorderedAccessViews(0, 1, &destDataGPUBufferView, NULL);
-	m_deviceContext->Dispatch(size / 4, 1u, 1u);
+	m_deviceContext->Dispatch((size / 400) + 1, 1u, 1u);
 
 	ID3D11ShaderResourceView* nullSRV[] = { NULL };
 	m_deviceContext->CSSetShaderResources(0, 1, nullSRV);
@@ -527,6 +530,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 }
 
 void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std::vector<int>& indices, Model* model) {
+	const std::lock_guard<std::mutex> lock(this->m_mutex);
 	model->setStride(stride);
 	model->setOffset(0u);
 
@@ -574,7 +578,6 @@ void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std
 }
 
 std::vector<DirectX::XMFLOAT3> ModelFactory::calcNormals(std::vector<float> vertices, std::vector<int> indices) {
-	
 	std::vector<DirectX::XMFLOAT3> faceNormals(0);
 	std::vector<DirectX::XMFLOAT3> vertexNormals(vertices.size() / 4, { 0, 0, 0 });
 	std::vector<int> vertexConnectingCount(vertices.size() / 4, 0);

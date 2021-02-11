@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "Scene.h"
 
+void initPlanet(Planet* planet, std::vector<GameObject*>& gameObjects, int id, float x, float y, float z, float r, float xRot, float zRot, int rotDir) {
+	planet->Initialize(x, y, z, r, xRot, zRot, rotDir);
+
+	gameObjects[id] = planet;
+}
+
 Scene::Scene() noexcept
 	:	m_numPlanets{ 0 }
 {
@@ -68,7 +74,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
 	std::uniform_int_distribution<int> distributionPlanets(30, 50);
 	this->m_numPlanets = distributionPlanets(generator);
-
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
 	//World space coordinates
 	std::uniform_int_distribution<int> distributionX(-5000, 5000);
@@ -97,10 +102,25 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 	this->m_gameObjects.push_back(planetmiddle);
 	*/
 
-	
+	std::vector<std::thread> threads;
+	this->m_gameObjects.resize(this->m_numPlanets);
 	//Create all the planets using the distributions.
 	for(int i = 0; i < this->m_numPlanets; i++){
 		Planet* planet = new Planet();
+		threads.push_back(std::thread(
+			initPlanet,
+			planet,
+			std::ref(this->m_gameObjects),
+			i,
+			static_cast<float>(distributionX(generator)),
+			static_cast<float>(distributionY(generator)),
+			static_cast<float>(distributionZ(generator)),
+			static_cast<float>(distributionRadius(generator)),
+			static_cast<float>(distributionXZRot(generator)),
+			static_cast<float>(distributionXZRot(generator)),
+			static_cast<int>(distributionRotDir(generator))
+		));
+		/*
 		if(!planet->Initialize(
 			static_cast<float>(distributionX(generator)),
 			static_cast<float>(distributionY(generator)),
@@ -114,9 +134,13 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight) {
 			//Throw
 			return false;
 		}
-		this->m_gameObjects.push_back(planet);
+		*/
+		//this->m_gameObjects.push_back(planet);
 	}
 	
+	for (int i = 0; i < this->m_numPlanets; i++) {
+		threads[i].join();
+	}
 	//Add the ship to the gameObject vector.
 	this->m_gameObjects.push_back(this->m_player.getShip());
 
@@ -144,3 +168,4 @@ bool Scene::update(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceCont
 	//Cull Objects HERE at the end or as response to AskForObjectsEvent? (Emil F)
 	return 1;
 }
+

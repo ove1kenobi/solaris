@@ -17,7 +17,6 @@ private:
 	PlayerCamera m_perspectiveCamera;
 	Player m_player;
 	std::vector<GameObject*> m_gameObjects;
-
 public:
 	Scene() noexcept;
 	~Scene();
