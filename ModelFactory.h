@@ -7,6 +7,7 @@
 #include "ourMath.h"
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/RenderEvents.h"
+#include <mutex>
 class ModelFactory : public EventPublisher
 {
 private:
@@ -15,6 +16,8 @@ private:
 	std::unordered_map<std::string, Model> m_loadedModels;
 	Microsoft::WRL::ComPtr<ID3D11Device> m_device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_deviceContext;
+
+	std::mutex m_mutex;
 private:
 	ModelFactory() noexcept = default;
 	~ModelFactory() noexcept = default;
@@ -32,8 +35,9 @@ private:
 		std::vector<int>& triangles,
 		unsigned int divisions
 	);
-
 	std::vector<float> createHeightOffset(size_t size, void* data, DirectX::XMFLOAT3 center, float r);
+	std::vector<DirectX::XMFLOAT3> calcNormals(std::vector<float> vertices, std::vector<int> indices);
+
 	void createBuffers(UINT stride, size_t size, void* data, const std::vector<int>& indexBuffer, Model* model);
 public:
 	static ModelFactory& Get() noexcept;

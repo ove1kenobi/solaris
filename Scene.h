@@ -6,6 +6,7 @@
 #include "EventSystem/EventPublisher.h"
 #include "Layer.h"
 #include "EventSystem/RenderEvents.h"
+#include <thread>
 class Scene : public EventPublisher, public Layer
 {
 private:
@@ -16,7 +17,6 @@ private:
 	PlayerCamera m_perspectiveCamera;
 	Player m_player;
 	std::vector<GameObject*> m_gameObjects;
-
 public:
 	Scene() noexcept;
 	~Scene();

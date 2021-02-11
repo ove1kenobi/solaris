@@ -8,12 +8,14 @@ struct VS_IN
 {
     float3 inPositionLS : POSITION;
     float4 inColorLS : COLOR;
+    float3 inNormalLS : NORMAL;
 };
 
 struct VS_OUT
 {
     float4 outPositionPS : SV_Position;
     float4 outColorPS : COLOR;
+    float4 outNormalPS : NORMAL;
 };
 
 VS_OUT vs_main(in VS_IN vsIn)
@@ -24,5 +26,8 @@ VS_OUT vs_main(in VS_IN vsIn)
     vsOut.outPositionPS = mul(vsOut.outPositionPS, PMatrix);
 
     vsOut.outColorPS = vsIn.inColorLS;
+
+
+    vsOut.outNormalPS = mul(float4(vsIn.inNormalLS, 0.0f), WMatrix);
     return vsOut;
 }
