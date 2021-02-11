@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "Render2D.h"
-//------ONLY FOR TESTING-----
-#include "RenderWindow.h"
 //-----------
 
 Render2D::Render2D() noexcept {
@@ -9,43 +7,23 @@ Render2D::Render2D() noexcept {
 }
 
 const bool Render2D::Initialize() noexcept {
-	//What does here is based on what renderUI needs.
 	return true;
 }
 
 void Render2D::RenderUI(HWND hwnd) {
 	/*The simplest way to add Direct2D content to a Direct3D scene,
 	is to use the GetBuffer method of an IDXGISwapChain to obtain a DXGI surface, 
-	then use the surface with the CreateDxgiSurfaceRenderTarget method to create an ID2D1RenderTarget,
-	with which to draw your 2-D content.*/
-	//TODO: move factory to the DXCore
-	//TODO: move RenderTarget to DXCore
-	//TODO: get hwnd from the window class the correct way
-	//TODO:
+	then use the surface with the CreateDxgiSurfaceRenderTarget method to create an ID2D1RenderTarget.*/
 
 	//Step 1: Create an ID2D1Factory
 	ID2D1Factory* pD2DFactory = NULL;
 	HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &pD2DFactory);
 
-
-	//Step 2: Create an ID2D1HwndRenderTarget (WHAT WE NEED TO CHANGE)
-	// Obtain the size of the drawing area.
 	RECT rc;
 	GetClientRect(hwnd, &rc);
 
-	/*// Get a surface in the swap chain
-    hr = m_pSwapChain->GetBuffer(
-        0,
-        IID_PPV_ARGS(&pBackBuffer)
-        );*/
-
-	/*hr = m_pD2DFactory->CreateDxgiSurfaceRenderTarget(
-        pBackBuffer,
-        &props,
-        &m_pBackBufferRT
-        );*/
-
-	// Create a Direct2D render target          
+	//Step 2: Create an ID2D1HwndRenderTarget
+	/*version 1
 	ID2D1HwndRenderTarget* pRT = NULL;
 	hr = pD2DFactory->CreateHwndRenderTarget(
 		D2D1::RenderTargetProperties(),
@@ -57,6 +35,30 @@ void Render2D::RenderUI(HWND hwnd) {
 		),
 		&pRT
 	);
+	*/
+
+	//------Version 2------------
+    hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
+
+	FLOAT dpiX;
+    FLOAT dpiY;
+	pD2DFactory->GetDesktopDpi(&dpiX, &dpiY);
+
+	D2D1_RENDER_TARGET_PROPERTIES props =
+		D2D1::RenderTargetProperties(
+			D2D1_RENDER_TARGET_TYPE_DEFAULT,
+			D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
+			dpiX,
+			dpiY
+		);
+
+	hr = pD2DFactory->CreateDxgiSurfaceRenderTarget(
+        pBackBuffer,
+        &props,
+        &m_pBackBufferRT
+        );
+
+	//--------------------------------
 
 
 	//Step 3: Create a Brush
@@ -64,7 +66,7 @@ void Render2D::RenderUI(HWND hwnd) {
 	if (SUCCEEDED(hr))
 	{
 
-		pRT->CreateSolidColorBrush(
+		m_pBackBufferRT->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::Aqua),
 			&pBlackBrush
 		);
@@ -73,9 +75,9 @@ void Render2D::RenderUI(HWND hwnd) {
 	In general, you should create brushes once and retain them for the life*/
 
 	//Step 4: Draw the Rectangle
-	pRT->BeginDraw();
+	m_pBackBufferRT->BeginDraw();
 
-	pRT->DrawRectangle(
+	m_pBackBufferRT->DrawRectangle(
 		D2D1::RectF(
 			rc.left + 100.0f,
 			rc.top + 100.0f,
@@ -83,12 +85,12 @@ void Render2D::RenderUI(HWND hwnd) {
 			rc.bottom - 100.0f),
 		pBlackBrush);
 
-	hr = pRT->EndDraw();
+	hr = m_pBackBufferRT->EndDraw();
 
 	//Step 5: Release Resources
-	pRT->Release();
-	pBlackBrush->Release();
-	pD2DFactory->Release();
+	//pRT->Release();
+	//pBlackBrush->Release();
+	//pD2DFactory->Release();
 }
 
 //If an event has been picked up, then we delegate it here
