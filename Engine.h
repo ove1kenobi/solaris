@@ -21,6 +21,8 @@ private:
 	ImGuiManager m_imguiManager;
 	LayerStack m_LayerStack;
 	bool m_Running;
+	long double m_time;
+	int fps;
 private:
 	void Update();
 	void Render();

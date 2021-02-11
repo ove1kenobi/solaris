@@ -4,13 +4,13 @@
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/InputEvents.h"
 #include "EventSystem\UtilityEvents.h"
-#include "DirectXTK/Mouse.h"
 
 class PlayerCamera : public IEventListener, public EventPublisher, public Camera {
 private:
 	float m_FOVvalue = 4.0f;
 	float m_distanceFromShip;
 	float m_sensitivity;
+	bool m_orbitModeActive;
 	void OnEvent(IEvent& event) noexcept;
 
 public:
@@ -22,9 +22,9 @@ public:
 	//Updates the vMatrix
 	void update(DirectX::XMVECTOR shipCoords);
 	//Mouse movement
-	void mouseRot();
+	void mouseRot(int xValue, int yValue);
 	//Zoom
-	void mouseScroll();
+	void mouseScroll(int scroll);
 	//Rotates camera when ship rotates.
 	void shipRot(float step);
 };

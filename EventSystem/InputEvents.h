@@ -77,30 +77,75 @@ public:
 	}
 };
 
-class MouseMoveEvent : public IEvent
+class MouseMoveAbsoluteEvent : public IEvent
 {
 private:
-
+	int m_xCoord, m_yCoord;
 public:
-	MouseMoveEvent() noexcept = default;
-	virtual ~MouseMoveEvent() noexcept = default;
+	MouseMoveAbsoluteEvent(int xCoord, int yCoord)
+	{
+		m_xCoord = xCoord;
+		m_yCoord = yCoord;
+	}
+	virtual ~MouseMoveAbsoluteEvent() noexcept = default;
 
 	[[nodiscard]] const EventType GetEventType() const noexcept
 	{
-		return EventType::MouseMoveEvent;
+		return EventType::MouseMoveAbsoluteEvent;
 	}
 	[[nodiscard]] const std::string GetDebugName() const noexcept
 	{
-		return "MouseMoveEvent";
+		return "MouseMoveAbsoluteEvent";
+	}
+	[[nodiscard]] const int GetXCoord() const noexcept
+	{
+		return m_xCoord;
+	}
+	[[nodiscard]] const int GetYCoord() const noexcept
+	{
+		return m_yCoord;
+	}
+};
+
+class MouseMoveRelativeEvent : public IEvent
+{
+private:
+	int m_xDiff, m_yDiff;
+public:
+	MouseMoveRelativeEvent(int xDiff, int yDiff)
+	{
+		m_xDiff = xDiff;
+		m_yDiff = yDiff;
+	}
+	virtual ~MouseMoveRelativeEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept
+	{
+		return EventType::MouseMoveRelativeEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept
+	{
+		return "MouseMoveRelativeEvent";
+	}
+	[[nodiscard]] const int GetXDiff() const noexcept
+	{
+		return m_xDiff;
+	}
+	[[nodiscard]] const int GetYDiff() const noexcept
+	{
+		return m_yDiff;
 	}
 };
 
 class MouseScrollEvent : public IEvent
 {
 private:
-
+	int m_wheelScroll;
 public:
-	MouseScrollEvent() noexcept = default;
+	MouseScrollEvent(int wheelScroll) 
+	{
+		m_wheelScroll = wheelScroll;
+	}
 	virtual ~MouseScrollEvent() noexcept = default;
 
 	[[nodiscard]] const EventType GetEventType() const noexcept
@@ -110,5 +155,9 @@ public:
 	[[nodiscard]] const std::string GetDebugName() const noexcept
 	{
 		return "MouseScrollEvent";
+	}
+	[[nodiscard]] const int GetWheelScroll() const noexcept
+	{
+		return m_wheelScroll;
 	}
 };

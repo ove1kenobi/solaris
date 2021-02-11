@@ -34,6 +34,10 @@ const bool ResourceManager::CreateAllBindables()
 
 	//Domain Shaders:
 
+	//Compute Shaders:
+	if (!m_ComputeShaderPlanet.Create(m_pDevice, L"ComputeShader_Planet.hlsl"))
+		return false;
+
 	//InputLayouts:
 	if (!m_InputLayoutMinimal.Create(m_pDevice, m_VertexShaderMinimal, LAYOUT_MINIMAL))
 		return false;
@@ -99,9 +103,12 @@ void ResourceManager::UnbindPipeline()
 
 	m_pDeviceContext->GSSetShader(nullptr, nullptr, 0u);
 	m_pDeviceContext->GSSetShaderResources(0u, 3u, nullSRV);
-	m_pDeviceContext->GSSetConstantBuffers(0u, 0u, nullptr);
 	m_pDeviceContext->GSSetSamplers(0u, 3u, nullSampler);
 	m_pDeviceContext->GSSetConstantBuffers(0u, 3u, nullBuffer);
+
+	m_pDeviceContext->CSSetShader(nullptr, nullptr, 0u);
+	m_pDeviceContext->CSSetShaderResources(0u, 3u, nullSRV);
+	m_pDeviceContext->CSSetConstantBuffers(0u, 0u, nullptr);
 }
 
 void ResourceManager::BindToPipeline(IEvent& event)
@@ -139,6 +146,12 @@ void ResourceManager::BindToPipeline(IEvent& event)
 			{
 				bindables->Bind(m_pDeviceContext);
 			}
+		}
+		break;
+	case BindID::ID_PlanetHeight :
+		if (!m_ComputeShaderPlanet.IsBound())
+		{
+			m_ComputeShaderPlanet.Bind(m_pDeviceContext);
 		}
 		break;
 	}

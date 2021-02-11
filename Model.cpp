@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "Model.h"
 
-Model::Model() : m_notLoaded{ true }
+Model::Model()
+	: m_notLoaded{ true }, m_stride{ 0 }, m_offset{ 0 },
+	m_indexBufferSize{ 0 }, m_vertexBufferSize{ 0 }
 {
 
 }

@@ -2,6 +2,7 @@
 #include "IBindable.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "ComputeShader.h"
 #include "PrimitiveTopology.h"
 #include "InputLayout.h"
 #include "CubeTexture.h"
@@ -22,6 +23,7 @@ private:
 	VertexShader m_VertexShaderSkybox;
 	PixelShader m_PixelShaderMinimal;
 	PixelShader m_PixelShaderSkybox;
+	ComputeShader m_ComputeShaderPlanet;
 	InputLayout m_InputLayoutCosmicBody;
 	InputLayout m_InputLayoutPlayerModel;
 	InputLayout m_InputLayoutMinimal;

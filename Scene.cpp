@@ -56,6 +56,8 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	}
 
 	//Generate sun.
+	ModelFactory::Get().PreparePlanetDisplacement();
+
 	Sun *sun = new Sun();
 	if(!sun->Initialize()){
 		return false;
@@ -80,7 +82,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 
 	//Planet in the middle for testing.
 	/*
-	CosmicBody* planetmiddle = new CosmicBody();
+	Planet* planetmiddle = new Planet();
 	if (!planetmiddle->init(
 		0,
 		0,
@@ -96,10 +98,11 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	this->m_gameObjects.push_back(planetmiddle);
 	*/
 
+	
 	//Create all the planets using the distributions.
 	for(int i = 0; i < this->m_numPlanets; i++){
-		CosmicBody* planet = new CosmicBody();
-		if(!planet->init(
+		Planet* planet = new Planet();
+		if(!planet->Initialize(
 			static_cast<float>(distributionX(generator)),
 			static_cast<float>(distributionY(generator)),
 			static_cast<float>(distributionZ(generator)),
@@ -120,8 +123,15 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	return true;
 }
 
-
 void Scene::Update() noexcept {
+	// Calculate gravity between each pair of GameObjects
+	SpaceShip* ship = this->m_player.getShip();
+	for (size_t i = 0; i < m_gameObjects.size(); ++i)
+	{
+		ship->CalculateGravity(m_gameObjects[i]);
+	}
+
+	//Update the player and all the game objects.
 	m_player.update();
 	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
 	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
@@ -129,14 +139,16 @@ void Scene::Update() noexcept {
 	for (auto r : this->m_gameObjects) {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
-#if defined(DEBUG) | defined(_DEBUG)
-	ImGui::Begin("Game Objects");
-	for (unsigned int i{ 0u }; i < m_gameObjects.size(); i++)
-	{
-		ImGui::Text("Game Object #%d", i + 1);
-		ImGui::Text("Center: (%.0f, %.0f, %.0f)", m_gameObjects[i]->GetCenter().x, m_gameObjects[i]->GetCenter().y, m_gameObjects[i]->GetCenter().z);
-	}
-	ImGui::End();
-#endif
+//#if defined(DEBUG) | defined(_DEBUG)
+//	Time t;
+//	ImGui::Begin("Game Objects");
+//	ImGui::Text("Delta Time: %f", t.DeltaTime());
+//	for (unsigned int i{ 0u }; i < m_gameObjects.size(); i++)
+//	{
+//		ImGui::Text("Game Object #%d", i + 1);
+//		ImGui::Text("Center: (%.0f, %.0f, %.0f)", m_gameObjects[i]->GetCenter().x, m_gameObjects[i]->GetCenter().y, m_gameObjects[i]->GetCenter().z);
+//	}
+//	ImGui::End();
+//#endif
 	//Cull Objects HERE at the end or as response to AskForObjectsEvent? (Emil F)
 }
