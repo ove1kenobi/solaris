@@ -22,6 +22,7 @@ Player::Player()
 
 Player::~Player()
 {
+	
 }
 
 bool Player::Initialize(/*DirectX::XMFLOAT3 position,*/ PlayerCamera* camera)

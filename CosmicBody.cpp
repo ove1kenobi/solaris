@@ -7,9 +7,16 @@ CosmicBody::CosmicBody() noexcept
 	
 }
 
+CosmicBody::~CosmicBody()
+{
+	//delete m_model;
+}
+
 bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir) {
-	//Set initial values. All ranomized.
+	//Set initial values. All randomized.
 	this->m_radius = r;
+	this->m_mass = r * 10000000;
+	this->m_1byMass = 1.0f / m_mass;
 	this->m_center.x = x;
 	this->m_center.y = y;
 	this->m_center.z = z;
@@ -28,7 +35,7 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	resultY = DirectX::XMVector4Transform(resultY, rotX);
 	resultY = DirectX::XMVector4Transform(resultY, rotZ);
 	DirectX::XMStoreFloat4(&this->m_yAxis, resultY);
-
+	
 	//Initialize the wMatrix.
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, DirectX::XMMatrixIdentity());
 	DirectX::XMMATRIX trans = DirectX::XMMatrixTranslation(x, y, z);
@@ -39,7 +46,8 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	return true;
 }
 
-bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
+bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
+{
 	static float angle = 0.0f;
 
 	//Construct rotation matrices
@@ -51,12 +59,15 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	
 	//Construct the translation matrix.
 	DirectX::XMMATRIX transMatrix = DirectX::XMMatrixIdentity();
+
+	// Static or dynamic center coordinates
 	DirectX::XMFLOAT4X4 transMatrixFloats;
 	DirectX::XMStoreFloat4x4(&transMatrixFloats, transMatrix);
 	transMatrixFloats._41 = getTransVector().x;
 	transMatrixFloats._42 = getTransVector().y;
 	transMatrixFloats._43 = getTransVector().z;
 	transMatrix = DirectX::XMLoadFloat4x4(&transMatrixFloats);
+	//transMatrix = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);	// dynamic center coordinates
 
 	//Update the wMatrix and the angle.
 	DirectX::XMMATRIX result = scaleMatrix * rotX * rotZ * rotMatrix  * transMatrix;
@@ -66,41 +77,31 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 
 	//Update the matrixBuffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-	ModelFactory::MatrixBuffer* data;
-
 	DirectX::XMMATRIX WMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&this->m_wMatrix));
 	VMatrix = DirectX::XMMatrixTranspose(VMatrix);
 	PMatrix = DirectX::XMMatrixTranspose(PMatrix);
 
-	deviceContext->Map(
-		this->m_model->getMatrixBuffer().Get(),
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&mappedSubresource
-	);
-
-	data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
-
+	deviceContext->Map(this->m_model->getMatrixBuffer().Get(),
+					   0,
+					   D3D11_MAP_WRITE_DISCARD,
+					   0,
+					   &mappedSubresource);
+	ModelFactory::MatrixBuffer* data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
 	data->WMatrix = WMatrix;
 	data->VMatrix = VMatrix;
 	data->PMatrix = PMatrix;
-
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
+	
 	return true;
 }
 
 void CosmicBody::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
 
-	deviceContext->IASetVertexBuffers(
-		0u,
-		1u,
-		this->m_model->getVertexBuffer().GetAddressOf(),
-		&this->m_model->getStride(),
-		&this->m_model->getOffset()
-	);
-
+	deviceContext->IASetVertexBuffers(0u,
+									  1u,
+									  this->m_model->getVertexBuffer().GetAddressOf(),
+									  &this->m_model->getStride(),
+									  &this->m_model->getOffset());
 	deviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
-
 	deviceContext->VSSetConstantBuffers(0, 1, this->m_model->getMatrixBuffer().GetAddressOf());
 }

@@ -123,13 +123,13 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 
 	//Convert the data to vertex_col.
 	std::vector<vertex_col> vertices;
-	for (unsigned int i = 0; i < vertexPositionValues.size(); i += 4) {
-		vertex_col newVertex;
+	for (size_t i = 0; i < vertexPositionValues.size(); i += 4) {
+		vertex_col newVertex = {};
 		newVertex.position.x = vertexPositionValues[i];
 		newVertex.position.y = vertexPositionValues[i + 1];
 		newVertex.position.z = vertexPositionValues[i + 2];
 
-		DirectX::XMFLOAT3 distance;
+		DirectX::XMFLOAT3 distance = {};
 		distance.x = newVertex.position.x;
 		distance.y = newVertex.position.y;
 		distance.z = newVertex.position.z;
@@ -138,7 +138,7 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 		if (len < r/*r - (r / 50)*/ ) {
 			newVertex.color.x = 0.0f;
 			newVertex.color.y = 0.0f;
-			newVertex.color.z = std::pow(len / r, 5);
+			newVertex.color.z = static_cast<float>(std::pow(len / r, 5));
 			newVertex.color.w = 1.0f;
 		}
 		else if (len >= r && len <= r + (r / 15)){
@@ -334,7 +334,6 @@ void ModelFactory::createTriangleFace(
 			vertexMap.push_back(edge3[i]);
 	}
 
-
 	//Triangulate
 	//Same as divisions at the start of the createSphere function. + 1
 	int rows = divisions + 1;/*static_cast<int>(std::ceil(this->m_radius / 100)) + 1;*/
@@ -372,13 +371,12 @@ void ModelFactory::createTriangleFace(
 std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, DirectX::XMFLOAT3 center, float r)
 {
 	const std::lock_guard<std::mutex> lock(this->m_mutex);
-
-	ID3D11Buffer* srcDataGPUBuffer;
-	ID3D11Buffer* destDataGPUBuffer;
-	ID3D11Buffer* copyToBuffer;
-	ID3D11Buffer* planetConstantsBuffer;
-	ID3D11ShaderResourceView* srcDataGPUBufferView;
-	ID3D11UnorderedAccessView* destDataGPUBufferView;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> srcDataGPUBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> destDataGPUBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> copyToBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> planetConstantsBuffer;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srcDataGPUBufferView;
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> destDataGPUBufferView;
 
 	//SOURCE
 	// First we create a buffer in GPU memory
@@ -391,7 +389,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	descGPUBuffer.StructureByteStride = 16;    // We assume the data is in the
 											  // RGB format, 6 bits per chan
 
-	D3D11_SUBRESOURCE_DATA InitData;
+	D3D11_SUBRESOURCE_DATA InitData = {};
 	InitData.pSysMem = data;
 	HR_X(this->m_device->CreateBuffer(&descGPUBuffer, &InitData, &srcDataGPUBuffer), "CreateBuffer");
 
@@ -409,7 +407,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	descView.Format = DXGI_FORMAT_UNKNOWN;
 	descView.BufferEx.NumElements = descBuf.ByteWidth / descBuf.StructureByteStride;
 
-	HR_X(m_device->CreateShaderResourceView(srcDataGPUBuffer, &descView, &srcDataGPUBufferView), "CreateShaderResourceView");
+	HR_X(m_device->CreateShaderResourceView(srcDataGPUBuffer.Get(), &descView, &srcDataGPUBufferView), "CreateShaderResourceView");
 
 	//DEST
 	//------------------------------------------------------------------------------------------------------------------------
@@ -446,7 +444,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	descViewUAV.Format = DXGI_FORMAT_UNKNOWN;
 	descViewUAV.Buffer.NumElements = descBufUAV.ByteWidth / descBufUAV.StructureByteStride;
 
-	HR_X(m_device->CreateUnorderedAccessView(destDataGPUBuffer,
+	HR_X(m_device->CreateUnorderedAccessView(destDataGPUBuffer.Get(),
 		&descViewUAV, &destDataGPUBufferView), "CreateUnorderedAccessView");
 
 	//Constant buffer
@@ -468,7 +466,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	PlanetConstants* constantBufferData;
 
 	m_deviceContext->Map(
-		planetConstantsBuffer,
+		planetConstantsBuffer.Get(),
 		0,
 		D3D11_MAP_WRITE_DISCARD,
 		0,
@@ -480,15 +478,15 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	constantBufferData->center = center;
 	constantBufferData->radius = r;
 
-	m_deviceContext->Unmap(planetConstantsBuffer, 0);
+	m_deviceContext->Unmap(planetConstantsBuffer.Get(), 0);
 
 	//Set everything
 	//------------------------------------------------------------------------------------
 
-	m_deviceContext->CSSetConstantBuffers(0, 1, &planetConstantsBuffer);
-	m_deviceContext->CSSetShaderResources(0, 1, &srcDataGPUBufferView);
-	m_deviceContext->CSSetUnorderedAccessViews(0, 1, &destDataGPUBufferView, NULL);
-	m_deviceContext->Dispatch((size / 400) + 1, 1u, 1u);
+	m_deviceContext->CSSetConstantBuffers(0, 1, planetConstantsBuffer.GetAddressOf());
+	m_deviceContext->CSSetShaderResources(0, 1, srcDataGPUBufferView.GetAddressOf());
+	m_deviceContext->CSSetUnorderedAccessViews(0, 1, destDataGPUBufferView.GetAddressOf(), NULL);
+	m_deviceContext->Dispatch((static_cast<UINT>(size) / 400) + 1, 1u, 1u);
 
 	ID3D11ShaderResourceView* nullSRV[] = { NULL };
 	m_deviceContext->CSSetShaderResources(0, 1, nullSRV);
@@ -512,10 +510,10 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	HR_X(m_device->CreateBuffer(&copyToBufferDesc, NULL,
 		&copyToBuffer), "CreateBuffer");
 
-	m_deviceContext->CopyResource(copyToBuffer, destDataGPUBuffer);
+	m_deviceContext->CopyResource(copyToBuffer.Get(), destDataGPUBuffer.Get());
 
 	D3D11_MAPPED_SUBRESOURCE doneVertices;
-	m_deviceContext->Map(copyToBuffer, 0, D3D11_MAP_READ, 0, &doneVertices);
+	m_deviceContext->Map(copyToBuffer.Get(), 0, D3D11_MAP_READ, 0, &doneVertices);
 
 	float* doneData = (float*)doneVertices.pData;
 	std::vector<float> donePositionValues;
@@ -524,7 +522,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 		doneData++;
 	}
 
-	m_deviceContext->Unmap(copyToBuffer, 0);
+	m_deviceContext->Unmap(copyToBuffer.Get(), 0);
 
 	return donePositionValues;
 }
@@ -553,7 +551,7 @@ void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std
 	indexBufferDescriptor.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 	// Define the resource data.
-	D3D11_SUBRESOURCE_DATA InitData;
+	D3D11_SUBRESOURCE_DATA InitData = {};
 	InitData.pSysMem = indices.data();
 	InitData.SysMemPitch = 0;
 	InitData.SysMemSlicePitch = 0;

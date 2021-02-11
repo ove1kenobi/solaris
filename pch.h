@@ -7,7 +7,8 @@
 #include <dxgi.h>
 #include <d3dcompiler.h>
 #include <directxmath.h>
-
+#include <DirectXTK/DDSTextureLoader.h>
+#include <imgui.h>
 #include <string>
 #include <unordered_map>
 #include <vector>

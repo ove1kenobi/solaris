@@ -1,7 +1,7 @@
 #include "..\pch.h"
 #include "InputLayout.h"
 
-void InputLayout::Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext)
+void InputLayout::Bind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
 #if defined(DEBUG) | defined (_DEBUG)
 	assert(pDeviceContext && m_pInputLayout);
@@ -9,7 +9,7 @@ void InputLayout::Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContex
 	pDeviceContext->IASetInputLayout(m_pInputLayout.Get());
 }
 
-void InputLayout::Unbind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext)
+void InputLayout::Unbind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
 #if defined(DEBUG) | defined (_DEBUG)
 	assert(pDeviceContext);
@@ -17,11 +17,11 @@ void InputLayout::Unbind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceCont
 	pDeviceContext->IASetInputLayout(nullptr);
 }
 
-const bool InputLayout::Create(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, const VertexShader& vertexShader, unsigned int type)
+const bool InputLayout::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, const VertexShader& vertexShader, unsigned int type)
 {
 	/*The input element descriptor will be continously expanded.
 	  The descriptor should probably be created outside of this function. */
-	if (type != LAYOUT_COSMIC && type != LAYOUT_PLAYER && type != LAYOUT_MINIMAL)
+	if (type != LAYOUT_COSMIC && type != LAYOUT_PLAYER && type != LAYOUT_MINIMAL && type != LAYOUT_SKYBOX)
 	{
 		return false;
 	}
@@ -66,6 +66,19 @@ const bool InputLayout::Create(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, con
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		};
+		HR(pDevice->CreateInputLayout(ieDesc,
+									  ARRAYSIZE(ieDesc),
+									  vertexShader.GetVertexShaderBlob()->GetBufferPointer(),
+									  vertexShader.GetVertexShaderBlob()->GetBufferSize(),
+									  &m_pInputLayout),
+									  "CreateInputLayout");
+	}
+	else if (type == LAYOUT_SKYBOX)
+	{
+		D3D11_INPUT_ELEMENT_DESC ieDesc[] =
+		{
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
 		};
 		HR(pDevice->CreateInputLayout(ieDesc,
 									  ARRAYSIZE(ieDesc),

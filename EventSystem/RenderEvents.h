@@ -107,3 +107,21 @@ public:
 		return m_BindID;
 	}
 };
+
+class ToggleDepthStencilStateEvent : public IEvent
+{
+private:
+
+public:
+	ToggleDepthStencilStateEvent() noexcept = default;
+	virtual ~ToggleDepthStencilStateEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::ToggleDepthStencilStateEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "ToggleDepthStencilStateEvent";
+	}
+};
