@@ -121,21 +121,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 			static_cast<float>(distributionXZRot(generator)),
 			static_cast<int>(distributionRotDir(generator))
 		));
-		/*
-		if(!planet->Initialize(
-			static_cast<float>(distributionX(generator)),
-			static_cast<float>(distributionY(generator)),
-			static_cast<float>(distributionZ(generator)),
-			static_cast<float>(distributionRadius(generator)),
-			static_cast<float>(distributionXZRot(generator)),
-			static_cast<float>(distributionXZRot(generator)),
-			static_cast<int>(distributionRotDir(generator))
-			))
-		{
-			return false;
-		}
-		*/
-		//this->m_gameObjects.push_back(planet);
 	}
 	
 	for (int i = 0; i < this->m_numPlanets; i++) {
