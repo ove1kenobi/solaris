@@ -48,13 +48,24 @@ Model* ModelFactory::GetModel(std::string filePath)
 				const aiMesh* mesh = scene->mMeshes[iMesh];
 #ifdef _DEBUG
 				loadDebug += std::string("Mesh: #") + std::to_string(iMesh) + std::string("\tVertices: ") + std::to_string(mesh->mNumVertices) + std::string("\n");
-#endif	
+#endif
+				DirectX::XMFLOAT3 vmax = {}, vmin = {};
+
 				for (UINT i = 0u; i < mesh->mNumVertices; ++i)
 				{
 					vertex_tex vtx = {};
 					vtx.position.x = mesh->mVertices[i].x;
 					vtx.position.y = mesh->mVertices[i].y;
 					vtx.position.z = mesh->mVertices[i].z;
+
+					// Find extreme corners on model
+					if (vtx.position.x < vmin.x) vmin.x = vtx.position.x;
+					if (vtx.position.y < vmin.y) vmin.y = vtx.position.y;
+					if (vtx.position.z < vmin.z) vmin.z = vtx.position.z;
+					if (vmax.x < vtx.position.x) vmax.x = vtx.position.x;
+					if (vmax.y < vtx.position.y) vmax.y = vtx.position.y;
+					if (vmax.z < vtx.position.z) vmax.z = vtx.position.z;
+
 					if (mesh->HasTextureCoords(iMesh))
 					{
 						vtx.texcoord.x = mesh->mTextureCoords[iMesh][i].x;
@@ -83,6 +94,18 @@ Model* ModelFactory::GetModel(std::string filePath)
 
 
 				}
+
+				// Create bounding box
+				// Calculate extent to vmax
+				vmax.x = abs(vmax.x - vmin.x) / 2;
+				vmax.y = abs(vmax.y - vmin.y) / 2;
+				vmax.z = abs(vmax.z - vmin.z) / 2;
+				// Calculate center to vmin
+				vmin.x += vmax.x;
+				vmin.y += vmax.y;
+				vmin.z += vmax.z;
+				model->SetBoundingVolume(new DirectX::BoundingBox(vmin, vmax));
+
 				for (UINT i = 0u; i < mesh->mNumFaces; ++i)
 				{
 					aiFace face = mesh->mFaces[i];
