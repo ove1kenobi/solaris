@@ -2,92 +2,96 @@
 #include "Render2D.h"
 //-----------
 
+//Make Render2D into a listener for events
 Render2D::Render2D() noexcept {
-	//EventBuss::Get().AddListener(this, );
+	EventBuss::Get().AddListener(this, EventType::DelegateDXEvent);
 }
 
 const bool Render2D::Initialize() noexcept {
 	return true;
 }
 
-void Render2D::RenderUI(HWND hwnd) {
-	/*The simplest way to add Direct2D content to a Direct3D scene,
-	is to use the GetBuffer method of an IDXGISwapChain to obtain a DXGI surface, 
-	then use the surface with the CreateDxgiSurfaceRenderTarget method to create an ID2D1RenderTarget.*/
+void Render2D::UpdateDXHandlers(IEvent& event) noexcept {
+	DelegateDXEvent& derivedEvent = static_cast<DelegateDXEvent&>(event);
+	this->m_pBackBuffer = derivedEvent.GetBackBuffer();
+	this->m_pSwapChain = derivedEvent.GetSwapChain();
 
-	//Step 1: Create an ID2D1Factory
+#if defined(DEBUG) | defined(_DEBUG)
+	assert(this->m_pBackBuffer);
+#endif
+}
+
+void Render2D::RenderUI(HWND hwnd) {
+	//Create factory TODO: needs to be moved to DXCore
 	ID2D1Factory* pD2DFactory = NULL;
 	HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &pD2DFactory);
-
-	RECT rc;
-	GetClientRect(hwnd, &rc);
-
-	//Step 2: Create an ID2D1HwndRenderTarget
-	/*version 1
-	ID2D1HwndRenderTarget* pRT = NULL;
-	hr = pD2DFactory->CreateHwndRenderTarget(
-		D2D1::RenderTargetProperties(),
-		D2D1::HwndRenderTargetProperties(
-			hwnd,
-			D2D1::SizeU(
-				rc.right - rc.left,
-				rc.bottom - rc.top)
-		),
-		&pRT
-	);
-	*/
-
-	//------Version 2------------
-    hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
-
-	FLOAT dpiX;
-    FLOAT dpiY;
-	pD2DFactory->GetDesktopDpi(&dpiX, &dpiY);
+	if (FAILED(hr))	//S_OK
+	{
+		printf("Error!\n");
+	}
 
 	D2D1_RENDER_TARGET_PROPERTIES props =
 		D2D1::RenderTargetProperties(
 			D2D1_RENDER_TARGET_TYPE_DEFAULT,
-			D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
-			dpiX,
-			dpiY
+			D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
 		);
 
-	hr = pD2DFactory->CreateDxgiSurfaceRenderTarget(
-        pBackBuffer,
-        &props,
-        &m_pBackBufferRT
-        );
-
-	//--------------------------------
-
-
-	//Step 3: Create a Brush
-	ID2D1SolidColorBrush* pBlackBrush = NULL;
-	if (SUCCEEDED(hr))
+	// Get swap chain surface
+	Microsoft::WRL::ComPtr<IDXGISurface> surface;
+	//hr = this->m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), static_cast<void**>(&surface));
+	hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&surface));
+	if (FAILED(hr))	//S_OK
 	{
-
-		m_pBackBufferRT->CreateSolidColorBrush(
-			D2D1::ColorF(D2D1::ColorF::Aqua),
-			&pBlackBrush
-		);
+		printf("Error!\n");
 	}
-	/*A brush can only be used with the render target that created it and with other render targets in the same resource domain. 
-	In general, you should create brushes once and retain them for the life*/
 
-	//Step 4: Draw the Rectangle
-	m_pBackBufferRT->BeginDraw();
+	//one or more arguments here are invalid
+	Microsoft::WRL::ComPtr<ID2D1RenderTarget> g_renderTarget2D = NULL;
+	hr = pD2DFactory->CreateDxgiSurfaceRenderTarget(
+		surface.Get(),
+		&props,
+		&g_renderTarget2D
+	);
+	if (FAILED(hr))	//E_INVALIDARG One or more arguments are invalid
+	{
+		printf("Error!\n");
+	}
 
-	m_pBackBufferRT->DrawRectangle(
-		D2D1::RectF(
-			rc.left + 100.0f,
-			rc.top + 100.0f,
-			rc.right - 100.0f,
-			rc.bottom - 100.0f),
-		pBlackBrush);
+	if (g_renderTarget2D) {
+		//Create brush that will be used for rendering
+		ID2D1SolidColorBrush* pBrush = NULL;
+		hr = g_renderTarget2D->CreateSolidColorBrush(
+			D2D1::ColorF(D2D1::ColorF::Aqua),
+			&pBrush
+		);
+		if (FAILED(hr))
+		{
+			printf("Error!\n");
+		}
 
-	hr = m_pBackBufferRT->EndDraw();
+		//Get screen size for screen position, used for drawing TODO: might not be needed depending on UI implementation
+		RECT rc;
+		GetClientRect(hwnd, &rc);
 
-	//Step 5: Release Resources
+		//Draw UI using brush
+		g_renderTarget2D->BeginDraw();
+
+		g_renderTarget2D->DrawRectangle(
+			D2D1::RectF(
+				rc.left + 100.0f,
+				rc.top + 100.0f,
+				rc.right - 100.0f,
+				rc.bottom - 100.0f),
+			pBrush);
+
+		hr = g_renderTarget2D->EndDraw();
+		if (FAILED(hr))
+		{
+			printf("Error!\n");
+		}
+	}
+
+	//TODO: do NOT forget to release pointers
 	//pRT->Release();
 	//pBlackBrush->Release();
 	//pD2DFactory->Release();
@@ -95,24 +99,23 @@ void Render2D::RenderUI(HWND hwnd) {
 
 //If an event has been picked up, then we delegate it here
 void Render2D::OnEvent(IEvent& event) noexcept {
-	//switch (event.GetEventType()) {
-		//case: inPlanetInteraction	//Player pressed "interact"
-		//case: inMenu	
-		//case: inGame
-		//case: inSettings
-		//case: inControllerDisplay
-		//case: inUpgrades
-		//case: inPause
-		//case: inMap
-	//default:
-		//break;
-	//}
+	switch (event.GetEventType()) {
+	case EventType::DelegateDXEvent:
+	{
+		UpdateDXHandlers(event);
+		break;
+	}
+	default:
+		break;
+	}
+
+	//Other possible events/states
+	//case: inPlanetInteraction	
+	//case: inMenu	
+	//case: inGame
+	//case: inSettings
+	//case: inControllerDisplay
+	//case: inUpgrades
+	//case: inPause
+	//case: inMap
 }
-
-//Vad behövs för att få tag på hwnd?
-//saved in class
-//Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
-
-//used by function to update
-//DelegateDXEvent& derivedEvent = static_cast<DelegateDXEvent&>(event);
-//m_pDeviceContext = derivedEvent.GetDeviceContext();

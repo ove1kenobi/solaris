@@ -5,16 +5,19 @@ class DelegateDXEvent : public IEvent
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_ppDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_ppDeviceContext;
+	Microsoft::WRL::ComPtr<IDXGISwapChain>			m_pSwapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_ppBackBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_ppDepthStencilView;
 public:
 	DelegateDXEvent(Microsoft::WRL::ComPtr<ID3D11Device>& pdevice,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pdeviceContext,
+		Microsoft::WRL::ComPtr<IDXGISwapChain>&	pswapChain,
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& pbackBuffer,
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& pdepthStencilView) noexcept
 	{
 		m_ppDevice = pdevice;
 		m_ppDeviceContext = pdeviceContext;
+		m_pSwapChain = pswapChain;
 		m_ppBackBuffer = pbackBuffer;
 		m_ppDepthStencilView = pdepthStencilView;
 	}
@@ -35,6 +38,10 @@ public:
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetDeviceContext() const
 	{
 		return m_ppDeviceContext;
+	}
+	[[nodiscard]] const Microsoft::WRL::ComPtr<IDXGISwapChain>& GetSwapChain() const
+	{
+		return m_pSwapChain;
 	}
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& GetBackBuffer() const
 	{

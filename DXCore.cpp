@@ -191,7 +191,7 @@ void DXCore::ToggleWireFrame() noexcept
 
 void DXCore::DelegateDXHandles() noexcept
 {
-	DelegateDXEvent event(m_pDevice, m_pDeviceContext, m_pBackBuffer, m_pDepthStencilView);
+	DelegateDXEvent event(m_pDevice, m_pDeviceContext, m_pSwapChain, m_pBackBuffer, m_pDepthStencilView);
 	EventBuss::Get().Delegate(event);
 }
 
