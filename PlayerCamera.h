@@ -1,11 +1,12 @@
 #pragma once
 #include "Camera.h"
 #include "EventSystem\IEventListener.h"
-#include "EventSystem/EventBuss.h"
+#include "EventSystem/EventPublisher.h"
 #include "EventSystem/InputEvents.h"
+#include "EventSystem\UtilityEvents.h"
 #include "DirectXTK/Mouse.h"
 
-class PlayerCamera : public IEventListener, public Camera {
+class PlayerCamera : public IEventListener, public EventPublisher, public Camera {
 private:
 	float m_FOVvalue = 4.0f;
 	float m_distanceFromShip;

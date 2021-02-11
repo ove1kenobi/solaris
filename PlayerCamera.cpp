@@ -4,7 +4,7 @@
 bool PlayerCamera::init(int screenWidth, int screenHeight) {
 	//DirectXTK mouse
 	DirectX::Mouse::Get().SetMode(DirectX::Mouse::MODE_RELATIVE);
-	EventBuss::Get().AddListener(this, EventType::MouseMoveEvent, EventType::MouseScrollEvent);
+	EventBuss::Get().AddListener(this, EventType::MouseMoveEvent, EventType::MouseScrollEvent, EventType::RequestCameraEvent);
 
 	this->m_screenFar = 100000.0f;
 	float FOV = 3.141592654f / this->m_FOVvalue;
@@ -77,6 +77,12 @@ void PlayerCamera::OnEvent(IEvent& event) noexcept {
 	case EventType::MouseScrollEvent:
 	{
 		mouseScroll();
+		break;
+	}
+	case EventType::RequestCameraEvent:
+	{
+		DelegateCameraEvent event(this);
+		EventBuss::Get().Delegate(event);
 		break;
 	}
 	}

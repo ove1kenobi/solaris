@@ -7,7 +7,7 @@ PrimitiveTopology::PrimitiveTopology() noexcept
 
 }
 
-void PrimitiveTopology::Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext)
+void PrimitiveTopology::Bind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
 #if defined(DEBUG) | defined (_DEBUG)
 	assert(pDeviceContext);
@@ -15,7 +15,7 @@ void PrimitiveTopology::Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDevice
 	pDeviceContext->IASetPrimitiveTopology(m_Topology);
 }
 
-void PrimitiveTopology::Unbind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext)
+void PrimitiveTopology::Unbind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
 #if defined(DEBUG) | defined (_DEBUG)
 	assert(pDeviceContext);

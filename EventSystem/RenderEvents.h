@@ -1,6 +1,7 @@
 #pragma once
 #include "IEvent.h"
-#include "../GameObject.h"
+//#include "../GameObject.h"
+class GameObject;
 #include "../Resources/BindIDs.h"
 
 class SendRenderObjectsEvent : public IEvent
@@ -103,5 +104,23 @@ public:
 	[[nodiscard]] const BindID& GetBindID() const noexcept
 	{
 		return m_BindID;
+	}
+};
+
+class ToggleDepthStencilStateEvent : public IEvent
+{
+private:
+
+public:
+	ToggleDepthStencilStateEvent() noexcept = default;
+	virtual ~ToggleDepthStencilStateEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::ToggleDepthStencilStateEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "ToggleDepthStencilStateEvent";
 	}
 };

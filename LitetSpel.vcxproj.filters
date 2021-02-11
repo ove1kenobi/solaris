@@ -3,6 +3,8 @@
   <ItemGroup>
     <FxCompile Include="PixelShader_Minimalistic.hlsl" />
     <FxCompile Include="VertexShader_Minimalistic.hlsl" />
+    <FxCompile Include="VertexShader_Skybox.hlsl" />
+    <FxCompile Include="PixelShader_Skybox.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bloom.cpp" />
@@ -40,6 +42,11 @@
     <ClCompile Include="DXDebug.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="LayerStack.cpp" />
+    <ClCompile Include="Resources\CubeTexture.cpp" />
+    <ClCompile Include="Resources\SamplerState.cpp" />
+    <ClCompile Include="Techniques\Skybox.cpp" />
+    <ClCompile Include="Resources\VertexBuffer.cpp" />
+    <ClCompile Include="Resources\IndexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -88,5 +95,10 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="LayerStack.h" />
+    <ClInclude Include="Resources\CubeTexture.h" />
+    <ClInclude Include="Resources\SamplerState.h" />
+    <ClInclude Include="Techniques\Skybox.h" />
+    <ClInclude Include="Resources\VertexBuffer.h" />
+    <ClInclude Include="Resources\IndexBuffer.h" />
   </ItemGroup>
 </Project>

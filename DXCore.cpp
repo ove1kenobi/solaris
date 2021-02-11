@@ -10,7 +10,8 @@ DXCore::DXCore() noexcept
 	  m_pRasterizerStateWireFrame{ nullptr },
 	  m_DefaultViewport { 0 },
 	  m_MSAAQuality{ 4u },
-	  m_WireFrameEnabled{ false }
+	  m_WireFrameEnabled{ false },
+	  m_SkyboxEnabled{ false }
 {
 
 }
@@ -19,7 +20,7 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 							  const unsigned int& clientWindowHeight, 
 							  const HWND& windowHandle)
 {
-	EventBuss::Get().AddListener(this, EventType::ToggleWireFrameEvent);
+	EventBuss::Get().AddListener(this, EventType::ToggleWireFrameEvent, EventType::ToggleDepthStencilStateEvent);
 
 	UINT flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
 	#if defined(DEBUG) || defined(_DEBUG)
@@ -102,9 +103,11 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 	depthStencilDescriptor.StencilEnable = false;
 	depthStencilDescriptor.StencilReadMask = 0u;
 	depthStencilDescriptor.StencilWriteMask = 0u;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDepthStencilState = nullptr;
-	HR(m_pDevice->CreateDepthStencilState(&depthStencilDescriptor, &pDepthStencilState), "CreateDepthStencilState");
-	m_pDeviceContext->OMSetDepthStencilState(pDepthStencilState.Get(), 1u);
+	HR(m_pDevice->CreateDepthStencilState(&depthStencilDescriptor, &m_pDepthStencilStateDefault), "CreateDepthStencilState");
+	m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilStateDefault.Get(), 1u);
+	depthStencilDescriptor.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	depthStencilDescriptor.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	HR(m_pDevice->CreateDepthStencilState(&depthStencilDescriptor, &m_pDepthStencilStateSkybox), "CreateDepthStencilState");
 
 	D3D11_TEXTURE2D_DESC depthStencilTextureDescriptor = {};
 	depthStencilTextureDescriptor.Width = clientWindowWidth;
@@ -155,7 +158,14 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 	rasterizerDesc.MultisampleEnable = true;
 	rasterizerDesc.AntialiasedLineEnable = false;
 	HR(m_pDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerStateFill), "CreateRasterizerState");
+
+	rasterizerDesc.CullMode = D3D11_CULL_NONE;
+	HR(m_pDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerStateNoCull), "CreateRasterizerState");
+
 	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+	HR(m_pDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerStateNoCullWF), "CreateRasterizerState");
+
+	rasterizerDesc.CullMode = D3D11_CULL_BACK;
 	HR(m_pDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerStateWireFrame), "CreateRasterizerState");
 	m_pDeviceContext->RSSetState(m_pRasterizerStateFill.Get());
 
@@ -171,6 +181,9 @@ void DXCore::OnEvent(IEvent& event) noexcept
 	{
 	case EventType::ToggleWireFrameEvent:
 			ToggleWireFrame();
+			break;
+	case EventType::ToggleDepthStencilStateEvent:
+			ToggleDepthStencilState();
 			break;
 	}
 }
@@ -203,6 +216,27 @@ const Microsoft::WRL::ComPtr<ID3D11Device>& DXCore::GetDevice() const noexcept
 const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& DXCore::GetDeviceContext() const noexcept
 {
 	return m_pDeviceContext;
+}
+
+void DXCore::ToggleDepthStencilState() noexcept
+{
+	m_SkyboxEnabled = !m_SkyboxEnabled;
+	if (m_SkyboxEnabled == true)
+	{
+		m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilStateSkybox.Get(), 1u);
+		if (!m_WireFrameEnabled)
+			m_pDeviceContext->RSSetState(m_pRasterizerStateNoCull.Get());
+		else
+			m_pDeviceContext->RSSetState(m_pRasterizerStateNoCullWF.Get());
+	}
+	else
+	{
+		m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilStateDefault.Get(), 1u);
+		if (!m_WireFrameEnabled)
+			m_pDeviceContext->RSSetState(m_pRasterizerStateFill.Get());
+		else
+			m_pDeviceContext->RSSetState(m_pRasterizerStateWireFrame.Get());
+	}
 }
 
 const Microsoft::WRL::ComPtr<IDXGISwapChain>& DXCore::GetSwapChain() const noexcept

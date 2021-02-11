@@ -7,11 +7,12 @@ class ImGuiManager : public Layer
 {
 private:
 	bool m_ShowDemoWindow;
+private:
+	void OnEvent(IEvent& event) noexcept override;
 public:
 	ImGuiManager() noexcept;
 	virtual ~ImGuiManager() noexcept;
 	void BeginFrame() noexcept;
 	void Render() noexcept;
-	void OnEvent(IEvent& event) noexcept override;
 	[[nodiscard]] const std::string GetDebugName() const noexcept override;
 };

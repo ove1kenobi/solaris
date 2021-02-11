@@ -6,7 +6,6 @@
 #include "EventSystem/EventPublisher.h"
 #include "Layer.h"
 #include "EventSystem/RenderEvents.h"
-#include <imgui.h>
 class Scene : public EventPublisher, public Layer
 {
 private:
@@ -21,12 +20,8 @@ private:
 public:
 	Scene() noexcept;
 	~Scene();
-
-
-
 	bool init(unsigned int screenWidth, unsigned int screenHeight, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext);
 	void Update() noexcept override;
-
 	void OnEvent(IEvent& event) noexcept override;
 	[[nodiscard]] const std::string GetDebugName() const noexcept override;
 	void sendObjects();

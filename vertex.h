@@ -15,3 +15,8 @@ struct vertex_col
 	DirectX::XMFLOAT3 tangent;
 	DirectX::XMFLOAT3 bitangent;
 };
+
+struct Vertex_Position
+{
+	DirectX::XMFLOAT3 position;
+};

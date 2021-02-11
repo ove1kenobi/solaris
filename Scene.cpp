@@ -56,13 +56,11 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	}
 
 	//Generate sun.
-	
 	Sun *sun = new Sun();
 	if(!sun->Initialize()){
 		return false;
 	}
 	this->m_gameObjects.push_back(sun);
-	
 	
 	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
@@ -76,7 +74,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	std::uniform_int_distribution<int> distributionY(-5000, 5000);
 	std::uniform_int_distribution<int> distributionZ(-5000, 5000);
 	//Needs to be radians
-	std::uniform_real_distribution<float> distributionXZRot(-M_PI_2, M_PI_2);
+	std::uniform_real_distribution<float> distributionXZRot(static_cast<float>(-M_PI_2), static_cast<float>(M_PI_2));
 	//negative rotation direction if 0.
 	std::uniform_int_distribution<int> distributionRotDir(0, 1);
 
@@ -111,7 +109,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 			static_cast<int>(distributionRotDir(generator))
 			))
 		{
-			//Throw
 			return false;
 		}
 		this->m_gameObjects.push_back(planet);
