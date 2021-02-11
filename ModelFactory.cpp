@@ -148,9 +148,9 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 			newVertex.color.w = 1.0f;
 		}
 		else {
-			newVertex.color.x = 1.0f - (0.7f * std::pow(((r + (r / 15)) / len), 10));
-			newVertex.color.y = 1.0f - (0.7f * std::pow(((r + (r / 15)) / len), 10));
-			newVertex.color.z = 1.0f - (0.7f * std::pow(((r + (r / 15)) / len), 10));
+			newVertex.color.x = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
+			newVertex.color.y = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
+			newVertex.color.z = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
 			newVertex.color.w = 1.0f;
 		}
 
