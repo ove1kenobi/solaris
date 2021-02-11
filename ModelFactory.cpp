@@ -154,9 +154,9 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 			newVertex.color.w = 1.0f;
 		}
 
-		newVertex.normal.x = 0;//normals[i / 4].x;
-		newVertex.normal.y = 0;//normals[i / 4].y;
-		newVertex.normal.z = 0;//normals[i / 4].z;
+		newVertex.normal.x = normals[i / 4].x;
+		newVertex.normal.y = normals[i / 4].y;
+		newVertex.normal.z = normals[i / 4].z;
 
 		newVertex.bitangent.x = 1.0f;
 		newVertex.bitangent.y = 1.0f;
@@ -485,7 +485,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	m_deviceContext->CSSetConstantBuffers(0, 1, &planetConstantsBuffer);
 	m_deviceContext->CSSetShaderResources(0, 1, &srcDataGPUBufferView);
 	m_deviceContext->CSSetUnorderedAccessViews(0, 1, &destDataGPUBufferView, NULL);
-	m_deviceContext->Dispatch(size / 8, 2u, 1u);
+	m_deviceContext->Dispatch(size / 4, 1u, 1u);
 
 	ID3D11ShaderResourceView* nullSRV[] = { NULL };
 	m_deviceContext->CSSetShaderResources(0, 1, nullSRV);
@@ -615,32 +615,7 @@ std::vector<DirectX::XMFLOAT3> ModelFactory::calcNormals(std::vector<float> vert
 		vertexNormals[i].y = vertexNormals[i].y / vertexConnectingCount[i];
 		vertexNormals[i].z = vertexNormals[i].z / vertexConnectingCount[i];
 	}
-	/*
-	std::vector<DirectX::XMFLOAT3> vertexNormals;
-	//Vertices.size() / 4 = number of vertices.
-	for (int i = 0; i < vertices.size(); i += 4) {
-		//Go through all the indices and find in what triangles this vertex is used.
-		std::vector<int> adjacentTriangles(0);
-		for (int j = 0; j < indices.size(); j++) {
-			if (indices[j] == i / 4) {
-				adjacentTriangles.push_back(std::floor(j / 3));
-			}
-		}
-		
-		//Go through the adjacentTriangles and add them all together and divide by the count to ge the average.
-		DirectX::XMFLOAT3 averageNormal = { 0, 0, 0 };
-		for (int j = 0; j < adjacentTriangles.size(); j++) {
-			averageNormal.x += faceNormals[adjacentTriangles[j]].x;
-			averageNormal.y += faceNormals[adjacentTriangles[j]].y;
-			averageNormal.z += faceNormals[adjacentTriangles[j]].z;
-		}
-		averageNormal.x = averageNormal.x / adjacentTriangles.size();
-		averageNormal.y = averageNormal.y / adjacentTriangles.size();
-		averageNormal.z = averageNormal.z / adjacentTriangles.size();
-
-		vertexNormals.push_back(averageNormal);
-	}
-	*/
+	
 	return vertexNormals;
 }
 
@@ -655,6 +630,8 @@ Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
 	std::vector<float> vertexPositionValues;
 	std::vector<int> indices;
 	createSphere(r, vertexPositionValues, indices);
+
+	std::vector<DirectX::XMFLOAT3> normals = calcNormals(vertexPositionValues, indices);
 
 	std::vector<vertex_col> vertices;
 	for (unsigned int i = 0; i < vertexPositionValues.size(); i += 4) {
@@ -676,9 +653,9 @@ Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
 		newVertex.tangent.y = 1.0f;
 		newVertex.tangent.z = 1.0f;
 
-		newVertex.normal.x = 1.0f;
-		newVertex.normal.y = 1.0f;
-		newVertex.normal.z = 1.0f;
+		newVertex.normal.x = normals[i / 4].x;
+		newVertex.normal.y = normals[i / 4].y;
+		newVertex.normal.z = normals[i / 4].z;
 
 		vertices.push_back(newVertex);
 	}

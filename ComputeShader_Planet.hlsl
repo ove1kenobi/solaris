@@ -14,7 +14,7 @@ struct WorldPosition {
 StructuredBuffer<WorldPosition> BufferIn : register(t0);
 RWStructuredBuffer<WorldPosition> BufferOut : register(u0);
 
-[numthreads(512, 1, 1)]
+[numthreads(1, 1, 1)]
 void cs_main( uint3 DTid : SV_DispatchThreadID )
 {
 	float oceanDepthMultiplier = 20;

@@ -6,6 +6,8 @@
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/RenderEvents.h"
 #include <imgui.h>
+#include <thread>
+
 class Scene : public EventPublisher, IEventListener
 {
 private:
