@@ -11,9 +11,11 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_matrixBuffer;
 	UINT m_vertexBufferSize;
 	UINT m_indexBufferSize;
+	DirectX::BoundingBox* m_boundingBox;
+	DirectX::BoundingSphere* m_boundingSphere;
 public:
 	Model();
-	~Model() = default;
+	~Model();
 	bool NotLoaded();
 	void Loaded();
 
@@ -28,6 +30,9 @@ public:
 
 	void setStride(UINT stride);
 	void setOffset(UINT offset);
+
 	UINT& getStride();
 	UINT& getOffset();
+	void SetBoundingVolume(DirectX::BoundingBox* box);
+	void SetBoundingVolume(DirectX::BoundingSphere* sphere);
 };

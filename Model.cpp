@@ -3,9 +3,24 @@
 
 Model::Model()
 	: m_notLoaded{ true }, m_stride{ 0 }, m_offset{ 0 },
-	m_indexBufferSize{ 0 }, m_vertexBufferSize{ 0 }
+	m_indexBufferSize{ 0 }, m_vertexBufferSize{ 0 },
+	m_boundingBox{ nullptr }, m_boundingSphere{ nullptr }
 {
 
+}
+
+Model::~Model()
+{
+	if (m_boundingBox)
+	{
+		delete m_boundingBox;
+		m_boundingBox = nullptr;
+	}
+	if (m_boundingSphere)
+	{
+		delete m_boundingSphere;
+		m_boundingSphere = nullptr;
+	}
 }
 
 bool Model::NotLoaded()
@@ -60,4 +75,14 @@ UINT& Model::getStride() {
 
 UINT& Model::getOffset() {
 	return this->m_offset;
+}
+
+void Model::SetBoundingVolume(DirectX::BoundingBox* box)
+{
+	m_boundingBox = box;
+}
+
+void Model::SetBoundingVolume(DirectX::BoundingSphere* sphere)
+{
+	m_boundingSphere = sphere;
 }
