@@ -60,15 +60,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	if (!m_player.Initialize(&m_perspectiveCamera)) {
 		return false;
 	}
-
-	//Generate sun.
-	ModelFactory::Get().PreparePlanetDisplacement();
-
-	Sun *sun = new Sun();
-	if(!sun->Initialize()){
-		return false;
-	}
-	this->m_gameObjects.push_back(sun);
 	
 	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
@@ -103,6 +94,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	this->m_gameObjects.push_back(planetmiddle);
 	*/
 
+	ModelFactory::Get().PreparePlanetDisplacement();
 	std::vector<std::thread> threads;
 	this->m_gameObjects.resize(this->m_numPlanets);
 	//Create all the planets using the distributions.
@@ -126,6 +118,14 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	for (int i = 0; i < this->m_numPlanets; i++) {
 		threads[i].join();
 	}
+
+	//Generate sun.
+	Sun* sun = new Sun();
+	if (!sun->Initialize()) {
+		return false;
+	}
+	this->m_gameObjects.push_back(sun);
+
 	//Add the ship to the gameObject vector.
 	this->m_gameObjects.push_back(this->m_player.getShip());
 
