@@ -1,7 +1,7 @@
 #include "..\pch.h"
 #include "ComputeShader.h"
 
-void ComputeShader::Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext)
+void ComputeShader::Bind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
 #if defined(DEBUG) | defined (_DEBUG)
 	assert(pDeviceContext && m_pComputeShader);
@@ -9,7 +9,7 @@ void ComputeShader::Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceCont
 	pDeviceContext->CSSetShader(m_pComputeShader.Get(), nullptr, 0u);
 }
 
-void ComputeShader::Unbind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext)
+void ComputeShader::Unbind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
 #if defined(DEBUG) | defined (_DEBUG)
 	assert(pDeviceContext);
@@ -17,7 +17,7 @@ void ComputeShader::Unbind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceCo
 	pDeviceContext->CSSetShader(nullptr, nullptr, 0u);
 }
 
-const bool ComputeShader::Create(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, const LPCWSTR& fileName)
+const bool ComputeShader::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, const LPCWSTR& fileName)
 {
 	Microsoft::WRL::ComPtr<ID3DBlob> pErrorBlob{ nullptr };
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;

@@ -155,7 +155,7 @@ void ResourceManager::BindToPipeline(IEvent& event)
 		}
 		break;
 	}
-	case BindID::ID_SKYBOX:
+	case BindID::ID_Skybox:
 	{
 		for (auto bindables : m_BindablesSkybox)
 		{

@@ -49,7 +49,7 @@ void Skybox::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDev
 	EventBuss::Get().Delegate(ubEvent);
 
 	//Bind Skybox bindables
-	BindIDEvent bindEvent(BindID::ID_SKYBOX);
+	BindIDEvent bindEvent(BindID::ID_Skybox);
 	EventBuss::Get().Delegate(bindEvent);
 
 	//Get the camera for its matrices

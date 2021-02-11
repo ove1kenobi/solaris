@@ -331,7 +331,6 @@ void ModelFactory::createTriangleFace(
 			vertexMap.push_back(edge3[i]);
 	}
 
-
 	//Triangulate
 	//Same as divisions at the start of the createSphere function. + 1
 	int rows = divisions + 1;/*static_cast<int>(std::ceil(this->m_radius / 100)) + 1;*/
