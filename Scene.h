@@ -1,5 +1,5 @@
 #pragma once
-#include "CosmicBody.h"
+#include "Planet.h"
 #include "Player.h"
 #include "Sun.h"
 #include "GameObject.h"
@@ -10,7 +10,7 @@
 class Scene : public EventPublisher, public Layer
 {
 private:
-	//GameObjects include planets, moons, asteroids and the sun.
+	//GameObjects include planets, moons, asteroids, the Sun and the spaceship.
 	int m_numPlanets;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
 	Camera m_orthoCamera;

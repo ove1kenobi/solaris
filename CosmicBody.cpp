@@ -2,14 +2,21 @@
 #include "CosmicBody.h"
 
 CosmicBody::CosmicBody() noexcept
-	:	m_radius{ 0.0f }, m_yAxis{ 0.0f, 1.0f, 0.0f, 0.0f }
+	: m_radius{ 0.0f }, m_yAxis{ 0.0f, 1.0f, 0.0f, 0.0f }, m_rotationDir{ 0 }
 {
 	
+}
+
+CosmicBody::~CosmicBody()
+{
+	//delete m_model;
 }
 
 bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir) {
 	//Set initial values. All ranomized.
 	this->m_radius = r;
+	this->m_mass = r * 10000000;
+	this->m_1byMass = 1.0f / m_mass;
 	this->m_center.x = x;
 	this->m_center.y = y;
 	this->m_center.z = z;
@@ -28,7 +35,6 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	resultY = DirectX::XMVector4Transform(resultY, rotX);
 	resultY = DirectX::XMVector4Transform(resultY, rotZ);
 	DirectX::XMStoreFloat4(&this->m_yAxis, resultY);
-	
 
 	//Initialize the wMatrix.
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, DirectX::XMMatrixIdentity());
@@ -37,13 +43,11 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, final);
 	
-	//Generate the sphere.
-	this->m_model = ModelFactory::Get().GenerateSphere(x, y, z, r);
-	
 	return true;
 }
 
-bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
+bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
+{
 	static float angle = 0.0f;
 
 	//Construct rotation matrices
@@ -55,18 +59,21 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	
 	//Construct the translation matrix.
 	DirectX::XMMATRIX transMatrix = DirectX::XMMatrixIdentity();
+
+	// Static or dynamic center coordinates
 	DirectX::XMFLOAT4X4 transMatrixFloats;
 	DirectX::XMStoreFloat4x4(&transMatrixFloats, transMatrix);
 	transMatrixFloats._41 = getTransVector().x;
 	transMatrixFloats._42 = getTransVector().y;
 	transMatrixFloats._43 = getTransVector().z;
 	transMatrix = DirectX::XMLoadFloat4x4(&transMatrixFloats);
+	//transMatrix = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);	// dynamic center coordinates
 
 	//Update the wMatrix and the angle.
 	DirectX::XMMATRIX result = scaleMatrix * rotX * rotZ * rotMatrix  * transMatrix;
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, result);
 	//Angle change depends on planets radius (smaller planet = faster spin)
-	angle += 0.01f * static_cast<float>(this->m_timer.DeltaTime()) * (1000 / this->m_radius);
+	angle += 0.001f * static_cast<float>(this->m_timer.DeltaTime()) * (1000 / this->m_radius);
 
 	//Update the matrixBuffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
@@ -91,6 +98,7 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	data->PMatrix = PMatrix;
 
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
+	
 	return true;
 }
 

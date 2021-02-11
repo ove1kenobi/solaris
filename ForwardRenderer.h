@@ -4,7 +4,7 @@
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/RenderEvents.h"
 #include "EventSystem\UtilityEvents.h"
-
+#include "GameObject.h"
 class ForwardRenderer : public EventPublisher, IEventListener 
 {
 private:

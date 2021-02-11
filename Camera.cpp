@@ -38,7 +38,7 @@ bool Camera::init(int screenWidth, int screenHeight, float cameraHeight) {
 	//Above the sun.
 	this->setPos(0.0f, cameraHeight, 0.0f);
 	//Look down
-	this->setRot(M_PI, 0.0f, 0.0f); //Might be wrong. Will have to test when implementing minimap.
+	this->setRot(static_cast<float>(M_PI), 0.0f, 0.0f); //Might be wrong. Will have to test when implementing minimap.
 
 	//Setting the view matrix. Doing it in init since it will not have to be updated for the static ortho camera.
 	//Create the rotation matrix.
