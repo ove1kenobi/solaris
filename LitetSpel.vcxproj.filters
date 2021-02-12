@@ -50,6 +50,7 @@
     <ClCompile Include="Resources\IndexBuffer.cpp" />
     <ClCompile Include="Resources\ComputeShader.cpp" />
     <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="Techniques\MousePicking.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -105,6 +106,7 @@
     <ClInclude Include="Resources\IndexBuffer.h" />
     <ClInclude Include="Resources\ComputeShader.h" />
     <ClInclude Include="Planet.h" />
+    <ClInclude Include="Techniques\MousePicking.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

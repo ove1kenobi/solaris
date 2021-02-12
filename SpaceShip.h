@@ -12,7 +12,7 @@ private:
 	void UpdatePhysics();
 public:
 	SpaceShip();
-	~SpaceShip() = default;
+	virtual ~SpaceShip() = default;
 
 	void move(DirectX::XMFLOAT4 deltaPos);
 	void rotate(float step);

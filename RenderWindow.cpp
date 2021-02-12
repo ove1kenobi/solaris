@@ -80,20 +80,21 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             CloseWindow(hwnd);
             break;
         }
-        /*
+        
        
         case WM_LBUTTONDOWN:
         {
-            // left mouse butten down
+            // left mouse button down
             int xPos = GET_X_LPARAM(lParam);
             int yPos = GET_Y_LPARAM(lParam);
-            MouseButtenEvent be(KeyState::KeyPress, VK_LBUTTON, xPos, yPos);
+            MouseButtonEvent be(KeyState::KeyPress, VK_LBUTTON, xPos, yPos);
             EventBuss::Get().Delegate(be);
             return 0;
         }
+        /*
         case WM_LBUTTONUP:
         {
-            // left mouse butten up
+            // left mouse button up
             int xPos = GET_X_LPARAM(lParam);
             int yPos = GET_Y_LPARAM(lParam);
             MouseButtenEvent be(KeyState::KeyRelease, VK_LBUTTON, xPos, yPos);

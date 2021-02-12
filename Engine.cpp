@@ -21,7 +21,6 @@ const bool Engine::Initialize()
 	//Forward Renderer:
 	if (!m_ForwardRenderer.Initialize())
 		return false;
-	
 	//Resource Manager
 	if (!m_ResourceManager.Initialize())
 		return false;
@@ -30,6 +29,8 @@ const bool Engine::Initialize()
 		return false;
 	//Scene
 	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
+		return false;
+	if (!m_MousePicking.Initialize())
 		return false;
 
 	m_LayerStack.Push(&m_scene);

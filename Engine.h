@@ -8,6 +8,7 @@
 #include "EventSystem\IEventListener.h"
 #include "ImGui\ImGuiManager.h"
 #include "LayerStack.h"
+#include "Techniques/MousePicking.h"
 
 class Engine : IEventListener
 {
@@ -20,6 +21,7 @@ private:
 	Scene m_scene;
 	ImGuiManager m_imguiManager;
 	LayerStack m_LayerStack;
+	MousePicking m_MousePicking;
 	bool m_Running;
 	long double m_time;
 	int fps;
