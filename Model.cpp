@@ -86,3 +86,14 @@ void Model::SetBoundingVolume(DirectX::BoundingSphere* sphere)
 {
 	m_boundingSphere = sphere;
 }
+
+DirectX::BoundingBox* Model::GetBoundingBox()
+{
+	return m_boundingBox;
+}
+
+DirectX::BoundingSphere* Model::GetBoundingSphere()
+{
+	return m_boundingSphere;
+}
+
