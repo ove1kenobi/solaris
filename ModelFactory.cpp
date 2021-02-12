@@ -80,8 +80,6 @@ Model* ModelFactory::GetModel(std::string filePath)
 						vtx.bitangent.z = mesh->mBitangents[i].z;
 					}
 					vertices.push_back(vtx);
-
-
 				}
 				for (UINT i = 0u; i < mesh->mNumFaces; ++i)
 				{
@@ -92,7 +90,6 @@ Model* ModelFactory::GetModel(std::string filePath)
 					}
 				}
 			}
-
 #ifdef _DEBUG
 			loadDebug += std::string("=======================================\n");
 			OutputDebugStringA(loadDebug.c_str());
@@ -265,14 +262,12 @@ void ModelFactory::createSphere(float r, std::vector<float> &vertexBuffer, std::
 		bool reverse = i >= 4;
 		createTriangleFace(completeEdges[baseTriangles[i][0]], completeEdges[baseTriangles[i][1]], completeEdges[baseTriangles[i][2]], reverse, vertices, triangles, divisions);
 	}
-
 	for (int i = 0; i < vertices.size(); i++) {
 		vertexBuffer.push_back(vertices[i].x);
 		vertexBuffer.push_back(vertices[i].y);
 		vertexBuffer.push_back(vertices[i].z);
 		vertexBuffer.push_back(0.0f); //Trash value for compute shader
 	}
-
 	indexBuffer = triangles;
 }
 
@@ -320,9 +315,7 @@ void ModelFactory::createTriangleFace(
 		else {
 			vertexMap.push_back(edge2[i]);
 		}
-
 	}
-
 	if (!reverse) {
 		//Add bottom edge vertices
 		for (int i = 0; i < pointsOnEdge; i++)

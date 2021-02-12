@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 Engine::Engine() noexcept
-	: m_Running{ true }
+	: m_Running{ true }, m_time{ 0.0 }, fps{ 0 }
 {
 	m_gameTime.Update();
 }

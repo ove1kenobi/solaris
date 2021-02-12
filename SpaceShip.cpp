@@ -38,23 +38,18 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, final);
 
 	//Update the matrixBuffer.
-
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-	ModelFactory::MatrixBuffer* data;
-
 	DirectX::XMMATRIX WMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&this->m_wMatrix));
 	VMatrix = DirectX::XMMatrixTranspose(VMatrix);
 	PMatrix = DirectX::XMMatrixTranspose(PMatrix);
 
-	deviceContext->Map(
-		this->m_model->getMatrixBuffer().Get(),
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&mappedSubresource
-	);
+	deviceContext->Map(this->m_model->getMatrixBuffer().Get(),
+			           0,
+		               D3D11_MAP_WRITE_DISCARD,
+		               0,
+		               &mappedSubresource);
 
-	data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
+	ModelFactory::MatrixBuffer* data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
 
 	data->WMatrix = WMatrix;
 	data->VMatrix = VMatrix;
