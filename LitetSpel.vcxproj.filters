@@ -39,7 +39,6 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="DXDebug.cpp" />
     <ClCompile Include="Render2D.cpp" />
-    <ClCompile Include="PlanetInteractionUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -87,6 +86,5 @@
     <ClInclude Include="EventSystem\InputEvents.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Render2D.h" />
-    <ClInclude Include="PlanetInteractionUI.h" />
   </ItemGroup>
 </Project>

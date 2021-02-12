@@ -114,7 +114,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="PlanetInteractionUI.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Render2D.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
@@ -177,7 +176,6 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelFactory.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="PlanetInteractionUI.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Render2D.h" />
     <ClInclude Include="RenderWindow.h" />

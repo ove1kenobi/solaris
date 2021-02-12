@@ -75,8 +75,7 @@ void Engine::Update()
 void Engine::Render()
 {
 	m_ForwardRenderer.RenderFrame();
-	//---ONLY FOR TESTING-------
-	m_Render2D.RenderUI(this->m_Window.GetHandle());
+	m_Render2D.RenderUI();
 
 	m_imguiManager.Render();
 	HR_A(m_DXCore.GetSwapChain()->Present(0u, 0u), "Present");
