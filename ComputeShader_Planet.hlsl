@@ -14,13 +14,13 @@ struct WorldPosition {
 StructuredBuffer<WorldPosition> BufferIn : register(t0);
 RWStructuredBuffer<WorldPosition> BufferOut : register(u0);
 
-[numthreads(512, 1, 1)]
+[numthreads(100, 1, 1)]
 void cs_main( uint3 DTid : SV_DispatchThreadID )
 {
-	float oceanDepthMultiplier = 20;
-	float oceanFloorDepth = 0.9;
-	float oceanFloorSmoothing = 1.0f;
-	float mountainBlend = 1.2f;
+	float oceanDepthMultiplier = 10;
+	float oceanFloorDepth = 5;
+	float oceanFloorSmoothing = 2.0f;
+	float mountainBlend = 10.f;
 
 	//simple noise
 	/*
@@ -75,11 +75,5 @@ void cs_main( uint3 DTid : SV_DispatchThreadID )
 	BufferOut[DTid.x].y = dir.y;
 	BufferOut[DTid.x].z = dir.z;
 	BufferOut[DTid.x].w = 0;
-	
-	/*
-	BufferOut[DTid.x].x = BufferIn[DTid.x].x;
-	BufferOut[DTid.x].y = BufferIn[DTid.x].y;
-	BufferOut[DTid.x].z = BufferIn[DTid.x].z;
-	BufferOut[DTid.x].w = 0;
-	*/
+	//
 }

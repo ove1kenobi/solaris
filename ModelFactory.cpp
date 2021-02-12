@@ -119,6 +119,8 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 	DirectX::XMFLOAT3 center = { x, y, z };
 	vertexPositionValues = createHeightOffset(vertexPositionValues.size(), static_cast<void*>(vertexPositionValues.data()), center, r);
 
+	std::vector<DirectX::XMFLOAT3> normals = calcNormals(vertexPositionValues, indices);
+
 	//Convert the data to vertex_col.
 	std::vector<vertex_col> vertices;
 	for (size_t i = 0; i < vertexPositionValues.size(); i += 4) {
@@ -146,11 +148,15 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 			newVertex.color.w = 1.0f;
 		}
 		else {
-			newVertex.color.x = 1.0f - (0.5f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
-			newVertex.color.y = 1.0f - (0.5f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
-			newVertex.color.z = 1.0f - (0.5f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
+			newVertex.color.x = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
+			newVertex.color.y = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
+			newVertex.color.z = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
 			newVertex.color.w = 1.0f;
 		}
+
+		newVertex.normal.x = normals[i / 4].x;
+		newVertex.normal.y = normals[i / 4].y;
+		newVertex.normal.z = normals[i / 4].z;
 
 		newVertex.bitangent.x = 1.0f;
 		newVertex.bitangent.y = 1.0f;
@@ -159,11 +165,7 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 		newVertex.tangent.x = 1.0f;
 		newVertex.tangent.y = 1.0f;
 		newVertex.tangent.z = 1.0f;
-
-		newVertex.normal.x = 1.0f;
-		newVertex.normal.y = 1.0f;
-		newVertex.normal.z = 1.0f;
-
+		
 		vertices.push_back(newVertex);
 	}
 
@@ -222,7 +224,7 @@ void ModelFactory::createSphere(float r, std::vector<float> &vertexBuffer, std::
 	};
 
 	//Calculate the number of divisions that are to be made of each edge. 100 easily changable.
-	unsigned int divisions = static_cast<int>(std::ceil(r / 5));
+	unsigned int divisions = static_cast<int>(std::ceil(r / 3));
 	//Number of vertices on 1 face.
 	unsigned int vertsPerTriangle = ((divisions + 3) * (divisions + 3) - (divisions + 3)) / 2;
 	//Number of triangles on 1 face.
@@ -283,6 +285,7 @@ void ModelFactory::createTriangleFace(
 	std::vector<int>& triangles,
 	unsigned int divisions
 ) {
+	const std::lock_guard<std::mutex> lock(this->m_mutex);
 	int pointsOnEdge = static_cast<int>(edge1.size());
 	std::vector<int> vertexMap;
 	vertexMap.push_back(edge1[0]);
@@ -367,6 +370,7 @@ void ModelFactory::createTriangleFace(
 
 std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, DirectX::XMFLOAT3 center, float r)
 {
+	const std::lock_guard<std::mutex> lock(this->m_mutex);
 	Microsoft::WRL::ComPtr<ID3D11Buffer> srcDataGPUBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> destDataGPUBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> copyToBuffer;
@@ -482,7 +486,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	m_deviceContext->CSSetConstantBuffers(0, 1, planetConstantsBuffer.GetAddressOf());
 	m_deviceContext->CSSetShaderResources(0, 1, srcDataGPUBufferView.GetAddressOf());
 	m_deviceContext->CSSetUnorderedAccessViews(0, 1, destDataGPUBufferView.GetAddressOf(), NULL);
-	m_deviceContext->Dispatch(static_cast<UINT>(size) / 8, 2u, 1u);
+	m_deviceContext->Dispatch((static_cast<UINT>(size) / 400) + 1, 1u, 1u);
 
 	ID3D11ShaderResourceView* nullSRV[] = { NULL };
 	m_deviceContext->CSSetShaderResources(0, 1, nullSRV);
@@ -524,6 +528,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 }
 
 void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std::vector<int>& indices, Model* model) {
+	const std::lock_guard<std::mutex> lock(this->m_mutex);
 	model->setStride(stride);
 	model->setOffset(0u);
 
@@ -570,6 +575,50 @@ void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std
 									  "CreateBuffer");
 }
 
+std::vector<DirectX::XMFLOAT3> ModelFactory::calcNormals(std::vector<float> vertices, std::vector<int> indices) {
+	std::vector<DirectX::XMFLOAT3> faceNormals(0);
+	std::vector<DirectX::XMFLOAT3> vertexNormals(vertices.size() / 4, { 0, 0, 0 });
+	std::vector<int> vertexConnectingCount(vertices.size() / 4, 0);
+
+	//Indices.size() / 3 = number of triangle faces.
+	for (int i = 0; i < indices.size(); i += 3) {
+		//The 3 vertex points that represent the face.
+		DirectX::XMFLOAT3 v0 = { vertices[indices[i] * 4], vertices[indices[i] * 4 + 1], vertices[indices[i] * 4 + 2] };
+		DirectX::XMFLOAT3 v1 = { vertices[indices[i + 1] * 4], vertices[indices[i + 1] * 4 + 1], vertices[indices[i + 1] * 4 + 2] };
+		DirectX::XMFLOAT3 v2 = { vertices[indices[i + 2] * 4], vertices[indices[i + 2] * 4 + 1], vertices[indices[i + 2] * 4 + 2] };
+
+		DirectX::XMFLOAT3 dir0 = { v2.x - v0.x, v2.y - v0.y, v2.z - v0.z };
+		DirectX::XMFLOAT3 dir1 = { v1.x - v0.x, v1.y - v0.y, v1.z - v0.z };
+
+		//The face normal
+		DirectX::XMFLOAT3 faceNormal = cross(dir0, dir1);
+
+		vertexNormals[indices[i]].x += faceNormal.x;
+		vertexNormals[indices[i]].y += faceNormal.y;
+		vertexNormals[indices[i]].z += faceNormal.z;
+		vertexConnectingCount[indices[i]]++;
+
+		vertexNormals[indices[i + 1]].x += faceNormal.x;
+		vertexNormals[indices[i + 1]].y += faceNormal.y;
+		vertexNormals[indices[i + 1]].z += faceNormal.z;
+		vertexConnectingCount[indices[i + 1]]++;
+
+		vertexNormals[indices[i + 2]].x += faceNormal.x;
+		vertexNormals[indices[i + 2]].y += faceNormal.y;
+		vertexNormals[indices[i + 2]].z += faceNormal.z;
+		vertexConnectingCount[indices[i + 2]]++;
+
+	}
+
+
+	for (int i = 0; i < vertexNormals.size(); i++) {
+		vertexNormals[i].x = vertexNormals[i].x / vertexConnectingCount[i];
+		vertexNormals[i].y = vertexNormals[i].y / vertexConnectingCount[i];
+		vertexNormals[i].z = vertexNormals[i].z / vertexConnectingCount[i];
+	}
+	
+	return vertexNormals;
+}
 
 void ModelFactory::PreparePlanetDisplacement() {
 	BindIDEvent me(BindID::ID_PlanetHeight);
@@ -582,6 +631,8 @@ Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
 	std::vector<float> vertexPositionValues;
 	std::vector<int> indices;
 	createSphere(r, vertexPositionValues, indices);
+
+	std::vector<DirectX::XMFLOAT3> normals = calcNormals(vertexPositionValues, indices);
 
 	std::vector<vertex_col> vertices;
 	for (unsigned int i = 0; i < vertexPositionValues.size(); i += 4) {
@@ -603,9 +654,9 @@ Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
 		newVertex.tangent.y = 1.0f;
 		newVertex.tangent.z = 1.0f;
 
-		newVertex.normal.x = 1.0f;
-		newVertex.normal.y = 1.0f;
-		newVertex.normal.z = 1.0f;
+		newVertex.normal.x = normals[i / 4].x;
+		newVertex.normal.y = normals[i / 4].y;
+		newVertex.normal.z = normals[i / 4].z;
 
 		vertices.push_back(newVertex);
 	}
