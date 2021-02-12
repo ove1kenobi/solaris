@@ -9,6 +9,7 @@
 #include "SamplerState.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "Texture.h"
 #include "..\vertex.h"
 #include "../EventSystem/RenderEvents.h"
 #include "../EventSystem/UtilityEvents.h"
@@ -34,8 +35,9 @@ private:
 	SamplerState m_SamplerSkybox;
 	VertexBuffer m_VertexBufferCube;
 	IndexBuffer m_IndexBufferCube;
+	Texture m_RenderTextureQuad;
 	std::vector<IBindable*> m_BindablesMinimalistic;
-	std::vector<IBindable*> m_BindablesCosmic;
+	std::vector<IBindable*> m_BindablesRenderQuad;
 	std::vector<IBindable*> m_BindablesPlayer;
 	std::vector<IBindable*> m_BindablesSkybox;
 	std::vector<DirectX::XMFLOAT3> m_CubeVertices;

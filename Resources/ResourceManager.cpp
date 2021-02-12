@@ -51,7 +51,9 @@ const bool ResourceManager::CreateAllBindables()
 	//Samplers:
 	if (!m_SamplerSkybox.Create(m_pDevice, BindFlag::S_PS, TechFlag::SKYBOX, 0u))
 		return false;
-	//Textures:
+	//Textures:									//HÅRDKODAT
+	if (!m_RenderTextureQuad.Create(m_pDevice, 0u, 1200, 800, D3D11_USAGE_DEFAULT, D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS, 0))
+		return false;
 	if (!m_CubeTextureSkybox.Create(m_pDevice, L"skymap.dds", 0u))
 		return false;
 	//Vertex Buffers:
@@ -68,6 +70,9 @@ const bool ResourceManager::CreateAllBindables()
 	m_BindablesSkybox.insert(m_BindablesSkybox.end(), { &m_VertexShaderSkybox, &m_PixelShaderSkybox, &m_InputLayoutSkybox, 
 														&m_TopologyTriList, &m_CubeTextureSkybox, &m_SamplerSkybox,
 														&m_VertexBufferCube, &m_IndexBufferCube});
+
+	//RenderQuad:											//Post processing VS & PS
+	m_BindablesRenderQuad.insert(m_BindablesRenderQuad.end(), {});
 	return true;
 }
 
@@ -127,9 +132,9 @@ void ResourceManager::BindToPipeline(IEvent& event)
 		}
 		break;
 	}
-	case BindID::ID_Cosmic :
+	case BindID::ID_RenderQuad :
 	{
-		for (auto bindables : m_BindablesCosmic)
+		for (auto bindables : m_BindablesRenderQuad)
 		{
 			if (!bindables->IsBound())
 			{

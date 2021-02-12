@@ -89,3 +89,45 @@ public:
 		return m_Camera;
 	}
 };
+
+class SendDSVEvent : public IEvent
+{
+private:
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
+public:
+	SendDSVEvent(Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& depthStencilView) noexcept
+	{
+		m_pDepthStencilView = depthStencilView;
+	}
+	virtual ~SendDSVEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::SendDSVEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "SendDSVEvent";
+	}
+	[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11DepthStencilView> GetDepthStencilView() const noexcept
+	{
+		return m_pDepthStencilView;
+	}
+};
+
+class RequestDSVEvent : public IEvent
+{
+private:
+public:
+	RequestDSVEvent() noexcept = default;
+	virtual ~RequestDSVEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::RequestDSVEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "RequestDSVEvent";
+	}
+};

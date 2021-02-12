@@ -22,8 +22,8 @@ void ForwardRenderer::BeginFrame()
 	UnbindPipelineEvent ubEvent;
 	EventBuss::Get().Delegate(ubEvent);
 
-	//Bind minimalistic:
-	BindIDEvent bindEvent(BindID::ID_Minimal);
+	//Bind RenderQuad:
+	BindIDEvent bindEvent(BindID::ID_RenderQuad);
 	EventBuss::Get().Delegate(bindEvent);
 
 	//Request-event for game objects 
@@ -35,6 +35,10 @@ void ForwardRenderer::BeginFrame()
 		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
 		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
+
+	//2nd pass, postprocessing
+
+	//Post processing DONE
 
 	//Skybox time:
 	m_Skybox.PreparePass(m_pDeviceContext);

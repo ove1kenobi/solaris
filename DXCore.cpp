@@ -20,7 +20,7 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 							  const unsigned int& clientWindowHeight, 
 							  const HWND& windowHandle)
 {
-	EventBuss::Get().AddListener(this, EventType::ToggleWireFrameEvent, EventType::ToggleDepthStencilStateEvent);
+	EventBuss::Get().AddListener(this, EventType::ToggleWireFrameEvent, EventType::ToggleDepthStencilStateEvent, EventType::RequestDSVEvent);
 
 	UINT flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
 	#if defined(DEBUG) || defined(_DEBUG)
@@ -184,6 +184,10 @@ void DXCore::OnEvent(IEvent& event) noexcept
 			break;
 	case EventType::ToggleDepthStencilStateEvent:
 			ToggleDepthStencilState();
+			break;
+
+	case EventType::RequestDSVEvent:
+			SendDSVEvent dsvEvent(m_pDepthStencilView);
 			break;
 	}
 }

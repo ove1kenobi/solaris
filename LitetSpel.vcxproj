@@ -137,6 +137,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="Resources\Texture.cpp" />
     <ClCompile Include="Resources\VertexBuffer.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
@@ -215,6 +216,7 @@
     <ClInclude Include="Resources\CubeTexture.h" />
     <ClInclude Include="Resources\IndexBuffer.h" />
     <ClInclude Include="Resources\SamplerState.h" />
+    <ClInclude Include="Resources\Texture.h" />
     <ClInclude Include="Resources\VertexBuffer.h" />
     <ClInclude Include="Resources\ComputeShader.h" />
     <ClInclude Include="Sun.h" />
