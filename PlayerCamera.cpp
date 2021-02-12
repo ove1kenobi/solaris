@@ -3,12 +3,12 @@
 
 bool PlayerCamera::init(int screenWidth, int screenHeight) {
 	//DirectXTK mouse
-	DirectX::Mouse::Get().SetMode(DirectX::Mouse::MODE_RELATIVE);
-	EventBuss::Get().AddListener(this, EventType::MouseMoveEvent, EventType::MouseScrollEvent);
-
+	EventBuss::Get().AddListener(this, EventType::MouseMoveRelativeEvent, EventType::MouseScrollEvent, EventType::ToggleImGuiEvent);
+	EventBuss::Get().AddListener(this, EventType::MouseMoveAbsoluteEvent, EventType::RequestCameraEvent);
 	this->m_screenFar = 100000.0f;
 	float FOV = 3.141592654f / this->m_FOVvalue;
 	float screenAspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
+	m_orbitModeActive = true;
 
 	//Initial camera distance from the ship.
 	this->m_distanceFromShip = 300.0f;
@@ -31,11 +31,8 @@ void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
 	DirectX::XMStoreFloat4x4(&this->m_vMatrix, DirectX::XMMatrixLookAtLH(this->m_posVector, this->m_forwardVector, this->m_upVector));
 }
 
-void PlayerCamera::mouseRot() {
-	auto r = DirectX::Mouse::Get().GetState();
-	float yValue = static_cast<float>(r.y);
-	float xValue = static_cast<float>(r.x);
-	
+void PlayerCamera::mouseRot(int xValue, int yValue) {
+
 	float pi = static_cast<float>((atan(1) * 4));
 
 	this->m_yaw -= xValue * (float)m_time.DeltaTime() / this->m_sensitivity;
@@ -49,10 +46,7 @@ void PlayerCamera::mouseRot() {
 		this->m_pitch = 0.0001f;
 }
 
-void PlayerCamera::mouseScroll() {
-	int scroll = DirectX::Mouse::Get().GetState().scrollWheelValue;
-	DirectX::Mouse::Get().ResetScrollWheelValue();
-
+void PlayerCamera::mouseScroll(int scroll) {
 	//Limits scroll between 600 to 50 atm. TODO: Make variables.
 	if(this->m_distanceFromShip < 600.0f && this->m_distanceFromShip > 50.0f)
 		this->m_distanceFromShip -= scroll  / 3;
@@ -69,15 +63,37 @@ void PlayerCamera::shipRot(float step) {
 
 void PlayerCamera::OnEvent(IEvent& event) noexcept {
 	switch (event.GetEventType()) {
-	case EventType::MouseMoveEvent:
-	{
-		mouseRot();
-		break;
-	}
-	case EventType::MouseScrollEvent:
-	{
-		mouseScroll();
-		break;
-	}
+		case EventType::MouseMoveRelativeEvent:
+		{
+			int xDiff = static_cast<MouseMoveRelativeEvent*>(&event)->GetXDiff();
+			int yDiff = static_cast<MouseMoveRelativeEvent*>(&event)->GetYDiff();
+			if (m_orbitModeActive)
+			{
+				mouseRot(xDiff, yDiff);
+			}
+			break;
+		}
+		case EventType::MouseMoveAbsoluteEvent:
+		{
+			break;
+		}
+		case EventType::MouseScrollEvent:
+		{
+			int wheelScroll = static_cast<MouseScrollEvent*>(&event)->GetWheelScroll();
+			mouseScroll(wheelScroll);
+			break;
+		}
+		case EventType::ToggleImGuiEvent:
+		{
+			if (m_orbitModeActive) m_orbitModeActive = false;
+			else m_orbitModeActive = true;
+			break;
+		}
+		case EventType::RequestCameraEvent:
+		{
+			DelegateCameraEvent event(this);
+			EventBuss::Get().Delegate(event);
+			break;
+		}
 	}
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include "Time.h"
 #include "ModelFactory.h"
+#include <imgui.h>
+
 
 class GameObject
 {
@@ -12,6 +14,7 @@ protected:
 	DirectX::XMFLOAT3 m_upVector;
 	DirectX::XMFLOAT4X4 m_wMatrix;
 	float m_mass;
+	float m_1byMass;
 	float m_pitch;
 	float m_roll;
 	float m_yaw;
@@ -21,7 +24,7 @@ protected:
 	Model* m_model;
 public:
 	GameObject() noexcept;
-	~GameObject();
+	virtual ~GameObject();
 
 	//Forces all GameObjects (planets, sun, ship) to have an update function and a function to bind their buffers.
 	virtual bool update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
@@ -33,4 +36,5 @@ public:
 	[[nodiscard]] const DirectX::XMFLOAT3& GetCenter() const noexcept;
 	//Returns the translation of the object in the world.
 	DirectX::XMFLOAT3 getTransVector();
+	float GetMass();
 };

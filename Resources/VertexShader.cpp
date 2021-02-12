@@ -1,6 +1,6 @@
 #include "..\pch.h"
 #include "VertexShader.h"
-void VertexShader::Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext)
+void VertexShader::Bind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
 #if defined(DEBUG) | defined (_DEBUG)
 	assert(pDeviceContext && m_pVertexShader);
@@ -8,7 +8,7 @@ void VertexShader::Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceConte
 	pDeviceContext->VSSetShader(m_pVertexShader.Get(), nullptr, 0u);
 }
 
-void VertexShader::Unbind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext)
+void VertexShader::Unbind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
 #if defined(DEBUG) | defined (_DEBUG)
 	assert(pDeviceContext);
@@ -16,7 +16,7 @@ void VertexShader::Unbind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceCon
 	pDeviceContext->VSSetShader(nullptr, nullptr, 0u);
 }
 
-const bool VertexShader::Create(Microsoft::WRL::ComPtr<ID3D11Device> pDevice,const LPCWSTR& fileName)
+const bool VertexShader::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice,const LPCWSTR& fileName)
 {
 	Microsoft::WRL::ComPtr<ID3DBlob> pErrorBlob{ nullptr };
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;

@@ -23,16 +23,23 @@ private:
 	Microsoft::WRL::ComPtr<ID2D1Factory>			m_pFactory;
 	Microsoft::WRL::ComPtr<IDXGISurface>			m_pSurface;
 	Microsoft::WRL::ComPtr<ID2D1RenderTarget>		m_pSurfaceRenderTarget;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_pRasterizerStateNoCull;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_pRasterizerStateNoCullWF;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_pDepthStencilStateDefault;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_pDepthStencilStateSkybox;
 	D3D11_VIEWPORT	m_DefaultViewport;
 	unsigned int	m_MSAAQuality;
 	bool			m_WireFrameEnabled;
+	bool			m_SkyboxEnabled;
+private:
+	void OnEvent(IEvent& event) noexcept override;
+	void ToggleWireFrame() noexcept;
+	void ToggleDepthStencilState() noexcept;
+	void DelegateDXHandles() noexcept;
 public:
 	DXCore() noexcept;
 	virtual ~DXCore() noexcept = default;
 	const bool Initialize(const unsigned int& clientWindowWidth, const unsigned int& clientWindowHeight, const HWND& windowHandle);
-	void OnEvent(IEvent& event) noexcept override;
-	void ToggleWireFrame() noexcept;
-	void DelegateDXHandles() noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice() const noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetDeviceContext() const noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<IDXGISwapChain>& GetSwapChain() const noexcept;

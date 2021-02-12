@@ -3,7 +3,11 @@
 
 ForwardRenderer::ForwardRenderer() noexcept
 	: m_Background{ 0.0f, 0.0f, 0.0f, 1.0f },
-	  m_gameObjects{ nullptr }
+	  m_pGameObjects{ nullptr },
+	  m_pDevice{ nullptr },
+	  m_pDeviceContext{ nullptr },
+	  m_pBackBuffer{ nullptr },
+	  m_pDepthStencilView{ nullptr }
 {
 	EventBuss::Get().AddListener(this, EventType::SendRenderObjectsEvent, EventType::DelegateDXEvent);
 }
@@ -14,6 +18,10 @@ void ForwardRenderer::BeginFrame()
 	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 	m_pDeviceContext->ClearRenderTargetView(m_pBackBuffer.Get(), m_Background);
 
+	//Start by unbinding pipeline:
+	UnbindPipelineEvent ubEvent;
+	EventBuss::Get().Delegate(ubEvent);
+
 	//Bind minimalistic:
 	BindIDEvent bindEvent(BindID::ID_Minimal);
 	EventBuss::Get().Delegate(bindEvent);
@@ -23,10 +31,15 @@ void ForwardRenderer::BeginFrame()
 	EventBuss::Get().Delegate(event);
 	
 	//Loop that renders and draws every GameObject.
-	for (size_t i = 0; i < (*m_gameObjects).size(); ++i) {
-		(*m_gameObjects)[i]->bindUniques(m_pDeviceContext);
-		m_pDeviceContext->DrawIndexed((*m_gameObjects)[i]->getIndexBufferSize(), 0u, 0u);
+	for (size_t i = 0; i < (*m_pGameObjects).size(); ++i) {
+		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
+
+	//Skybox time:
+	m_Skybox.PreparePass(m_pDeviceContext);
+	m_Skybox.DoPass(m_pDeviceContext);
+	m_Skybox.CleanUp();
 }
 
 //Cleans up for the next frame and applies post processing effects
@@ -45,24 +58,23 @@ void ForwardRenderer::UpdateDXHandlers(IEvent& event) noexcept
 	m_pDeviceContext = derivedEvent.GetDeviceContext();
 	m_pBackBuffer = derivedEvent.GetBackBuffer();
 	m_pDepthStencilView = derivedEvent.GetDepthStencilView();
+	m_pDevice = derivedEvent.GetDevice();
 #if defined(DEBUG) | defined(_DEBUG)
-	assert(m_pDeviceContext && m_pBackBuffer && m_pDepthStencilView);
+	assert(m_pDeviceContext && m_pBackBuffer && m_pDepthStencilView && m_pDevice);
 #endif
 }
 
 const bool ForwardRenderer::Initialize() noexcept
 {
+	if (!m_Skybox.Initialize(m_pDevice))
+		return false;
 	return true;
 }
 
 //Calls private functions to render the frame
 ID3D11RenderTargetView* ForwardRenderer::RenderFrame()
 {
-	//return the finished render to the Engine after applying BeginFrame, SubmitObjects, and then Endframe to it.
 	BeginFrame();
-	//return this->EndFrame(target);
-
-	//return this->EndFrame(this->SubmitObject(this->BeginFrame(renderTarget), gameObjects));
 	return nullptr;
 }
 
@@ -73,7 +85,7 @@ void ForwardRenderer::OnEvent(IEvent& event) noexcept
 	case EventType::SendRenderObjectsEvent:
 	{
 		SendRenderObjectsEvent& derivedEvent = static_cast<SendRenderObjectsEvent&>(event);
-		this->m_gameObjects = derivedEvent.getGameObjectVector();
+		this->m_pGameObjects = derivedEvent.getGameObjectVector();
 		break;
 	}
 	case EventType::DelegateDXEvent:

@@ -43,3 +43,8 @@ void ImGuiManager::OnEvent(IEvent& event) noexcept
 		break;
 	}
 }
+
+const std::string ImGuiManager::GetDebugName() const noexcept
+{
+	return "ImGui";
+}

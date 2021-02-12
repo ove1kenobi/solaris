@@ -1,7 +1,7 @@
 #include "..\pch.h"
 #include "PixelShader.h"
 
-void PixelShader::Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext)
+void PixelShader::Bind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
 #if defined(DEBUG) | defined (_DEBUG)
 	assert(pDeviceContext && m_pPixelShader);
@@ -9,7 +9,7 @@ void PixelShader::Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContex
 	pDeviceContext->PSSetShader(m_pPixelShader.Get(), nullptr, 0u);
 }
 
-void PixelShader::Unbind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext)
+void PixelShader::Unbind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
 #if defined(DEBUG) | defined (_DEBUG)
 	assert(pDeviceContext);
@@ -17,7 +17,7 @@ void PixelShader::Unbind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceCont
 	pDeviceContext->PSSetShader(nullptr, nullptr, 0u);
 }
 
-const bool PixelShader::Create(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, const LPCWSTR& fileName)
+const bool PixelShader::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, const LPCWSTR& fileName)
 {
 	Microsoft::WRL::ComPtr<ID3DBlob> pErrorBlob{ nullptr };
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;

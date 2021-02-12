@@ -16,7 +16,7 @@ const bool Engine::Initialize()
 		return false;
 
 	ImGui_ImplWin32_Init(m_Window.GetHandle());
-	ModelFactory::Get().setDevice(m_DXCore.GetDevice());
+	ModelFactory::Get().setDeviceAndContext(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext());
 
 	//Forward Renderer
 	if (!m_ForwardRenderer.Initialize())
@@ -25,15 +25,19 @@ const bool Engine::Initialize()
 	//2D Renderer
 	if (!m_Render2D.Initialize())
 		return false;
-
-	//Scene
-	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
-		return false;
 	
 	//Resource Manager
 	if (!m_ResourceManager.Initialize())
 		return false;
+	//Resource Manager
+	if (!m_ResourceManager.Initialize())
+		return false;
+	//Scene
+	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
+		return false;
 
+	m_LayerStack.Push(&m_scene);
+	m_LayerStack.PushOverlay(&m_imguiManager);
 	return true;
 }
 
@@ -69,7 +73,16 @@ void Engine::OnEvent(IEvent& event) noexcept
 void Engine::Update()
 {
 	m_gameTime.Update();
-	m_scene.update(m_DXCore.GetDeviceContext());
+
+	m_time += m_gameTime.DeltaTime();
+	fps++;
+
+	if (m_time >= 1.0f) {
+		m_time -= 1.0f;
+		m_Window.SetFPS(fps);
+		fps = 0;
+	}
+	m_LayerStack.Update();
 }
 
 void Engine::Render()

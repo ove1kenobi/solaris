@@ -1,8 +1,10 @@
 #pragma once
 #include "time.h"
+#include "EventSystem\IEventListener.h"
+#include "EventSystem\EventPublisher.h"
 //Orthographic camera.
 //Used as Base class for the PlayerCamera.
-class Camera {
+class Camera{
 protected:
 	float m_pitch, m_roll, m_yaw;
 

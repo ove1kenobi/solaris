@@ -7,7 +7,7 @@ private:
 public:
 	IBindable();
 	virtual ~IBindable() = default;
-	virtual void Bind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext) = 0;
-	virtual void Unbind(Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext) = 0;
+	virtual void Bind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) = 0;
+	virtual void Unbind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) = 0;
 	[[nodiscard]] const bool& IsBound() const noexcept;
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "IEvent.h"
+class PlayerCamera;
 class DelegateDXEvent : public IEvent
 {
 private:
@@ -67,4 +68,46 @@ public:
 		return m_pSurfaceRenderTarget;
 	}
 
+};
+
+class RequestCameraEvent : public IEvent
+{
+private:
+public:
+	RequestCameraEvent() noexcept = default;
+	virtual ~RequestCameraEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::RequestCameraEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "RequestCameraEvent";
+	}
+};
+
+class DelegateCameraEvent : public IEvent
+{
+private:
+	PlayerCamera* m_Camera;
+public:
+	DelegateCameraEvent(PlayerCamera* camera) noexcept
+	{
+		m_Camera = camera;
+	}
+	virtual ~DelegateCameraEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::DelegateCameraEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "DelegateCameraEvent";
+	}
+	[[nodiscard]] PlayerCamera* GetCamera() const noexcept
+	{
+		return m_Camera;
+	}
 };
