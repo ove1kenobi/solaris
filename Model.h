@@ -35,4 +35,6 @@ public:
 	UINT& getOffset();
 	void SetBoundingVolume(DirectX::BoundingBox* box);
 	void SetBoundingVolume(DirectX::BoundingSphere* sphere);
+	DirectX::BoundingBox* GetBoundingBox();
+	DirectX::BoundingSphere* GetBoundingSphere();
 };
