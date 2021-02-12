@@ -24,7 +24,7 @@ protected:
 	Model* m_model;
 public:
 	GameObject() noexcept;
-	~GameObject();
+	virtual ~GameObject();
 
 	//Forces all GameObjects (planets, sun, ship) to have an update function and a function to bind their buffers.
 	virtual bool update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
