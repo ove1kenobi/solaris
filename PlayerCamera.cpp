@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "PlayerCamera.h"
 
+PlayerCamera::PlayerCamera() : m_distanceFromShip{ 0 }, m_orbitModeActive{ true }, m_sensitivity{ 0 } {
+
+}
+
 bool PlayerCamera::init(int screenWidth, int screenHeight) {
 	//DirectXTK mouse
 	EventBuss::Get().AddListener(this, EventType::MouseMoveRelativeEvent, EventType::MouseScrollEvent, EventType::ToggleImGuiEvent);

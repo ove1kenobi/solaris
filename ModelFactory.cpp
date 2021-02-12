@@ -36,7 +36,7 @@ Model* ModelFactory::GetModel(std::string filePath)
 		else
 		{
 			std::vector<vertex_tex> vertices;
-			std::vector<int> indices;
+			std::vector<UINT> indices;
 #ifdef _DEBUG
 			std::string loadDebug = std::string("=======================================\nLoading model: ") + filePath + std::string("\n");
 			loadDebug += std::string("Meshes: ") + std::to_string(scene->mNumMeshes) + std::string("\t");
@@ -136,7 +136,7 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 	//Create the sphere vertices and indices. The vertices are just raw float values.
 	Model* model = new Model();
 	std::vector<float> vertexPositionValues;
-	std::vector<int> indices;
+	std::vector<UINT> indices;
 	createSphere(r, vertexPositionValues, indices);
 
 	DirectX::XMFLOAT3 center = { x, y, z };
@@ -199,7 +199,7 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 	return model;
 }
 
-void ModelFactory::createSphere(float r, std::vector<float> &vertexBuffer, std::vector<int> &indexBuffer) {
+void ModelFactory::createSphere(float r, std::vector<float> &vertexBuffer, std::vector<UINT> &indexBuffer) {
 	//Starting octahedron points.
 	DirectX::XMFLOAT3 p0, p1, p2, p3, p4, p5;
 	//So that the triangles have the same length on all 3 sides.
@@ -256,7 +256,7 @@ void ModelFactory::createSphere(float r, std::vector<float> &vertexBuffer, std::
 	unsigned int vertsTotal = (vertsPerTriangle * 8) - ((divisions + 2) * 12) + 6;
 
 	std::vector<DirectX::XMFLOAT3> vertices;
-	std::vector<int> triangles;
+	std::vector<UINT> triangles;
 
 	for (int i = 0; i < 6; i++)
 		vertices.push_back(octVertices[i]);
@@ -305,7 +305,7 @@ void ModelFactory::createTriangleFace(
 	std::vector<int> edge3,
 	bool reverse,
 	std::vector<DirectX::XMFLOAT3>& vertices,
-	std::vector<int>& triangles,
+	std::vector<UINT>& triangles,
 	unsigned int divisions
 ) {
 	const std::lock_guard<std::mutex> lock(this->m_mutex);
@@ -550,7 +550,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	return donePositionValues;
 }
 
-void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std::vector<int>& indices, Model* model) {
+void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std::vector<UINT>& indices, Model* model) {
 	const std::lock_guard<std::mutex> lock(this->m_mutex);
 	model->setStride(stride);
 	model->setOffset(0u);
@@ -598,17 +598,17 @@ void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std
 									  "CreateBuffer");
 }
 
-std::vector<DirectX::XMFLOAT3> ModelFactory::calcNormals(std::vector<float> vertices, std::vector<int> indices) {
+std::vector<DirectX::XMFLOAT3> ModelFactory::calcNormals(std::vector<float> vertices, std::vector<UINT> indices) {
 	std::vector<DirectX::XMFLOAT3> faceNormals(0);
 	std::vector<DirectX::XMFLOAT3> vertexNormals(vertices.size() / 4, { 0, 0, 0 });
 	std::vector<int> vertexConnectingCount(vertices.size() / 4, 0);
 
 	//Indices.size() / 3 = number of triangle faces.
-	for (int i = 0; i < indices.size(); i += 3) {
+	for (unsigned long long i = 0; i < indices.size(); i += 3) {
 		//The 3 vertex points that represent the face.
-		DirectX::XMFLOAT3 v0 = { vertices[indices[i] * 4], vertices[indices[i] * 4 + 1], vertices[indices[i] * 4 + 2] };
-		DirectX::XMFLOAT3 v1 = { vertices[indices[i + 1] * 4], vertices[indices[i + 1] * 4 + 1], vertices[indices[i + 1] * 4 + 2] };
-		DirectX::XMFLOAT3 v2 = { vertices[indices[i + 2] * 4], vertices[indices[i + 2] * 4 + 1], vertices[indices[i + 2] * 4 + 2] };
+		DirectX::XMFLOAT3 v0 = { vertices[static_cast<unsigned long long>(indices[i]) * 4], vertices[static_cast<unsigned long long>(indices[i]) * 4 + 1], vertices[static_cast<unsigned long long>(indices[i]) * 4 + 2] };
+		DirectX::XMFLOAT3 v1 = { vertices[static_cast<unsigned long long>(indices[i + 1]) * 4], vertices[static_cast<unsigned long long>(indices[i + 1]) * 4 + 1], vertices[static_cast<unsigned long long>(indices[i + 1]) * 4 + 2] };
+		DirectX::XMFLOAT3 v2 = { vertices[static_cast<unsigned long long>(indices[i + 2]) * 4], vertices[static_cast<unsigned long long>(indices[i + 2]) * 4 + 1], vertices[static_cast<unsigned long long>(indices[i + 2]) * 4 + 2] };
 
 		DirectX::XMFLOAT3 dir0 = { v2.x - v0.x, v2.y - v0.y, v2.z - v0.z };
 		DirectX::XMFLOAT3 dir1 = { v1.x - v0.x, v1.y - v0.y, v1.z - v0.z };
@@ -652,13 +652,13 @@ Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
 	//Create the sphere vertices and indices. The vertices are just raw float values.
 	Model* model = new Model();
 	std::vector<float> vertexPositionValues;
-	std::vector<int> indices;
+	std::vector<UINT> indices;
 	createSphere(r, vertexPositionValues, indices);
 
 	std::vector<DirectX::XMFLOAT3> normals = calcNormals(vertexPositionValues, indices);
 
 	std::vector<vertex_col> vertices;
-	for (unsigned int i = 0; i < vertexPositionValues.size(); i += 4) {
+	for (unsigned long long i = 0; i < vertexPositionValues.size(); i += 4) {
 		vertex_col newVertex;
 		newVertex.position.x = vertexPositionValues[i];
 		newVertex.position.y = vertexPositionValues[i + 1];
