@@ -659,7 +659,7 @@ Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
 
 	std::vector<vertex_col> vertices;
 	for (unsigned long long i = 0; i < vertexPositionValues.size(); i += 4) {
-		vertex_col newVertex;
+		vertex_col newVertex = {};
 		newVertex.position.x = vertexPositionValues[i];
 		newVertex.position.y = vertexPositionValues[i + 1];
 		newVertex.position.z = vertexPositionValues[i + 2];
