@@ -8,14 +8,21 @@
 //XAML: https://docs.microsoft.com/en-us/windows/uwp/gaming/directx-and-xaml-interop
 //Direct2D: https://docs.microsoft.com/en-us/windows/win32/direct2d/direct2d-and-direct3d-interoperation-overview
 
+//Will only know how to draw things based on instructions, should not keep the instructions
 class Render2D : public EventPublisher, IEventListener {
 private:
 	//From the event handler
 	Microsoft::WRL::ComPtr<ID2D1Factory> m_pFactory;
 	Microsoft::WRL::ComPtr<ID2D1RenderTarget> m_pRenderTarget2D;
 
-	//Saved here for now as it is only for the example
-	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBrush;
+	//Planet interaction UI
+	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBrushDarkBlue;
+	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBrushLightBlue;
+
+	D2D1_RECT_F m_pMainRectangle;
+	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pBottomLeft;
+	Microsoft::WRL::ComPtr<ID2D1GeometrySink> m_pSink;
+	//---------------------
 	void UpdateDXHandlers(IEvent& event) noexcept;
 public:
 	Render2D() noexcept;
