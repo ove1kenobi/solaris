@@ -21,6 +21,7 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 							  const HWND& windowHandle)
 {
 	EventBuss::Get().AddListener(this, EventType::ToggleWireFrameEvent, EventType::ToggleDepthStencilStateEvent, EventType::RequestDSVEvent);
+	EventBuss::Get().AddListener(this, EventType::BindBackBufferEvent);
 
 	UINT flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
 	#if defined(DEBUG) || defined(_DEBUG)
@@ -180,15 +181,21 @@ void DXCore::OnEvent(IEvent& event) noexcept
 	switch (event.GetEventType())
 	{
 	case EventType::ToggleWireFrameEvent:
-			ToggleWireFrame();
-			break;
+		ToggleWireFrame();
+		break;
 	case EventType::ToggleDepthStencilStateEvent:
-			ToggleDepthStencilState();
-			break;
+		ToggleDepthStencilState();
+		break;
 
 	case EventType::RequestDSVEvent:
-			SendDSVEvent dsvEvent(m_pDepthStencilView);
-			break;
+	{
+		SendDSVEvent dsvEvent(m_pDepthStencilView);
+		EventBuss::Get().Delegate(dsvEvent);
+		break;
+	}
+	case EventType::BindBackBufferEvent:
+		m_pDeviceContext->OMSetRenderTargets(1, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
+		break;
 	}
 }
 

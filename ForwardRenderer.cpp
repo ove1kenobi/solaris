@@ -17,7 +17,6 @@ void ForwardRenderer::BeginFrame()
 {
 	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 	m_pDeviceContext->ClearRenderTargetView(m_pBackBuffer.Get(), m_Background);
-
 	//Start by unbinding pipeline:
 	UnbindPipelineEvent ubEvent;
 	EventBuss::Get().Delegate(ubEvent);
@@ -36,9 +35,20 @@ void ForwardRenderer::BeginFrame()
 		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
 
-	//2nd pass, postprocessing
+	//Unbind
+	EventBuss::Get().Delegate(ubEvent);
 
+	//Bind backbuffer
+	BindBackBufferEvent bindBackBuffer;
+	EventBuss::Get().Delegate(bindBackBuffer);
+
+	//2nd pass, postprocessing
+	BindIDEvent bindWaterEvent(BindID::ID_Water);
+	EventBuss::Get().Delegate(bindWaterEvent);
 	//Post processing DONE
+
+	//Draw the quad
+	m_pDeviceContext->DrawIndexed(6, 0u, 0u);
 
 	//Skybox time:
 	m_Skybox.PreparePass(m_pDeviceContext);

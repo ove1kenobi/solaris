@@ -10,6 +10,7 @@ ResourceManager::ResourceManager() noexcept
 const bool ResourceManager::Initialize() noexcept
 {
 	CreateCubeData();
+	CreateQuadData();
 	if (!CreateAllBindables())
 		return false;
 
@@ -23,10 +24,14 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	if (!m_VertexShaderSkybox.Create(m_pDevice, L"VertexShader_Skybox.hlsl"))
 		return false;
+	if (!m_VertexShaderPostProcessing.Create(m_pDevice, L"VertexShader_PostProcessing.hlsl"))
+		return false;
 	//Pixel Shaders:
 	if (!m_PixelShaderMinimal.Create(m_pDevice, L"PixelShader_Minimalistic.hlsl"))
 		return false;
 	if (!m_PixelShaderSkybox.Create(m_pDevice, L"PixelShader_Skybox.hlsl"))
+		return false;
+	if (!m_PixelShaderPostProcessing.Create(m_pDevice, L"PixelShader_PostProcessing.hlsl"))
 		return false;
 	//Geometry Shaders:
 
@@ -43,6 +48,8 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	if (!m_InputLayoutSkybox.Create(m_pDevice, m_VertexShaderSkybox, LAYOUT_SKYBOX))
 		return false;
+	if (!m_InputLayoutPostProcessing.Create(m_pDevice, m_VertexShaderPostProcessing, LAYOUT_POSTPROCESSING))
+		return false;
 	//Primitive topologies:
 	if (!m_TopologyTriList.Create(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST))
 		return false;
@@ -51,17 +58,27 @@ const bool ResourceManager::CreateAllBindables()
 	//Samplers:
 	if (!m_SamplerSkybox.Create(m_pDevice, BindFlag::S_PS, TechFlag::SKYBOX, 0u))
 		return false;
+	if (!m_SamplerPostProcessing.Create(m_pDevice, BindFlag::S_PS, TechFlag::POSTPROCESSING, 0u))
+		return false;
 	//Textures:									//HÅRDKODAT
-	if (!m_RenderTextureQuad.Create(m_pDevice, 0u, 1200, 800, D3D11_USAGE_DEFAULT, D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS, 0))
+	if (!m_RenderTextureQuad.Create(m_pDevice, 0u, 1920, 1080, D3D11_USAGE_DEFAULT, D3D11_BIND_RENDER_TARGET, 0))
 		return false;
 	if (!m_CubeTextureSkybox.Create(m_pDevice, L"skymap.dds", 0u))
 		return false;
 	//Vertex Buffers:
+		//Skybox
 	if (!m_VertexBufferCube.Create(m_pDevice, D3D11_USAGE::D3D11_USAGE_IMMUTABLE, 0u, 
 								   static_cast<UINT>(m_CubeVertices.size() * 12), sizeof(Vertex_Position), m_CubeVertices.data(), 0u))
 		return false;
 	if (!m_IndexBufferCube.Create(m_pDevice, D3D11_USAGE::D3D11_USAGE_IMMUTABLE, 0u,
 								  static_cast<UINT>(m_CubeIndices.size() * sizeof(unsigned int)), sizeof(unsigned int), m_CubeIndices.data()))
+		return false;
+		//Quad
+	if (!m_VertexBufferQuad.Create(m_pDevice, D3D11_USAGE::D3D11_USAGE_IMMUTABLE, 0u,
+								  static_cast<UINT>(m_QuadVertices.size() * 20), sizeof(Vertex_PosTex), m_QuadVertices.data(), 0u))
+		return false;
+	if (!m_IndexBufferQuad.Create(m_pDevice, D3D11_USAGE::D3D11_USAGE_IMMUTABLE, 0u,
+								  static_cast<UINT>(m_QuadIndices.size() * sizeof(unsigned int)), sizeof(unsigned int), m_QuadIndices.data()))
 		return false;
 	//Arrange:
 	//Minimal:
@@ -71,8 +88,11 @@ const bool ResourceManager::CreateAllBindables()
 														&m_TopologyTriList, &m_CubeTextureSkybox, &m_SamplerSkybox,
 														&m_VertexBufferCube, &m_IndexBufferCube});
 
-	//RenderQuad:											//Post processing VS & PS
-	m_BindablesRenderQuad.insert(m_BindablesRenderQuad.end(), {});
+	//RenderQuad First Pass:
+	m_BindablesRenderQuad.insert(m_BindablesRenderQuad.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList, &m_RenderTextureQuad });
+
+	//Water Post processing:
+	m_BindablesWater.insert(m_BindablesWater.end(), { &m_RenderTextureQuad, &m_TopologyTriList, &m_InputLayoutPostProcessing, &m_VertexShaderPostProcessing, &m_PixelShaderPostProcessing, &m_VertexBufferQuad, &m_IndexBufferQuad});
 	return true;
 }
 
@@ -83,26 +103,22 @@ void ResourceManager::UnbindPipeline()
 	ID3D11Buffer* nullBuffer[3] = { nullptr };
 
 	m_pDeviceContext->VSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->VSSetConstantBuffers(0u, 0u, nullptr);
 	m_pDeviceContext->VSSetShaderResources(0u, 3u, nullSRV);
 	m_pDeviceContext->VSSetSamplers(0u, 3u, nullSampler);
 	m_pDeviceContext->VSSetConstantBuffers(0u, 3u, nullBuffer);
 
 	m_pDeviceContext->PSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->PSSetSamplers(0u, 0u, nullptr);
 	m_pDeviceContext->PSSetShaderResources(0u, 3u, nullSRV);
 	m_pDeviceContext->PSSetSamplers(0u, 3u, nullSampler);
 	m_pDeviceContext->PSSetConstantBuffers(0u, 3u, nullBuffer);
 
 	m_pDeviceContext->DSSetShader(nullptr, nullptr, 0u);
 	m_pDeviceContext->DSSetShaderResources(0u, 3u, nullSRV);
-	m_pDeviceContext->DSSetConstantBuffers(0u, 0u, nullptr);
 	m_pDeviceContext->DSSetSamplers(0u, 3u, nullSampler);
 	m_pDeviceContext->DSSetConstantBuffers(0u, 3u, nullBuffer);
 
 	m_pDeviceContext->HSSetShader(nullptr, nullptr, 0u);
 	m_pDeviceContext->HSSetShaderResources(0u, 3u, nullSRV);
-	m_pDeviceContext->HSSetConstantBuffers(0u, 0u, nullptr);
 	m_pDeviceContext->HSSetSamplers(0u, 3u, nullSampler);
 	m_pDeviceContext->HSSetConstantBuffers(0u, 3u, nullBuffer);
 
@@ -171,6 +187,16 @@ void ResourceManager::BindToPipeline(IEvent& event)
 		}
 		break;
 	}
+	case BindID::ID_Water:
+	{
+		for (auto bindables : m_BindablesWater)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+	}
 	}
 }
 
@@ -218,4 +244,20 @@ void ResourceManager::CreateCubeData() noexcept
 												4,5,7, 4,7,6,
 												0,4,2, 2,4,6,
 												0,1,4, 1,5,4 });
+}
+
+void ResourceManager::CreateQuadData() noexcept
+{
+	m_QuadVertices.insert(m_QuadVertices.end(), {	{	DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f),	// Top right
+														DirectX::XMFLOAT2(0.0f, 0.0f)},
+													{	DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f),	// Bottom right
+														DirectX::XMFLOAT2(1.0f, 1.0f)},
+													{	DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f),	// Bottom left
+														DirectX::XMFLOAT2(0.0f, 1.0f)},
+													{	DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f),	// Top left
+														DirectX::XMFLOAT2(1.0f, 0.0f)}
+												});
+
+	m_QuadIndices.insert(m_QuadIndices.end(), { 0, 1, 2,  0, 3, 1 });
+
 }

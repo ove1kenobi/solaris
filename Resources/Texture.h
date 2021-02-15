@@ -11,7 +11,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> m_pUnorderedAccessView;
 	unsigned int m_Slot;
 	bool m_isRenderTarget;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>* m_pDepthStencilView;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
+	float m_background[4];
 public:
 	Texture() noexcept;
 	virtual ~Texture() noexcept = default;

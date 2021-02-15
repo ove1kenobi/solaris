@@ -6,7 +6,8 @@ Texture::Texture() noexcept
     m_pShaderResourceView { nullptr },
     m_pUnorderedAccessView{ nullptr }, 
     m_pDepthStencilView{ nullptr },
-    m_Slot{ 0u }, m_isRenderTarget{ false }
+    m_Slot{ 0u }, m_isRenderTarget{ false },
+    m_background{0.5f, 0.5f, 0.5f, 1.0f}
 {
     
 }
@@ -18,13 +19,12 @@ void Texture::Bind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceCon
 #endif
 
     if (m_isRenderTarget) {
-        pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), (*m_pDepthStencilView).Get());
-
+        pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
+        pDeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), m_background);
         m_isRenderTarget = false;
     }
     else {
         pDeviceContext->PSSetShaderResources(m_Slot, 1u, m_pShaderResourceView.GetAddressOf());
-
         if (m_pRenderTargetView) {
             m_isRenderTarget = true;
         }
@@ -45,7 +45,7 @@ void Texture::Unbind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceC
 
     if (m_pRenderTargetView) {
         ID3D11RenderTargetView* nullRTV[1] = { nullptr };
-        pDeviceContext->OMSetRenderTargets(1, nullRTV, (*m_pDepthStencilView).Get());
+        pDeviceContext->OMSetRenderTargets(1, nullRTV, m_pDepthStencilView.Get());
     }
 
     if (m_pUnorderedAccessView) {
@@ -63,7 +63,7 @@ const bool Texture::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, 
     texDesc.MipLevels = 1;
     texDesc.ArraySize = 1;
     texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    texDesc.SampleDesc.Count = 1;
+    texDesc.SampleDesc.Count = 4u;
     texDesc.Usage = usage;
     texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | bindflags;
     texDesc.CPUAccessFlags = cpuaccessflags;
@@ -78,7 +78,7 @@ const bool Texture::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, 
     if(bindflags & D3D11_BIND_RENDER_TARGET){
         D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
         rtvDesc.Format = texDesc.Format;
-        rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+        rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DMS;
         rtvDesc.Texture2D.MipSlice = 0;
 
         hr = pDevice->CreateRenderTargetView(texture, &rtvDesc, m_pRenderTargetView.GetAddressOf());
@@ -96,7 +96,7 @@ const bool Texture::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, 
 
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
     srvDesc.Format = texDesc.Format;
-    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DMS;
     srvDesc.Texture2D.MostDetailedMip = 0;
     srvDesc.Texture2D.MipLevels = 1;
 
@@ -125,7 +125,7 @@ void Texture::OnEvent(IEvent& event) noexcept {
     case EventType::SendDSVEvent:
     {
         SendDSVEvent& derivedEvent = static_cast<SendDSVEvent&>(event);
-        m_pDepthStencilView = &derivedEvent.GetDepthStencilView();
+        m_pDepthStencilView = derivedEvent.GetDepthStencilView();
         break;
     }
     }

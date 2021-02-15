@@ -3,6 +3,7 @@
 #include "EventSystem\IEventListener.h"
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem\UtilityEvents.h"
+#include "EventSystem\RenderEvents.h"
 #include "ImGui\imgui_impl_dx11.h"
 
 #pragma comment(lib, "user32")
