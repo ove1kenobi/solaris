@@ -153,12 +153,13 @@ void Scene::Update() noexcept {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
 //#if defined(DEBUG) | defined(_DEBUG)
-	//Time t;
-	//ImGui::Begin("Game Objects");
-	//ImGui::Text("Delta Time: %f", t.DeltaTime());
+//	Time t;
+//	ImGui::Begin("Game Objects");
+//	ImGui::Text("Seconds: %f", t.DeltaTime());
 //	for (unsigned int i{ 0u }; i < m_gameObjects.size(); i++)
 //	{
 //		ImGui::Text("Game Object #%d", i + 1);
+//		ImGui::Text("Game Object #%f", m_gameObjects[i]->GetMass());
 //		ImGui::Text("Center: (%.0f, %.0f, %.0f)", m_gameObjects[i]->GetCenter().x, m_gameObjects[i]->GetCenter().y, m_gameObjects[i]->GetCenter().z);
 //	}
 //	ImGui::End();
