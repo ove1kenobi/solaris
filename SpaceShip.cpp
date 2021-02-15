@@ -76,6 +76,11 @@ void SpaceShip::rotate(float step) {
 	}
 }
 
+const bool SpaceShip::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
+{
+	return false;
+}
+
 DirectX::XMFLOAT3 SpaceShip::getCenter() {
 	return this->m_center;
 }

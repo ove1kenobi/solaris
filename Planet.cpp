@@ -9,3 +9,8 @@ bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zR
 	this->m_model = ModelFactory::Get().GeneratePlanet(x, y, z, r);
 	return true;
 }
+
+const bool Planet::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
+{
+	return m_model->GetBoundingSphere()->Intersects(origin, direction, distance);
+}

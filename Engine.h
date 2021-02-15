@@ -21,7 +21,6 @@ private:
 	Scene m_scene;
 	ImGuiManager m_imguiManager;
 	LayerStack m_LayerStack;
-	MousePicking m_MousePicking;
 	bool m_Running;
 	long double m_time;
 	int fps;

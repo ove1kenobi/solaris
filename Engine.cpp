@@ -30,8 +30,6 @@ const bool Engine::Initialize()
 	//Scene
 	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
 		return false;
-	if (!m_MousePicking.Initialize())
-		return false;
 
 	m_LayerStack.Push(&m_scene);
 	m_LayerStack.PushOverlay(&m_imguiManager);
@@ -79,7 +77,9 @@ void Engine::Update()
 		m_Window.SetFPS(fps);
 		fps = 0;
 	}
+	//Should RenderWindow be a layer...?
 	m_LayerStack.Update();
+	m_Window.Update();
 }
 
 void Engine::Render()

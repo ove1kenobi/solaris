@@ -243,13 +243,3 @@ const Microsoft::WRL::ComPtr<IDXGISwapChain>& DXCore::GetSwapChain() const noexc
 {
 	return m_pSwapChain;
 }
-
-const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& DXCore::GetBackBuffer() const noexcept
-{
-	return m_pBackBuffer;
-}
-
-const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& DXCore::GetDepthStencilView() const noexcept
-{
-	return m_pDepthStencilView;
-}

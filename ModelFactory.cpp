@@ -193,6 +193,7 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 	model->setIndexBufferSize(static_cast<UINT>(indices.size()));
 
 	createBuffers(sizeof(vertex_col), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
+	model->SetBoundingVolume(new DirectX::BoundingSphere(center, r + (r / 5.0f)));
 	return model;
 }
 
@@ -626,13 +627,11 @@ std::vector<DirectX::XMFLOAT3> ModelFactory::calcNormals(std::vector<float> vert
 
 	}
 
-
 	for (int i = 0; i < vertexNormals.size(); i++) {
 		vertexNormals[i].x = vertexNormals[i].x / vertexConnectingCount[i];
 		vertexNormals[i].y = vertexNormals[i].y / vertexConnectingCount[i];
 		vertexNormals[i].z = vertexNormals[i].z / vertexConnectingCount[i];
 	}
-	
 	return vertexNormals;
 }
 

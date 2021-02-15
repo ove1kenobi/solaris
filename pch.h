@@ -23,3 +23,4 @@
 #include <stdexcept>
 #include <stdarg.h>
 #include <thread>
+#include <sstream>

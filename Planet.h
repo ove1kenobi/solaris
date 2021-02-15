@@ -8,4 +8,5 @@ public:
 	~Planet() = default;
 
 	bool Initialize(float x, float y, float z, float r, float xRot, float zRot, int rotDir);
+	[[nodiscard]] const bool IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept override;
 };

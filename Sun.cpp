@@ -15,3 +15,8 @@ bool Sun::Initialize()
 	this->m_model = ModelFactory::Get().GenerateSun(this->m_center.x, this->m_center.y, this->m_center.z, this->m_radius);
 	return true;
 }
+
+const bool Sun::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
+{
+	return false;
+}

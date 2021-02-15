@@ -161,3 +161,34 @@ public:
 		return m_wheelScroll;
 	}
 };
+
+class DelegateMouseCoordsEvent : public IEvent
+{
+private:
+	unsigned int m_XCoord;
+	unsigned int m_YCoord;
+public:
+	DelegateMouseCoordsEvent(unsigned int& xCoord, unsigned int& yCoord) noexcept
+	{
+		m_XCoord = xCoord;
+		m_YCoord = yCoord;
+	}
+	virtual ~DelegateMouseCoordsEvent() noexcept = default;
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::DelegateMouseCoordsEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "DelegateMouseCoordsEvent";
+
+	}
+	[[nodiscard]] const unsigned int& GetXCoord() const noexcept
+	{
+		return m_XCoord;
+	}
+	[[nodiscard]] const unsigned int& GetYCoord() const noexcept
+	{
+		return m_YCoord;
+	}
+};

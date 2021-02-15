@@ -92,6 +92,9 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	data->PMatrix = PMatrix;
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
 	
+	//Bounding sphere:
+	//m_model->GetBoundingSphere()->Center = m_center;
+
 	return true;
 }
 
