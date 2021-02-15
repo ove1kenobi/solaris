@@ -2,7 +2,7 @@
 #include "ForwardRenderer.h"
 
 ForwardRenderer::ForwardRenderer() noexcept
-	: m_Background{ 0.0f, 0.0f, 0.0f, 1.0f },
+	: m_Background{ 0.0f, 1.0f, 0.0f, 1.0f },
 	  m_pGameObjects{ nullptr },
 	  m_pDevice{ nullptr },
 	  m_pDeviceContext{ nullptr },
@@ -37,6 +37,10 @@ void ForwardRenderer::BeginFrame()
 
 	//Unbind
 	EventBuss::Get().Delegate(ubEvent);
+
+	ID3D11RenderTargetView* nullRTV[1] = { nullptr };
+	ID3D11DepthStencilView* nullDSV = { nullptr };
+	m_pDeviceContext->OMSetRenderTargets(1, nullRTV, nullDSV);
 
 	//Bind backbuffer
 	BindBackBufferEvent bindBackBuffer;
