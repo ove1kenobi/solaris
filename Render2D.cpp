@@ -50,13 +50,20 @@ const bool Render2D::Initialize() noexcept {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
-			D2D1::Point2F(m_pMainRectangle.left, m_pMainRectangle.bottom + 10.0f),
+			D2D1::Point2F(m_pMainRectangle.left + 10.0f, m_pMainRectangle.bottom + 10.0f),
 			D2D1_FIGURE_BEGIN_FILLED
 		);
 		D2D1_POINT_2F points[] = {
-		   D2D1::Point2F(m_pMainRectangle.left + 420.0f, m_pMainRectangle.bottom + 10.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 420.0f, m_pMainRectangle.bottom + 10.0f),	//Trinagle
 		   D2D1::Point2F(m_pMainRectangle.left + 400.0f, m_pMainRectangle.bottom - 10.0f),
-		   D2D1::Point2F(449, 181),
+		   D2D1::Point2F(m_pMainRectangle.left + 170.0f, m_pMainRectangle.bottom - 10.0f),	//Trinagle
+		   D2D1::Point2F(m_pMainRectangle.left + 150.0f, m_pMainRectangle.bottom - 30.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 30.0f, m_pMainRectangle.bottom - 30.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 30.0f, m_pMainRectangle.bottom - 150.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 10.0f, m_pMainRectangle.bottom - 170.0f),	//Triangle
+		   D2D1::Point2F(m_pMainRectangle.left + 10.0f, m_pMainRectangle.bottom - 230.0f),
+		   D2D1::Point2F(m_pMainRectangle.left - 10.0f, m_pMainRectangle.bottom - 250.0f),	//Triangle
+		   D2D1::Point2F(m_pMainRectangle.left - 10.0f, m_pMainRectangle.bottom - 10.0f),
 		};
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
@@ -113,35 +120,6 @@ void Render2D::RenderUI() {
 	}
 
 	//Planet interaction UI
-	//Bottom left corner, gets created based on main triangle size
-	D2D1_RECT_F BottomLeftRectangle = D2D1::RectF(
-		m_pMainRectangle.left - 10.0f,
-		m_pMainRectangle.bottom - 10.0f,
-		m_pMainRectangle.left + 400.0f,
-		m_pMainRectangle.bottom + 10.0f
-	);
-
-	D2D1_RECT_F BottomLeftRectangle1 = D2D1::RectF(
-		m_pMainRectangle.left - 10.0f,
-		m_pMainRectangle.bottom - 30.0f,
-		m_pMainRectangle.left + 150.0f,
-		m_pMainRectangle.bottom - 10.0f
-	);
-
-	D2D1_RECT_F BottomLeftRectangle2 = D2D1::RectF(
-		m_pMainRectangle.left - 10.0f,
-		m_pMainRectangle.bottom - 230.0f,
-		m_pMainRectangle.left + 10.0f,
-		m_pMainRectangle.bottom - 30.0f
-	);
-
-	D2D1_RECT_F BottomLeftRectangle3 = D2D1::RectF(
-		m_pMainRectangle.left + 10.0f,
-		m_pMainRectangle.bottom - 150.0f,
-		m_pMainRectangle.left + 30.0f,
-		m_pMainRectangle.bottom - 30.0f
-	);
-
 	//Bottom right corner, gets created based on main triangle size
 	D2D1_RECT_F BottomRightRectangle = D2D1::RectF(
 		m_pMainRectangle.right + 10.0f,
@@ -171,21 +149,14 @@ void Render2D::RenderUI() {
 	m_pRenderTarget2D->FillRectangle(&m_pMainRectangle, m_pBrushDarkBlue.Get());
 
 	//Bottom Left
-	m_pRenderTarget2D->FillRectangle(&BottomLeftRectangle, m_pBrushLightBlue.Get());
-	m_pRenderTarget2D->FillRectangle(&BottomLeftRectangle1, m_pBrushLightBlue.Get());
-	m_pRenderTarget2D->FillRectangle(&BottomLeftRectangle2, m_pBrushLightBlue.Get());
-	m_pRenderTarget2D->FillRectangle(&BottomLeftRectangle3, m_pBrushLightBlue.Get());
+	m_pRenderTarget2D->FillGeometry(m_pBottomLeft.Get(), m_pBrushLightBlue.Get());
 
 	//Bottom Right
 	m_pRenderTarget2D->FillRectangle(&BottomRightRectangle, m_pBrushLightBlue.Get());
 
-	//Top Right
+	//Top
 	m_pRenderTarget2D->FillRectangle(&TopRightRectangle, m_pBrushLightBlue.Get());
-
-	//Top Left
 	m_pRenderTarget2D->FillRectangle(&TopLeftRectangle, m_pBrushLightBlue.Get());
-
-	m_pRenderTarget2D->FillGeometry(m_pBottomLeft.Get(), m_pBrushLightBlue.Get());
 
 	//---------------------
 	/*TODO: clean up of Render2D
