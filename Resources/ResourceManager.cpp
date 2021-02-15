@@ -2,9 +2,10 @@
 #include "ResourceManager.h"
 
 ResourceManager::ResourceManager() noexcept
-	: m_pDevice{ nullptr }, m_pDeviceContext{ nullptr }
+	: m_pDevice{ nullptr }, m_pDeviceContext{ nullptr }, m_ClientWindowWidth{ 0u }, m_ClientWindowHeight{ 0u }
 {
 	EventBuss::Get().AddListener(this, EventType::UnbindPipelineEvent, EventType::BindIDEvent, EventType::DelegateDXEvent);
+	EventBuss::Get().AddListener(this, EventType::DelegateResolutionEvent);
 }
 
 const bool ResourceManager::Initialize() noexcept
@@ -73,31 +74,27 @@ const bool ResourceManager::CreateAllBindables()
 
 void ResourceManager::UnbindPipeline()
 {
-	ID3D11ShaderResourceView* nullSRV[3] = { nullptr };
-	ID3D11SamplerState* nullSampler[3] = { nullptr };
-	ID3D11Buffer* nullBuffer[3] = { nullptr };
+	ID3D11ShaderResourceView*	nullSRV[3] = { nullptr };
+	ID3D11SamplerState*			nullSampler[3] = { nullptr };
+	ID3D11Buffer*				nullBuffer[3] = { nullptr };
 
 	m_pDeviceContext->VSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->VSSetConstantBuffers(0u, 0u, nullptr);
 	m_pDeviceContext->VSSetShaderResources(0u, 3u, nullSRV);
 	m_pDeviceContext->VSSetSamplers(0u, 3u, nullSampler);
 	m_pDeviceContext->VSSetConstantBuffers(0u, 3u, nullBuffer);
 
 	m_pDeviceContext->PSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->PSSetSamplers(0u, 0u, nullptr);
 	m_pDeviceContext->PSSetShaderResources(0u, 3u, nullSRV);
 	m_pDeviceContext->PSSetSamplers(0u, 3u, nullSampler);
 	m_pDeviceContext->PSSetConstantBuffers(0u, 3u, nullBuffer);
 
 	m_pDeviceContext->DSSetShader(nullptr, nullptr, 0u);
 	m_pDeviceContext->DSSetShaderResources(0u, 3u, nullSRV);
-	m_pDeviceContext->DSSetConstantBuffers(0u, 0u, nullptr);
 	m_pDeviceContext->DSSetSamplers(0u, 3u, nullSampler);
 	m_pDeviceContext->DSSetConstantBuffers(0u, 3u, nullBuffer);
 
 	m_pDeviceContext->HSSetShader(nullptr, nullptr, 0u);
 	m_pDeviceContext->HSSetShaderResources(0u, 3u, nullSRV);
-	m_pDeviceContext->HSSetConstantBuffers(0u, 0u, nullptr);
 	m_pDeviceContext->HSSetSamplers(0u, 3u, nullSampler);
 	m_pDeviceContext->HSSetConstantBuffers(0u, 3u, nullBuffer);
 
@@ -179,6 +176,13 @@ void ResourceManager::UpdateDXHandlers(IEvent& event) noexcept
 #endif
 }
 
+void ResourceManager::UpdateResolution(IEvent& event) noexcept
+{
+	DelegateResolutionEvent& derivedEvent = static_cast<DelegateResolutionEvent&>(event);
+	m_ClientWindowWidth = derivedEvent.GetClientWindowWidth();
+	m_ClientWindowHeight = derivedEvent.GetClientWindowHeight();
+}
+
 void ResourceManager::OnEvent(IEvent& event) noexcept
 {
 	switch (event.GetEventType())
@@ -194,7 +198,11 @@ void ResourceManager::OnEvent(IEvent& event) noexcept
 	case EventType::DelegateDXEvent :
 		UpdateDXHandlers(event);
 		break;
+	case EventType::DelegateResolutionEvent:
+		UpdateResolution(event);
+		break;
 	}
+
 }
 
 void ResourceManager::CreateCubeData() noexcept

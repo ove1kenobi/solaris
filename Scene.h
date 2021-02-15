@@ -7,7 +7,6 @@
 #include "Layer.h"
 #include "EventSystem/RenderEvents.h"
 #include "Techniques/MousePicking.h"
-#include <winspool.h>
 class Scene : public EventPublisher, public Layer
 {
 private:

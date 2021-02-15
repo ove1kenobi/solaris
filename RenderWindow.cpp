@@ -223,6 +223,12 @@ void RenderWindow::Update() noexcept
     }
 }
 
+void RenderWindow::DelegateResolution() noexcept
+{
+    DelegateResolutionEvent event(m_clientWinWidth, m_clientWinHeight);
+    EventBuss::Get().Delegate(event);
+}
+
 HWND RenderWindow::GetHandle()
 {
     return m_winHandle;

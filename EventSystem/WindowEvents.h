@@ -32,3 +32,32 @@ public:
 		return "ToggleImGuiEvent";
 	}
 };
+
+class DelegateResolutionEvent : public IEvent 
+{
+private:
+	unsigned int m_ClientWindowWidth;
+	unsigned int m_ClientWindowHeight;
+public:
+	DelegateResolutionEvent(const unsigned int& clientWindowWidth, const unsigned& clientWindowHeight) noexcept
+	{
+		m_ClientWindowWidth = clientWindowWidth;
+		m_ClientWindowHeight = clientWindowHeight;
+	}
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::DelegateResolutionEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "DelegateResolutionEvent";
+	}
+	[[nodiscard]] const unsigned int& GetClientWindowWidth() const noexcept
+	{
+		return m_ClientWindowWidth;
+	}
+	[[nodiscard]] const unsigned int& GetClientWindowHeight() const noexcept
+	{
+		return m_ClientWindowHeight;
+	}
+};

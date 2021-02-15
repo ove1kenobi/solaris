@@ -3,6 +3,7 @@
 #include "..\EventSystem\EventPublisher.h"
 #include "..\EventSystem\InputEvents.h"
 #include "..\EventSystem\UtilityEvents.h"
+#include "..\EventSystem\WindowEvents.h"
 #include "..\PlayerCamera.h"
 #include "..\GameObject.h"
 class MousePicking : public IEventListener, public EventPublisher

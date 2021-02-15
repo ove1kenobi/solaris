@@ -12,6 +12,7 @@
 #include "..\vertex.h"
 #include "../EventSystem/RenderEvents.h"
 #include "../EventSystem/UtilityEvents.h"
+#include "..\EventSystem\WindowEvents.h"
 #include "..\EventSystem\EventBuss.h"
 #include "..\EventSystem\IEventListener.h"
 class ResourceManager : public IEventListener
@@ -40,11 +41,14 @@ private:
 	std::vector<IBindable*> m_BindablesSkybox;
 	std::vector<DirectX::XMFLOAT3> m_CubeVertices;
 	std::vector<unsigned int> m_CubeIndices;
+	unsigned int m_ClientWindowWidth;
+	unsigned int m_ClientWindowHeight;
 private:
 	[[nodiscard]] const bool CreateAllBindables();
 	void UnbindPipeline();
 	void BindToPipeline(IEvent& event);
 	void UpdateDXHandlers(IEvent& event) noexcept;
+	void UpdateResolution(IEvent& event) noexcept;
 	void OnEvent(IEvent& event) noexcept override;
 	void CreateCubeData() noexcept;
 public:

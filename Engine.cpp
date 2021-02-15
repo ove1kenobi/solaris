@@ -24,12 +24,12 @@ const bool Engine::Initialize()
 	//Resource Manager
 	if (!m_ResourceManager.Initialize())
 		return false;
-	//Resource Manager
-	if (!m_ResourceManager.Initialize())
-		return false;
 	//Scene
 	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
 		return false;
+
+	//All components must have the correct monitor resolution: (Emil F)
+	m_Window.DelegateResolution();
 
 	m_LayerStack.Push(&m_scene);
 	m_LayerStack.PushOverlay(&m_imguiManager);
@@ -77,7 +77,7 @@ void Engine::Update()
 		m_Window.SetFPS(fps);
 		fps = 0;
 	}
-	//Should RenderWindow be a layer...?
+	//Should RenderWindow be a layer...? (Emil F)
 	m_LayerStack.Update();
 	m_Window.Update();
 }

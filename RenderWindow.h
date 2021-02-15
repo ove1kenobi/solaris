@@ -23,6 +23,7 @@ public:
 	RenderWindow();
 	virtual ~RenderWindow() = default;
 	static void Update() noexcept;
+	static void DelegateResolution() noexcept;
 	HWND GetHandle();
 	UINT GetWidth();
 	UINT GetHeight();
