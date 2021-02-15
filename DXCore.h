@@ -9,6 +9,7 @@
 #pragma comment(lib, "gdi32")
 #pragma comment(lib, "d3d11")
 #pragma comment(lib, "d3dcompiler")
+#pragma comment(lib, "d2d1")
 
 class DXCore : public IEventListener, EventPublisher
 {

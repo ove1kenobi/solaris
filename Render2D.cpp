@@ -32,7 +32,7 @@ void Render2D::RenderUI() {
 	m_pRenderTarget2D->BeginDraw();
 
 	//-----Example------
-	//m_pRenderTarget2D->DrawRectangle(D2D1::RectF(100.0f, 50.0f, 800.0f, 200.0f), m_pBrush.Get());
+	m_pRenderTarget2D->DrawRectangle(D2D1::RectF(100.0f, 50.0f, 800.0f, 200.0f), m_pBrush.Get());
 	//-----Example------
 
 	//End draw call

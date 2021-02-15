@@ -4,12 +4,8 @@
 #include <windowsx.h>
 #include <wrl.h>
 #include <d3d11.h>
-//For 2D rendering
-//---------------
 #include <d2d1.h>
 #include <d2d1helper.h>
-#pragma comment(lib, "d2d1")
-//---------------
 #include <dxgi.h>
 #include <d3dcompiler.h>
 #include <directxmath.h>
