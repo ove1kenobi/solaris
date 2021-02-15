@@ -66,7 +66,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	if (!sun->Initialize()) {
 		return false;
 	}
-	this->m_gameObjects.push_back(sun);
+
 
 	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
@@ -126,6 +126,9 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	for (int i = 0; i < this->m_numPlanets; i++) {
 		threads[i].join();
 	}
+
+	// Push sun to stack
+	this->m_gameObjects.push_back(sun);
 
 	//Add the ship to the gameObject vector.
 	this->m_gameObjects.push_back(this->m_player.getShip());

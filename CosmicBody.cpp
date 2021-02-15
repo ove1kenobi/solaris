@@ -58,9 +58,9 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	// Update orbit
 	if (m_tetheredTo)
 	{
-		//DirectX::XMFLOAT3 tc = m_tetheredTo->GetCenter();
-		//m_center.x = tc.x + m_major_semi_axix * static_cast<float>(cos(m_time.SinceStart() * m_orbital_speed));
-		//m_center.y = tc.y + m_minor_semi_axix * static_cast<float>(sin(m_time.SinceStart() * m_orbital_speed));
+		DirectX::XMFLOAT3 tc = m_tetheredTo->GetCenter();
+		m_center.x = tc.x + m_major_semi_axix * static_cast<float>(cos(m_time.SinceStart() * m_orbital_speed));
+		m_center.y = tc.y + m_minor_semi_axix * static_cast<float>(sin(m_time.SinceStart() * m_orbital_speed));
 	}
 
 	static float angle = 0.0f;

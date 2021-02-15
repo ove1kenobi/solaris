@@ -15,7 +15,7 @@ protected:
 	Time m_time;
 public:
 	CosmicBody() noexcept;
-	~CosmicBody();
+	virtual ~CosmicBody();
 	//Sets all the randomized values.
 	bool init(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo);
 	bool update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
