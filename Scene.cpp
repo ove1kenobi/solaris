@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "Scene.h"
 
-void initPlanet(Planet* planet, std::vector<GameObject*>& gameObjects, int id, float x, float y, float z, float r, float xRot, float zRot, int rotDir) {
-	planet->Initialize(x, y, z, r, xRot, zRot, rotDir);
+void initPlanet(Planet* planet, std::vector<GameObject*>& gameObjects, int id, float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo) {
+	planet->Initialize(x, y, z, r, xRot, zRot, rotDir, tetherTo);
 
 	gameObjects[id] = planet;
 }
@@ -61,6 +61,13 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 		return false;
 	}
 	
+	//Generate sun.
+	Sun* sun = new Sun();
+	if (!sun->Initialize()) {
+		return false;
+	}
+	this->m_gameObjects.push_back(sun);
+
 	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
 	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
@@ -111,20 +118,14 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 			static_cast<float>(distributionRadius(generator)),
 			static_cast<float>(distributionXZRot(generator)),
 			static_cast<float>(distributionXZRot(generator)),
-			static_cast<int>(distributionRotDir(generator))
+			static_cast<int>(distributionRotDir(generator)),
+			sun
 		));
 	}
 	
 	for (int i = 0; i < this->m_numPlanets; i++) {
 		threads[i].join();
 	}
-
-	//Generate sun.
-	Sun* sun = new Sun();
-	if (!sun->Initialize()) {
-		return false;
-	}
-	this->m_gameObjects.push_back(sun);
 
 	//Add the ship to the gameObject vector.
 	this->m_gameObjects.push_back(this->m_player.getShip());
@@ -149,9 +150,9 @@ void Scene::Update() noexcept {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
 //#if defined(DEBUG) | defined(_DEBUG)
-//	Time t;
-//	ImGui::Begin("Game Objects");
-//	ImGui::Text("Delta Time: %f", t.DeltaTime());
+	//Time t;
+	//ImGui::Begin("Game Objects");
+	//ImGui::Text("Delta Time: %f", t.DeltaTime());
 //	for (unsigned int i{ 0u }; i < m_gameObjects.size(); i++)
 //	{
 //		ImGui::Text("Game Object #%d", i + 1);

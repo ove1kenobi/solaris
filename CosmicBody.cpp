@@ -2,7 +2,8 @@
 #include "CosmicBody.h"
 
 CosmicBody::CosmicBody() noexcept
-	: m_radius{ 0.0f }, m_yAxis{ 0.0f, 1.0f, 0.0f, 0.0f }, m_rotationDir{ 0 }
+	: m_radius{ 0.0f }, m_yAxis{ 0.0f, 1.0f, 0.0f, 0.0f }, m_rotationDir{ 0 },
+	m_tetheredTo{ nullptr }, m_major_semi_axix{ 0 }, m_minor_semi_axix{ 0 }, m_orbital_speed{ 0 }
 {
 	
 }
@@ -12,17 +13,23 @@ CosmicBody::~CosmicBody()
 	//delete m_model;
 }
 
-bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir) {
+bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo) {
 	//Set initial values. All randomized.
 	this->m_radius = r;
 	this->m_mass = r * 10000000;
-	this->m_1byMass = 1.0f / m_mass;
 	this->m_center.x = x;
 	this->m_center.y = y;
 	this->m_center.z = z;
 	this->m_pitch = xRot;
 	this->m_roll = zRot;
 	this->m_rotationDir = rotDir;
+	this->m_tetheredTo = tetherTo;
+	if(tetherTo)
+	{
+		this->m_major_semi_axix = length(m_center - tetherTo->GetCenter());
+		this->m_minor_semi_axix = this->m_major_semi_axix * 0.8f;
+		this->m_orbital_speed = 6.2831853f / 100.0f;	// 2pi / distance from center of orbit
+	}
 	//If the random value was 0, set it to -1.
 	if (this->m_rotationDir == 0) {
 		this->m_rotationDir--;
@@ -48,6 +55,14 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 
 bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
+	// Update orbit
+	if (m_tetheredTo)
+	{
+		//DirectX::XMFLOAT3 tc = m_tetheredTo->GetCenter();
+		//m_center.x = tc.x + m_major_semi_axix * static_cast<float>(cos(m_time.SinceStart() * m_orbital_speed));
+		//m_center.y = tc.y + m_minor_semi_axix * static_cast<float>(sin(m_time.SinceStart() * m_orbital_speed));
+	}
+
 	static float angle = 0.0f;
 
 	//Construct rotation matrices
@@ -61,13 +76,13 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	DirectX::XMMATRIX transMatrix = DirectX::XMMatrixIdentity();
 
 	// Static or dynamic center coordinates
-	DirectX::XMFLOAT4X4 transMatrixFloats;
-	DirectX::XMStoreFloat4x4(&transMatrixFloats, transMatrix);
-	transMatrixFloats._41 = getTransVector().x;
-	transMatrixFloats._42 = getTransVector().y;
-	transMatrixFloats._43 = getTransVector().z;
-	transMatrix = DirectX::XMLoadFloat4x4(&transMatrixFloats);
-	//transMatrix = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);	// dynamic center coordinates
+	//DirectX::XMFLOAT4X4 transMatrixFloats;
+	//DirectX::XMStoreFloat4x4(&transMatrixFloats, transMatrix);
+	//transMatrixFloats._41 = getTransVector().x;
+	//transMatrixFloats._42 = getTransVector().y;
+	//transMatrixFloats._43 = getTransVector().z;
+	//transMatrix = DirectX::XMLoadFloat4x4(&transMatrixFloats);
+	transMatrix = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);	// dynamic center coordinates
 
 	//Update the wMatrix and the angle.
 	DirectX::XMMATRIX result = scaleMatrix * rotX * rotZ * rotMatrix  * transMatrix;

@@ -7,5 +7,5 @@ public:
 	Planet() = default;
 	~Planet() = default;
 
-	bool Initialize(float x, float y, float z, float r, float xRot, float zRot, int rotDir);
+	bool Initialize(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo);
 };
