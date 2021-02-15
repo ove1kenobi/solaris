@@ -69,7 +69,7 @@ const bool Texture::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, 
     texDesc.CPUAccessFlags = cpuaccessflags;
     texDesc.MiscFlags = 0;
 
-    ID3D11Texture2D* texture;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
     HRESULT hr = pDevice->CreateTexture2D(&texDesc, NULL, &texture);
     if (FAILED(hr)) {
         return false;
@@ -81,7 +81,7 @@ const bool Texture::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, 
         rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DMS;
         rtvDesc.Texture2D.MipSlice = 0;
 
-        hr = pDevice->CreateRenderTargetView(texture, &rtvDesc, m_pRenderTargetView.GetAddressOf());
+        hr = pDevice->CreateRenderTargetView(texture.Get(), &rtvDesc, m_pRenderTargetView.GetAddressOf());
         if (FAILED(hr)) {
             return false;
         }
@@ -100,7 +100,7 @@ const bool Texture::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, 
     srvDesc.Texture2D.MostDetailedMip = 0;
     srvDesc.Texture2D.MipLevels = 1;
 
-    hr = pDevice->CreateShaderResourceView(texture, &srvDesc, m_pShaderResourceView.GetAddressOf());
+    hr = pDevice->CreateShaderResourceView(texture.Get(), &srvDesc, m_pShaderResourceView.GetAddressOf());
     if (FAILED(hr)) {
         return false;
     }
@@ -111,7 +111,7 @@ const bool Texture::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, 
         uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
         uavDesc.Texture2D.MipSlice = 0;
 
-        hr = pDevice->CreateUnorderedAccessView(texture, &uavDesc, m_pUnorderedAccessView.GetAddressOf());
+        hr = pDevice->CreateUnorderedAccessView(texture.Get(), &uavDesc, m_pUnorderedAccessView.GetAddressOf());
         if (FAILED(hr)) {
             return false;
         }
