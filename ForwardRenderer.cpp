@@ -35,21 +35,21 @@ void ForwardRenderer::BeginFrame()
 		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
 
-	//Unbind
+	//Unbind pipeline:
 	EventBuss::Get().Delegate(ubEvent);
 
 	ID3D11RenderTargetView* nullRTV[1] = { nullptr };
 	ID3D11DepthStencilView* nullDSV = { nullptr };
-	m_pDeviceContext->OMSetRenderTargets(1, nullRTV, nullDSV);
-
-	//Bind backbuffer
-	BindBackBufferEvent bindBackBuffer;
-	EventBuss::Get().Delegate(bindBackBuffer);
+	m_pDeviceContext->OMSetRenderTargets(1u, nullRTV, nullDSV);
 
 	//2nd pass, postprocessing
 	BindIDEvent bindWaterEvent(BindID::ID_Water);
 	EventBuss::Get().Delegate(bindWaterEvent);
 	//Post processing DONE
+
+	//Bind backbuffer
+	BindBackBufferEvent bindBackBuffer;
+	EventBuss::Get().Delegate(bindBackBuffer);
 
 	//Draw the quad
 	m_pDeviceContext->DrawIndexed(6, 0u, 0u);
