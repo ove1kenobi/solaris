@@ -166,12 +166,12 @@ void ResourceManager::BindToPipeline(IEvent& event)
 
 void ResourceManager::UpdateDXHandlers(IEvent& event) noexcept
 {
-#if defined(DEBUG) | defined(_DEBUG)
-	assert(m_pDevice && m_pDeviceContext);
-#endif
 	DelegateDXEvent& derivedEvent = static_cast<DelegateDXEvent&>(event);
 	m_pDevice = derivedEvent.GetDevice();
 	m_pDeviceContext = derivedEvent.GetDeviceContext();
+#if defined(DEBUG) | defined(_DEBUG)
+	assert(m_pDevice && m_pDeviceContext);
+#endif
 }
 
 void ResourceManager::OnEvent(IEvent& event) noexcept

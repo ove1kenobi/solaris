@@ -1,33 +1,24 @@
 #include "pch.h"
 #include "Light.h"
 
-Light::Light() {
-	this->m_Ambient = { 1.0f ,1.0f ,1.0f , 0.0f };
-	this->m_Diffuse = { 1.0f ,1.0f ,1.0f , 0.0f };
+Light::Light() noexcept
+	: m_DiffuseLightColor{ DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f) },
+	  m_DiffuseLightIntensity{ 1.0f }
+{
 }
 
-Light::~Light() {
 
+const DirectX::XMFLOAT3& Light::GetDiffuseColor() const noexcept
+{
+	return m_DiffuseLightColor;
 }
 
-bool Light::Init(DirectX::XMVECTOR ambient, DirectX::XMVECTOR diffuse) {
-	this->m_Ambient = ambient;
-	this->m_Diffuse = diffuse;
-	return true;
+const float& Light::GetDiffuseLightIntensity() const noexcept
+{
+	return m_DiffuseLightIntensity;
 }
 
-DirectX::XMVECTOR Light::GetAmbient() {
-	return this->m_Ambient;
-}
-
-DirectX::XMVECTOR Light::GetDiffuse() {
-	return this->m_Diffuse;
-}
-
-void Light::SetAmbient(DirectX::XMVECTOR ambient) {
-	this->m_Ambient = ambient;
-}
-
-void Light::SetDiffuse(DirectX::XMVECTOR diffuse) {
-	this->m_Diffuse = diffuse;
+void Light::SetDiffuseColor(const DirectX::XMFLOAT3& diffuseColor) noexcept 
+{
+	m_DiffuseLightColor = diffuseColor;
 }

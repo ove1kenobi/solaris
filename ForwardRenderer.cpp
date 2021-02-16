@@ -4,12 +4,14 @@
 ForwardRenderer::ForwardRenderer() noexcept
 	: m_Background{ 0.0f, 0.0f, 0.0f, 1.0f },
 	  m_pGameObjects{ nullptr },
+	  m_pSunLight{ nullptr },
 	  m_pDevice{ nullptr },
 	  m_pDeviceContext{ nullptr },
 	  m_pBackBuffer{ nullptr },
-	  m_pDepthStencilView{ nullptr }
+	  m_pDepthStencilView{ nullptr },
+	  m_pLightCBuffer{ nullptr }
 {
-	EventBuss::Get().AddListener(this, EventType::SendRenderObjectsEvent, EventType::DelegateDXEvent);
+	EventBuss::Get().AddListener(this, EventType::SendRenderObjectsEvent, EventType::DelegateDXEvent, EventType::DelegateSunLightEvent);
 }
 
 //Sets everything up for forward rendering, takes information from the event handler as input
@@ -68,6 +70,8 @@ const bool ForwardRenderer::Initialize() noexcept
 {
 	if (!m_Skybox.Initialize(m_pDevice))
 		return false;
+	if (!InitializeSunLight())
+		return false;
 	return true;
 }
 
@@ -93,4 +97,39 @@ void ForwardRenderer::OnEvent(IEvent& event) noexcept
 		UpdateDXHandlers(event);
 	}
 	}
+}
+
+const bool ForwardRenderer::InitializeSunLight()
+{
+	//Constant buffer for camera:
+	D3D11_BUFFER_DESC lightBufferDesc = {};
+	lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	lightBufferDesc.ByteWidth = sizeof(PhongLightCB);
+	lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	lightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	lightBufferDesc.MiscFlags = 0;
+	lightBufferDesc.StructureByteStride = 0;
+	HR(m_pDevice->CreateBuffer(&lightBufferDesc,
+							   nullptr,
+							   &m_pLightCBuffer), 
+							   "CreateBuffer");
+	return true;
+}
+
+void ForwardRenderer::BindLightData()
+{
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource = {};
+	HR_X(m_pDeviceContext->Map(m_pLightCBuffer.Get(),
+							 0,
+							 D3D11_MAP_WRITE_DISCARD,
+							 0,
+							 &mappedSubresource), 
+							 "Map");
+	PhongLightCB* data = (PhongLightCB*)mappedSubresource.pData;
+	data->ambientColor = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f);
+	data->diffuseColor = m_pSunLight->GetDiffuseColor();
+	data->diffuseLightIntensity = m_pSunLight->GetDiffuseLightIntensity();
+	data->lightWorldPosition = m_pSunLight->GetWorldPosition();
+	m_pDeviceContext->Unmap(m_pLightCBuffer.Get(), 0);
+	m_pDeviceContext->PSSetConstantBuffers(0u, 1u, m_pLightCBuffer.GetAddressOf());
 }

@@ -1,21 +1,14 @@
 #pragma once
 #include "Light.h"
-
-class PointLight : public Light {
+class PointLight : public Light 
+{
 private:
-	DirectX::XMFLOAT3 m_Position;
-	DirectX::XMFLOAT3 m_Attenuation;
-	float m_Range;
+	DirectX::XMFLOAT3 m_WorldPosition;
 public:
-	PointLight();
-	~PointLight();
-	//bool Init();
-	bool Init(DirectX::XMVECTOR ambient, DirectX::XMVECTOR diffuse, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 attenuation, float range);
-	//For incorporation with the shaders
-	DirectX::XMFLOAT3 GetPosition();
-	DirectX::XMFLOAT3 GetAttenuation();
+	PointLight() noexcept;
+	virtual ~PointLight() noexcept = default;
+	const bool Initialize(const DirectX::XMFLOAT3& diffuseLightColor, const float& diffuseLightIntensity, const DirectX::XMFLOAT3& worldPosition) noexcept;
+	[[nodiscard]] const DirectX::XMFLOAT3& GetWorldPosition() const noexcept;
 	//Only for debugging and dynamic adjustment of values if needed
-	void SetPosition(DirectX::XMFLOAT3 position);
-	void SetAttenuation(DirectX::XMFLOAT3 attenuation);
-	void SetRange(float range);
+	void SetWorldPosition(const DirectX::XMFLOAT3& position) noexcept;
 };

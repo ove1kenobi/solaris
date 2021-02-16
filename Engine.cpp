@@ -18,10 +18,6 @@ const bool Engine::Initialize()
 	ImGui_ImplWin32_Init(m_Window.GetHandle());
 	ModelFactory::Get().setDeviceAndContext(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext());
 
-	//Forward Renderer
-	if (!m_ForwardRenderer.Initialize())
-		return false;
-
 	//2D Renderer
 	if (!m_Render2D.Initialize())
 		return false;
@@ -32,6 +28,10 @@ const bool Engine::Initialize()
 
 	//Scene
 	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
+		return false;
+
+	//Forward Renderer
+	if (!m_ForwardRenderer.Initialize())
 		return false;
 
 	m_LayerStack.Push(&m_scene);
@@ -68,7 +68,7 @@ void Engine::OnEvent(IEvent& event) noexcept
 	}
 }
 
-void Engine::Update()
+void Engine::Update() noexcept
 {
 	m_gameTime.Update();
 
