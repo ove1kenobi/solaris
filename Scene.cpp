@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "Scene.h"
 
-void initPlanet(Planet* planet, std::vector<GameObject*>& gameObjects, int id, float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo) {
-	planet->Initialize(x, y, z, r, xRot, zRot, rotDir, tetherTo);
+void initPlanet(Planet* planet, Orbit* orbit, std::vector<GameObject*>& gameObjects, size_t id, size_t num, float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo) {
+	planet->Initialize(x, y, z, r, xRot, zRot, rotDir, tetherTo, orbit);
 
 	gameObjects[id] = planet;
+	gameObjects[id + num] = orbit;
 }
 
 Scene::Scene() noexcept
@@ -38,7 +39,7 @@ const std::string Scene::GetDebugName() const noexcept
 
 //Send gameObjects for rendering after being asked.
 void Scene::sendObjects() {
-	SendRenderObjectsEvent event(&this->m_gameObjects);
+	SendRenderObjectsEvent event(&this->m_gameObjects, m_numPlanets);
 	EventBuss::Get().Delegate(event);
 }
 
@@ -103,15 +104,18 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 
 	ModelFactory::Get().PreparePlanetDisplacement();
 	std::vector<std::thread> threads;
-	this->m_gameObjects.resize(this->m_numPlanets);
+	this->m_gameObjects.resize(this->m_numPlanets * 2);
 	//Create all the planets using the distributions.
-	for(int i = 0; i < this->m_numPlanets; i++){
+	for(size_t i = 0; i < this->m_numPlanets; ++i){
 		Planet* planet = new Planet();
+		Orbit* orbit = new Orbit();
 		threads.push_back(std::thread(
 			initPlanet,
 			planet,
+			orbit,
 			std::ref(this->m_gameObjects),
 			i,
+			m_numPlanets,
 			static_cast<float>(distributionX(generator)),
 			static_cast<float>(distributionY(generator)),
 			static_cast<float>(distributionZ(generator)),
@@ -121,6 +125,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 			static_cast<int>(distributionRotDir(generator)),
 			sun
 		));
+
 	}
 	
 	for (int i = 0; i < this->m_numPlanets; i++) {

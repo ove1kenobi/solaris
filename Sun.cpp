@@ -3,7 +3,7 @@
 bool Sun::Initialize() 
 {
 	//The cosmic body
-	this->init(0.0f, 0.0f, 0.0f, 900.0f, 0.0f, 0.0f, 1, nullptr);
+	this->init(0.0f, 0.0f, 0.0f, 900.0f, 0.0f, 0.0f, 1, nullptr, nullptr);
 	//The light
 	this->light.Init({ 1.0f, 1.0f, 1.0f, 1.0f },
 		{ 1.0f, 1.0f, 1.0f, 1.0f },

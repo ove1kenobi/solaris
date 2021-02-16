@@ -13,6 +13,7 @@ private:
 	//Color of the screen
 	FLOAT m_Background[4];
 	std::vector<GameObject*>* m_pGameObjects;
+	size_t m_numPlanets;
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pBackBuffer;

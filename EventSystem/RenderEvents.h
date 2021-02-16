@@ -9,10 +9,12 @@ class SendRenderObjectsEvent : public IEvent
 {
 private:
 	std::vector<GameObject*>* m_gameObjects;
+	size_t m_numPlanets;
 public:
-	SendRenderObjectsEvent(std::vector<GameObject*> *gameObjects) noexcept
+	SendRenderObjectsEvent(std::vector<GameObject*> *gameObjects, const size_t& numPlanets) noexcept
 	{
-		this->m_gameObjects = gameObjects;
+		m_gameObjects = gameObjects;
+		m_numPlanets = numPlanets;
 	};
 	virtual ~SendRenderObjectsEvent() noexcept = default;
 
@@ -26,6 +28,10 @@ public:
 	}
 	std::vector<GameObject*> *getGameObjectVector() {
 		return this->m_gameObjects;
+	}
+	const size_t& GetNumPlanets()
+	{
+		return m_numPlanets;
 	}
 };
 

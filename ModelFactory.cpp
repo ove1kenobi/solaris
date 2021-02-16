@@ -557,7 +557,7 @@ void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std
 
 	//vertexbuffer
 	D3D11_BUFFER_DESC vertexBufferDescriptor = {};
-	vertexBufferDescriptor.ByteWidth = sizeof(vertex_col) * static_cast<UINT>(size);
+	vertexBufferDescriptor.ByteWidth = stride * static_cast<UINT>(size);
 	vertexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	D3D11_SUBRESOURCE_DATA sr_data = { 0 };
@@ -694,20 +694,20 @@ Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
 Model* ModelFactory::GenerateOrbit(float major_semi_axis, float minor_semi_axis)
 {
 	std::vector<DirectX::XMFLOAT3> vertices;
+	vertices.resize(60);
 	std::vector<UINT> indices;
-	size_t num = 20;
-	float segment = 3.14159265f / num;
-	for (size_t i = 0; i < num; ++i)
+	float segment = 2 * 3.14159265f / (vertices.size() - 1);
+	for (size_t i = 0; i < vertices.size(); ++i)
 	{
 		DirectX::XMFLOAT3 point = {};
 		point.x = major_semi_axis * static_cast<float>(cos(segment * i));
 		point.z = minor_semi_axis * static_cast<float>(sin(segment * i));
-		vertices.push_back(point);
+		vertices[i] = point;
 		indices.push_back(static_cast<UINT>(i));
 	}
 	Model* model = new Model();
-	model->setVertexBufferSize(static_cast<float>(vertices.size()));
-	model->setIndexBufferSize(static_cast<float>(vertices.size()));
+	model->setVertexBufferSize(static_cast<UINT>(vertices.size()));
+	model->setIndexBufferSize(static_cast<UINT>(vertices.size()));
 	createBuffers(sizeof(DirectX::XMFLOAT3), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
 	return model;
 }

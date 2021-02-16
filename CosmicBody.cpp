@@ -3,17 +3,18 @@
 
 CosmicBody::CosmicBody() noexcept
 	: m_radius{ 0.0f }, m_yAxis{ 0.0f, 1.0f, 0.0f, 0.0f }, m_rotationDir{ 0 },
-	m_tetheredTo{ nullptr }, m_major_semi_axix{ 0 }, m_minor_semi_axix{ 0 }, m_orbital_speed{ 0 }
+	m_tetheredTo{ nullptr }, m_major_semi_axis{ 0 }, m_minor_semi_axis{ 0 }, m_orbital_speed{ 0 },
+	m_orbit{ nullptr }
 {
 	
 }
 
 CosmicBody::~CosmicBody()
 {
-	//delete m_model;
+	//delete m_orbit;
 }
 
-bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo) {
+bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo, Orbit* orbit) {
 	//Set initial values. All randomized.
 	this->m_radius = r;
 	this->m_mass = r * 10000000;
@@ -24,11 +25,13 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	this->m_roll = zRot;
 	this->m_rotationDir = rotDir;
 	this->m_tetheredTo = tetherTo;
-	if(tetherTo)
+	if(tetherTo && orbit)
 	{
-		this->m_major_semi_axix = length(m_center - tetherTo->GetCenter());
-		this->m_minor_semi_axix = this->m_major_semi_axix * 0.8f;
-		this->m_orbital_speed = 6.2831853f * m_major_semi_axix / m_mass * 1000.0f;
+		this->m_major_semi_axis = length(m_center - tetherTo->GetCenter());
+		this->m_minor_semi_axis = this->m_major_semi_axis * 0.8f;
+		this->m_orbital_speed = 6.2831853f * m_major_semi_axis / m_mass * 1000.0f;
+		m_orbit = orbit;
+		m_orbit->init(m_major_semi_axis, m_minor_semi_axis);
 	}
 	//If the random value was 0, set it to -1.
 	if (this->m_rotationDir == 0) {
@@ -59,8 +62,8 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	if (m_tetheredTo)
 	{
 		DirectX::XMFLOAT3 tc = m_tetheredTo->GetCenter();
-		m_center.x = tc.x + m_major_semi_axix * static_cast<float>(cos(m_time.SinceStart() * m_orbital_speed));
-		m_center.z = tc.z + m_minor_semi_axix * static_cast<float>(sin(m_time.SinceStart() * m_orbital_speed));
+		m_center.x = tc.x + m_major_semi_axis * static_cast<float>(cos(m_time.SinceStart() * m_orbital_speed));
+		m_center.z = tc.z + m_minor_semi_axis * static_cast<float>(sin(m_time.SinceStart() * m_orbital_speed));
 	}
 
 	static float angle = 0.0f;
@@ -119,4 +122,9 @@ void CosmicBody::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& 
 									  &this->m_model->getOffset());
 	deviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, this->m_model->getMatrixBuffer().GetAddressOf());
+}
+
+GameObject* CosmicBody::GetOrbit()
+{
+	return static_cast<GameObject*>(m_orbit);
 }
