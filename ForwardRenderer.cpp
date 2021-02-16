@@ -2,7 +2,7 @@
 #include "ForwardRenderer.h"
 
 ForwardRenderer::ForwardRenderer() noexcept
-	: m_Background{ 0.0f, 0.0f, 0.0f, 1.0f },
+	: m_Background{ 0.0f, 1.0f, 0.0f, 1.0f },
 	  m_pGameObjects{ nullptr },
 	  m_pDevice{ nullptr },
 	  m_pDeviceContext{ nullptr },
