@@ -6,7 +6,6 @@
 #include "EventSystem/EventPublisher.h"
 #include "Layer.h"
 #include "EventSystem/RenderEvents.h"
-#include <thread>
 class Scene : public EventPublisher, public Layer
 {
 private:

@@ -25,9 +25,6 @@ const bool Engine::Initialize()
 	//Resource Manager
 	if (!m_ResourceManager.Initialize())
 		return false;
-	//Resource Manager
-	if (!m_ResourceManager.Initialize())
-		return false;
 	//Scene
 	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
 		return false;

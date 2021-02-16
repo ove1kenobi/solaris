@@ -65,7 +65,6 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 		m_center.x = tc.x + m_major_semi_axis * static_cast<float>(cos(m_time.SinceStart() * m_orbital_speed));
 		m_center.z = tc.z + m_minor_semi_axis * static_cast<float>(sin(m_time.SinceStart() * m_orbital_speed));
 	}
-
 	static float angle = 0.0f;
 
 	//Construct rotation matrices
@@ -78,6 +77,7 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	//Construct the translation matrix.
 	DirectX::XMMATRIX transMatrix = DirectX::XMMatrixIdentity();
 
+	//TODO: EMIL H, review and remove!
 	// Static or dynamic center coordinates
 	//DirectX::XMFLOAT4X4 transMatrixFloats;
 	//DirectX::XMStoreFloat4x4(&transMatrixFloats, transMatrix);
