@@ -37,7 +37,6 @@ const bool ResourceManager::CreateAllBindables()
 	//Compute Shaders:
 	if (!m_ComputeShaderPlanet.Create(m_pDevice, L"ComputeShader_Planet.hlsl"))
 		return false;
-
 	//InputLayouts:
 	if (!m_InputLayoutMinimal.Create(m_pDevice, m_VertexShaderMinimal, LAYOUT_MINIMAL))
 		return false;
@@ -78,26 +77,22 @@ void ResourceManager::UnbindPipeline()
 	ID3D11Buffer* nullBuffer[3] = { nullptr };
 
 	m_pDeviceContext->VSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->VSSetConstantBuffers(0u, 0u, nullptr);
 	m_pDeviceContext->VSSetShaderResources(0u, 3u, nullSRV);
 	m_pDeviceContext->VSSetSamplers(0u, 3u, nullSampler);
 	m_pDeviceContext->VSSetConstantBuffers(0u, 3u, nullBuffer);
 
 	m_pDeviceContext->PSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->PSSetSamplers(0u, 0u, nullptr);
 	m_pDeviceContext->PSSetShaderResources(0u, 3u, nullSRV);
 	m_pDeviceContext->PSSetSamplers(0u, 3u, nullSampler);
 	m_pDeviceContext->PSSetConstantBuffers(0u, 3u, nullBuffer);
 
 	m_pDeviceContext->DSSetShader(nullptr, nullptr, 0u);
 	m_pDeviceContext->DSSetShaderResources(0u, 3u, nullSRV);
-	m_pDeviceContext->DSSetConstantBuffers(0u, 0u, nullptr);
 	m_pDeviceContext->DSSetSamplers(0u, 3u, nullSampler);
 	m_pDeviceContext->DSSetConstantBuffers(0u, 3u, nullBuffer);
 
 	m_pDeviceContext->HSSetShader(nullptr, nullptr, 0u);
 	m_pDeviceContext->HSSetShaderResources(0u, 3u, nullSRV);
-	m_pDeviceContext->HSSetConstantBuffers(0u, 0u, nullptr);
 	m_pDeviceContext->HSSetSamplers(0u, 3u, nullSampler);
 	m_pDeviceContext->HSSetConstantBuffers(0u, 3u, nullBuffer);
 
@@ -108,7 +103,7 @@ void ResourceManager::UnbindPipeline()
 
 	m_pDeviceContext->CSSetShader(nullptr, nullptr, 0u);
 	m_pDeviceContext->CSSetShaderResources(0u, 3u, nullSRV);
-	m_pDeviceContext->CSSetConstantBuffers(0u, 0u, nullptr);
+	m_pDeviceContext->CSSetConstantBuffers(0u, 0u, nullBuffer);
 }
 
 void ResourceManager::BindToPipeline(IEvent& event)
@@ -171,12 +166,12 @@ void ResourceManager::BindToPipeline(IEvent& event)
 
 void ResourceManager::UpdateDXHandlers(IEvent& event) noexcept
 {
-	DelegateDXEvent& derivedEvent = static_cast<DelegateDXEvent&>(event);
-	m_pDevice = derivedEvent.GetDevice();
-	m_pDeviceContext = derivedEvent.GetDeviceContext();
 #if defined(DEBUG) | defined(_DEBUG)
 	assert(m_pDevice && m_pDeviceContext);
 #endif
+	DelegateDXEvent& derivedEvent = static_cast<DelegateDXEvent&>(event);
+	m_pDevice = derivedEvent.GetDevice();
+	m_pDeviceContext = derivedEvent.GetDeviceContext();
 }
 
 void ResourceManager::OnEvent(IEvent& event) noexcept
