@@ -16,12 +16,14 @@ private:
 	Microsoft::WRL::ComPtr<ID2D1RenderTarget> m_pRenderTarget2D;
 
 	//Planet interaction UI
+	Microsoft::WRL::ComPtr<ID2D1GeometrySink> m_pSink;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBrushDarkBlue;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBrushLightBlue;
 
 	D2D1_RECT_F m_pMainRectangle;
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pBottomLeft;
-	Microsoft::WRL::ComPtr<ID2D1GeometrySink> m_pSink;
+	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pBottomRight;
+	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pTop;
 	//---------------------
 	void UpdateDXHandlers(IEvent& event) noexcept;
 public:

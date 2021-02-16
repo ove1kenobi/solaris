@@ -9,40 +9,38 @@ Render2D::Render2D() noexcept
 
 const bool Render2D::Initialize() noexcept {
 	//Brush for the square
-	HRESULT hr = m_pRenderTarget2D->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::DarkBlue, 0.25f), &m_pBrushDarkBlue);
+	HRESULT hr = m_pRenderTarget2D->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Aqua, 0.15f), &m_pBrushDarkBlue);
 	if (FAILED(hr)) {
 		printf("Error!\n");
 		return false;
 	}
 
 	//Brush for the corners
-	hr = m_pRenderTarget2D->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Cyan, 0.5f), &m_pBrushLightBlue);
+	hr = m_pRenderTarget2D->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::DarkCyan, 1.0f), &m_pBrushLightBlue);
 	if (FAILED(hr)) {
 		printf("Error!\n");
 		return false;
 	}
 
-
-
-	//Complex shape testing
-	hr = m_pFactory->CreatePathGeometry(&m_pBottomLeft);
-	if (FAILED(hr)) {
-		printf("Error!\n");
-		return false;
-	}
-
+	//Get screen size
 	D2D1_SIZE_F rtSize = m_pRenderTarget2D->GetSize();
-
-	// Draw a grid background. (helps with layouts)
 	int width = static_cast<int>(rtSize.width);
 	int height = static_cast<int>(rtSize.height);
 
+	//Create main rectangle
 	m_pMainRectangle = D2D1::RectF(
 		100.0f,
 		50.0f,
 		rtSize.width - 100.0f,
 		rtSize.height - 200.0f
 	);
+
+	//Create bottom left corner
+	hr = m_pFactory->CreatePathGeometry(&m_pBottomLeft);
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
 
 	hr = m_pBottomLeft->Open(&m_pSink);
 	if (SUCCEEDED(hr))
@@ -64,6 +62,94 @@ const bool Render2D::Initialize() noexcept {
 		   D2D1::Point2F(m_pMainRectangle.left + 10.0f, m_pMainRectangle.bottom - 230.0f),
 		   D2D1::Point2F(m_pMainRectangle.left - 10.0f, m_pMainRectangle.bottom - 250.0f),	//Triangle
 		   D2D1::Point2F(m_pMainRectangle.left - 10.0f, m_pMainRectangle.bottom - 10.0f),
+		};
+		m_pSink->AddLines(points, ARRAYSIZE(points));
+		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+	}
+	hr = m_pSink->Close();
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+	//Create bottom right corner
+	hr = m_pFactory->CreatePathGeometry(&m_pBottomRight);
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+	hr = m_pBottomRight->Open(&m_pSink);
+	if (SUCCEEDED(hr))
+	{
+		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
+
+		m_pSink->BeginFigure(
+			D2D1::Point2F(m_pMainRectangle.right - 10.0f, m_pMainRectangle.bottom + 10.0f),
+			D2D1_FIGURE_BEGIN_FILLED
+		);
+		D2D1_POINT_2F points[] = {
+		   D2D1::Point2F(m_pMainRectangle.right - 420.0f, m_pMainRectangle.bottom + 10.0f),	//Trinagle
+		   D2D1::Point2F(m_pMainRectangle.right - 400.0f, m_pMainRectangle.bottom - 10.0f),
+		   D2D1::Point2F(m_pMainRectangle.right - 170.0f, m_pMainRectangle.bottom - 10.0f),	//Trinagle
+		   D2D1::Point2F(m_pMainRectangle.right - 150.0f, m_pMainRectangle.bottom - 30.0f),
+		   D2D1::Point2F(m_pMainRectangle.right - 30.0f, m_pMainRectangle.bottom - 30.0f),
+		   D2D1::Point2F(m_pMainRectangle.right - 30.0f, m_pMainRectangle.bottom - 150.0f),
+		   D2D1::Point2F(m_pMainRectangle.right - 10.0f, m_pMainRectangle.bottom - 170.0f),	//Triangle
+		   D2D1::Point2F(m_pMainRectangle.right - 10.0f, m_pMainRectangle.bottom - 230.0f),
+		   D2D1::Point2F(m_pMainRectangle.right + 10.0f, m_pMainRectangle.bottom - 250.0f),	//Triangle
+		   D2D1::Point2F(m_pMainRectangle.right + 10.0f, m_pMainRectangle.bottom - 10.0f),
+		};
+		m_pSink->AddLines(points, ARRAYSIZE(points));
+		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+	}
+	hr = m_pSink->Close();
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+	//Create top
+	hr = m_pFactory->CreatePathGeometry(&m_pTop);
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+	hr = m_pTop->Open(&m_pSink);
+	if (SUCCEEDED(hr))
+	{
+		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
+
+		m_pSink->BeginFigure(
+			D2D1::Point2F(m_pMainRectangle.right - 10.0f, m_pMainRectangle.top - 10.0f),
+			D2D1_FIGURE_BEGIN_FILLED
+		);
+		D2D1_POINT_2F points[] = {
+			//Title area
+		   D2D1::Point2F(m_pMainRectangle.right - 280.0f, m_pMainRectangle.top - 10.0f),
+		   D2D1::Point2F(m_pMainRectangle.right - 300.0f, m_pMainRectangle.top - 30.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 300.0f, m_pMainRectangle.top - 30.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 280.0f, m_pMainRectangle.top - 10.0f),
+
+		   //Left corner
+		   D2D1::Point2F(m_pMainRectangle.left + 10.0f, m_pMainRectangle.top - 10.0f),
+		   D2D1::Point2F(m_pMainRectangle.left - 10.0f, m_pMainRectangle.top + 10.0f),
+		   D2D1::Point2F(m_pMainRectangle.left - 10.0f, m_pMainRectangle.top + 120.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 10.0f, m_pMainRectangle.top + 100.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 10.0f, m_pMainRectangle.top + 80.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 30.0f, m_pMainRectangle.top + 60.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 30.0f, m_pMainRectangle.top + 30.0f),
+
+		   //Right corner
+		   D2D1::Point2F(m_pMainRectangle.right - 30.0f, m_pMainRectangle.top + 30.0f),
+
+		   D2D1::Point2F(m_pMainRectangle.right - 30.0f, m_pMainRectangle.top + 60.0f),
+		   D2D1::Point2F(m_pMainRectangle.right - 10.0f, m_pMainRectangle.top + 80.0f),
+		   D2D1::Point2F(m_pMainRectangle.right - 10.0f, m_pMainRectangle.top + 100.0f),
+		   D2D1::Point2F(m_pMainRectangle.right + 10.0f, m_pMainRectangle.top + 120.0f),
+
+		   D2D1::Point2F(m_pMainRectangle.right + 10.0f, m_pMainRectangle.top + 10.0f),
 		};
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
@@ -98,7 +184,7 @@ void Render2D::RenderUI() {
 	int height = static_cast<int>(rtSize.height);
 
 	int gridSize = 10;
-
+	/*
 	for (int x = 0; x < width; x += gridSize)
 	{
 		m_pRenderTarget2D->DrawLine(
@@ -117,34 +203,9 @@ void Render2D::RenderUI() {
 			m_pBrushLightBlue.Get(),
 			0.5f
 		);
-	}
+	}*/
 
 	//Planet interaction UI
-	//Bottom right corner, gets created based on main triangle size
-	D2D1_RECT_F BottomRightRectangle = D2D1::RectF(
-		m_pMainRectangle.right + 10.0f,
-		m_pMainRectangle.bottom - 10.0f,
-		m_pMainRectangle.right - 400.0f,
-		m_pMainRectangle.bottom + 10.0f
-	);
-
-	//TODO: Change into a single one
-	//Top right corner, gets created based on main triangle size
-	D2D1_RECT_F TopRightRectangle = D2D1::RectF(
-		m_pMainRectangle.right + 10.0f,
-		m_pMainRectangle.top + 10.0f,
-		m_pMainRectangle.right - 400.0f,
-		m_pMainRectangle.top - 10.0f
-	);
-
-	//Top left corner, gets created based on main triangle size
-	D2D1_RECT_F TopLeftRectangle = D2D1::RectF(
-		m_pMainRectangle.left - 10.0f,
-		m_pMainRectangle.top + 10.0f,
-		m_pMainRectangle.left + 400.0f,
-		m_pMainRectangle.top - 10.0f
-	);
-
 	//Main Rectangle
 	m_pRenderTarget2D->FillRectangle(&m_pMainRectangle, m_pBrushDarkBlue.Get());
 
@@ -152,11 +213,10 @@ void Render2D::RenderUI() {
 	m_pRenderTarget2D->FillGeometry(m_pBottomLeft.Get(), m_pBrushLightBlue.Get());
 
 	//Bottom Right
-	m_pRenderTarget2D->FillRectangle(&BottomRightRectangle, m_pBrushLightBlue.Get());
+	m_pRenderTarget2D->FillGeometry(m_pBottomRight.Get(), m_pBrushLightBlue.Get());
 
 	//Top
-	m_pRenderTarget2D->FillRectangle(&TopRightRectangle, m_pBrushLightBlue.Get());
-	m_pRenderTarget2D->FillRectangle(&TopLeftRectangle, m_pBrushLightBlue.Get());
+	m_pRenderTarget2D->FillGeometry(m_pTop.Get(), m_pBrushLightBlue.Get());
 
 	//---------------------
 	/*TODO: clean up of Render2D
