@@ -12,27 +12,33 @@ SpaceShip::SpaceShip()
 	};
 	this->m_center = { 0.0f, 2000.0f, 0.0f };
 	this->m_mass = 10000.0f;
-	pi = static_cast<float>(atan(1) * 4);
-	this->m_rotationAngle = pi;
+	m_yaw = M_PI;
+	m_pitchTilt = 0.0f;
+	m_rollTilt = 0.0f;
 }
 
 bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
 	this->UpdatePhysics();
 
-#if defined(DEBUG) | defined(_DEBUG)
-	ImGui::Begin("Spaceship");
-	ImGui::Text("Center  : (%f, %f, %f)", m_center.x, m_center.y, m_center.z);
-	ImGui::Text("Velocity: (%f, %f, %f)", m_velocity.x, m_velocity.y, m_velocity.z);
-	ImGui::DragFloat("Mass", &m_mass, 500.0f);
-	ImGui::End();
-#endif
+//#if defined(DEBUG) | defined(_DEBUG)
+//	ImGui::Begin("Spaceship");
+//	ImGui::Text("Center  : (%f, %f, %f)", m_center.x, m_center.y, m_center.z);
+//	ImGui::Text("Velocity: (%f, %f, %f)", m_velocity.x, m_velocity.y, m_velocity.z);
+//	ImGui::DragFloat("Mass", &m_mass, 500.0f);
+//	ImGui::End();
+//#endif
 
 	//Updated the same way as a cosmicbody, with S * R * T. Rotation is around the ships up vector.
 	DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&this->m_upVector);
 	//100 times smaller. TODO: make variable?
 	DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationAxis(up, this->m_rotationAngle);
+	DirectX::XMMATRIX rotX = DirectX::XMMatrixRotationX(m_pitch + m_pitchTilt);
+	DirectX::XMMATRIX rotY = DirectX::XMMatrixRotationY(m_yaw);
+	DirectX::XMVECTOR forward{ m_forwardVector.x, m_forwardVector.y, m_forwardVector.z };
+	DirectX::XMMATRIX roll = DirectX::XMMatrixRotationAxis(forward, m_roll + m_rollTilt);
+	DirectX::XMMATRIX rot = rotX * rotY * roll;
+
 	DirectX::XMMATRIX trans = DirectX::XMMatrixTranslation(this->m_center.x, this->m_center.y, this->m_center.z);
 	DirectX::XMMATRIX final = scale * rot * trans;
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, final);
@@ -64,21 +70,56 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 	return true;
 }
 
-void SpaceShip::move(DirectX::XMFLOAT4 deltaPos) {
-	this->m_center.x += deltaPos.x;
-	this->m_center.y += deltaPos.y;
-	this->m_center.z += deltaPos.z;
+void SpaceShip::Move(float step)
+{
+	DirectX::XMFLOAT3 pos;
+
+	pos.x = step * m_forwardVector.x;
+	pos.y = step * m_forwardVector.y;
+	pos.z = step * m_forwardVector.z;
+
+	m_center.x += pos.x;
+	m_center.y += pos.y;
+	m_center.z += pos.z;
 }
 
-void SpaceShip::rotate(float step) {
-	this->m_rotationAngle -= step;
+void SpaceShip::AdjustRotation(float step)
+{
+	if (-step < m_roll && m_roll < step) m_roll = 0.0f;
+	else if (m_roll < 0) m_roll += step;
+	else if (m_roll > 0) m_roll -= step;
+}
+
+void SpaceShip::AddRotation(float yaw, float pitch)
+{
+	float alpha = 0.1f;
+
+	m_yaw += yaw;
+	if (m_yaw >= 2 * M_PI) m_yaw -= 2 * M_PI;
+	else if (m_yaw <= -2 * M_PI) m_yaw += 2 * M_PI;
+
+	m_pitch += pitch;
+	if (m_pitch > M_PI_2 - alpha) m_pitch = M_PI_2 - alpha;
+	else if (m_pitch < -M_PI_2 + alpha) m_pitch = -M_PI_2 + alpha;
+}
+
+void SpaceShip::SetTilt(float pitchLerp, float rollLerp)
+{
+	m_pitchTilt = pitchLerp * M_PI / 8.0f;
+	m_rollTilt = rollLerp * M_PI_4;
+}
+
+void SpaceShip::SetForwardVector(DirectX::XMFLOAT3 cameraPos)
+{
+	m_forwardVector.x = m_center.x - cameraPos.x;
+	m_forwardVector.y = m_center.y - cameraPos.y;
+	m_forwardVector.z = m_center.z - cameraPos.z;
 	
-	if (this->m_rotationAngle <= -2 * pi) {
-		this->m_rotationAngle += 2 * pi;
-	}
-	else if (this->m_rotationAngle >= 2*pi){
-		this->m_rotationAngle -= 2 * pi;
-	}
+	float length = sqrtf(pow(m_forwardVector.x, 2) + pow(m_forwardVector.y, 2) + pow(m_forwardVector.z, 2));
+
+	m_forwardVector.x /= length;
+	m_forwardVector.y /= length;
+	m_forwardVector.z /= length;
 }
 
 DirectX::XMFLOAT3 SpaceShip::getCenter() {

@@ -14,20 +14,13 @@ private:
 	// Reference to the camera that is connected to the player/ship.
 	PlayerCamera* m_camera;
 
-	bool m_moveForwards, m_moveBackwards;
-	bool m_moveUp, m_moveDown;
-	bool m_rotateRight, m_rotateLeft;
-	
 	Time m_time;
+	float m_mousePosX, m_mousePosY;
+	bool m_moveForwards, m_moveBackwards;
+	bool m_adjustRotation;
+	float m_speed;
 
-	DirectX::XMFLOAT3 m_forwardVector;
-	DirectX::XMFLOAT3 m_rightVector;
-	DirectX::XMFLOAT3 m_upVector;
-
-	float m_speed, m_rotation;
-
-	void Move(DirectX::XMFLOAT3 direction);
-	void YawRotation(float rotation);
+	void UpdateRotation();
 
 public:
 	Player();

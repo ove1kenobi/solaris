@@ -59,6 +59,10 @@ RenderWindow::RenderWindow()
     if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE) {
         // handle error
     }
+
+    AllocConsole();
+    freopen("CONOUT$", "w", stdout);
+    std::cout << "Debug console is open" << std::endl;
 }
 
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -118,7 +122,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             EventBuss::Get().Delegate(be);
             return 0;
         }
-        */
+        *//*
         case WM_INPUT:
         {
             UINT dataSize = 0;
@@ -141,16 +145,16 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             }
 
             return DefWindowProc(hwnd, uMsg, wParam, lParam);
-        }
-        /*
+        }*/
         case WM_MOUSEMOVE:
         {
-            int xPos = GET_X_LPARAM(lParam);
-            int yPos = GET_Y_LPARAM(lParam);
+            float xPos = GET_X_LPARAM(lParam);
+            float yPos = GET_Y_LPARAM(lParam);
+            xPos = 2.0f*xPos / (float)m_clientWinWidth - 1.0f;
+            yPos = 2.0f*yPos / (float)m_clientWinHeight - 1.0f;
             MouseMoveAbsoluteEvent mae(xPos, yPos);
             EventBuss::Get().Delegate(mae);
         }
-        */
         case WM_MOUSEWHEEL:
         {
             int wheelScroll = GET_WHEEL_DELTA_WPARAM(wParam);

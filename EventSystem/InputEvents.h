@@ -80,9 +80,9 @@ public:
 class MouseMoveAbsoluteEvent : public IEvent
 {
 private:
-	int m_xCoord, m_yCoord;
+	float m_xCoord, m_yCoord;
 public:
-	MouseMoveAbsoluteEvent(int xCoord, int yCoord)
+	MouseMoveAbsoluteEvent(float xCoord, float yCoord)
 	{
 		m_xCoord = xCoord;
 		m_yCoord = yCoord;
@@ -97,11 +97,11 @@ public:
 	{
 		return "MouseMoveAbsoluteEvent";
 	}
-	[[nodiscard]] const int GetXCoord() const noexcept
+	[[nodiscard]] const float GetXCoord() const noexcept
 	{
 		return m_xCoord;
 	}
-	[[nodiscard]] const int GetYCoord() const noexcept
+	[[nodiscard]] const float GetYCoord() const noexcept
 	{
 		return m_yCoord;
 	}

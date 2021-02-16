@@ -1,23 +1,29 @@
 #include "pch.h"
 #include "Player.h"
 
+void Player::UpdateRotation()
+{
+	float yaw = m_mousePosX * m_time.DeltaTime();
+	float pitch = -m_mousePosY * m_time.DeltaTime();
+	float roll = -m_mousePosX * m_time.DeltaTime();
+	m_camera->OrbitRotation(yaw, pitch);
+	m_ship->AddRotation(yaw, pitch);
+	m_ship->SetTilt(-m_mousePosY, -m_mousePosX);
+
+	m_ship->SetForwardVector(m_camera->getPos());
+}
+
 Player::Player()
 {
 	m_moveForwards = false;
 	m_moveBackwards = false;
-	m_moveUp = false;
-	m_moveDown = false;
-	m_rotateRight = false;
-	m_rotateLeft = false;
+	m_adjustRotation = false;
+	m_mousePosX = 0.0f;
+	m_mousePosY = 0.0f;
 
 	m_ship = nullptr;
 	m_camera = nullptr;
-	m_speed = 500.0f;
-	m_rotation = (float)M_PI_4;
-
-	m_forwardVector = { 0.0f, 0.0f, 1.0f };
-	m_rightVector = { 1.0f, 0.0f, 0.0f };
-	m_upVector = {0.0f, 1.0f, 0.0f};
+	m_speed = 1000.0f;
 }
 
 Player::~Player()
@@ -27,83 +33,29 @@ Player::~Player()
 
 bool Player::Initialize(/*DirectX::XMFLOAT3 position,*/ PlayerCamera* camera)
 {
-	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);
+	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::MouseMoveAbsoluteEvent);
 
-	m_ship = new SpaceShip();
 	m_camera = camera;
-	//m_center = position;
-	//m_upVector = {0.0f, 1.0f, 0.0f};
+	m_ship = new SpaceShip();
+	m_adjustRotation = true;
 
 	return true;
 }
 
-void Player::Move(DirectX::XMFLOAT3 direction)
-{
-	float step = m_speed * (float)m_time.DeltaTime();
-	DirectX::XMFLOAT4 offset(direction.x * step, direction.y * step, direction.z * step, 0.0f);
-
-	//m_center.x += offset.x;
-	//m_center.y += offset.y;
-	//m_center.z += offset.z;
-	m_ship->move(offset);
-	
-	
-	
-	//DirectX::XMVECTOR offsetVec = DirectX::XMLoadFloat4(&offset);
-}
-
-void Player::YawRotation(float rotation)
-{
-	float step = rotation * (float)m_time.DeltaTime();
-
-	// Rotating right and forward vector in a 2D plane
-	m_rightVector.x = cos(step)*m_rightVector.x - sin(step)*m_rightVector.z;
-	m_rightVector.z = sin(step)*m_rightVector.x + cos(step)*m_rightVector.z;
-
-	m_forwardVector.x = cos(step)*m_forwardVector.x - sin(step)*m_forwardVector.z;
-	m_forwardVector.z = sin(step)*m_forwardVector.x + cos(step)*m_forwardVector.z;
-
-	// rotate model
-	this->m_ship->rotate(step);
-
-	//rotate camera
-	this->m_camera->shipRot(step);
-}
-
 bool Player::update()
 {
-	if (m_moveForwards) {
-		Move(m_forwardVector);
-	}
-	else if (m_moveBackwards) {
-		DirectX::XMFLOAT3 backVector = {-m_forwardVector.x, -m_forwardVector.y, -m_forwardVector.z };
-		Move(backVector);
-	}
-
-	if (m_rotateRight) {
-		YawRotation(-m_rotation);
-	} 
-	else if (m_rotateLeft) {
-		YawRotation(m_rotation);
-	}
-
-	if (m_moveUp) {
-		Move(m_upVector);
-	}
-	else if (m_moveDown) {
-		DirectX::XMFLOAT3 downVector = { -m_upVector.x, -m_upVector.y, -m_upVector.z };
-		Move(downVector);
-	}
-
 	DirectX::XMFLOAT3 a = m_ship->getCenter();
 	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
 	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
 
-	//std::cout << "position: \t" << m_center.x << '\t' << m_center.y << '\t' << m_center.z << std::endl;
+	UpdateRotation();
 
-	//DirectX::XMVECTOR positionVec;
-	//DirectX::XMStoreFloat3(&m_center, positionVec);
-	//m_camera->update(positionVec);
+	if (m_moveForwards) {
+		m_ship->Move(m_speed * m_time.DeltaTime());
+	}
+	else if (m_moveBackwards) {
+		m_ship->Move(-1 * m_speed * m_time.DeltaTime());
+	}
 
 	return false;
 }
@@ -116,6 +68,43 @@ void Player::OnEvent(IEvent& event) noexcept
 {
 	switch (event.GetEventType())
 	{
+		case EventType::MouseMoveAbsoluteEvent:
+		{
+			float xCoord = static_cast<MouseMoveAbsoluteEvent*>(&event)->GetXCoord();
+			float yCoord = static_cast<MouseMoveAbsoluteEvent*>(&event)->GetYCoord();
+			m_mousePosX = xCoord;
+			m_mousePosY = yCoord;
+
+			/*
+			if (-0.1f < xCoord && xCoord < 0.1f) {
+				m_mousePosX = 0.0f;
+			}
+			else {
+				m_mousePosX = xCoord;
+			}
+
+			if (-0.1f < yCoord && yCoord < 0.1f) {
+				m_mousePosY = 0.0f;
+			}
+			else {
+				m_mousePosY = yCoord;
+			}*/
+		}
+
+		/*
+		case EventType::MouseMoveRelativeEvent:
+		{
+			int xDiff = static_cast<MouseMoveRelativeEvent*>(&event)->GetXDiff();
+			int yDiff = static_cast<MouseMoveRelativeEvent*>(&event)->GetYDiff();
+			
+			float yaw = xDiff * m_time.DeltaTime() / 0.2f;
+			float pitch = -yDiff * m_time.DeltaTime() / 0.2f;
+			float roll = -xDiff * m_time.DeltaTime() * 2.0f;
+			m_ship->Rotate(yaw, pitch, roll);
+			m_ship->SetForwardVector(m_camera->getPos());
+			m_adjustRotation = false;
+		}*/
+
 		case EventType::KeyboardEvent:
 		{
 			KeyState state = static_cast<KeyboardEvent*>(&event)->GetKeyState();
@@ -128,20 +117,6 @@ void Player::OnEvent(IEvent& event) noexcept
 				else if (virKey == 'S') {
 					m_moveBackwards = true;
 				}
-
-				if (virKey == 'D') {
-					m_rotateRight = true;
-				}
-				else if (virKey == 'A') {
-					m_rotateLeft = true;
-				}
-
-				if (virKey == VK_SPACE) {
-					m_moveUp = true;
-				}
-				else if (virKey == VK_SHIFT) {
-					m_moveDown = true;
-				}
 			}
 
 			if (state == KeyState::KeyRelease) {
@@ -150,20 +125,6 @@ void Player::OnEvent(IEvent& event) noexcept
 				}
 				else if (virKey == 'S') {
 					m_moveBackwards = false;
-				}
-
-				if (virKey == 'D') {
-					m_rotateRight = false;
-				}
-				else if (virKey == 'A') {
-					m_rotateLeft = false;
-				}
-
-				if (virKey == VK_SPACE) {
-					m_moveUp = false;
-				}
-				else if (virKey == VK_SHIFT) {
-					m_moveDown = false;
 				}
 			}
 			
