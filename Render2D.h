@@ -1,9 +1,8 @@
 #pragma once
 #include "pch.h"
-#include "ModuleUI.h"
+#include "PlanetInteractionUI.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
-#include "EventSystem\UtilityEvents.h"
 
 //Direct2D will be used to render all of the graphics, and use XAML for everything else UI related (Layout, interactions).
 //XAML: https://docs.microsoft.com/en-us/windows/uwp/gaming/directx-and-xaml-interop
@@ -11,7 +10,7 @@
 
 class Render2D : public EventPublisher, IEventListener {
 private:
-	//ModuleUI* UI;
+	PlanetInteractionUI m_TestUI;
 public:
 	Render2D() noexcept;
 	virtual ~Render2D() = default;

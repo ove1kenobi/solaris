@@ -7,17 +7,19 @@ Render2D::Render2D() noexcept
 }
 
 const bool Render2D::Initialize() noexcept {
-	//Create all UI modules here
+	if (!m_TestUI.Initialize()) {
+		return false;
+	}
 	return true;
 }
 
 void Render2D::RenderUI() {
-	//ModuleUI->BeginFrame();
+	m_TestUI.BeginFrame();
 
-	//ModuleUI->RenderHelpGrid(10);
-	//ModuleUI->RenderUI();
+	m_TestUI.RenderHelpGrid(10);
+	m_TestUI.RenderUI();
 
-	//ModuleUI->EndFrame();
+	m_TestUI.EndFrame();
 }
 
 void Render2D::OnEvent(IEvent& event) noexcept {

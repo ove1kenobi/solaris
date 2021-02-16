@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "ModuleUI.h"
 
+ModuleUI::ModuleUI() noexcept {
+	EventBuss::Get().AddListener(this, EventType::DelegateDXEvent);
+}
+
 void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {
 	DelegateDXEvent& derivedEvent = static_cast<DelegateDXEvent&>(event);
 	m_pFactory = derivedEvent.GetFactory();
@@ -12,24 +16,21 @@ void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {
 }
 
 int ModuleUI::GetWidth() {
-	return static_cast<int>(m_pRenderTarget2D->GetSize().width);
+	D2D1_SIZE_F rtSize = m_pRenderTarget2D->GetSize();
+	return static_cast<int>(rtSize.width);
 }
 
 int ModuleUI::GetHeight() {
-	return static_cast<int>(m_pRenderTarget2D->GetSize().height);
+	D2D1_SIZE_F rtSize = m_pRenderTarget2D->GetSize();
+	return static_cast<int>(rtSize.height);
 }
 
-ModuleUI::ModuleUI() noexcept {
-
-}
-
-const bool ModuleUI::Initialize() noexcept {
-	HRESULT hr = m_pRenderTarget2D->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Aqua, 1.0f), &m_pBrush);
+bool ModuleUI::Initialize() {
+	HRESULT hr = m_pRenderTarget2D->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Aqua, 0.5f), &m_pBrush);
 	if (FAILED(hr)) {
 		printf("Error!\n");
 		return false;
 	}
-    return false;
 }
 
 bool ModuleUI::UpdateBrush()

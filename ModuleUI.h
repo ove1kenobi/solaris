@@ -1,8 +1,9 @@
 #pragma once
 #include "EventSystem/IEventListener.h"
+#include "EventSystem/EventPublisher.h"
 #include "EventSystem\UtilityEvents.h"
 
-class ModuleUI : IEventListener {
+class ModuleUI : public IEventListener {
 private:
 	void UpdateDXHandlers(IEvent& event) noexcept;
 protected:
@@ -21,7 +22,7 @@ public:
 	ModuleUI() noexcept;
 	virtual ~ModuleUI() = default;
 
-	[[nodiscard]] const bool Initialize() noexcept;
+	bool Initialize();
 
 	bool UpdateBrush();
 	void BeginFrame();
