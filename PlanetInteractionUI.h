@@ -1,8 +1,5 @@
 #pragma once
 #include "ModuleUI.h"
-#include "EventSystem/IEventListener.h"
-#include "EventSystem/EventPublisher.h"
-#include "EventSystem\UtilityEvents.h"
 
 class PlanetInteractionUI : public ModuleUI {
 private:

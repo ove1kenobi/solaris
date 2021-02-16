@@ -3,7 +3,6 @@
 
 PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pMainRectangle = D2D1::RectF();
-	EventBuss::Get().AddListener(this, EventType::DelegateDXEvent);
 }
 
 bool PlanetInteractionUI::CreateMainScreen() {
