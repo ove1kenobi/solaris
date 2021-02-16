@@ -108,6 +108,7 @@
     <ClCompile Include="LayerStack.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelFactory.cpp" />
+    <ClCompile Include="ModuleUI.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -117,6 +118,7 @@
       </PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="PlanetInteractionUI.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Render2D.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
@@ -204,8 +206,10 @@
     <ClInclude Include="LayerStack.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelFactory.h" />
+    <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Planet.h" />
+    <ClInclude Include="PlanetInteractionUI.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Render2D.h" />
     <ClInclude Include="RenderWindow.h" />

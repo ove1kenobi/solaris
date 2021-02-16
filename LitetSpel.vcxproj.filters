@@ -51,6 +51,8 @@
     <ClCompile Include="Resources\ComputeShader.cpp" />
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="Render2D.cpp" />
+    <ClCompile Include="PlanetInteractionUI.cpp" />
+    <ClCompile Include="ModuleUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -107,6 +109,8 @@
     <ClInclude Include="Resources\ComputeShader.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="Render2D.h" />
+    <ClInclude Include="PlanetInteractionUI.h" />
+    <ClInclude Include="ModuleUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />
