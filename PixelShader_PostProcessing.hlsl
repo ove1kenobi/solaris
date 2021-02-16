@@ -15,5 +15,5 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	}
 	texCol = texCol / 4;
 
-	return float4(1.0f, 0.0f, 0.0f, 1.0f);
+	return texCol;
 }

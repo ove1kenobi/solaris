@@ -248,16 +248,14 @@ void ResourceManager::CreateCubeData() noexcept
 
 void ResourceManager::CreateQuadData() noexcept
 {
-	m_QuadVertices.insert(m_QuadVertices.end(), {	{	DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f),	// Top right
+	m_QuadVertices.insert(m_QuadVertices.end(), {	{	DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f),	// Bottom left
 														DirectX::XMFLOAT2(0.0f, 0.0f)},
-													{	DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f),	// Bottom right
+													{	DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f),	// Top right
 														DirectX::XMFLOAT2(1.0f, 1.0f)},
-													{	DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f),	// Bottom left
+													{	DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f),	// Top left
 														DirectX::XMFLOAT2(0.0f, 1.0f)},
-													{	DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f),	// Top left
+													{	DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f),	// Bottom right
 														DirectX::XMFLOAT2(1.0f, 0.0f)}
 												});
-
-	m_QuadIndices.insert(m_QuadIndices.end(), { 0, 1, 2,  0, 3, 1 });
-
+	m_QuadIndices.insert(m_QuadIndices.end(), { 0, 2, 3,  3, 2, 1 });
 }

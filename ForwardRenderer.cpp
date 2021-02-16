@@ -51,9 +51,11 @@ void ForwardRenderer::BeginFrame()
 	BindBackBufferEvent bindBackBuffer;
 	EventBuss::Get().Delegate(bindBackBuffer);
 
+	m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), nullDSV);
 	//Draw the quad
 	m_pDeviceContext->DrawIndexed(6, 0u, 0u);
 
+	m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
 	//Skybox time:
 	m_Skybox.PreparePass(m_pDeviceContext);
 	m_Skybox.DoPass(m_pDeviceContext);
