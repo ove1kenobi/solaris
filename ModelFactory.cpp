@@ -690,3 +690,24 @@ Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
 	createBuffers(sizeof(vertex_col), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
 	return model;
 }
+
+Model* ModelFactory::GenerateOrbit(float major_semi_axis, float minor_semi_axis)
+{
+	std::vector<DirectX::XMFLOAT3> vertices;
+	std::vector<UINT> indices;
+	size_t num = 20;
+	float segment = 3.14159265f / num;
+	for (size_t i = 0; i < num; ++i)
+	{
+		DirectX::XMFLOAT3 point = {};
+		point.x = major_semi_axis * static_cast<float>(cos(segment * i));
+		point.z = minor_semi_axis * static_cast<float>(sin(segment * i));
+		vertices.push_back(point);
+		indices.push_back(static_cast<UINT>(i));
+	}
+	Model* model = new Model();
+	model->setVertexBufferSize(static_cast<float>(vertices.size()));
+	model->setIndexBufferSize(static_cast<float>(vertices.size()));
+	createBuffers(sizeof(DirectX::XMFLOAT3), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
+	return model;
+}

@@ -44,6 +44,7 @@ public:
 	Model* GetModel(std::string filePath);
 	Model* GeneratePlanet(float x, float y, float z, float r);
 	Model* GenerateSun(float x, float y, float z, float r);
+	Model* GenerateOrbit(float major_semi_axis, float minor_semi_axis);
 	void PreparePlanetDisplacement();
 	void setDeviceAndContext(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext);
 
