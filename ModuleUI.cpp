@@ -31,11 +31,12 @@ bool ModuleUI::Initialize() {
 		printf("Error!\n");
 		return false;
 	}
+	return true;
 }
 
-bool ModuleUI::UpdateBrush()
-{
-    return false;
+void ModuleUI::UpdateBrush(D2D1::ColorF color, float opacity) {
+	this->m_pBrush.Get()->SetColor(color);
+	this->m_pBrush.Get()->SetOpacity(opacity);
 }
 
 void ModuleUI::BeginFrame() {
@@ -43,6 +44,7 @@ void ModuleUI::BeginFrame() {
 }
 
 void ModuleUI::RenderHelpGrid(int gridSize) {
+	this->UpdateBrush(D2D1::ColorF::Aqua, 0.5f);
 	for (int x = 0; x < this->GetWidth(); x += gridSize)
 	{
 		m_pRenderTarget2D->DrawLine(

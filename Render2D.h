@@ -10,10 +10,10 @@
 
 class Render2D : public EventPublisher, IEventListener {
 private:
-	PlanetInteractionUI m_TestUI;
+	PlanetInteractionUI* m_TestUI;
 public:
 	Render2D() noexcept;
-	virtual ~Render2D() = default;
+	virtual ~Render2D();
 
 	[[nodiscard]] const bool Initialize() noexcept;
 	void RenderUI();

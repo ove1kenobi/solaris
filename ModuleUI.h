@@ -24,7 +24,7 @@ public:
 
 	bool Initialize();
 
-	bool UpdateBrush();
+	void UpdateBrush(D2D1::ColorF color, float opacity);
 	void BeginFrame();
 	void RenderHelpGrid(int gridSize);
 	virtual void RenderUI() = 0;
@@ -32,11 +32,4 @@ public:
 
 	void OnEvent(IEvent& event) noexcept;
 };
-
-/*
-We have car, truck, bike, motorbike
-They are all type veichle
-Then we have a road, where a known amount of vehicles can be on.
-Road decides what vehicles is allowed to be on it when.
-*/
 
