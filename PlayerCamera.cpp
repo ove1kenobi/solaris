@@ -9,7 +9,6 @@ PlayerCamera::PlayerCamera() {
 }
 
 bool PlayerCamera::init(int screenWidth, int screenHeight) {
-	//DirectXTK mouse
 	EventBuss::Get().AddListener(this, EventType::MouseScrollEvent, EventType::RequestCameraEvent);
 	this->m_screenFar = 100000.0f;
 	float FOV = 3.141592654f / this->m_FOVvalue;
@@ -21,18 +20,24 @@ bool PlayerCamera::init(int screenWidth, int screenHeight) {
 
 void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
 	//Orbit around the ship.
+
+	// Set focus point to the ship position
 	DirectX::XMVECTOR focusPos = shipCoords;
 
+	// Calculate the camera position in relation to the ship and rotation with polar coordinates
 	m_posVector = DirectX::XMVectorSetX(m_posVector, sinf(m_pitch) * sinf(m_yaw) * m_distanceFromShip);
 	m_posVector = DirectX::XMVectorSetY(m_posVector, cosf(m_pitch) * m_distanceFromShip);
 	m_posVector = DirectX::XMVectorSetZ(m_posVector, -sinf(m_pitch) * cosf(m_yaw) * m_distanceFromShip);
 	m_posVector = DirectX::XMVectorAdd(m_posVector, focusPos);
 
+	// Create forward vector 
 	m_forwardVector = DirectX::XMVectorSubtract(focusPos, m_posVector);
 	m_forwardVector = DirectX::XMVector3Normalize(m_forwardVector);
 
+	// Optional, offsets the ship from the camera center
 	//focusPos = DirectX::XMVectorAdd(DirectX::operator*(m_upVector, 10.0f), focusPos);
 
+	// Create the view matrix
 	DirectX::XMStoreFloat4x4(&m_vMatrix, DirectX::XMMatrixLookAtLH(m_posVector, focusPos, m_upVector));
 }
 

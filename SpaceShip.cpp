@@ -104,12 +104,14 @@ void SpaceShip::SetTilt(float pitchLerp, float rollLerp)
 
 void SpaceShip::SetForwardVector(DirectX::XMFLOAT3 cameraPos)
 {
+	// Create a vector from the camera to the ship 
 	m_forwardVector.x = m_center.x - cameraPos.x;
 	m_forwardVector.y = m_center.y - cameraPos.y;
 	m_forwardVector.z = m_center.z - cameraPos.z;
 	
 	float length = sqrtf(powf(m_forwardVector.x, 2) + powf(m_forwardVector.y, 2) + powf(m_forwardVector.z, 2));
 
+	// Normalize the vector
 	m_forwardVector.x /= length;
 	m_forwardVector.y /= length;
 	m_forwardVector.z /= length;

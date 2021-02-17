@@ -13,20 +13,20 @@ private:
 	SpaceShip* m_ship;
 	// Reference to the camera that is connected to the player/ship.
 	PlayerCamera* m_camera;
-
 	Time m_time;
+
 	float m_mousePosX, m_mousePosY;
 	bool m_moveForwards, m_moveBackwards;
 	bool m_playerControlsActive;
 	float m_speed, m_rotationSpeed;
-
+	// Updates the rotation for the camera and the ship
 	void UpdateRotation();
 
 public:
 	Player();
 	~Player();
 
-	bool Initialize(/*DirectX::XMFLOAT3 position,*/ PlayerCamera* camera);
+	bool Initialize(PlayerCamera* camera);
 	bool update();
 	SpaceShip* getShip();
 

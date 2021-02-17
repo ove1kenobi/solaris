@@ -6,10 +6,12 @@ void Player::UpdateRotation()
 	float yaw = m_mousePosX * (float)m_time.DeltaTime() * m_rotationSpeed;
 	float pitch = -m_mousePosY * (float)m_time.DeltaTime() * m_rotationSpeed;
 	float roll = -m_mousePosX * (float)m_time.DeltaTime() * m_rotationSpeed;
+	// Rotate the camera
 	m_camera->OrbitRotation(yaw, pitch);
+	// Rotates the ship
 	m_ship->AddRotation(yaw, pitch);
+	// Tilts the ship in the direction it is moving
 	m_ship->SetTilt(-m_mousePosY, -m_mousePosX);
-
 	m_ship->SetForwardVector(m_camera->getPos());
 }
 
@@ -32,7 +34,7 @@ Player::~Player()
 	
 }
 
-bool Player::Initialize(/*DirectX::XMFLOAT3 position,*/ PlayerCamera* camera)
+bool Player::Initialize(PlayerCamera* camera)
 {
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::ToggleImGuiEvent, EventType::MouseMoveAbsoluteEvent);
 
@@ -48,6 +50,7 @@ bool Player::update()
 	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
 	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
 
+	// Handle player input
 	if (m_playerControlsActive) {
 		UpdateRotation();
 
