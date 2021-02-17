@@ -147,10 +147,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         {
 			m_CurrentXCoord = GET_X_LPARAM(lParam);
 			m_CurrentYCoord = GET_Y_LPARAM(lParam);
-            //int xPos = GET_X_LPARAM(lParam);
-            //int yPos = GET_Y_LPARAM(lParam);
-            //MouseMoveAbsoluteEvent mae(xPos, yPos);
-            //EventBuss::Get().Delegate(mae);
             break;
         }
         case WM_MOUSEWHEEL:
@@ -166,8 +162,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             int yPos = GET_Y_LPARAM(lParam);
             MouseMoveAbsoluteEvent mae(xPos, yPos);
             EventBuss::Get().Delegate(mae);
-            //m_CurrentXCoord = xPos;
-            //m_CurrentYCoord = yPos;
             break;
         }
         case WM_KEYDOWN:
