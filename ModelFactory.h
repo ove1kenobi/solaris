@@ -23,7 +23,7 @@ private:
 	ModelFactory& operator=(const ModelFactory& other) = delete;
 
 	//Called in GenerateSphere to create the sphere.
-	void createSphere(float r, std::vector<float> &vertexBuffer, std::vector<int> &indexBuffer);
+	void createSphere(float r, std::vector<float> &vertexBuffer, std::vector<UINT> &indexBuffer);
 	//Called in createSphere to create a new triangle.
 	void createTriangleFace(
 		std::vector<int> edge1,
@@ -31,13 +31,13 @@ private:
 		std::vector<int> edge3,
 		bool reverse,
 		std::vector<DirectX::XMFLOAT3>& vertices,
-		std::vector<int>& triangles,
+		std::vector<UINT>& triangles,
 		unsigned int divisions
 	);
 	std::vector<float> createHeightOffset(size_t size, void* data, DirectX::XMFLOAT3 center, float r);
-	std::vector<DirectX::XMFLOAT3> calcNormals(std::vector<float> vertices, std::vector<int> indices);
+	std::vector<DirectX::XMFLOAT3> calcNormals(std::vector<float> vertices, std::vector<UINT> indices);
 
-	void createBuffers(UINT stride, size_t size, void* data, const std::vector<int>& indexBuffer, Model* model);
+	void createBuffers(UINT stride, size_t size, void* data, const std::vector<UINT>& indexBuffer, Model* model);
 public:
 	static ModelFactory& Get() noexcept;
 	Model* GetModel(std::string filePath);

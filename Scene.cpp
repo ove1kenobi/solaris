@@ -69,13 +69,13 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
 	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
-	std::uniform_int_distribution<int> distributionPlanets(30, 50);
+	std::uniform_int_distribution<int> distributionPlanets(20, 30);
 	this->m_numPlanets = distributionPlanets(generator);
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
 	//World space coordinates
-	std::uniform_int_distribution<int> distributionX(-5000, 5000);
-	std::uniform_int_distribution<int> distributionY(-5000, 5000);
-	std::uniform_int_distribution<int> distributionZ(-5000, 5000);
+	std::uniform_int_distribution<int> distributionX(0, 90000);
+	std::uniform_int_distribution<int> distributionY(0, 0);
+	std::uniform_int_distribution<int> distributionZ(0, 0);
 	//Needs to be radians
 	std::uniform_real_distribution<float> distributionXZRot(static_cast<float>(-M_PI_2), static_cast<float>(M_PI_2));
 	//negative rotation direction if 0.

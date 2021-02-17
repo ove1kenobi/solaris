@@ -2,6 +2,7 @@
 #include "DXCore.h"
 #include "RenderWindow.h"
 #include "ForwardRenderer.h"
+#include "Render2D.h"
 #include "Time.h"
 #include "Scene.h"
 #include "Resources/ResourceManager.h" 
@@ -16,6 +17,7 @@ private:
 	RenderWindow m_Window;
 	DXCore m_DXCore;
 	ForwardRenderer m_ForwardRenderer;
+	Render2D m_Render2D;
 	ResourceManager m_ResourceManager;
 	Time m_gameTime;
 	Scene m_scene;

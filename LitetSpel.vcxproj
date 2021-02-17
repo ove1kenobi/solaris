@@ -118,6 +118,7 @@
     </ClCompile>
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Render2D.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="PlayerCamera.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Render2D.h" />
     <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="PlayerCamera.h" />

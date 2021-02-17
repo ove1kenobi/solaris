@@ -38,7 +38,6 @@ const bool ResourceManager::CreateAllBindables()
 	//Compute Shaders:
 	if (!m_ComputeShaderPlanet.Create(m_pDevice, L"ComputeShader_Planet.hlsl"))
 		return false;
-
 	//InputLayouts:
 	if (!m_InputLayoutMinimal.Create(m_pDevice, m_VertexShaderMinimal, LAYOUT_MINIMAL))
 		return false;
@@ -105,7 +104,7 @@ void ResourceManager::UnbindPipeline()
 
 	m_pDeviceContext->CSSetShader(nullptr, nullptr, 0u);
 	m_pDeviceContext->CSSetShaderResources(0u, 3u, nullSRV);
-	m_pDeviceContext->CSSetConstantBuffers(0u, 0u, nullptr);
+	m_pDeviceContext->CSSetConstantBuffers(0u, 0u, nullBuffer);
 }
 
 void ResourceManager::BindToPipeline(IEvent& event)
