@@ -3,8 +3,6 @@
 
 PlayerCamera::PlayerCamera() {
 	m_distanceFromShip = 60.0f;
-	m_mousePosX = 0.0f;
-	m_mousePosY = 0.0f;
 	m_maxScroll = 100.0f;
 	m_minScroll = 50.0f;
 	m_pitch = (float)M_PI_2;
