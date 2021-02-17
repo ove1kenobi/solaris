@@ -2,7 +2,9 @@
 #include "Engine.h"
 
 Engine::Engine() noexcept
-	: m_Running{ true }
+	: m_Running{ true },
+	m_fps{ 0 },
+	m_time{ 0.0f }
 {
 	m_gameTime.Update();
 }
@@ -71,14 +73,14 @@ void Engine::OnEvent(IEvent& event) noexcept
 void Engine::Update()
 {
 	m_gameTime.Update();
-
+	
 	m_time += m_gameTime.DeltaTime();
-	fps++;
+	m_fps++;
 
 	if (m_time >= 1.0f) {
 		m_time -= 1.0f;
-		m_Window.SetFPS(fps);
-		fps = 0;
+		m_Window.SetFPS(m_fps);
+		m_fps = 0;
 	}
 	m_LayerStack.Update();
 }

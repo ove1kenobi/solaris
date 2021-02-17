@@ -1,8 +1,13 @@
 #include "pch.h"
 #include "PlayerCamera.h"
 
-PlayerCamera::PlayerCamera() : m_distanceFromShip{ 0 }, m_orbitModeActive{ true }, m_sensitivity{ 0 } {
-
+PlayerCamera::PlayerCamera() {
+	m_distanceFromShip = 60.0f;
+	m_mousePosX = 0.0f;
+	m_mousePosY = 0.0f;
+	m_maxScroll = 100.0f;
+	m_minScroll = 50.0f;
+	m_pitch = (float)M_PI_2;
 }
 
 bool PlayerCamera::init(int screenWidth, int screenHeight) {
@@ -11,15 +16,6 @@ bool PlayerCamera::init(int screenWidth, int screenHeight) {
 	this->m_screenFar = 100000.0f;
 	float FOV = 3.141592654f / this->m_FOVvalue;
 	float screenAspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
-
-	//Initial camera distance from the ship.
-	this->m_distanceFromShip = 60.0f;
-
-	m_mousePosX = 0.0f;
-	m_mousePosY = 0.0f;
-	m_maxScroll = 100.0f;
-	m_minScroll = 50.0f;
-	m_pitch = M_PI_2;
 
 	DirectX::XMStoreFloat4x4(&this->m_pMatrix, DirectX::XMMatrixPerspectiveFovLH(FOV, screenAspect, this->m_screenNear, this->m_screenFar));
 	return true;
@@ -47,11 +43,11 @@ void PlayerCamera::OrbitRotation(float yaw, float pitch) {
 	float alpha = 0.1f;
 
 	m_yaw -= yaw;
-	if (m_yaw >= 2 * M_PI) m_yaw -= 2 * M_PI;
-	else if (m_yaw <= -2 * M_PI) m_yaw += 2 * M_PI;
+	if (m_yaw >= 2.0f * (float)M_PI) m_yaw -= 2.0f * (float)M_PI;
+	else if (m_yaw <= -2.0f * (float)M_PI) m_yaw += 2.0f * (float)M_PI;
 
 	m_pitch += pitch;
-	if (m_pitch > M_PI - alpha) m_pitch = M_PI - alpha;
+	if (m_pitch > (float)M_PI - alpha) m_pitch = (float)M_PI - alpha;
 	else if (m_pitch < alpha) m_pitch = alpha;
 }
 

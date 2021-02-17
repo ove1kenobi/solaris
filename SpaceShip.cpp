@@ -12,7 +12,7 @@ SpaceShip::SpaceShip()
 	};
 	this->m_center = { 0.0f, 2000.0f, 0.0f };
 	this->m_mass = 10000.0f;
-	m_yaw = M_PI;
+	m_yaw = (float)M_PI;
 	m_pitchTilt = 0.0f;
 	m_rollTilt = 0.0f;
 }
@@ -88,18 +88,18 @@ void SpaceShip::AddRotation(float yaw, float pitch)
 	float alpha = 0.1f;
 
 	m_yaw += yaw;
-	if (m_yaw >= 2 * M_PI) m_yaw -= 2 * M_PI;
-	else if (m_yaw <= -2 * M_PI) m_yaw += 2 * M_PI;
+	if (m_yaw >= 2 * (float)M_PI) m_yaw -= 2 * (float)M_PI;
+	else if (m_yaw <= -2 * (float)M_PI) m_yaw += 2 * (float)M_PI;
 
 	m_pitch += pitch;
-	if (m_pitch > M_PI_2 - alpha) m_pitch = M_PI_2 - alpha;
-	else if (m_pitch < -M_PI_2 + alpha) m_pitch = -M_PI_2 + alpha;
+	if (m_pitch > (float)M_PI_2 - alpha) m_pitch = (float)M_PI_2 - alpha;
+	else if (m_pitch < -(float)M_PI_2 + alpha) m_pitch = -(float)M_PI_2 + alpha;
 }
 
 void SpaceShip::SetTilt(float pitchLerp, float rollLerp)
 {
-	m_pitchTilt = pitchLerp * M_PI / 8.0f;
-	m_rollTilt = rollLerp * M_PI_4;
+	m_pitchTilt = pitchLerp * (float)M_PI / 8.0f;
+	m_rollTilt = rollLerp * (float)M_PI_4;
 }
 
 void SpaceShip::SetForwardVector(DirectX::XMFLOAT3 cameraPos)
@@ -108,7 +108,7 @@ void SpaceShip::SetForwardVector(DirectX::XMFLOAT3 cameraPos)
 	m_forwardVector.y = m_center.y - cameraPos.y;
 	m_forwardVector.z = m_center.z - cameraPos.z;
 	
-	float length = sqrtf(pow(m_forwardVector.x, 2) + pow(m_forwardVector.y, 2) + pow(m_forwardVector.z, 2));
+	float length = sqrtf(powf(m_forwardVector.x, 2) + powf(m_forwardVector.y, 2) + powf(m_forwardVector.z, 2));
 
 	m_forwardVector.x /= length;
 	m_forwardVector.y /= length;

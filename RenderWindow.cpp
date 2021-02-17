@@ -106,8 +106,8 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         }*/
         case WM_MOUSEMOVE:
         {
-            float xPos = GET_X_LPARAM(lParam);
-            float yPos = GET_Y_LPARAM(lParam);
+            float xPos = (float)GET_X_LPARAM(lParam);
+            float yPos = (float)GET_Y_LPARAM(lParam);
             xPos = 2.0f*xPos / (float)m_clientWinWidth - 1.0f;
             yPos = 2.0f*yPos / (float)m_clientWinHeight - 1.0f;
             MouseMoveAbsoluteEvent mae(xPos, yPos);
@@ -120,15 +120,14 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             EventBuss::Get().Delegate(se);
             break;
         }
-        /*
         case WM_MOUSEHOVER:
         {
-            int xPos = GET_X_LPARAM(lParam);
-            int yPos = GET_Y_LPARAM(lParam);
+            float xPos = (float)GET_X_LPARAM(lParam);
+            float yPos = (float)GET_Y_LPARAM(lParam);
             MouseMoveAbsoluteEvent mae(xPos, yPos);
             EventBuss::Get().Delegate(mae);
             break;
-        }*/
+        }
         case WM_KEYDOWN:
         {
             // key press

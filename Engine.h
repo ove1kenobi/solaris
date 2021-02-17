@@ -24,7 +24,7 @@ private:
 	LayerStack m_LayerStack;
 	bool m_Running;
 	long double m_time;
-	int fps;
+	int m_fps;
 private:
 	void Update();
 	void Render();
