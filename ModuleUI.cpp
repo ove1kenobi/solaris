@@ -7,11 +7,11 @@ ModuleUI::ModuleUI() noexcept {
 
 void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {
 	DelegateDXEvent& derivedEvent = static_cast<DelegateDXEvent&>(event);
-	m_pFactory = derivedEvent.GetFactory();
+	m_pFactory2D = derivedEvent.GetFactory();
 	m_pRenderTarget2D = derivedEvent.GetSurfaceRenderTarget();
 
 	#if defined(DEBUG) | defined(_DEBUG)
-	assert(m_pFactory && m_pRenderTarget2D);
+	assert(m_pFactory2D && m_pRenderTarget2D);
 	#endif
 }
 
@@ -31,6 +31,13 @@ bool ModuleUI::Initialize() {
 		printf("Error!\n");
 		return false;
 	}
+
+	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,__uuidof(IDWriteFactory), &m_pTextFactory);
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
 	return true;
 }
 

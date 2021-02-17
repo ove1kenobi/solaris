@@ -3,6 +3,7 @@
 
 Render2D::Render2D() noexcept {
 	m_TestUI = new PlanetInteractionUI();
+	m_Render = false;
 }
 
 Render2D::~Render2D() {
@@ -17,12 +18,14 @@ const bool Render2D::Initialize() noexcept {
 }
 
 void Render2D::RenderUI() {
-	m_TestUI->BeginFrame();
+	m_Render = true;
+	if (m_Render) {
+		m_TestUI->BeginFrame();
 
-	m_TestUI->RenderHelpGrid(10);
-	m_TestUI->RenderUI();
+		m_TestUI->RenderUI();
 
-	m_TestUI->EndFrame();
+		m_TestUI->EndFrame();
+	}
 }
 
 void Render2D::OnEvent(IEvent& event) noexcept {
