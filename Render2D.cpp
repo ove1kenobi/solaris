@@ -3,7 +3,8 @@
 
 Render2D::Render2D() noexcept {
 	m_TestUI = new PlanetInteractionUI();
-	m_Render = false;
+	m_RenderPlanetInteraction = false;
+	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);
 }
 
 Render2D::~Render2D() {
@@ -18,8 +19,7 @@ const bool Render2D::Initialize() noexcept {
 }
 
 void Render2D::RenderUI() {
-	m_Render = true;
-	if (m_Render) {
+	if (m_RenderPlanetInteraction) {
 		m_TestUI->BeginFrame();
 
 		m_TestUI->RenderUI();
@@ -30,19 +30,24 @@ void Render2D::RenderUI() {
 
 void Render2D::OnEvent(IEvent& event) noexcept {
 	switch (event.GetEventType()) {
-	/*case: EventType::inPlanetInteraction:	//Tells us it's time to switch state
-		setState(PlanetInteaction);
-	*/
-	default:
-		break;
-	}
+		case EventType::KeyboardEvent:
+		{
+			KeyState state = static_cast<KeyboardEvent*>(&event)->GetKeyState();
+			int virKey = static_cast<KeyboardEvent*>(&event)->GetVirtualKeyCode();
 
-	//Other possible events/states
-	//case: inMenu	
-	//case: inGame
-	//case: inSettings
-	//case: inControllerDisplay
-	//case: inUpgrades
-	//case: inPause
-	//case: inMap
+			if (state == KeyState::KeyPress) {
+				if (virKey == 'E') {
+					if (m_RenderPlanetInteraction) {
+						m_RenderPlanetInteraction = false;
+					}
+					else {
+						m_RenderPlanetInteraction = true;
+					}
+				}
+			}
+		}
+			break;
+		default:
+			break;
+	}
 }

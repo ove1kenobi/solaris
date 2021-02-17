@@ -3,7 +3,7 @@
 #include "PlanetInteractionUI.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
-//TODO: add keyboard events so it only renders when you press "E"
+#include "EventSystem/InputEvents.h"
 
 //Direct2D will be used to render all of the graphics, and use XAML for everything else UI related (Layout, interactions).
 //XAML: https://docs.microsoft.com/en-us/windows/uwp/gaming/directx-and-xaml-interop
@@ -12,7 +12,7 @@
 class Render2D : public EventPublisher, IEventListener {
 private:
 	PlanetInteractionUI* m_TestUI;
-	bool m_Render;
+	bool m_RenderPlanetInteraction;
 public:
 	Render2D() noexcept;
 	virtual ~Render2D();
