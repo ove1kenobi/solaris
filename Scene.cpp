@@ -148,16 +148,4 @@ void Scene::Update() noexcept {
 	for (auto r : this->m_gameObjects) {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
-//#if defined(DEBUG) | defined(_DEBUG)
-//	Time t;
-//	ImGui::Begin("Game Objects");
-//	ImGui::Text("Delta Time: %f", t.DeltaTime());
-//	for (unsigned int i{ 0u }; i < m_gameObjects.size(); i++)
-//	{
-//		ImGui::Text("Game Object #%d", i + 1);
-//		ImGui::Text("Center: (%.0f, %.0f, %.0f)", m_gameObjects[i]->GetCenter().x, m_gameObjects[i]->GetCenter().y, m_gameObjects[i]->GetCenter().z);
-//	}
-//	ImGui::End();
-//#endif
-	//Cull Objects HERE at the end or as response to AskForObjectsEvent? (Emil F)
 }

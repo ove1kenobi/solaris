@@ -12,6 +12,7 @@ void Skybox::AssignCamera(IEvent& event) noexcept
 {
 	DelegateCameraEvent& derivedEvent = static_cast<DelegateCameraEvent&>(event);
 	m_pCamera = derivedEvent.GetCamera();
+	EventBuss::Get().RemoveListener(this, EventType::DelegateCameraEvent);
 }
 
 void Skybox::OnEvent(IEvent& event) noexcept
@@ -39,6 +40,9 @@ const bool Skybox::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevic
 	HR(pDevice->CreateBuffer(&matrixBufferDesc,
 							 nullptr,
 							 &m_pCameraCBuffer), "CreateBuffer");
+	//Get the camera for its matrices
+	RequestCameraEvent requestCameraEvent;
+	EventBuss::Get().Delegate(requestCameraEvent);
 	return true;
 }
 
@@ -51,10 +55,6 @@ void Skybox::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDev
 	//Bind Skybox bindables
 	BindIDEvent bindEvent(BindID::ID_Skybox);
 	EventBuss::Get().Delegate(bindEvent);
-
-	//Get the camera for its matrices
-	RequestCameraEvent requestCameraEvent;
-	EventBuss::Get().Delegate(requestCameraEvent);
 
 	//Toggle depth stencil and rasterizer
 	ToggleDepthStencilStateEvent dsEvent;
@@ -70,7 +70,8 @@ void Skybox::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDev
 							 0,
 							 D3D11_MAP_WRITE_DISCARD,
 							 0,
-							 &mappedSubresource), "Map");
+							 &mappedSubresource), 
+							 "Map");
 	MatrixBuffer* data = (MatrixBuffer*)mappedSubresource.pData;
 	data->VMatrix = buffer.VMatrix;
 	data->PMatrix = buffer.PMatrix;

@@ -5,11 +5,13 @@ ForwardRenderer::ForwardRenderer() noexcept
 	: m_Background{ 0.0f, 0.0f, 0.0f, 1.0f },
 	  m_pGameObjects{ nullptr },
 	  m_pSunLight{ nullptr },
+	  m_pCamera{ nullptr },
 	  m_pDevice{ nullptr },
 	  m_pDeviceContext{ nullptr },
 	  m_pBackBuffer{ nullptr },
 	  m_pDepthStencilView{ nullptr },
-	  m_pLightCBuffer{ nullptr }
+	  m_pLightCBuffer{ nullptr },
+	  m_pCameraCBuffer{ nullptr }
 {
 	EventBuss::Get().AddListener(this, EventType::SendRenderObjectsEvent, EventType::DelegateDXEvent, EventType::DelegateSunLightEvent);
 }
@@ -32,8 +34,14 @@ void ForwardRenderer::BeginFrame()
 	AskForRenderObjectsEvent event;
 	EventBuss::Get().Delegate(event);
 	
+	//Bind light:
+	BindLightData();
+	//Bind Camera:
+	BindCameraData();
+
 	//Loop that renders and draws every GameObject.
-	for (size_t i = 0; i < (*m_pGameObjects).size(); ++i) {
+	for (size_t i = 0; i < (*m_pGameObjects).size(); ++i) 
+	{
 		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
 		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
@@ -72,6 +80,9 @@ const bool ForwardRenderer::Initialize() noexcept
 		return false;
 	if (!InitializeSunLight())
 		return false;
+	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent);
+	if (!InitializeCameraBuffer())
+		return false;
 	return true;
 }
 
@@ -95,6 +106,20 @@ void ForwardRenderer::OnEvent(IEvent& event) noexcept
 	case EventType::DelegateDXEvent:
 	{
 		UpdateDXHandlers(event);
+		break;
+	}
+	case EventType::DelegateSunLightEvent:
+	{
+		DelegateSunLightEvent& derivedEvent = static_cast<DelegateSunLightEvent&>(event);
+		m_pSunLight = derivedEvent.GetSunLight();
+		break;
+	}
+	case EventType::DelegateCameraEvent:
+	{
+		DelegateCameraEvent& derivedEvent = static_cast<DelegateCameraEvent&>(event);
+		m_pCamera = derivedEvent.GetCamera();
+		EventBuss::Get().RemoveListener(this, EventType::DelegateCameraEvent);
+		break;
 	}
 	}
 }
@@ -104,7 +129,7 @@ const bool ForwardRenderer::InitializeSunLight()
 	//Constant buffer for camera:
 	D3D11_BUFFER_DESC lightBufferDesc = {};
 	lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	lightBufferDesc.ByteWidth = sizeof(PhongLightCB);
+	lightBufferDesc.ByteWidth = sizeof(BlinnPhongLightCB);
 	lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	lightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	lightBufferDesc.MiscFlags = 0;
@@ -113,6 +138,26 @@ const bool ForwardRenderer::InitializeSunLight()
 							   nullptr,
 							   &m_pLightCBuffer), 
 							   "CreateBuffer");
+	RequestSunLightEvent sunEvent;
+	EventBuss::Get().Delegate(sunEvent);
+	return true;
+}
+
+const bool ForwardRenderer::InitializeCameraBuffer()
+{
+	D3D11_BUFFER_DESC cameraBufferDesc = {};
+	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	cameraBufferDesc.ByteWidth = sizeof(CameraCB);
+	cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cameraBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cameraBufferDesc.MiscFlags = 0;
+	cameraBufferDesc.StructureByteStride = 0;
+	HR(m_pDevice->CreateBuffer(&cameraBufferDesc,
+							   nullptr,
+							   &m_pCameraCBuffer),
+							   "CreateBuffer");
+	RequestCameraEvent camEvent;
+	EventBuss::Get().Delegate(camEvent);
 	return true;
 }
 
@@ -125,11 +170,74 @@ void ForwardRenderer::BindLightData()
 							 0,
 							 &mappedSubresource), 
 							 "Map");
-	PhongLightCB* data = (PhongLightCB*)mappedSubresource.pData;
+	BlinnPhongLightCB* data = (BlinnPhongLightCB*)mappedSubresource.pData;
+#if defined(DEBUG) | defined(_DEBUG)
+	static float sAmbientColor[3] = { 0.5f, 0.5f, 0.5f };
+	static float sDiffuseColor[3] = { 1.0f, 0.95f, 0.93f };
+	static float sDiffuseLightIntensity = m_pSunLight->GetDiffuseLightIntensity();
+	static float sLightWorldPosition[3] = { 0.0f, 0.0f, 0.0f };
+	static float sAmbientLightIntensity = 0.5f;
+	static float sSpecularIntensity = 1.0f;
+	static float sSpecularPower = 16.0f;
+
+	data->ambientColor = DirectX::XMFLOAT3(sAmbientColor[0], sAmbientColor[1], sAmbientColor[2]);
+	data->diffuseColor = DirectX::XMFLOAT3(sDiffuseColor[0], sDiffuseColor[1], sDiffuseColor[2]);
+	data->diffuseLightIntensity = sDiffuseLightIntensity;
+	data->lightWorldPosition = DirectX::XMFLOAT3(sLightWorldPosition[0], sLightWorldPosition[1], sLightWorldPosition[2]);
+	data->ambientLightIntensity = sAmbientLightIntensity;
+	data->specularIntensity = sSpecularIntensity;
+	data->specularPower = sSpecularPower;
+
+	ImGui::Begin("Lighting");
+	ImGui::DragFloat3("Light World Position", sLightWorldPosition, 20.0f);
+	ImGui::DragFloat3("Ambient Color", sAmbientColor, 0.05f, 0.0f, 1.0f);
+	ImGui::DragFloat("Ambient Light Intensity", &sAmbientLightIntensity, 0.05f, 0.0f, 1.0f);
+	ImGui::DragFloat3("Diffuse Color", sDiffuseColor, 0.05f, 0.0f, 1.0f);
+	ImGui::DragFloat("Diffuse Light Intensity", &sDiffuseLightIntensity, 0.05f, 0.0f, 1.0f);
+	ImGui::DragFloat("Specular intensity", &sSpecularIntensity, 0.05f, 0.0f, 1.0f);
+	ImGui::DragFloat("Specular Power", &sSpecularPower, 0.05f, 1.0f, 30.0f);
+	bool isPressed = ImGui::Button("Reset all");
+	if (isPressed)
+	{
+		sAmbientColor[0] = 0.5f;
+		sAmbientColor[1] = 0.5f;
+		sAmbientColor[2] = 0.5f;
+		sDiffuseColor[0] = 1.0f;
+		sDiffuseColor[1] = 0.95f;
+		sDiffuseColor[2] = 0.93f;
+		sDiffuseLightIntensity = m_pSunLight->GetDiffuseLightIntensity();
+		sLightWorldPosition[0] = sLightWorldPosition[1] = sLightWorldPosition[2] = 0.0f;
+		sAmbientLightIntensity = 0.5f;
+		sSpecularIntensity = 1.0f;
+		sSpecularPower = 16.0f;
+	}
+	ImGui::End();
+#else
 	data->ambientColor = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f);
 	data->diffuseColor = m_pSunLight->GetDiffuseColor();
 	data->diffuseLightIntensity = m_pSunLight->GetDiffuseLightIntensity();
 	data->lightWorldPosition = m_pSunLight->GetWorldPosition();
+	data->ambientLightIntensity = 0.5f;
+	data->specularIntensity = 1.0f;  //Should be material property later (Emil F)
+	data->specularPower = 16.0f; //Should be material property later (Emil F)
+#endif
 	m_pDeviceContext->Unmap(m_pLightCBuffer.Get(), 0);
 	m_pDeviceContext->PSSetConstantBuffers(0u, 1u, m_pLightCBuffer.GetAddressOf());
+}
+
+void ForwardRenderer::BindCameraData()
+{
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource = {};
+	HR_X(m_pDeviceContext->Map(m_pCameraCBuffer.Get(),
+							   0,
+							   D3D11_MAP_WRITE_DISCARD,
+							   0,
+							   &mappedSubresource),
+							   "Map");
+	CameraCB* data = (CameraCB*)mappedSubresource.pData;
+
+	data->cameraWorldPosition = m_pCamera->getPos();
+
+	m_pDeviceContext->Unmap(m_pCameraCBuffer.Get(), 0);
+	m_pDeviceContext->PSSetConstantBuffers(1u, 1u, m_pCameraCBuffer.GetAddressOf());
 }

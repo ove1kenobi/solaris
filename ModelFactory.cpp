@@ -614,7 +614,7 @@ std::vector<DirectX::XMFLOAT3> ModelFactory::calcNormals(std::vector<float> vert
 		DirectX::XMFLOAT3 dir1 = { v1.x - v0.x, v1.y - v0.y, v1.z - v0.z };
 
 		//The face normal
-		DirectX::XMFLOAT3 faceNormal = cross(dir0, dir1);
+		DirectX::XMFLOAT3 faceNormal = cross(dir1, dir0);
 
 		vertexNormals[indices[i]].x += faceNormal.x;
 		vertexNormals[indices[i]].y += faceNormal.y;

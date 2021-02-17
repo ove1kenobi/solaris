@@ -27,7 +27,7 @@ const bool Sun::Initialize() noexcept
 	this->m_model = ModelFactory::Get().GenerateSun(this->m_center.x, this->m_center.y, this->m_center.z, this->m_radius);
 	//The light
 	//Uses RGB-values as taken from the net from a paper discussing correct sun-RGB-values. Intensity is 1, center is same as sun. 
-	m_PointLight.Initialize(DirectX::XMFLOAT3(255.0f, 242.0f, 237.0f), 1.0f, m_center);
+	m_PointLight.Initialize(DirectX::XMFLOAT3(1.0f, 0.95f, 0.93f), 1.0f, m_center);
 	return true;
 }
 

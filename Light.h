@@ -1,6 +1,6 @@
 #pragma once
 
-struct PhongLightCB
+struct BlinnPhongLightCB
 {
 	DirectX::XMFLOAT3 ambientColor;
 	float padding1;
@@ -8,6 +8,11 @@ struct PhongLightCB
 	float padding2;
 	DirectX::XMFLOAT3 lightWorldPosition;
 	float diffuseLightIntensity;
+	DirectX::XMFLOAT3 padding;
+	float ambientLightIntensity;
+	DirectX::XMFLOAT2 padding4;
+	float specularPower;
+	float specularIntensity;
 };
 
 class Light 

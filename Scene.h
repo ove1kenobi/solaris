@@ -19,7 +19,7 @@ private:
 	std::vector<GameObject*> m_gameObjects;
 public:
 	Scene() noexcept;
-	~Scene();
+	virtual ~Scene();
 	bool init(unsigned int screenWidth, unsigned int screenHeight, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext);
 	void Update() noexcept override;
 	void OnEvent(IEvent& event) noexcept override;
