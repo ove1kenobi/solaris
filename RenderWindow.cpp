@@ -59,10 +59,6 @@ RenderWindow::RenderWindow()
     if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE) {
         // handle error
     }
-
-    AllocConsole();
-    freopen("CONOUT$", "w", stdout);
-    std::cout << "Debug console is open" << std::endl;
 }
 
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -85,44 +81,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             break;
         }
         /*
-       
-        case WM_LBUTTONDOWN:
-        {
-            // left mouse butten down
-            int xPos = GET_X_LPARAM(lParam);
-            int yPos = GET_Y_LPARAM(lParam);
-            MouseButtenEvent be(KeyState::KeyPress, VK_LBUTTON, xPos, yPos);
-            EventBuss::Get().Delegate(be);
-            return 0;
-        }
-        case WM_LBUTTONUP:
-        {
-            // left mouse butten up
-            int xPos = GET_X_LPARAM(lParam);
-            int yPos = GET_Y_LPARAM(lParam);
-            MouseButtenEvent be(KeyState::KeyRelease, VK_LBUTTON, xPos, yPos);
-            EventBuss::Get().Delegate(be);
-            return 0;
-        }
-        case WM_RBUTTONDOWN:
-        {
-            // right mouse butten down
-            int xPos = GET_X_LPARAM(lParam);
-            int yPos = GET_Y_LPARAM(lParam);
-            MouseButtenEvent be(KeyState::KeyPress, VK_RBUTTON, xPos, yPos);
-            EventBuss::Get().Delegate(be);
-            return 0;
-        }
-        case WM_RBUTTONUP:
-        {
-            // right mouse butten up
-            int xPos = GET_X_LPARAM(lParam);
-            int yPos = GET_Y_LPARAM(lParam);
-            MouseButtenEvent be(KeyState::KeyRelease, VK_RBUTTON, xPos, yPos);
-            EventBuss::Get().Delegate(be);
-            return 0;
-        }
-        *//*
         case WM_INPUT:
         {
             UINT dataSize = 0;
@@ -162,7 +120,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             EventBuss::Get().Delegate(se);
             break;
         }
-
+        /*
         case WM_MOUSEHOVER:
         {
             int xPos = GET_X_LPARAM(lParam);
@@ -170,7 +128,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             MouseMoveAbsoluteEvent mae(xPos, yPos);
             EventBuss::Get().Delegate(mae);
             break;
-        }
+        }*/
         case WM_KEYDOWN:
         {
             // key press

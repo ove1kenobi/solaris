@@ -3,9 +3,9 @@
 
 void Player::UpdateRotation()
 {
-	float yaw = m_mousePosX * m_time.DeltaTime();
-	float pitch = -m_mousePosY * m_time.DeltaTime();
-	float roll = -m_mousePosX * m_time.DeltaTime();
+	float yaw = m_mousePosX * (float)m_time.DeltaTime() * m_rotationSpeed;
+	float pitch = -m_mousePosY * (float)m_time.DeltaTime() * m_rotationSpeed;
+	float roll = -m_mousePosX * (float)m_time.DeltaTime() * m_rotationSpeed;
 	m_camera->OrbitRotation(yaw, pitch);
 	m_ship->AddRotation(yaw, pitch);
 	m_ship->SetTilt(-m_mousePosY, -m_mousePosX);
@@ -17,13 +17,14 @@ Player::Player()
 {
 	m_moveForwards = false;
 	m_moveBackwards = false;
-	m_adjustRotation = false;
+	m_playerControlsActive = true;
 	m_mousePosX = 0.0f;
 	m_mousePosY = 0.0f;
 
 	m_ship = nullptr;
 	m_camera = nullptr;
 	m_speed = 1000.0f;
+	m_rotationSpeed = 1.0f;
 }
 
 Player::~Player()
@@ -33,11 +34,10 @@ Player::~Player()
 
 bool Player::Initialize(/*DirectX::XMFLOAT3 position,*/ PlayerCamera* camera)
 {
-	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::MouseMoveAbsoluteEvent);
+	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::ToggleImGuiEvent, EventType::MouseMoveAbsoluteEvent);
 
 	m_camera = camera;
 	m_ship = new SpaceShip();
-	m_adjustRotation = true;
 
 	return true;
 }
@@ -48,13 +48,15 @@ bool Player::update()
 	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
 	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
 
-	UpdateRotation();
+	if (m_playerControlsActive) {
+		UpdateRotation();
 
-	if (m_moveForwards) {
-		m_ship->Move(m_speed * m_time.DeltaTime());
-	}
-	else if (m_moveBackwards) {
-		m_ship->Move(-1 * m_speed * m_time.DeltaTime());
+		if (m_moveForwards) {
+			m_ship->Move(m_speed * (float)m_time.DeltaTime());
+		}
+		else if (m_moveBackwards) {
+			m_ship->Move(-1 * m_speed * (float)m_time.DeltaTime());
+		}
 	}
 
 	return false;
@@ -74,37 +76,8 @@ void Player::OnEvent(IEvent& event) noexcept
 			float yCoord = static_cast<MouseMoveAbsoluteEvent*>(&event)->GetYCoord();
 			m_mousePosX = xCoord;
 			m_mousePosY = yCoord;
-
-			/*
-			if (-0.1f < xCoord && xCoord < 0.1f) {
-				m_mousePosX = 0.0f;
-			}
-			else {
-				m_mousePosX = xCoord;
-			}
-
-			if (-0.1f < yCoord && yCoord < 0.1f) {
-				m_mousePosY = 0.0f;
-			}
-			else {
-				m_mousePosY = yCoord;
-			}*/
+			break;
 		}
-
-		/*
-		case EventType::MouseMoveRelativeEvent:
-		{
-			int xDiff = static_cast<MouseMoveRelativeEvent*>(&event)->GetXDiff();
-			int yDiff = static_cast<MouseMoveRelativeEvent*>(&event)->GetYDiff();
-			
-			float yaw = xDiff * m_time.DeltaTime() / 0.2f;
-			float pitch = -yDiff * m_time.DeltaTime() / 0.2f;
-			float roll = -xDiff * m_time.DeltaTime() * 2.0f;
-			m_ship->Rotate(yaw, pitch, roll);
-			m_ship->SetForwardVector(m_camera->getPos());
-			m_adjustRotation = false;
-		}*/
-
 		case EventType::KeyboardEvent:
 		{
 			KeyState state = static_cast<KeyboardEvent*>(&event)->GetKeyState();
@@ -128,6 +101,12 @@ void Player::OnEvent(IEvent& event) noexcept
 				}
 			}
 			
+			break;
+		}
+		case EventType::ToggleImGuiEvent:
+		{
+			if (m_playerControlsActive) m_playerControlsActive = false;
+			else m_playerControlsActive = true;
 			break;
 		}
 	}

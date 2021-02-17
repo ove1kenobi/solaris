@@ -1,8 +1,6 @@
 #pragma once
 #include "GameObject.h"
 
-#include <iostream>
-
 class SpaceShip : public GameObject
 {
 private:
@@ -16,7 +14,6 @@ public:
 	~SpaceShip() = default;
 
 	void Move(float step);
-	void AdjustRotation(float step);
 	void AddRotation(float yaw, float pitch);
 	void SetTilt(float pitchLerp, float rollLerp);
 	void SetForwardVector(DirectX::XMFLOAT3 cameraPos);

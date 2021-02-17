@@ -83,13 +83,6 @@ void SpaceShip::Move(float step)
 	m_center.z += pos.z;
 }
 
-void SpaceShip::AdjustRotation(float step)
-{
-	if (-step < m_roll && m_roll < step) m_roll = 0.0f;
-	else if (m_roll < 0) m_roll += step;
-	else if (m_roll > 0) m_roll -= step;
-}
-
 void SpaceShip::AddRotation(float yaw, float pitch)
 {
 	float alpha = 0.1f;

@@ -17,8 +17,8 @@ private:
 	Time m_time;
 	float m_mousePosX, m_mousePosY;
 	bool m_moveForwards, m_moveBackwards;
-	bool m_adjustRotation;
-	float m_speed;
+	bool m_playerControlsActive;
+	float m_speed, m_rotationSpeed;
 
 	void UpdateRotation();
 
