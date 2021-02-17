@@ -14,7 +14,7 @@ private:
 	void OnEvent(IEvent& event) noexcept;
 
 public:
-	PlayerCamera() = default;
+	PlayerCamera();
 	~PlayerCamera() = default;
 
 	//Initializes the pMatrix

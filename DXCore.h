@@ -9,6 +9,7 @@
 #pragma comment(lib, "gdi32")
 #pragma comment(lib, "d3d11")
 #pragma comment(lib, "d3dcompiler")
+#pragma comment(lib, "d2d1")
 
 class DXCore : public IEventListener, EventPublisher
 {
@@ -20,6 +21,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>	m_pDepthStencilView;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>	m_pRasterizerStateFill;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>	m_pRasterizerStateWireFrame;
+	Microsoft::WRL::ComPtr<ID2D1Factory>			m_pFactory;
+	Microsoft::WRL::ComPtr<IDXGISurface>			m_pSurface;
+	Microsoft::WRL::ComPtr<ID2D1RenderTarget>		m_pSurfaceRenderTarget;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_pRasterizerStateNoCull;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_pRasterizerStateNoCullWF;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_pDepthStencilStateDefault;
@@ -42,4 +46,6 @@ public:
 	[[nodiscard]] const Microsoft::WRL::ComPtr<IDXGISwapChain>& GetSwapChain() const noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& GetBackBuffer() const noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& GetDepthStencilView() const noexcept;
+	[[nodiscard]] const Microsoft::WRL::ComPtr<ID2D1Factory>& GetFactory() const noexcept;
+	[[nodiscard]] const Microsoft::WRL::ComPtr<ID2D1RenderTarget>& GetSurfaceRenderTarget() const noexcept;
 };

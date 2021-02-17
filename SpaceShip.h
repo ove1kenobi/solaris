@@ -11,7 +11,7 @@ private:
 	void UpdatePhysics();
 public:
 	SpaceShip();
-	~SpaceShip() = default;
+	virtual ~SpaceShip() = default;
 
 	void Move(float step);
 	void AddRotation(float yaw, float pitch);
