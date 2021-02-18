@@ -106,6 +106,14 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             return DefWindowProc(hwnd, uMsg, wParam, lParam);
             break;
         }*/
+        case WM_LBUTTONDOWN:
+        {
+            // left mouse button down
+            int xPos = GET_X_LPARAM(lParam);
+            int yPos = GET_Y_LPARAM(lParam);
+            MouseButtonEvent be(KeyState::KeyPress, VK_LBUTTON, xPos, yPos);
+            EventBuss::Get().Delegate(be);
+        }
         case WM_MOUSEMOVE:
         {
             m_CurrentXCoord = GET_X_LPARAM(lParam);
