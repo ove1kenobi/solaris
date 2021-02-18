@@ -34,7 +34,7 @@ public:
 	}
 };
 
-class MouseButtenEvent : public IEvent
+class MouseButtonEvent : public IEvent
 {
 private:
 	KeyState m_keyState;
@@ -42,22 +42,22 @@ private:
 	int m_virtualKeyCode;
 
 public:
-	MouseButtenEvent(KeyState keyState, int virtualKeyCode, int xCoord, int yCoord)
+	MouseButtonEvent(KeyState keyState, int virtualKeyCode, int xCoord, int yCoord)
 	{
 		m_keyState = keyState;
 		m_virtualKeyCode = virtualKeyCode;
 		m_xCoord = xCoord;
 		m_yCoord = yCoord;
 	}
-	virtual ~MouseButtenEvent() noexcept = default;
+	virtual ~MouseButtonEvent() noexcept = default;
 
 	[[nodiscard]] const EventType GetEventType() const noexcept
 	{
-		return EventType::MouseButtenEvent;
+		return EventType::MouseButtonEvent;
 	}
 	[[nodiscard]] const std::string GetDebugName() const noexcept
 	{
-		return "MouseButtenEvent";
+		return "MouseButtonEvent";
 	}
 	[[nodiscard]] const int GetXCoord() const noexcept
 	{
@@ -159,5 +159,36 @@ public:
 	[[nodiscard]] const int GetWheelScroll() const noexcept
 	{
 		return m_wheelScroll;
+	}
+};
+
+class DelegateMouseCoordsEvent : public IEvent
+{
+private:
+	unsigned int m_XCoord;
+	unsigned int m_YCoord;
+public:
+	DelegateMouseCoordsEvent(unsigned int& xCoord, unsigned int& yCoord) noexcept
+	{
+		m_XCoord = xCoord;
+		m_YCoord = yCoord;
+	}
+	virtual ~DelegateMouseCoordsEvent() noexcept = default;
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::DelegateMouseCoordsEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "DelegateMouseCoordsEvent";
+
+	}
+	[[nodiscard]] const unsigned int& GetXCoord() const noexcept
+	{
+		return m_XCoord;
+	}
+	[[nodiscard]] const unsigned int& GetYCoord() const noexcept
+	{
+		return m_YCoord;
 	}
 };

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Orbit.h"
 
-Orbit::Orbit()
+Orbit::Orbit() noexcept
 {
 
 }
@@ -63,4 +63,9 @@ void Orbit::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& devic
 		&m_model->getOffset());
 	deviceContext->IASetIndexBuffer(m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, m_model->getMatrixBuffer().GetAddressOf());
+}
+
+const bool Orbit::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
+{
+	return false;
 }

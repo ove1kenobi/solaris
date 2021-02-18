@@ -119,6 +119,7 @@
     </ClCompile>
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Render2D.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="PlayerCamera.cpp" />
@@ -148,6 +149,10 @@
     </ClCompile>
     <ClCompile Include="Sun.cpp" />
     <ClCompile Include="SpaceShip.cpp" />
+    <ClCompile Include="Techniques\MousePicking.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="Techniques\Skybox.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
@@ -208,6 +213,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Render2D.h" />
     <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="PlayerCamera.h" />
@@ -221,6 +227,7 @@
     <ClInclude Include="Resources\ComputeShader.h" />
     <ClInclude Include="Sun.h" />
     <ClInclude Include="SpaceShip.h" />
+    <ClInclude Include="Techniques\MousePicking.h" />
     <ClInclude Include="Techniques\Skybox.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="ourMath.h" />

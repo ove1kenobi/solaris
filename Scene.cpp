@@ -26,7 +26,12 @@ void Scene::OnEvent(IEvent& event) noexcept {
 		case EventType::AskForRenderObjectsEvent:
 			sendObjects();
 			break;
-
+		case EventType::DelegateMouseCoordsEvent:
+		{
+			DelegateMouseCoordsEvent& derivedEvent = static_cast<DelegateMouseCoordsEvent&>(event);
+			m_Picking.DoIntersectionTests(derivedEvent.GetXCoord(), derivedEvent.GetYCoord(), m_gameObjects);
+			break;
+		}
 		default:
 			break;
 	}
@@ -45,7 +50,7 @@ void Scene::sendObjects() {
 
 bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext) {
 	m_pDeviceContext = pDeviceContext;
-	EventBuss::Get().AddListener(this, EventType::AskForRenderObjectsEvent);
+	EventBuss::Get().AddListener(this, EventType::AskForRenderObjectsEvent, EventType::DelegateMouseCoordsEvent);
 
 	//Orthographic camera. Over the sun. Last parameter is how high above the sun.
 	if (!this->m_orthoCamera.init(screenWidth, screenHeight, 1000)) {
@@ -127,7 +132,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 		));
 
 	}
-	
 	for (int i = 0; i < this->m_numPlanets; i++) {
 		threads[i].join();
 	}
@@ -137,6 +141,9 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 
 	//Add the ship to the gameObject vector.
 	this->m_gameObjects.push_back(this->m_player.getShip());
+
+	if (!m_Picking.Initialize())
+		return false;
 
 	return true;
 }
@@ -148,7 +155,6 @@ void Scene::Update() noexcept {
 	{
 		ship->CalculateGravity(m_gameObjects[i]);
 	}
-
 	//Update the player and all the game objects.
 	m_player.update();
 	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
@@ -157,6 +163,9 @@ void Scene::Update() noexcept {
 	for (auto r : this->m_gameObjects) {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
+
+	//Currently: Display the picked (left mouse press) object:
+	m_Picking.DisplayPickedObject();
 //#if defined(DEBUG) | defined(_DEBUG)
 //	Time t;
 //	ImGui::Begin("Game Objects");

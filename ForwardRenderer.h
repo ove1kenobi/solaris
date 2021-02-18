@@ -10,7 +10,6 @@
 class ForwardRenderer : public EventPublisher, public IEventListener 
 {
 private:
-	//Color of the screen
 	FLOAT m_Background[4];
 	std::vector<GameObject*>* m_pGameObjects;
 	size_t m_numPlanets;

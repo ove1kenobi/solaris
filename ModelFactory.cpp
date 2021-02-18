@@ -91,8 +91,6 @@ Model* ModelFactory::GetModel(std::string filePath)
 						vtx.bitangent.z = mesh->mBitangents[i].z;
 					}
 					vertices.push_back(vtx);
-
-
 				}
 
 				// Create bounding box
@@ -115,7 +113,6 @@ Model* ModelFactory::GetModel(std::string filePath)
 					}
 				}
 			}
-
 #ifdef _DEBUG
 			loadDebug += std::string("=======================================\n");
 			OutputDebugStringA(loadDebug.c_str());
@@ -196,6 +193,7 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 	model->setIndexBufferSize(static_cast<UINT>(indices.size()));
 
 	createBuffers(sizeof(vertex_col), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
+	model->SetBoundingVolume(new DirectX::BoundingSphere(center, r + (r / 5.0f)));
 	return model;
 }
 
@@ -288,14 +286,12 @@ void ModelFactory::createSphere(float r, std::vector<float> &vertexBuffer, std::
 		bool reverse = i >= 4;
 		createTriangleFace(completeEdges[baseTriangles[i][0]], completeEdges[baseTriangles[i][1]], completeEdges[baseTriangles[i][2]], reverse, vertices, triangles, divisions);
 	}
-
 	for (int i = 0; i < vertices.size(); i++) {
 		vertexBuffer.push_back(vertices[i].x);
 		vertexBuffer.push_back(vertices[i].y);
 		vertexBuffer.push_back(vertices[i].z);
 		vertexBuffer.push_back(0.0f); //Trash value for compute shader
 	}
-
 	indexBuffer = triangles;
 }
 
@@ -343,9 +339,7 @@ void ModelFactory::createTriangleFace(
 		else {
 			vertexMap.push_back(edge2[i]);
 		}
-
 	}
-
 	if (!reverse) {
 		//Add bottom edge vertices
 		for (int i = 0; i < pointsOnEdge; i++)
@@ -633,13 +627,11 @@ std::vector<DirectX::XMFLOAT3> ModelFactory::calcNormals(std::vector<float> vert
 
 	}
 
-
 	for (int i = 0; i < vertexNormals.size(); i++) {
 		vertexNormals[i].x = vertexNormals[i].x / vertexConnectingCount[i];
 		vertexNormals[i].y = vertexNormals[i].y / vertexConnectingCount[i];
 		vertexNormals[i].z = vertexNormals[i].z / vertexConnectingCount[i];
 	}
-	
 	return vertexNormals;
 }
 

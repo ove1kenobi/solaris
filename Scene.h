@@ -6,6 +6,7 @@
 #include "EventSystem/EventPublisher.h"
 #include "Layer.h"
 #include "EventSystem/RenderEvents.h"
+#include "Techniques/MousePicking.h"
 class Scene : public EventPublisher, public Layer
 {
 private:
@@ -16,6 +17,7 @@ private:
 	PlayerCamera m_perspectiveCamera;
 	Player m_player;
 	std::vector<GameObject*> m_gameObjects;
+	MousePicking m_Picking;
 public:
 	Scene() noexcept;
 	~Scene();

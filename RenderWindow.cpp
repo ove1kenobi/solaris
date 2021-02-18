@@ -5,6 +5,8 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 UINT RenderWindow::m_clientWinWidth = DEFAULT_WIN_WIDTH;
 UINT RenderWindow::m_clientWinHeight = DEFAULT_WIN_HEIGHT;
+unsigned int RenderWindow::m_CurrentXCoord = DEFAULT_WIN_WIDTH / 2;
+unsigned int RenderWindow::m_CurrentYCoord = DEFAULT_WIN_HEIGHT / 2;
 
 RenderWindow::RenderWindow()
 {
@@ -81,19 +83,18 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             break;
         }
         /*
-       
         case WM_LBUTTONDOWN:
         {
-            // left mouse butten down
+            // left mouse button down
             int xPos = GET_X_LPARAM(lParam);
             int yPos = GET_Y_LPARAM(lParam);
-            MouseButtenEvent be(KeyState::KeyPress, VK_LBUTTON, xPos, yPos);
+            MouseButtonEvent be(KeyState::KeyPress, VK_LBUTTON, xPos, yPos);
             EventBuss::Get().Delegate(be);
-            return 0;
+            break;
         }
         case WM_LBUTTONUP:
         {
-            // left mouse butten up
+            // left mouse button up
             int xPos = GET_X_LPARAM(lParam);
             int yPos = GET_Y_LPARAM(lParam);
             MouseButtenEvent be(KeyState::KeyRelease, VK_LBUTTON, xPos, yPos);
@@ -139,18 +140,19 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                     }
                 }
             }
-
             return DefWindowProc(hwnd, uMsg, wParam, lParam);
+            break;
         }
-        /*
         case WM_MOUSEMOVE:
         {
-            int xPos = GET_X_LPARAM(lParam);
-            int yPos = GET_Y_LPARAM(lParam);
-            MouseMoveAbsoluteEvent mae(xPos, yPos);
-            EventBuss::Get().Delegate(mae);
+			m_CurrentXCoord = GET_X_LPARAM(lParam);
+			m_CurrentYCoord = GET_Y_LPARAM(lParam);
+            //int xPos = GET_X_LPARAM(lParam);
+            //int yPos = GET_Y_LPARAM(lParam);
+            //MouseMoveAbsoluteEvent mae(xPos, yPos);
+            //EventBuss::Get().Delegate(mae);
+            break;
         }
-        */
         case WM_MOUSEWHEEL:
         {
             int wheelScroll = GET_WHEEL_DELTA_WPARAM(wParam);
@@ -158,13 +160,14 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             EventBuss::Get().Delegate(se);
             break;
         }
-
         case WM_MOUSEHOVER:
         {
             int xPos = GET_X_LPARAM(lParam);
             int yPos = GET_Y_LPARAM(lParam);
             MouseMoveAbsoluteEvent mae(xPos, yPos);
             EventBuss::Get().Delegate(mae);
+            //m_CurrentXCoord = xPos;
+            //m_CurrentYCoord = yPos;
             break;
         }
         case WM_KEYDOWN:
@@ -209,6 +212,21 @@ void RenderWindow::CloseWindow(const HWND& hwnd) noexcept
 {
     if (MessageBox(hwnd, L"Quit?", L"Exit", MB_YESNO) == IDYES)
         DestroyWindow(hwnd);
+}
+
+void RenderWindow::Update() noexcept
+{
+    if (m_CurrentXCoord > 0 && m_CurrentXCoord < m_clientWinWidth && m_CurrentYCoord > 0 && m_CurrentYCoord < m_clientWinHeight)
+    {
+        DelegateMouseCoordsEvent event(m_CurrentXCoord, m_CurrentYCoord);
+        EventBuss::Get().Delegate(event);
+    }
+}
+
+void RenderWindow::DelegateResolution() noexcept
+{
+    DelegateResolutionEvent event(m_clientWinWidth, m_clientWinHeight);
+    EventBuss::Get().Delegate(event);
 }
 
 HWND RenderWindow::GetHandle()
