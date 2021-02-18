@@ -7,7 +7,8 @@ ForwardRenderer::ForwardRenderer() noexcept
 	  m_pDevice{ nullptr },
 	  m_pDeviceContext{ nullptr },
 	  m_pBackBuffer{ nullptr },
-	  m_pDepthStencilView{ nullptr }
+	  m_pDepthStencilView{ nullptr },
+	m_numPlanets{ 0 }
 {
 	EventBuss::Get().AddListener(this, EventType::SendRenderObjectsEvent, EventType::DelegateDXEvent);
 }
@@ -23,15 +24,32 @@ void ForwardRenderer::BeginFrame()
 	EventBuss::Get().Delegate(ubEvent);
 
 	//Bind minimalistic:
-	BindIDEvent bindEvent(BindID::ID_Minimal);
-	EventBuss::Get().Delegate(bindEvent);
+	BindIDEvent bindEventMinimal(BindID::ID_Minimal);
+	EventBuss::Get().Delegate(bindEventMinimal);
 
 	//Request-event for game objects 
 	AskForRenderObjectsEvent event;
 	EventBuss::Get().Delegate(event);
 	
 	//Loop that renders and draws every GameObject.
-	for (size_t i = 0; i < (*m_pGameObjects).size(); ++i) {
+	for (size_t i = 0; i < m_numPlanets; ++i) {
+		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
+	}
+
+	//Bind orbit:
+	BindIDEvent bindEventOrbit(BindID::ID_Orbit);
+	EventBuss::Get().Delegate(bindEventOrbit);
+
+	for (size_t i = m_numPlanets; i < m_numPlanets * 2; ++i) {
+		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
+	}
+
+	//Bind minimalistic:
+	EventBuss::Get().Delegate(bindEventMinimal);
+
+	for (size_t i = m_numPlanets * 2; i < (*m_pGameObjects).size(); ++i) {
 		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
 		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
@@ -85,7 +103,8 @@ void ForwardRenderer::OnEvent(IEvent& event) noexcept
 	case EventType::SendRenderObjectsEvent:
 	{
 		SendRenderObjectsEvent& derivedEvent = static_cast<SendRenderObjectsEvent&>(event);
-		this->m_pGameObjects = derivedEvent.getGameObjectVector();
+		m_pGameObjects = derivedEvent.getGameObjectVector();
+		m_numPlanets = derivedEvent.GetNumPlanets();
 		break;
 	}
 	case EventType::DelegateDXEvent:

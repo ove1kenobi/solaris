@@ -26,7 +26,7 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 
 	m_pEventOneText = L"It is a period of civil war. Rebel spaceships, striking from a hidden base, "
 		L"have won their first victory against the evil Galactic Empire.During the battle, "
-		L"Rebel spies managed to steal secret plans to the Empire’s ultimate weapon, the DEATH STAR, "
+		L"Rebel spies managed to steal secret plans to the Empire?s ultimate weapon, the DEATH STAR, "
 		L"an armored space station with enough power to destroy an entire planet. ";
 
 	m_pEventTwoText = L"It is a dark time for the Rebellion.Although the Death Star has been destroyed, "
