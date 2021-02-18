@@ -7,7 +7,6 @@
 #include <d2d1.h>
 #include <d2d1helper.h>
 #include <dwrite.h>
-#pragma comment(lib, "Dwrite")
 #include <dxgi.h>
 #include <d3dcompiler.h>
 #include <directxmath.h>

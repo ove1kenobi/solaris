@@ -2,12 +2,9 @@
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem\UtilityEvents.h"
-#include <dwrite.h>
-//TODO: add mouse events for interaction
+#include "EventSystem/InputEvents.h"
 
 class ModuleUI : public IEventListener {
-private:
-	void UpdateDXHandlers(IEvent& event) noexcept;
 protected:
 	//From the event handler
 	Microsoft::WRL::ComPtr<ID2D1Factory> m_pFactory2D;
@@ -17,11 +14,11 @@ protected:
 	//Refactoring stuff
 	Microsoft::WRL::ComPtr<ID2D1GeometrySink> m_pSink;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBrush;
-	//Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTextFormat;
 
 	//Functions
 	int GetWidth();
 	int GetHeight();
+	void UpdateDXHandlers(IEvent& event) noexcept;
 public:
 	ModuleUI() noexcept;
 	virtual ~ModuleUI() = default;
@@ -33,7 +30,5 @@ public:
 	void RenderHelpGrid(int gridSize);
 	virtual void RenderUI() = 0;
 	void EndFrame();
-
-	void OnEvent(IEvent& event) noexcept;
 };
 

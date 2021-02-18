@@ -2,7 +2,9 @@
 #include "PlanetInteractionUI.h"
 
 PlanetInteractionUI::PlanetInteractionUI() noexcept {
-	m_pRandomEvents = false;
+	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);
+	m_pRenderHelpGrids = false;
+	m_pRenderRandomEvents = false;
 	m_pMainRectangle = D2D1::RectF();
 	m_pPlanetNameTextBox = D2D1::RectF();
 	m_pPlanetFlavourTextBox = D2D1::RectF();
@@ -269,10 +271,7 @@ bool PlanetInteractionUI::CreateDetails()
 }
 
 void PlanetInteractionUI::RenderRandomEvents() {
-	//m_pRenderTarget2D->DrawRectangle(m_pEventOneTextBox, m_pBrush.Get());
-	//m_pRenderTarget2D->DrawRectangle(m_pEventTwoTextBox, m_pBrush.Get());
-	//m_pRenderTarget2D->DrawRectangle(m_pEventThreeTextBox, m_pBrush.Get());
-
+	//Event one
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pEventOneText.c_str(),
 		(UINT32)m_pEventOneText.length(),
@@ -281,6 +280,7 @@ void PlanetInteractionUI::RenderRandomEvents() {
 		m_pBrush.Get()
 	);
 
+	//Event two
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pEventTwoText.c_str(),
 		(UINT32)m_pEventTwoText.length(),
@@ -289,6 +289,7 @@ void PlanetInteractionUI::RenderRandomEvents() {
 		m_pBrush.Get()
 	);
 
+	//Event three
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pEventThreeText.c_str(),
 		(UINT32)m_pEventThreeText.length(),
@@ -298,9 +299,17 @@ void PlanetInteractionUI::RenderRandomEvents() {
 	);
 }
 
-void PlanetInteractionUI::RenderUI() {
-	//RenderHelpGrid(10);
+void PlanetInteractionUI::RenderHelpLines() {
+	//Temp function only for debuging
+	RenderHelpGrid(10);
+	m_pRenderTarget2D->DrawRectangle(m_pPlanetNameTextBox, m_pBrush.Get());
+	m_pRenderTarget2D->DrawRectangle(m_pPlanetFlavourTextBox, m_pBrush.Get());
+	m_pRenderTarget2D->DrawRectangle(m_pEventOneTextBox, m_pBrush.Get());
+	m_pRenderTarget2D->DrawRectangle(m_pEventTwoTextBox, m_pBrush.Get());
+	m_pRenderTarget2D->DrawRectangle(m_pEventThreeTextBox, m_pBrush.Get());
+}
 
+void PlanetInteractionUI::RenderUI() {
 	//Main screen
 	this->UpdateBrush(D2D1::ColorF::Aqua, 0.25f);
 	m_pRenderTarget2D->FillRectangle(m_pMainRectangle, m_pBrush.Get());
@@ -308,18 +317,14 @@ void PlanetInteractionUI::RenderUI() {
 	UpdateBrush(D2D1::ColorF::White, 1.0f);
 	m_pRenderTarget2D->DrawRectangle(m_pMainRectangle, m_pBrush.Get());
 
+	//Corners of main screen
 	this->UpdateBrush(D2D1::ColorF::Teal, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pBottomLeft.Get(), m_pBrush.Get());
 	m_pRenderTarget2D->FillGeometry(m_pBottomRight.Get(), m_pBrush.Get());
 	m_pRenderTarget2D->FillGeometry(m_pTop.Get(), m_pBrush.Get());
 
 
-	//Text UI elements
-	UpdateBrush(D2D1::ColorF::White, 1.0f);
-
-	//m_pRenderTarget2D->DrawRectangle(m_pPlanetNameTextBox, m_pBrush.Get());
-	//m_pRenderTarget2D->DrawRectangle(m_pPlanetFlavourTextBox, m_pBrush.Get());
-
+	//Planet text UI
 	UpdateBrush(D2D1::ColorF::White, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pPlanetNameText.c_str(),
@@ -337,9 +342,13 @@ void PlanetInteractionUI::RenderUI() {
 		m_pBrush.Get()
 	);
 
-	m_pRandomEvents = true;
-	if (m_pRandomEvents) {
+	//Random event text UI
+	if (m_pRenderRandomEvents) {
 		this->RenderRandomEvents();
+	}
+
+	if (m_pRenderHelpGrids) {
+		this->RenderHelpLines();
 	}
 }
 
@@ -379,4 +388,41 @@ bool PlanetInteractionUI::Initialize() {
 		return false;
 	}
 	return true;
+}
+
+void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
+	switch (event.GetEventType()) {
+	case EventType::DelegateDXEvent:
+	{
+		UpdateDXHandlers(event);
+		break;
+	}
+	case EventType::KeyboardEvent:
+	{
+		KeyState state = static_cast<KeyboardEvent*>(&event)->GetKeyState();
+		int virKey = static_cast<KeyboardEvent*>(&event)->GetVirtualKeyCode();
+
+		if (state == KeyState::KeyPress) {
+			if (virKey == 'R') {
+				if (m_pRenderRandomEvents) {
+					m_pRenderRandomEvents = false;
+				}
+				else {
+					m_pRenderRandomEvents = true;
+				}
+			}
+			if (virKey == 'H') {
+				if (m_pRenderHelpGrids) {
+					m_pRenderHelpGrids = false;
+				}
+				else {
+					m_pRenderHelpGrids = true;
+				}
+			}
+		}
+	}
+	break;
+	default:
+		break;
+	}
 }

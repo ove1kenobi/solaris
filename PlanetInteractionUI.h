@@ -1,10 +1,10 @@
 #pragma once
 #include "ModuleUI.h"
-#include <dwrite.h>
 
 class PlanetInteractionUI : public ModuleUI {
 private:
-	bool m_pRandomEvents;
+	bool m_pRenderHelpGrids;
+	bool m_pRenderRandomEvents;
 	//Main screen
 	D2D1_RECT_F m_pMainRectangle;
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pBottomLeft;
@@ -31,11 +31,14 @@ private:
 
 	//Style details
 
-	//Private functions
+	//Creation functions
 	bool CreateMainScreen();
 	bool CreateTextElements();
 	bool CreateDetails();
+
+	//Render functions
 	void RenderRandomEvents();
+	void RenderHelpLines();
 public:
 	PlanetInteractionUI() noexcept;
 	virtual ~PlanetInteractionUI() = default;
@@ -43,10 +46,13 @@ public:
 	bool Initialize();
 	void RenderUI();
 
+	//For changing the events once an event system is implimented
 	void SetPlanetName(std::wstring text);
 	void SetPlanetFlavourText(std::wstring text);
 	void SetEventOne(std::wstring text);
 	void SetEventTwo(std::wstring text);
 	void SetEventThree(std::wstring text);
+
+	void OnEvent(IEvent& event) noexcept;
 };
 

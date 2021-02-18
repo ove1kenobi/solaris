@@ -7,11 +7,12 @@ ModuleUI::ModuleUI() noexcept {
 
 void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {
 	DelegateDXEvent& derivedEvent = static_cast<DelegateDXEvent&>(event);
-	m_pFactory2D = derivedEvent.GetFactory();
+	m_pFactory2D = derivedEvent.GetFactory2D();
 	m_pRenderTarget2D = derivedEvent.GetSurfaceRenderTarget();
+	m_pTextFactory = derivedEvent.GetTextFactory();
 
 	#if defined(DEBUG) | defined(_DEBUG)
-	assert(m_pFactory2D && m_pRenderTarget2D);
+	assert(m_pFactory2D && m_pRenderTarget2D && m_pTextFactory);
 	#endif
 }
 
@@ -27,12 +28,6 @@ int ModuleUI::GetHeight() {
 
 bool ModuleUI::Initialize() {
 	HRESULT hr = m_pRenderTarget2D->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Aqua, 0.5f), &m_pBrush);
-	if (FAILED(hr)) {
-		printf("Error!\n");
-		return false;
-	}
-
-	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,__uuidof(IDWriteFactory), &m_pTextFactory);
 	if (FAILED(hr)) {
 		printf("Error!\n");
 		return false;
@@ -77,17 +72,5 @@ void ModuleUI::EndFrame() {
 	HRESULT hr = m_pRenderTarget2D->EndDraw();
 	if (FAILED(hr)) {
 		printf("Error!\n");
-	}
-}
-
-void ModuleUI::OnEvent(IEvent& event) noexcept {
-	switch (event.GetEventType()) {
-		case EventType::DelegateDXEvent:
-		{
-			UpdateDXHandlers(event);
-			break;
-		}
-		default:
-			break;
 	}
 }
