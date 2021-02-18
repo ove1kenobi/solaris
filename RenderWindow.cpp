@@ -82,7 +82,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             CloseWindow(hwnd);
             break;
         }
-        /*
+
         case WM_LBUTTONDOWN:
         {
             // left mouse button down
@@ -97,7 +97,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             // left mouse button up
             int xPos = GET_X_LPARAM(lParam);
             int yPos = GET_Y_LPARAM(lParam);
-            MouseButtenEvent be(KeyState::KeyRelease, VK_LBUTTON, xPos, yPos);
+            MouseButtonEvent be(KeyState::KeyRelease, VK_LBUTTON, xPos, yPos);
             EventBuss::Get().Delegate(be);
             return 0;
         }
@@ -106,7 +106,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             // right mouse butten down
             int xPos = GET_X_LPARAM(lParam);
             int yPos = GET_Y_LPARAM(lParam);
-            MouseButtenEvent be(KeyState::KeyPress, VK_RBUTTON, xPos, yPos);
+            MouseButtonEvent be(KeyState::KeyPress, VK_RBUTTON, xPos, yPos);
             EventBuss::Get().Delegate(be);
             return 0;
         }
@@ -115,7 +115,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             // right mouse butten up
             int xPos = GET_X_LPARAM(lParam);
             int yPos = GET_Y_LPARAM(lParam);
-            MouseButtenEvent be(KeyState::KeyRelease, VK_RBUTTON, xPos, yPos);
+            MouseButtonEvent be(KeyState::KeyRelease, VK_RBUTTON, xPos, yPos);
             EventBuss::Get().Delegate(be);
             return 0;
         }

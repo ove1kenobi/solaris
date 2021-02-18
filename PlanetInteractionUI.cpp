@@ -2,9 +2,9 @@
 #include "PlanetInteractionUI.h"
 
 PlanetInteractionUI::PlanetInteractionUI() noexcept {
-	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);
-	EventBuss::Get().AddListener(this, EventType::MouseButtenEvent);
-	EventBuss::Get().AddListener(this, EventType::MouseMoveAbsoluteEvent);
+	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);			
+	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
+	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent);
 	m_pRenderHelpGrids = false;
 	m_pRenderRandomEvents = false;
 	m_pMainRectangle = D2D1::RectF();
@@ -401,6 +401,7 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 	}
 	case EventType::KeyboardEvent:
 	{
+		//TODO: make it possible to nagivate the choices with the keys too
 		KeyState state = static_cast<KeyboardEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<KeyboardEvent*>(&event)->GetVirtualKeyCode();
 
@@ -425,26 +426,25 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		break;
 	}
 	//For hovering over UI elements
-	case EventType::MouseMoveAbsoluteEvent:
+	case EventType::DelegateMouseCoordsEvent:
 	{
 		//Example of how it would work
-		/*
 		int mouseX = static_cast<MouseMoveAbsoluteEvent*>(&event)->GetXCoord();
 		this->SetPlanetName(std::to_wstring(mouseX));
-		if (mouseX > m_pEventOneTextBox.left && mouseX < m_pEventOneTextBox.right) {
-			m_pRenderRandomEvents = true;
+		if (mouseX > m_pMainRectangle.left && mouseX < m_pMainRectangle.right) {
+			m_pRenderHelpGrids = true;
 		}
 		else {
-			m_pRenderRandomEvents = false;
-		}*/
+			m_pRenderHelpGrids = false;
+		}
 		break;
 	}
 	//For clicking on UI elements
-	case EventType::MouseButtenEvent:
+	case EventType::MouseButtonEvent:
 	{
-		int mouseX = static_cast<MouseButtenEvent*>(&event)->GetXCoord();
-		KeyState state = static_cast<MouseButtenEvent*>(&event)->GetKeyState();
-		int virKey = static_cast<MouseButtenEvent*>(&event)->GetVirtualKeyCode();
+		int mouseX = static_cast<MouseButtonEvent*>(&event)->GetXCoord();
+		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
+		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
 		if (virKey == VK_LBUTTON && state == KeyState::KeyPress) {
 			this->SetPlanetName(std::to_wstring(mouseX));
 			if (mouseX > m_pEventOneTextBox.left && mouseX < m_pEventOneTextBox.right) {

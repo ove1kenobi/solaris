@@ -3,6 +3,7 @@
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem\UtilityEvents.h"
 #include "EventSystem/InputEvents.h"
+#include "EventSystem/WindowEvents.h"
 
 class ModuleUI : public IEventListener {
 protected:
@@ -16,8 +17,8 @@ protected:
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBrush;
 
 	//Functions
-	int GetWidth();
-	int GetHeight();
+	int GetWidth();	//don't need anymore
+	int GetHeight();	//don't need anymore
 	void UpdateDXHandlers(IEvent& event) noexcept;
 public:
 	ModuleUI() noexcept;
