@@ -91,8 +91,6 @@ Model* ModelFactory::GetModel(std::string filePath)
 						vtx.bitangent.z = mesh->mBitangents[i].z;
 					}
 					vertices.push_back(vtx);
-
-
 				}
 
 				// Create bounding box
@@ -115,7 +113,6 @@ Model* ModelFactory::GetModel(std::string filePath)
 					}
 				}
 			}
-
 #ifdef _DEBUG
 			loadDebug += std::string("=======================================\n");
 			OutputDebugStringA(loadDebug.c_str());
@@ -196,6 +193,7 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 	model->setIndexBufferSize(static_cast<UINT>(indices.size()));
 
 	createBuffers(sizeof(vertex_col), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
+	model->SetBoundingVolume(new DirectX::BoundingSphere(center, r + (r / 5.0f)));
 	return model;
 }
 
@@ -288,14 +286,12 @@ void ModelFactory::createSphere(float r, std::vector<float> &vertexBuffer, std::
 		bool reverse = i >= 4;
 		createTriangleFace(completeEdges[baseTriangles[i][0]], completeEdges[baseTriangles[i][1]], completeEdges[baseTriangles[i][2]], reverse, vertices, triangles, divisions);
 	}
-
 	for (int i = 0; i < vertices.size(); i++) {
 		vertexBuffer.push_back(vertices[i].x);
 		vertexBuffer.push_back(vertices[i].y);
 		vertexBuffer.push_back(vertices[i].z);
 		vertexBuffer.push_back(0.0f); //Trash value for compute shader
 	}
-
 	indexBuffer = triangles;
 }
 
@@ -343,9 +339,7 @@ void ModelFactory::createTriangleFace(
 		else {
 			vertexMap.push_back(edge2[i]);
 		}
-
 	}
-
 	if (!reverse) {
 		//Add bottom edge vertices
 		for (int i = 0; i < pointsOnEdge; i++)
@@ -557,7 +551,7 @@ void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std
 
 	//vertexbuffer
 	D3D11_BUFFER_DESC vertexBufferDescriptor = {};
-	vertexBufferDescriptor.ByteWidth = sizeof(vertex_col) * static_cast<UINT>(size);
+	vertexBufferDescriptor.ByteWidth = stride * static_cast<UINT>(size);
 	vertexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	D3D11_SUBRESOURCE_DATA sr_data = { 0 };
@@ -633,13 +627,11 @@ std::vector<DirectX::XMFLOAT3> ModelFactory::calcNormals(std::vector<float> vert
 
 	}
 
-
 	for (int i = 0; i < vertexNormals.size(); i++) {
 		vertexNormals[i].x = vertexNormals[i].x / vertexConnectingCount[i];
 		vertexNormals[i].y = vertexNormals[i].y / vertexConnectingCount[i];
 		vertexNormals[i].z = vertexNormals[i].z / vertexConnectingCount[i];
 	}
-	
 	return vertexNormals;
 }
 
@@ -688,5 +680,26 @@ Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
 	model->setIndexBufferSize(static_cast<UINT>(indices.size()));
 
 	createBuffers(sizeof(vertex_col), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
+	return model;
+}
+
+Model* ModelFactory::GenerateOrbit(float major_semi_axis, float minor_semi_axis)
+{
+	std::vector<DirectX::XMFLOAT3> vertices;
+	vertices.resize(60);
+	std::vector<UINT> indices;
+	float segment = 2 * 3.14159265f / (vertices.size() - 1);
+	for (size_t i = 0; i < vertices.size(); ++i)
+	{
+		DirectX::XMFLOAT3 point = {};
+		point.x = major_semi_axis * static_cast<float>(cos(segment * i));
+		point.z = minor_semi_axis * static_cast<float>(sin(segment * i));
+		vertices[i] = point;
+		indices.push_back(static_cast<UINT>(i));
+	}
+	Model* model = new Model();
+	model->setVertexBufferSize(static_cast<UINT>(vertices.size()));
+	model->setIndexBufferSize(static_cast<UINT>(vertices.size()));
+	createBuffers(sizeof(DirectX::XMFLOAT3), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
 	return model;
 }

@@ -109,6 +109,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelFactory.cpp" />
     <ClCompile Include="ModuleUI.cpp" />
+    <ClCompile Include="Orbit.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -150,6 +151,10 @@
     </ClCompile>
     <ClCompile Include="Sun.cpp" />
     <ClCompile Include="SpaceShip.cpp" />
+    <ClCompile Include="Techniques\MousePicking.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="Techniques\Skybox.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
@@ -207,6 +212,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelFactory.h" />
     <ClInclude Include="ModuleUI.h" />
+    <ClInclude Include="Orbit.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="PlanetInteractionUI.h" />
@@ -225,6 +231,7 @@
     <ClInclude Include="Resources\ComputeShader.h" />
     <ClInclude Include="Sun.h" />
     <ClInclude Include="SpaceShip.h" />
+    <ClInclude Include="Techniques\MousePicking.h" />
     <ClInclude Include="Techniques\Skybox.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="ourMath.h" />
@@ -256,6 +263,14 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ps_main</EntryPointName>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="PixelShader_Orbit.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ps_main</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ps_main</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="PixelShader_Skybox.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -270,6 +285,14 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">vs_main</EntryPointName>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">vs_main</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="VertexShader_Orbit.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">vs_main</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">vs_main</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="VertexShader_Skybox.hlsl">

@@ -9,6 +9,7 @@
 #include "EventSystem\IEventListener.h"
 #include "ImGui\ImGuiManager.h"
 #include "LayerStack.h"
+#include "Techniques/MousePicking.h"
 
 class Engine : IEventListener
 {
