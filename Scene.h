@@ -11,7 +11,7 @@ class Scene : public EventPublisher, public Layer
 {
 private:
 	//GameObjects include planets, moons, asteroids, the Sun and the spaceship.
-	int m_numPlanets;
+	size_t m_numPlanets;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
 	Camera m_orthoCamera;
 	PlayerCamera m_perspectiveCamera;

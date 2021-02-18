@@ -12,7 +12,6 @@ protected:
 	DirectX::XMFLOAT3 m_upVector;
 	DirectX::XMFLOAT4X4 m_wMatrix;
 	float m_mass;
-	float m_1byMass;
 	float m_pitch;
 	float m_roll;
 	float m_yaw;

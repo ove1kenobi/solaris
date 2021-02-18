@@ -6,6 +6,8 @@
     <FxCompile Include="VertexShader_Skybox.hlsl" />
     <FxCompile Include="PixelShader_Skybox.hlsl" />
     <FxCompile Include="ComputeShader_Planet.hlsl" />
+    <FxCompile Include="VertexShader_Orbit.hlsl" />
+    <FxCompile Include="PixelShader_Orbit.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bloom.cpp" />
@@ -52,6 +54,9 @@
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="Techniques\MousePicking.cpp" />
     <ClCompile Include="Render2D.cpp" />
+    <ClCompile Include="PlanetInteractionUI.cpp" />
+    <ClCompile Include="ModuleUI.cpp" />
+    <ClCompile Include="Orbit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -109,6 +114,9 @@
     <ClInclude Include="Planet.h" />
     <ClInclude Include="Techniques\MousePicking.h" />
     <ClInclude Include="Render2D.h" />
+    <ClInclude Include="PlanetInteractionUI.h" />
+    <ClInclude Include="ModuleUI.h" />
+    <ClInclude Include="Orbit.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

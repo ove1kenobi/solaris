@@ -22,15 +22,18 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
 	VertexShader m_VertexShaderMinimal;
 	VertexShader m_VertexShaderSkybox;
+	VertexShader m_VertexShaderOrbit;
 	PixelShader m_PixelShaderMinimal;
 	PixelShader m_PixelShaderSkybox;
+	PixelShader m_PixelShaderOrbit;
 	ComputeShader m_ComputeShaderPlanet;
 	InputLayout m_InputLayoutCosmicBody;
 	InputLayout m_InputLayoutPlayerModel;
 	InputLayout m_InputLayoutMinimal;
-	InputLayout m_InputLayoutSkybox;
+	InputLayout m_InputLayoutSinglePoint;
 	PrimitiveTopology m_TopologyTriList;
 	PrimitiveTopology m_TopologyPatchList;
+	PrimitiveTopology m_TopologyLineStrip;
 	CubeTexture m_CubeTextureSkybox;
 	SamplerState m_SamplerSkybox;
 	VertexBuffer m_VertexBufferCube;
@@ -39,6 +42,7 @@ private:
 	std::vector<IBindable*> m_BindablesCosmic;
 	std::vector<IBindable*> m_BindablesPlayer;
 	std::vector<IBindable*> m_BindablesSkybox;
+	std::vector<IBindable*> m_BindablesOrbit;
 	std::vector<DirectX::XMFLOAT3> m_CubeVertices;
 	std::vector<unsigned int> m_CubeIndices;
 	unsigned int m_ClientWindowWidth;
