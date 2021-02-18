@@ -35,6 +35,7 @@ private:
 	bool CreateMainScreen();
 	bool CreateTextElements();
 	bool CreateDetails();
+	bool UpdateModules();
 
 	//Render functions
 	void RenderRandomEvents();

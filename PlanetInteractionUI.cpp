@@ -5,8 +5,10 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);			
 	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
 	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent);
+
 	m_pRenderHelpGrids = false;
 	m_pRenderRandomEvents = false;
+
 	m_pMainRectangle = D2D1::RectF();
 	m_pPlanetNameTextBox = D2D1::RectF();
 	m_pPlanetFlavourTextBox = D2D1::RectF();
@@ -45,8 +47,8 @@ bool PlanetInteractionUI::CreateMainScreen() {
 	m_pMainRectangle = D2D1::RectF(
 		100.0f,
 		50.0f,
-		this->GetWidth() - 100.0f,
-		this->GetHeight() - 200.0f
+		static_cast<float>(m_pWindowWidth) - 100.0f,
+		static_cast<float>(m_pWindowHeight) - 200.0f
 	);
 
 	//Create bottom left corner
@@ -237,7 +239,7 @@ bool PlanetInteractionUI::CreateTextElements() {
 	float blockSize = ((m_pMainRectangle.bottom - screenOffset) - (m_pMainRectangle.top + screenOffset)) / 3.0f;
 
 	m_pPlanetFlavourTextBox = D2D1::RectF(
-		(GetWidth() / 2.0f) + screenOffset,
+		(static_cast<float>(m_pWindowWidth) / 2.0f) + screenOffset,
 		m_pMainRectangle.top + screenOffset,
 		m_pMainRectangle.right - screenOffset,
 		m_pMainRectangle.bottom - screenOffset
@@ -246,21 +248,21 @@ bool PlanetInteractionUI::CreateTextElements() {
 	m_pEventOneTextBox = D2D1::RectF(
 		m_pMainRectangle.left + screenOffset,
 		m_pMainRectangle.top + screenOffset,
-		GetWidth() / 2.0f,
+		static_cast<float>(m_pWindowWidth) / 2.0f,
 		m_pMainRectangle.top + screenOffset + blockSize - padding
 	);
 
 	m_pEventThreeTextBox = D2D1::RectF(
 		m_pMainRectangle.left + screenOffset,
 		m_pMainRectangle.bottom - screenOffset - blockSize + padding,
-		GetWidth() / 2.0f,
+		static_cast<float>(m_pWindowWidth) / 2.0f,
 		m_pMainRectangle.bottom - screenOffset
 	);
 
 	m_pEventTwoTextBox = D2D1::RectF(
 		m_pMainRectangle.left + screenOffset,
 		m_pEventOneTextBox.bottom + padding,
-		GetWidth() / 2.0f,
+		static_cast<float>(m_pWindowWidth) / 2.0f,
 		m_pEventThreeTextBox.top - padding
 	);
 
@@ -269,6 +271,21 @@ bool PlanetInteractionUI::CreateTextElements() {
 
 bool PlanetInteractionUI::CreateDetails()
 {
+	return true;
+}
+
+bool PlanetInteractionUI::UpdateModules() {
+	if (!this->CreateMainScreen()) {
+		return false;
+	}
+
+	if (!this->CreateTextElements()) {
+		return false;
+	}
+
+	if (!this->CreateDetails()) {
+		return false;
+	}
 	return true;
 }
 
@@ -428,7 +445,6 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 	//For hovering over UI elements
 	case EventType::DelegateMouseCoordsEvent:
 	{
-		//Example of how it would work
 		int mouseX = static_cast<DelegateMouseCoordsEvent*>(&event)->GetXCoord();
 		int mouseY = static_cast<DelegateMouseCoordsEvent*>(&event)->GetYCoord();
 		this->SetPlanetName(std::to_wstring(mouseX));
@@ -460,6 +476,13 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 				}
 			}
 		}
+		break;
+	}
+	case EventType::DelegateResolutionEvent:
+	{
+		m_pWindowWidth = static_cast<DelegateResolutionEvent*>(&event)->GetClientWindowWidth();
+		m_pWindowHeight = static_cast<DelegateResolutionEvent*>(&event)->GetClientWindowHeight();
+		this->UpdateModules();
 		break;
 	}
 	default:

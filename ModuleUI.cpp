@@ -3,6 +3,9 @@
 
 ModuleUI::ModuleUI() noexcept {
 	EventBuss::Get().AddListener(this, EventType::DelegateDXEvent);
+	EventBuss::Get().AddListener(this, EventType::DelegateResolutionEvent);
+	m_pWindowWidth = 0;
+	m_pWindowHeight = 0;
 }
 
 void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {
@@ -14,16 +17,6 @@ void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {
 	#if defined(DEBUG) | defined(_DEBUG)
 	assert(m_pFactory2D && m_pRenderTarget2D && m_pTextFactory);
 	#endif
-}
-
-int ModuleUI::GetWidth() {
-	D2D1_SIZE_F rtSize = m_pRenderTarget2D->GetSize();
-	return static_cast<int>(rtSize.width);
-}
-
-int ModuleUI::GetHeight() {
-	D2D1_SIZE_F rtSize = m_pRenderTarget2D->GetSize();
-	return static_cast<int>(rtSize.height);
 }
 
 bool ModuleUI::Initialize() {
@@ -47,21 +40,21 @@ void ModuleUI::BeginFrame() {
 
 void ModuleUI::RenderHelpGrid(int gridSize) {
 	this->UpdateBrush(D2D1::ColorF::Aqua, 0.5f);
-	for (int x = 0; x < this->GetWidth(); x += gridSize)
+	for (unsigned int x = 0; x < m_pWindowWidth; x += gridSize)
 	{
 		m_pRenderTarget2D->DrawLine(
 			D2D1::Point2F(static_cast<FLOAT>(x), 0.0f),
-			D2D1::Point2F(static_cast<FLOAT>(x), static_cast<float>(this->GetHeight())),
+			D2D1::Point2F(static_cast<FLOAT>(x), static_cast<float>(m_pWindowHeight)),
 			m_pBrush.Get(),
 			0.5f
 		);
 	}
 
-	for (int y = 0; y < this->GetHeight(); y += gridSize)
+	for (unsigned int y = 0; y < m_pWindowHeight; y += gridSize)
 	{
 		m_pRenderTarget2D->DrawLine(
 			D2D1::Point2F(0.0f, static_cast<FLOAT>(y)),
-			D2D1::Point2F(static_cast<float>(this->GetWidth()), static_cast<FLOAT>(y)),
+			D2D1::Point2F(static_cast<float>(m_pWindowWidth), static_cast<FLOAT>(y)),
 			m_pBrush.Get(),
 			0.5f
 		);

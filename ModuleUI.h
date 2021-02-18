@@ -7,26 +7,26 @@
 
 class ModuleUI : public IEventListener {
 protected:
-	//From the event handler
+	//For creating UI elements
 	Microsoft::WRL::ComPtr<ID2D1Factory> m_pFactory2D;
 	Microsoft::WRL::ComPtr<ID2D1RenderTarget> m_pRenderTarget2D;
 	Microsoft::WRL::ComPtr<IDWriteFactory> m_pTextFactory;
-
-	//Refactoring stuff
 	Microsoft::WRL::ComPtr<ID2D1GeometrySink> m_pSink;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBrush;
 
-	//Functions
-	int GetWidth();	//don't need anymore
-	int GetHeight();	//don't need anymore
+	//Window information
+	unsigned int m_pWindowWidth;
+	unsigned int m_pWindowHeight;
+
 	void UpdateDXHandlers(IEvent& event) noexcept;
 public:
 	ModuleUI() noexcept;
 	virtual ~ModuleUI() = default;
-
 	bool Initialize();
 
+	virtual bool UpdateModules() = 0;
 	void UpdateBrush(D2D1::ColorF color, float opacity);
+
 	void BeginFrame();
 	void RenderHelpGrid(int gridSize);
 	virtual void RenderUI() = 0;
