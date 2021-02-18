@@ -15,19 +15,20 @@ SpaceShip::SpaceShip()
 	m_yaw = (float)M_PI;
 	m_pitchTilt = 0.0f;
 	m_rollTilt = 0.0f;
+	m_topSpeed = 3000.0f;
 }
 
 bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
 	this->UpdatePhysics();
 
-//#if defined(DEBUG) | defined(_DEBUG)
-//	ImGui::Begin("Spaceship");
-//	ImGui::Text("Center  : (%f, %f, %f)", m_center.x, m_center.y, m_center.z);
-//	ImGui::Text("Velocity: (%f, %f, %f)", m_velocity.x, m_velocity.y, m_velocity.z);
-//	ImGui::DragFloat("Mass", &m_mass, 500.0f);
-//	ImGui::End();
-//#endif
+#if defined(DEBUG) | defined(_DEBUG)
+	ImGui::Begin("Spaceship");
+	ImGui::Text("Center  : (%f, %f, %f)", m_center.x, m_center.y, m_center.z);
+	ImGui::Text("Velocity: (%f, %f, %f)", m_velocity.x, m_velocity.y, m_velocity.z);
+	ImGui::DragFloat("Mass", &m_mass, 500.0f);
+	ImGui::End();
+#endif
 
 	//Updated the same way as a cosmicbody, with S * R * T. Rotation is around the ships up vector.
 	DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&this->m_upVector);
@@ -78,9 +79,10 @@ void SpaceShip::Move(float step)
 	pos.y = step * m_forwardVector.y;
 	pos.z = step * m_forwardVector.z;
 
-	m_center.x += pos.x;
-	m_center.y += pos.y;
-	m_center.z += pos.z;
+	//m_center.x += pos.x;
+	//m_center.y += pos.y;
+	//m_center.z += pos.z;
+	AddForce(pos);
 }
 
 void SpaceShip::AddRotation(float yaw, float pitch)
@@ -191,6 +193,17 @@ void SpaceShip::UpdatePhysics()
 	m_velocity.x += sumForces.x;
 	m_velocity.y += sumForces.y;
 	m_velocity.z += sumForces.z;
+
+	float speed = sqrtf(powf(m_velocity.x, 2) + powf(m_velocity.y, 2) + powf(m_velocity.z, 2));
+	
+	if (speed > m_topSpeed) {
+		m_velocity.x = m_topSpeed * m_velocity.x / speed;
+		m_velocity.y = m_topSpeed * m_velocity.y / speed;
+		m_velocity.z = m_topSpeed * m_velocity.z / speed;
+	}
+
+	speed = sqrtf(powf(m_velocity.x, 2) + powf(m_velocity.y, 2) + powf(m_velocity.z, 2));
+	std::cout << speed << std::endl;
 
 	m_center.x += static_cast<float>(m_velocity.x * m_timer.DeltaTime());
 	m_center.y += static_cast<float>(m_velocity.y * m_timer.DeltaTime());

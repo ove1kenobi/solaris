@@ -1,10 +1,13 @@
 #pragma once
 #include "GameObject.h"
 
+#include <iostream>
+
 class SpaceShip : public GameObject
 {
 private:
 	float m_pitchTilt, m_rollTilt;
+	float m_topSpeed;
 
 	// Physics
 	std::vector<DirectX::XMFLOAT3> m_forces;
