@@ -51,7 +51,7 @@ void ModuleUI::RenderHelpGrid(int gridSize) {
 	{
 		m_pRenderTarget2D->DrawLine(
 			D2D1::Point2F(static_cast<FLOAT>(x), 0.0f),
-			D2D1::Point2F(static_cast<FLOAT>(x), this->GetHeight()),
+			D2D1::Point2F(static_cast<FLOAT>(x), static_cast<float>(this->GetHeight())),
 			m_pBrush.Get(),
 			0.5f
 		);
@@ -61,7 +61,7 @@ void ModuleUI::RenderHelpGrid(int gridSize) {
 	{
 		m_pRenderTarget2D->DrawLine(
 			D2D1::Point2F(0.0f, static_cast<FLOAT>(y)),
-			D2D1::Point2F(this->GetWidth(), static_cast<FLOAT>(y)),
+			D2D1::Point2F(static_cast<float>(this->GetWidth()), static_cast<FLOAT>(y)),
 			m_pBrush.Get(),
 			0.5f
 		);
