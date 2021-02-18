@@ -71,9 +71,9 @@ Model* ModelFactory::GetModel(std::string filePath)
 						vtx.texcoord.x = mesh->mTextureCoords[iMesh][i].x;
 						vtx.texcoord.y = mesh->mTextureCoords[iMesh][i].y;
 					}
-					vtx.normal.x = 1.0f;	// temporary for
-					vtx.normal.y = 0.3f;	// vertex color
-					vtx.normal.z = 0.1f;	// use section below.
+					vtx.normal.x = mesh->mVertices[i].x;	// temporary for
+					vtx.normal.y = 0.3f;//mesh->mVertices[i].y;	// vertex color
+					vtx.normal.z = mesh->mVertices[i].z;	// use section below.
 
 					//if (mesh->HasNormals())
 					//{
