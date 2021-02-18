@@ -8,7 +8,6 @@ Orbit::Orbit()
 
 Orbit::~Orbit()
 {
-	//if (m_model) delete m_model;
 }
 
 bool Orbit::init(float major_semi_axis, float minor_semi_axis)

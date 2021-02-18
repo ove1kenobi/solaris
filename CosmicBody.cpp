@@ -11,7 +11,6 @@ CosmicBody::CosmicBody() noexcept
 
 CosmicBody::~CosmicBody()
 {
-	//delete m_orbit;
 }
 
 bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo, Orbit* orbit) {

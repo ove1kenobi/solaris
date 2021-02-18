@@ -4,7 +4,6 @@
 class Orbit : public GameObject
 {
 private:
-	//Model* m_model;
 
 public:
 	Orbit();
