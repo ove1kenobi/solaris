@@ -27,5 +27,5 @@ public:
 	ForwardRenderer() noexcept;
 	virtual ~ForwardRenderer() = default;
 	[[nodiscard]] const bool Initialize() noexcept;
-	ID3D11RenderTargetView* RenderFrame();
+	void RenderFrame();
 };
