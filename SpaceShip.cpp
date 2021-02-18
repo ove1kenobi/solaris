@@ -20,7 +20,6 @@ SpaceShip::SpaceShip()
 
 bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
-	this->UpdatePhysics();
 
 #if defined(DEBUG) | defined(_DEBUG)
 	ImGui::Begin("Spaceship");
