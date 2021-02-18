@@ -1,9 +1,8 @@
 #pragma once
 #include "IEvent.h"
-//#include "../GameObject.h"
 #include "../Resources/BindIDs.h"
-
 class GameObject;
+class PointLight;
 
 class SendRenderObjectsEvent : public IEvent
 {
@@ -129,5 +128,47 @@ public:
 	[[nodiscard]] const std::string GetDebugName() const noexcept override
 	{
 		return "ToggleDepthStencilStateEvent";
+	}
+};
+
+class RequestSunLightEvent : public IEvent
+{
+private:
+public:
+	RequestSunLightEvent() noexcept = default;
+	virtual ~RequestSunLightEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::RequestSunLightEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "RequestSunLightEvent";
+	}
+};
+
+class DelegateSunLightEvent : public IEvent
+{
+private:
+	PointLight* m_pSunLight;
+public:
+	DelegateSunLightEvent(PointLight* pSunLight) noexcept
+	{
+		m_pSunLight = pSunLight;
+	}
+	virtual ~DelegateSunLightEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::DelegateSunLightEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "DelegateSunLightEvent";
+	}
+	[[nodiscard]] PointLight* GetSunLight() const noexcept
+	{
+		return m_pSunLight;
 	}
 };

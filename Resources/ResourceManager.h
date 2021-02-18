@@ -23,9 +23,11 @@ private:
 	VertexShader m_VertexShaderMinimal;
 	VertexShader m_VertexShaderSkybox;
 	VertexShader m_VertexShaderOrbit;
+	VertexShader m_VertexShaderSun;
 	PixelShader m_PixelShaderMinimal;
 	PixelShader m_PixelShaderSkybox;
 	PixelShader m_PixelShaderOrbit;
+	PixelShader m_PixelShaderSun;
 	ComputeShader m_ComputeShaderPlanet;
 	InputLayout m_InputLayoutCosmicBody;
 	InputLayout m_InputLayoutPlayerModel;
@@ -43,6 +45,7 @@ private:
 	std::vector<IBindable*> m_BindablesPlayer;
 	std::vector<IBindable*> m_BindablesSkybox;
 	std::vector<IBindable*> m_BindablesOrbit;
+	std::vector<IBindable*> m_BindablesSun;
 	std::vector<DirectX::XMFLOAT3> m_CubeVertices;
 	std::vector<unsigned int> m_CubeIndices;
 	unsigned int m_ClientWindowWidth;
