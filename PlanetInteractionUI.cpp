@@ -429,9 +429,11 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 	case EventType::DelegateMouseCoordsEvent:
 	{
 		//Example of how it would work
-		int mouseX = static_cast<MouseMoveAbsoluteEvent*>(&event)->GetXCoord();
+		int mouseX = static_cast<DelegateMouseCoordsEvent*>(&event)->GetXCoord();
+		int mouseY = static_cast<DelegateMouseCoordsEvent*>(&event)->GetYCoord();
 		this->SetPlanetName(std::to_wstring(mouseX));
-		if (mouseX > m_pMainRectangle.left && mouseX < m_pMainRectangle.right) {
+		if (mouseX > m_pMainRectangle.left && mouseX < m_pMainRectangle.right &&
+			mouseY > m_pMainRectangle.top && mouseY < m_pMainRectangle.bottom) {
 			m_pRenderHelpGrids = true;
 		}
 		else {
@@ -443,15 +445,19 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 	case EventType::MouseButtonEvent:
 	{
 		int mouseX = static_cast<MouseButtonEvent*>(&event)->GetXCoord();
+		int mouseY = static_cast<MouseButtonEvent*>(&event)->GetYCoord();
 		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
 		if (virKey == VK_LBUTTON && state == KeyState::KeyPress) {
 			this->SetPlanetName(std::to_wstring(mouseX));
-			if (mouseX > m_pEventOneTextBox.left && mouseX < m_pEventOneTextBox.right) {
-				m_pRenderRandomEvents = true;
-			}
-			else {
-				m_pRenderRandomEvents = false;
+			if (mouseX > m_pEventOneTextBox.left && mouseX < m_pEventOneTextBox.right &&
+				mouseY > m_pMainRectangle.top && mouseY < m_pMainRectangle.bottom) {
+				if (m_pRenderRandomEvents) {
+					m_pRenderRandomEvents = false;
+				}
+				else {
+					m_pRenderRandomEvents = true;
+				}
 			}
 		}
 		break;
