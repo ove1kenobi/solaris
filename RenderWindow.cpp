@@ -124,7 +124,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             EventBuss::Get().Delegate(se);
             break;
         }
-
         case WM_KEYDOWN:
         {
             // key press
