@@ -27,7 +27,7 @@ private:
 	long double m_time;
 	int m_fps;
 private:
-	void Update();
+	void Update() noexcept;
 	void Render();
 	void OnEvent(IEvent& event) noexcept override;
 public:

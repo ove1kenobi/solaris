@@ -33,6 +33,8 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	if (!m_PixelShaderOrbit.Create(m_pDevice, L"PixelShader_Orbit.hlsl"))
 		return false;
+	if (!m_PixelShaderSun.Create(m_pDevice, L"PixelShader_Sun.hlsl"))
+		return false;
 	//Geometry Shaders:
 
 	//Hull Shaders:
@@ -75,6 +77,7 @@ const bool ResourceManager::CreateAllBindables()
 														&m_TopologyTriList, &m_CubeTextureSkybox, &m_SamplerSkybox,
 														&m_VertexBufferCube, &m_IndexBufferCube});
 	m_BindablesOrbit.insert(m_BindablesOrbit.end(), { &m_VertexShaderOrbit, &m_PixelShaderOrbit, &m_InputLayoutSinglePoint, &m_TopologyLineStrip });
+	m_BindablesSun.insert(m_BindablesSun.end(), { &m_VertexShaderMinimal, &m_PixelShaderSun, &m_InputLayoutMinimal, &m_TopologyTriList });
 	return true;
 }
 
@@ -172,6 +175,17 @@ void ResourceManager::BindToPipeline(IEvent& event)
 	case BindID::ID_Orbit:
 	{
 		for (auto bindables : m_BindablesOrbit)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		break;
+	}
+	case BindID::ID_SUN:
+	{
+		for (auto bindables : m_BindablesSun)
 		{
 			if (!bindables->IsBound())
 			{

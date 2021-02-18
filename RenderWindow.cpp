@@ -124,6 +124,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             yPos = 2.0f*yPos / (float)m_clientWinHeight - 1.0f;
             MouseMoveAbsoluteEvent mae(xPos, yPos);
             EventBuss::Get().Delegate(mae);
+            break;
         }
         case WM_MOUSEWHEEL:
         {

@@ -608,7 +608,7 @@ std::vector<DirectX::XMFLOAT3> ModelFactory::calcNormals(std::vector<float> vert
 		DirectX::XMFLOAT3 dir1 = { v1.x - v0.x, v1.y - v0.y, v1.z - v0.z };
 
 		//The face normal
-		DirectX::XMFLOAT3 faceNormal = cross(dir0, dir1);
+		DirectX::XMFLOAT3 faceNormal = cross(dir1, dir0);
 
 		vertexNormals[indices[i]].x += faceNormal.x;
 		vertexNormals[indices[i]].y += faceNormal.y;
@@ -678,7 +678,7 @@ Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
 
 	model->setVertexBufferSize(static_cast<UINT>(vertices.size()));
 	model->setIndexBufferSize(static_cast<UINT>(indices.size()));
-
+	model->SetBoundingVolume(new DirectX::BoundingSphere(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), r + (r / 5.0f)));
 	createBuffers(sizeof(vertex_col), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
 	return model;
 }

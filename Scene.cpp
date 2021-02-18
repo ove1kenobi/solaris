@@ -130,7 +130,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 			static_cast<int>(distributionRotDir(generator)),
 			sun
 		));
-
 	}
 	for (int i = 0; i < this->m_numPlanets; i++) {
 		threads[i].join();
@@ -163,20 +162,5 @@ void Scene::Update() noexcept {
 	for (auto r : this->m_gameObjects) {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
-
-	//Currently: Display the picked (left mouse press) object:
 	m_Picking.DisplayPickedObject();
-//#if defined(DEBUG) | defined(_DEBUG)
-//	Time t;
-//	ImGui::Begin("Game Objects");
-//	ImGui::Text("Seconds: %f", t.DeltaTime());
-//	for (unsigned int i{ 0u }; i < m_gameObjects.size(); i++)
-//	{
-//		ImGui::Text("Game Object #%d", i + 1);
-//		ImGui::Text("Game Object #%f", m_gameObjects[i]->GetMass());
-//		ImGui::Text("Center: (%.0f, %.0f, %.0f)", m_gameObjects[i]->GetCenter().x, m_gameObjects[i]->GetCenter().y, m_gameObjects[i]->GetCenter().z);
-//	}
-//	ImGui::End();
-//#endif
-	//Cull Objects HERE at the end or as response to AskForObjectsEvent? (Emil F)
 }

@@ -8,6 +8,7 @@
     <FxCompile Include="ComputeShader_Planet.hlsl" />
     <FxCompile Include="VertexShader_Orbit.hlsl" />
     <FxCompile Include="PixelShader_Orbit.hlsl" />
+    <FxCompile Include="PixelShader_Sun.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bloom.cpp" />
