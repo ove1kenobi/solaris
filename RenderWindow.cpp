@@ -142,7 +142,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
             return DefWindowProc(hwnd, uMsg, wParam, lParam);
         }
-        /*
         case WM_MOUSEMOVE:
         {
             int xPos = GET_X_LPARAM(lParam);
@@ -150,7 +149,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             MouseMoveAbsoluteEvent mae(xPos, yPos);
             EventBuss::Get().Delegate(mae);
         }
-        */
         case WM_MOUSEWHEEL:
         {
             int wheelScroll = GET_WHEEL_DELTA_WPARAM(wParam);

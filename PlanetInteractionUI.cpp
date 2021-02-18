@@ -3,6 +3,9 @@
 
 PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);
+	EventBuss::Get().AddListener(this, EventType::MouseButtenEvent);
+	EventBuss::Get().AddListener(this, EventType::MouseMoveAbsoluteEvent);
+	EventBuss::Get().AddListener(this, EventType::MouseMoveRelativeEvent);
 	m_pRenderHelpGrids = false;
 	m_pRenderRandomEvents = false;
 	m_pMainRectangle = D2D1::RectF();
@@ -420,8 +423,20 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 				}
 			}
 		}
+		break;
 	}
-	break;
+	case EventType::MouseMoveAbsoluteEvent:
+	{
+		int mouseX = static_cast<MouseMoveAbsoluteEvent*>(&event)->GetXCoord();
+		this->SetPlanetName(std::to_wstring(mouseX));
+		break;
+	}
+	case EventType::MouseMoveRelativeEvent:
+	{
+		int mouseX2 = static_cast<MouseMoveRelativeEvent*>(&event)->GetXDiff();
+		this->SetPlanetFlavourText(std::to_wstring(mouseX2));
+		break;
+	}
 	default:
 		break;
 	}
