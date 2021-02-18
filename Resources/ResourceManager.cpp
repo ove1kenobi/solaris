@@ -2,9 +2,10 @@
 #include "ResourceManager.h"
 
 ResourceManager::ResourceManager() noexcept
-	: m_pDevice{ nullptr }, m_pDeviceContext{ nullptr }
+	: m_pDevice{ nullptr }, m_pDeviceContext{ nullptr }, m_ClientWindowWidth{ 0u }, m_ClientWindowHeight{ 0u }
 {
 	EventBuss::Get().AddListener(this, EventType::UnbindPipelineEvent, EventType::BindIDEvent, EventType::DelegateDXEvent);
+	EventBuss::Get().AddListener(this, EventType::DelegateResolutionEvent);
 }
 
 const bool ResourceManager::Initialize() noexcept
@@ -23,10 +24,16 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	if (!m_VertexShaderSkybox.Create(m_pDevice, L"VertexShader_Skybox.hlsl"))
 		return false;
+	if (!m_VertexShaderOrbit.Create(m_pDevice, L"VertexShader_Orbit.hlsl"))
+		return false;
 	//Pixel Shaders:
 	if (!m_PixelShaderMinimal.Create(m_pDevice, L"PixelShader_Minimalistic.hlsl"))
 		return false;
 	if (!m_PixelShaderSkybox.Create(m_pDevice, L"PixelShader_Skybox.hlsl"))
+		return false;
+	if (!m_PixelShaderOrbit.Create(m_pDevice, L"PixelShader_Orbit.hlsl"))
+		return false;
+	if (!m_PixelShaderSun.Create(m_pDevice, L"PixelShader_Sun.hlsl"))
 		return false;
 	//Geometry Shaders:
 
@@ -40,12 +47,14 @@ const bool ResourceManager::CreateAllBindables()
 	//InputLayouts:
 	if (!m_InputLayoutMinimal.Create(m_pDevice, m_VertexShaderMinimal, LAYOUT_MINIMAL))
 		return false;
-	if (!m_InputLayoutSkybox.Create(m_pDevice, m_VertexShaderSkybox, LAYOUT_SKYBOX))
+	if (!m_InputLayoutSinglePoint.Create(m_pDevice, m_VertexShaderSkybox, LAYOUT_SINGLEPOINT))
 		return false;
 	//Primitive topologies:
 	if (!m_TopologyTriList.Create(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST))
 		return false;
 	if (!m_TopologyPatchList.Create(D3D11_PRIMITIVE_TOPOLOGY_11_CONTROL_POINT_PATCHLIST))
+		return false;
+	if (!m_TopologyLineStrip.Create(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP))
 		return false;
 	//Samplers:
 	if (!m_SamplerSkybox.Create(m_pDevice, BindFlag::S_PS, TechFlag::SKYBOX, 0u))
@@ -64,17 +73,19 @@ const bool ResourceManager::CreateAllBindables()
 	//Minimal:
 	m_BindablesMinimalistic.insert(m_BindablesMinimalistic.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList });
 	//Skybox:
-	m_BindablesSkybox.insert(m_BindablesSkybox.end(), { &m_VertexShaderSkybox, &m_PixelShaderSkybox, &m_InputLayoutSkybox, 
+	m_BindablesSkybox.insert(m_BindablesSkybox.end(), { &m_VertexShaderSkybox, &m_PixelShaderSkybox, &m_InputLayoutSinglePoint, 
 														&m_TopologyTriList, &m_CubeTextureSkybox, &m_SamplerSkybox,
 														&m_VertexBufferCube, &m_IndexBufferCube});
+	m_BindablesOrbit.insert(m_BindablesOrbit.end(), { &m_VertexShaderOrbit, &m_PixelShaderOrbit, &m_InputLayoutSinglePoint, &m_TopologyLineStrip });
+	m_BindablesSun.insert(m_BindablesSun.end(), { &m_VertexShaderMinimal, &m_PixelShaderSun, &m_InputLayoutMinimal, &m_TopologyTriList });
 	return true;
 }
 
 void ResourceManager::UnbindPipeline()
 {
-	ID3D11ShaderResourceView* nullSRV[3] = { nullptr };
-	ID3D11SamplerState* nullSampler[3] = { nullptr };
-	ID3D11Buffer* nullBuffer[3] = { nullptr };
+	ID3D11ShaderResourceView*	nullSRV[3] = { nullptr };
+	ID3D11SamplerState*			nullSampler[3] = { nullptr };
+	ID3D11Buffer*				nullBuffer[3] = { nullptr };
 
 	m_pDeviceContext->VSSetShader(nullptr, nullptr, 0u);
 	m_pDeviceContext->VSSetShaderResources(0u, 3u, nullSRV);
@@ -161,6 +172,28 @@ void ResourceManager::BindToPipeline(IEvent& event)
 		}
 		break;
 	}
+	case BindID::ID_Orbit:
+	{
+		for (auto bindables : m_BindablesOrbit)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		break;
+	}
+	case BindID::ID_SUN:
+	{
+		for (auto bindables : m_BindablesSun)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		break;
+	}
 	}
 }
 
@@ -172,6 +205,13 @@ void ResourceManager::UpdateDXHandlers(IEvent& event) noexcept
 #if defined(DEBUG) | defined(_DEBUG)
 	assert(m_pDevice && m_pDeviceContext);
 #endif
+}
+
+void ResourceManager::UpdateResolution(IEvent& event) noexcept
+{
+	DelegateResolutionEvent& derivedEvent = static_cast<DelegateResolutionEvent&>(event);
+	m_ClientWindowWidth = derivedEvent.GetClientWindowWidth();
+	m_ClientWindowHeight = derivedEvent.GetClientWindowHeight();
 }
 
 void ResourceManager::OnEvent(IEvent& event) noexcept
@@ -189,7 +229,11 @@ void ResourceManager::OnEvent(IEvent& event) noexcept
 	case EventType::DelegateDXEvent :
 		UpdateDXHandlers(event);
 		break;
+	case EventType::DelegateResolutionEvent:
+		UpdateResolution(event);
+		break;
 	}
+
 }
 
 void ResourceManager::CreateCubeData() noexcept
