@@ -51,42 +51,8 @@ bool PlanetInteractionUI::CreateMainScreen() {
 		static_cast<float>(m_pWindowHeight) - 200.0f
 	);
 
-	ID2D1GradientStopCollection* pGradientStops = NULL;
-
-	D2D1_GRADIENT_STOP gradientStops[3];
-	gradientStops[0].color = D2D1::ColorF(D2D1::ColorF::DarkSlateBlue, 0.25f);
-	gradientStops[0].position = 0.0f;
-	gradientStops[1].color = D2D1::ColorF(D2D1::ColorF::Aqua, 0.25f);
-	gradientStops[1].position = 0.5f;
-	gradientStops[2].color = D2D1::ColorF(D2D1::ColorF::DarkSlateBlue, 0.25f);
-	gradientStops[2].position = 1.0f;
-
-	// Create the ID2D1GradientStopCollection from a previously
-// declared array of D2D1_GRADIENT_STOP structs.
-	HRESULT hr = m_pRenderTarget2D->CreateGradientStopCollection(
-		gradientStops,
-		3,
-		D2D1_GAMMA_2_2,
-		D2D1_EXTEND_MODE_CLAMP,
-		&pGradientStops
-	);
-
-	// The line that determines the direction of the gradient starts at
-	// the upper-left corner of the square and ends at the lower-right corner.
-
-	if (SUCCEEDED(hr))
-	{
-		hr = m_pRenderTarget2D->CreateLinearGradientBrush(
-			D2D1::LinearGradientBrushProperties(
-				D2D1::Point2F(m_pMainRectangle.left, static_cast<float>(m_pWindowHeight)),
-				D2D1::Point2F(m_pMainRectangle.right, static_cast<float>(m_pWindowHeight))),
-			pGradientStops,
-			&m_pLinearGradientBrush
-		);
-	}
-
 	//Create bottom left corner
-	hr = m_pFactory2D->CreatePathGeometry(&m_pBottomLeft);
+	HRESULT hr = m_pFactory2D->CreatePathGeometry(&m_pBottomLeft);
 	if (FAILED(hr)) {
 		printf("Error!\n");
 		return false;
@@ -303,12 +269,48 @@ bool PlanetInteractionUI::CreateTextElements() {
 	return true;
 }
 
-bool PlanetInteractionUI::CreateDetails()
-{
+bool PlanetInteractionUI::CreateTools() {
+	ID2D1GradientStopCollection* pGradientStops = NULL;
+
+	D2D1_GRADIENT_STOP gradientStops[3];
+	gradientStops[0].color = D2D1::ColorF(D2D1::ColorF::DarkSlateBlue, 0.25f);
+	gradientStops[0].position = 0.0f;
+	gradientStops[1].color = D2D1::ColorF(D2D1::ColorF::Aqua, 0.25f);
+	gradientStops[1].position = 0.5f;
+	gradientStops[2].color = D2D1::ColorF(D2D1::ColorF::DarkSlateBlue, 0.25f);
+	gradientStops[2].position = 1.0f;
+
+	HRESULT hr = m_pRenderTarget2D->CreateGradientStopCollection(
+		gradientStops,
+		3,
+		D2D1_GAMMA_1_0,
+		D2D1_EXTEND_MODE_CLAMP,
+		&pGradientStops
+	);
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+	hr = m_pRenderTarget2D->CreateLinearGradientBrush(
+		D2D1::LinearGradientBrushProperties(
+			D2D1::Point2F(m_pMainRectangle.left, static_cast<float>(m_pWindowHeight)),
+			D2D1::Point2F(m_pMainRectangle.right, static_cast<float>(m_pWindowHeight))),
+		pGradientStops,
+		&m_pLinearGradientBrush
+	);
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+	pGradientStops->Release();
+
 	return true;
 }
 
 bool PlanetInteractionUI::UpdateModules() {
+	//Recreate the shapes based on new screen size
 	if (!this->CreateMainScreen()) {
 		return false;
 	}
@@ -317,9 +319,10 @@ bool PlanetInteractionUI::UpdateModules() {
 		return false;
 	}
 
-	if (!this->CreateDetails()) {
-		return false;
-	}
+	//Update tools
+	m_pLinearGradientBrush->SetStartPoint(D2D1::Point2F(m_pMainRectangle.left, static_cast<float>(m_pWindowHeight)));
+	m_pLinearGradientBrush->SetEndPoint(D2D1::Point2F(m_pMainRectangle.right, static_cast<float>(m_pWindowHeight)));
+
 	return true;
 }
 
@@ -362,13 +365,13 @@ void PlanetInteractionUI::RenderHelpLines() {
 	m_pRenderTarget2D->DrawRectangle(m_pEventThreeTextBox, m_pBrush.Get());
 }
 
-void PlanetInteractionUI::RenderUI() {
-	//Main screen
+void PlanetInteractionUI::RenderScreen() {
+	//Main square
 	this->UpdateBrush(D2D1::ColorF::Aqua, 0.05f);
 	m_pRenderTarget2D->FillRectangle(m_pMainRectangle, m_pBrush.Get());
 
+	//Grid for the square
 	unsigned int gridSize = 25;
-
 	this->UpdateBrush(D2D1::ColorF::Aqua, 0.25f);
 	for (unsigned int x = m_pMainRectangle.left; x < m_pMainRectangle.right; x += gridSize)
 	{
@@ -390,19 +393,29 @@ void PlanetInteractionUI::RenderUI() {
 		);
 	}
 
+	//Use gradient brush to add effect
 	m_pRenderTarget2D->FillRectangle(&m_pMainRectangle, m_pLinearGradientBrush.Get());
 
-	UpdateBrush(D2D1::ColorF::White, 1.0f);
+	//Add outline to main square
+	UpdateBrush(D2D1::ColorF::White, 0.5f);
 	m_pRenderTarget2D->DrawRectangle(m_pMainRectangle, m_pBrush.Get());
+}
 
-	//Corners of main screen
-	this->UpdateBrush(D2D1::ColorF::Teal, 1.0f);
+void PlanetInteractionUI::RenderCorners() {
+	this->UpdateBrush(D2D1::ColorF::Teal, 0.75f);
+
+	//Left corner
 	m_pRenderTarget2D->FillGeometry(m_pBottomLeft.Get(), m_pBrush.Get());
+
+	//Right corner
 	m_pRenderTarget2D->FillGeometry(m_pBottomRight.Get(), m_pBrush.Get());
+
+	//Top corners
 	m_pRenderTarget2D->FillGeometry(m_pTop.Get(), m_pBrush.Get());
+}
 
-
-	//Planet text UI
+void PlanetInteractionUI::RenderPlanetText() {
+	//Planet name
 	UpdateBrush(D2D1::ColorF::White, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pPlanetNameText.c_str(),
@@ -412,6 +425,7 @@ void PlanetInteractionUI::RenderUI() {
 		m_pBrush.Get()
 	);
 
+	//Planet flavour text
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pPlanetFlavourText.c_str(),
 		(UINT32)m_pPlanetFlavourText.length(),
@@ -419,6 +433,12 @@ void PlanetInteractionUI::RenderUI() {
 		m_pPlanetFlavourTextBox,
 		m_pBrush.Get()
 	);
+}
+
+void PlanetInteractionUI::RenderUI() {
+	this->RenderScreen();
+	this->RenderCorners();
+	this->RenderPlanetText();
 
 	//Random event text UI
 	if (m_pRenderRandomEvents) {
@@ -462,7 +482,7 @@ bool PlanetInteractionUI::Initialize() {
 		return false;
 	}
 
-	if (!this->CreateDetails()) {
+	if (!this->CreateTools()) {
 		return false;
 	}
 	return true;

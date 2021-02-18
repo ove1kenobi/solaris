@@ -5,6 +5,7 @@ class PlanetInteractionUI : public ModuleUI {
 private:
 	bool m_pRenderHelpGrids;
 	bool m_pRenderRandomEvents;
+
 	//Main screen
 	D2D1_RECT_F m_pMainRectangle;
 	Microsoft::WRL::ComPtr< ID2D1LinearGradientBrush> m_pLinearGradientBrush;
@@ -31,15 +32,17 @@ private:
 	D2D1_RECT_F m_pEventThreeTextBox;
 	std::wstring m_pEventThreeText;
 
-	//Style details
-
 	//Creation functions
 	bool CreateMainScreen();
 	bool CreateTextElements();
-	bool CreateDetails();
+	bool CreateTools();
+
 	bool UpdateModules();
 
 	//Render functions
+	void RenderScreen();
+	void RenderCorners();
+	void RenderPlanetText();
 	void RenderRandomEvents();
 	void RenderHelpLines();
 public:
