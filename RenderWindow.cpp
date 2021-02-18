@@ -52,15 +52,15 @@ RenderWindow::RenderWindow()
     //ShowCursor(showCursor);
 
     // Register mouse as raw input device
-    RAWINPUTDEVICE rid;
-    rid.usUsagePage = 0x01;
-    rid.usUsage = 0x02;
-    rid.dwFlags = 0;
-    rid.hwndTarget = NULL;
+    //RAWINPUTDEVICE rid;
+    //rid.usUsagePage = 0x01;
+    //rid.usUsage = 0x02;
+    //rid.dwFlags = 0;
+    //rid.hwndTarget = NULL;
 
-    if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE) {
+    //if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE) {
         // handle error
-    }
+    //}
 }
 
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -104,6 +104,7 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 }
             }
             return DefWindowProc(hwnd, uMsg, wParam, lParam);
+            break;
         }*/
         case WM_MOUSEMOVE:
         {

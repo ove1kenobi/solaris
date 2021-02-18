@@ -10,7 +10,7 @@ SpaceShip::SpaceShip()
 		0.0f, 0.0f, 0.03f, 0.0f,
 		0.0f, 0.0f, 100.0f, 1.0f
 	};
-	this->m_center = { -10000.0f, 20000.0f, -10000.0f };
+	this->m_center = { 0.0f, 1000.0f, -10000.0f };
 	this->m_mass = 10000.0f;
 	m_yaw = (float)M_PI;
 	m_pitchTilt = 0.0f;
@@ -19,15 +19,13 @@ SpaceShip::SpaceShip()
 
 bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
-	this->UpdatePhysics();
-
-//#if defined(DEBUG) | defined(_DEBUG)
-//	ImGui::Begin("Spaceship");
-//	ImGui::Text("Center  : (%f, %f, %f)", m_center.x, m_center.y, m_center.z);
-//	ImGui::Text("Velocity: (%f, %f, %f)", m_velocity.x, m_velocity.y, m_velocity.z);
-//	ImGui::DragFloat("Mass", &m_mass, 500.0f);
-//	ImGui::End();
-//#endif
+#if defined(DEBUG) | defined(_DEBUG)
+	ImGui::Begin("Spaceship");
+	ImGui::Text("Center  : (%f, %f, %f)", m_center.x, m_center.y, m_center.z);
+	ImGui::Text("Velocity: (%f, %f, %f)", m_velocity.x, m_velocity.y, m_velocity.z);
+	ImGui::DragFloat("Mass", &m_mass, 500.0f);
+	ImGui::End();
+#endif
 
 	//Updated the same way as a cosmicbody, with S * R * T. Rotation is around the ships up vector.
 	DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&this->m_upVector);

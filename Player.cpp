@@ -46,9 +46,6 @@ bool Player::Initialize(PlayerCamera* camera)
 
 bool Player::update()
 {
-	DirectX::XMFLOAT3 a = m_ship->getCenter();
-	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
-	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
 
 	// Handle player input
 	if (m_playerControlsActive) {
@@ -61,6 +58,12 @@ bool Player::update()
 			m_ship->Move(-1 * m_speed * (float)m_time.DeltaTime());
 		}
 	}
+
+	m_ship->UpdatePhysics();
+
+	DirectX::XMFLOAT3 a = m_ship->getCenter();
+	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
+	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
 
 	return false;
 }
