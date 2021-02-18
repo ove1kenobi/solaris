@@ -10,7 +10,7 @@ SpaceShip::SpaceShip()
 		0.0f, 0.0f, 0.03f, 0.0f,
 		0.0f, 0.0f, 100.0f, 1.0f
 	};
-	this->m_center = { 0.0f, 2000.0f, 0.0f };
+	this->m_center = { -10000.0f, 20000.0f, -10000.0f };
 	this->m_mass = 10000.0f;
 	m_yaw = (float)M_PI;
 	m_pitchTilt = 0.0f;
@@ -44,23 +44,18 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, final);
 
 	//Update the matrixBuffer.
-
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-	ModelFactory::MatrixBuffer* data;
-
 	DirectX::XMMATRIX WMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&this->m_wMatrix));
 	VMatrix = DirectX::XMMatrixTranspose(VMatrix);
 	PMatrix = DirectX::XMMatrixTranspose(PMatrix);
 
-	deviceContext->Map(
-		this->m_model->getMatrixBuffer().Get(),
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&mappedSubresource
-	);
+	deviceContext->Map(this->m_model->getMatrixBuffer().Get(),
+			           0,
+		               D3D11_MAP_WRITE_DISCARD,
+		               0,
+		               &mappedSubresource);
 
-	data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
+	ModelFactory::MatrixBuffer* data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
 
 	data->WMatrix = WMatrix;
 	data->VMatrix = VMatrix;
@@ -117,6 +112,11 @@ void SpaceShip::SetForwardVector(DirectX::XMFLOAT3 cameraPos)
 	m_forwardVector.z /= length;
 }
 
+const bool SpaceShip::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
+{
+	return false;
+}
+
 DirectX::XMFLOAT3 SpaceShip::getCenter() {
 	return this->m_center;
 }
@@ -139,10 +139,7 @@ void SpaceShip::CalculateGravity(GameObject* other)
 	// Calculates the force of gravity between GameObjects a and b
 
 	// ab = vector from a to b
-	DirectX::XMFLOAT3 ab = other->GetCenter();
-	ab.x -= this->m_center.x;
-	ab.y -= this->m_center.y;
-	ab.z -= this->m_center.z;
+	DirectX::XMFLOAT3 ab = other->GetCenter() - m_center;
 
 	// r = |ab| -> (distance between a and b)
 	double r = sqrtf(ab.x * ab.x + ab.y * ab.y + ab.z * ab.z);
@@ -161,12 +158,6 @@ void SpaceShip::CalculateGravity(GameObject* other)
 	ab.y *= f;
 	ab.z *= f;
 	m_forces.push_back(ab);
-
-	// The equal and opposite force on GameObject b
-	//ab.x *= -1.0f;
-	//ab.y *= -1.0f;
-	//ab.z *= -1.0f;
-	//other->AddForce(ab);
 }
 
 void SpaceShip::AddForce(DirectX::XMFLOAT3 f)
@@ -181,16 +172,12 @@ void SpaceShip::UpdatePhysics()
 	DirectX::XMFLOAT3 sumForces = {};
 	for (size_t i = 0; i < m_forces.size(); ++i)
 	{
-		sumForces.x += m_forces[i].x;
-		sumForces.y += m_forces[i].y;
-		sumForces.z += m_forces[i].z;
+		sumForces = sumForces + m_forces[i];
 	}
 
 	m_forces.clear();
 
-	m_velocity.x += sumForces.x;
-	m_velocity.y += sumForces.y;
-	m_velocity.z += sumForces.z;
+	m_velocity = m_velocity + sumForces;
 
 	m_center.x += static_cast<float>(m_velocity.x * m_timer.DeltaTime());
 	m_center.y += static_cast<float>(m_velocity.y * m_timer.DeltaTime());
