@@ -5,7 +5,6 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);
 	EventBuss::Get().AddListener(this, EventType::MouseButtenEvent);
 	EventBuss::Get().AddListener(this, EventType::MouseMoveAbsoluteEvent);
-	EventBuss::Get().AddListener(this, EventType::MouseMoveRelativeEvent);
 	m_pRenderHelpGrids = false;
 	m_pRenderRandomEvents = false;
 	m_pMainRectangle = D2D1::RectF();
@@ -425,16 +424,36 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		}
 		break;
 	}
+	//For hovering over UI elements
 	case EventType::MouseMoveAbsoluteEvent:
 	{
+		//Example of how it would work
+		/*
 		int mouseX = static_cast<MouseMoveAbsoluteEvent*>(&event)->GetXCoord();
 		this->SetPlanetName(std::to_wstring(mouseX));
+		if (mouseX > m_pEventOneTextBox.left && mouseX < m_pEventOneTextBox.right) {
+			m_pRenderRandomEvents = true;
+		}
+		else {
+			m_pRenderRandomEvents = false;
+		}*/
 		break;
 	}
-	case EventType::MouseMoveRelativeEvent:
+	//For clicking on UI elements
+	case EventType::MouseButtenEvent:
 	{
-		int mouseX2 = static_cast<MouseMoveRelativeEvent*>(&event)->GetXDiff();
-		this->SetPlanetFlavourText(std::to_wstring(mouseX2));
+		int mouseX = static_cast<MouseButtenEvent*>(&event)->GetXCoord();
+		KeyState state = static_cast<MouseButtenEvent*>(&event)->GetKeyState();
+		int virKey = static_cast<MouseButtenEvent*>(&event)->GetVirtualKeyCode();
+		if (virKey == VK_LBUTTON && state == KeyState::KeyPress) {
+			this->SetPlanetName(std::to_wstring(mouseX));
+			if (mouseX > m_pEventOneTextBox.left && mouseX < m_pEventOneTextBox.right) {
+				m_pRenderRandomEvents = true;
+			}
+			else {
+				m_pRenderRandomEvents = false;
+			}
+		}
 		break;
 	}
 	default:

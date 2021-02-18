@@ -80,8 +80,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             CloseWindow(hwnd);
             break;
         }
-        /*
-       
         case WM_LBUTTONDOWN:
         {
             // left mouse butten down
@@ -118,7 +116,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             EventBuss::Get().Delegate(be);
             return 0;
         }
-        */
         case WM_INPUT:
         {
             UINT dataSize = 0;
