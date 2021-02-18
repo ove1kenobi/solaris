@@ -123,8 +123,9 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 	DirectX::XMFLOAT3 cameraPos3 = m_pCamera->getPos();
 	DirectX::XMFLOAT4 cameraPos = { cameraPos3.x, cameraPos3.y, cameraPos3.z, 1.0f };
 	dataCamera->cameraPos = DirectX::XMLoadFloat4(&cameraPos);
-	dataCamera->inverseVMatrix = DirectX::XMMatrixInverse(nullptr, DirectX::XMMatrixTranspose(m_pCamera->getVMatrix()));
-	dataCamera->inversePMatrix = DirectX::XMMatrixInverse(nullptr, DirectX::XMMatrixTranspose(m_pCamera->getPMatrix()));
+	dataCamera->inverseVMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, m_pCamera->getVMatrix()));
+	dataCamera->inversePMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, m_pCamera->getPMatrix()));
+	dataCamera->PMatrix = m_pCamera->getPMatrix();
 
 	pDeviceContext->Unmap(m_pCameraCBuffer.Get(), 0);
 

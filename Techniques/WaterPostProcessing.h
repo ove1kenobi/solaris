@@ -17,6 +17,7 @@ struct CameraData
 	DirectX::XMVECTOR cameraPos;
 	DirectX::XMMATRIX inverseVMatrix;
 	DirectX::XMMATRIX inversePMatrix;
+	DirectX::XMMATRIX PMatrix;
 };
 
 class WaterPostProcessing : public IEventListener, public EventPublisher

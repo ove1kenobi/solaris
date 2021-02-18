@@ -2,17 +2,18 @@
 Texture2DMS<float4> colorTexture	: register(t0);
 Texture2DMS<float> depthTexture	: register(t1);
 
-cbuffer PlanetData
+cbuffer PlanetData : register(b0)
 {
 	float4 center[50]; //Radius is in w.
 };
 
-cbuffer CameraData
+cbuffer CameraData : register(b1)
 {
 	float4 cameraDir;
 	float4 cameraPos;
 	matrix inverseVMatrix;
 	matrix inversePMatrix;
+	float4x4 PMatrix;
 };
 
 struct PS_IN
@@ -33,41 +34,35 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 
 
 	float depth = 0.0f;
-	for (int i = 0; i < 4; i++) {
-		depth += depthTexture.Load(psIn.outPositionPS.xy, i);
+	for (int j = 0; j < 4; j++) {
+		depth += depthTexture.Load(psIn.outPositionPS.xy, j);
 	}
 
 	depth /= 4;
-	depth = (1.0f / (((1 - 100000 / 0.1f)) * depth + (100000 / 0.1f)));
-	depth = (1.0f / (((1 - 100000 / 0.1f) / 100000) * depth + ((100000 / 0.1f) / 100000))) * length(float3(cameraDir.xyz));
-	//(1-far/near) / far
-	//(far/near) / far
-	//Calculate the normalized view direction
-	float3 rayDir = normalize(float3(cameraDir.xyz));
-
-	//Calculate the current pixels worldposition.
-	psIn.outPositionWS.x *= (1920.f / 2.f);
-	psIn.outPositionWS.y *= (1080.f / 2.f);
-	psIn.outPositionWS.z = 0.1f;
-	float4 pixelPos = mul(psIn.outPositionWS, inversePMatrix);
-	pixelPos = mul(pixelPos, inverseVMatrix);
-	pixelPos /= pixelPos.w;
 	
-	return pixelPos;
-	//rayDir = normalize(pixelPos.xyz - cameraPos.xyz);
+	float4 pixelViewSpace;
+	pixelViewSpace.x = (((2.0f * psIn.outPositionPS.x) / 1920.0f) - 1.0f) / PMatrix[0][0];
+	pixelViewSpace.y = (((-2.0f * psIn.outPositionPS.y) / 1080.0f) + 1.0f) / PMatrix[1][1];
+	pixelViewSpace.z = 1.0f;
+	pixelViewSpace.w = 0.0f;
 
-	//pixelPos.z = depth - cameraPos.z;
+	float4 DirectionWorldSpace = mul(pixelViewSpace, inverseVMatrix);
 
-	float2 closestPlanet = float2(3.402823466e+38F, 0);
+	//depth = (1.0f / (((1 - 100000 / 0.1f)) * depth + (100000 / 0.1f)));
+	depth = (1.0f / (((1.0f - 100000.0f / 0.1f) / 100000.0f) * depth + ((100000.0f / 0.1f) / 100000.0f))) * length(float3(DirectionWorldSpace.xyz));
+	
+	//return float4(depth / 1000, depth / 1000, depth / 1000, 1.0f);
+	float4 originVector = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	float4 originWorldSpaceVector = mul(originVector, inverseVMatrix);
+	
+	float2 closestPlanet = float2(3.402823466e+38F, 0.0f);
 	float2 tempPlanet;
-	for (int i = 0; i < 50; i++) {
+	for (int k = 0; k < 50; k++) {
 		//Breaks the loop when there are no more planets in the array.
-		if (center[i].w == 0.0f) {
+		if (center[k].w == 0.0f) {
 			break;
 		}
-		//								ARG3 NEEDS TO BE THE ORIGIN! I.E THE PIXEL IN THE SRV's POSITION BUT IN WORLDSPACE
-		//								ARG4 NEEDS TO BE THE DIRECTION FROM ORIGIN TO THE WORLDPOS IT IS LOOKING AT! (get by transforming pixel in SRV to world space but also take depth into account?)
-		tempPlanet = raySphereIntersect(center[i].xyz, center[i].w + 500, float3(pixelPos.xyz), normalize(float3(cameraDir.xyz)));
+		tempPlanet = raySphereIntersect(center[k].xyz, center[k].w + 5, cameraPos, normalize(float3(DirectionWorldSpace.xyz)));
 		//If we hit the planet and the planet is closer than the closest planet so far.
 		if (tempPlanet.x != -1 && tempPlanet.x < closestPlanet.x) {
 			closestPlanet = tempPlanet;
@@ -75,13 +70,17 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 		//After this for-loop we have the distance to the closest planet.
 	}
 	
+
 	float oceanViewDepth = min(closestPlanet.y, depth - closestPlanet.x);
-	if (oceanViewDepth > 0) {
-		float opticalDepth = 1 - exp(-oceanViewDepth * 10);
-		float alpha = 1 - exp(-oceanViewDepth * 2);
-		float4 oceanCol = lerp(float4(0.f, 0.f, 0.f, 1.f), float4(0.f, 0.f, 1.f, 1.f), opticalDepth);
+	
+	if (oceanViewDepth > 0.0f) {
+
+		float opticalDepth = 1 - exp(-oceanViewDepth * 0.05f);
+		float alpha = 1 - exp(-oceanViewDepth * 0.05);
+		float4 oceanCol = lerp(float4(1.0f, 1.0f, 1.0f, 1.0f), float4(0.f, 0.f, 0.2f, 1.0f), opticalDepth);
 		return lerp(texCol, oceanCol, alpha);
 	}
 
 	return texCol;
+	
 }

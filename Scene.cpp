@@ -69,9 +69,9 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
 	std::uniform_int_distribution<int> distributionPlanets(20, 30);
 	this->m_numPlanets = 1/*distributionPlanets(generator)*/;
-	std::uniform_int_distribution<int> distributionRadius(100, 500);
+	std::uniform_int_distribution<int> distributionRadius(500, 500);
 	//World space coordinates
-	std::uniform_int_distribution<int> distributionX(1000, 1100);
+	std::uniform_int_distribution<int> distributionX(1000, 1000);
 	std::uniform_int_distribution<int> distributionY(0, 0);
 	std::uniform_int_distribution<int> distributionZ(0, 0);
 	//Needs to be radians
