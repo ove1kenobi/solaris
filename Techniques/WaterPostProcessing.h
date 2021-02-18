@@ -5,23 +5,35 @@
 #include "..\EventSystem\UtilityEvents.h"
 #include "..\DXDebug.h"
 #include "..\PlayerCamera.h"
-struct MatrixBuffer 
+#include "..\Planet.h"
+struct PlanetData
 {
-	DirectX::XMMATRIX VMatrix;
-	DirectX::XMMATRIX PMatrix;
+	DirectX::XMVECTOR center[50];
 };
 
-class Skybox : public IEventListener, public EventPublisher
+struct CameraData
+{
+	DirectX::XMVECTOR cameraDir;
+	DirectX::XMVECTOR cameraPos;
+	DirectX::XMMATRIX inverseVMatrix;
+	DirectX::XMMATRIX inversePMatrix;
+};
+
+class WaterPostProcessing : public IEventListener, public EventPublisher
 {
 private:
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pPlanetCBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pCameraCBuffer;
+
 	PlayerCamera* m_pCamera;
+	std::vector<Planet*> m_planets;
 private:
 	void AssignCamera(IEvent& event) noexcept;
+	void AssignPlanets(IEvent& event) noexcept;
 	void OnEvent(IEvent& event) noexcept override;
 public:
-	Skybox() noexcept;
-	virtual ~Skybox() noexcept = default;
+	WaterPostProcessing() noexcept;
+	virtual ~WaterPostProcessing() noexcept = default;
 	[[nodiscard]] const bool Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice) noexcept;
 	void PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
 	void DoPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;

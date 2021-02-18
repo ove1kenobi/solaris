@@ -35,12 +35,20 @@ void ForwardRenderer::BeginFrame()
 		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
 
-	//Unbind pipeline:
-	EventBuss::Get().Delegate(ubEvent);
+	m_Skybox.PreparePass(m_pDeviceContext);
+	m_Skybox.DoPass(m_pDeviceContext);
+	m_Skybox.CleanUp();
 
 	ID3D11RenderTargetView* nullRTV[1] = { nullptr };
 	ID3D11DepthStencilView* nullDSV = { nullptr };
 	m_pDeviceContext->OMSetRenderTargets(1u, nullRTV, nullDSV);
+
+	//Skybox time:
+	//m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
+	
+	/* ALL BEING DONE IN WATERPOSTPROCESSING ATM
+	//Unbind pipeline:
+	EventBuss::Get().Delegate(ubEvent);
 
 	//2nd pass, postprocessing
 	BindIDEvent bindWaterEvent(BindID::ID_Water);
@@ -50,16 +58,18 @@ void ForwardRenderer::BeginFrame()
 	//Bind backbuffer
 	BindBackBufferEvent bindBackBuffer;
 	EventBuss::Get().Delegate(bindBackBuffer);
+	*/
+	m_WaterPP.PreparePass(m_pDeviceContext);
+	m_pDeviceContext->PSSetShaderResources(1u, 1u, m_pDepthShaderResourceView.GetAddressOf());
+	//Done in PreparePass now.
+	//m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), nullDSV);
+	//Draw the quad Done in DoPass now
+	//m_pDeviceContext->DrawIndexed(6, 0u, 0u);
+	m_WaterPP.DoPass(m_pDeviceContext);
 
-	m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), nullDSV);
-	//Draw the quad
-	m_pDeviceContext->DrawIndexed(6, 0u, 0u);
-
-	m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
-	//Skybox time:
-	m_Skybox.PreparePass(m_pDeviceContext);
-	m_Skybox.DoPass(m_pDeviceContext);
-	m_Skybox.CleanUp();
+	//Done in cleanup now.
+	//m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
+	m_WaterPP.CleanUp();
 }
 
 //Cleans up for the next frame and applies post processing effects
@@ -79,6 +89,7 @@ void ForwardRenderer::UpdateDXHandlers(IEvent& event) noexcept
 	m_pBackBuffer = derivedEvent.GetBackBuffer();
 	m_pDepthStencilView = derivedEvent.GetDepthStencilView();
 	m_pDevice = derivedEvent.GetDevice();
+	m_pDepthShaderResourceView = derivedEvent.GetShaderResourceView();
 #if defined(DEBUG) | defined(_DEBUG)
 	assert(m_pDeviceContext && m_pBackBuffer && m_pDepthStencilView && m_pDevice);
 #endif
@@ -87,6 +98,8 @@ void ForwardRenderer::UpdateDXHandlers(IEvent& event) noexcept
 const bool ForwardRenderer::Initialize() noexcept
 {
 	if (!m_Skybox.Initialize(m_pDevice))
+		return false;
+	if (!m_WaterPP.Initialize(m_pDevice))
 		return false;
 	return true;
 }

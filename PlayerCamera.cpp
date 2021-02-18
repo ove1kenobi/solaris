@@ -101,3 +101,7 @@ void PlayerCamera::OnEvent(IEvent& event) noexcept {
 		}
 	}
 }
+
+DirectX::XMVECTOR PlayerCamera::GetForward() {
+	return m_forwardVector;
+}

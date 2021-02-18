@@ -53,6 +53,7 @@
     <ClCompile Include="Resources\ComputeShader.cpp" />
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="Resources\Texture.cpp" />
+    <ClCompile Include="Techniques\WaterPostProcessing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -109,8 +110,10 @@
     <ClInclude Include="Resources\ComputeShader.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="Resources\Texture.h" />
+    <ClInclude Include="Techniques\WaterPostProcessing.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />
+    <None Include="GPUmath.hlsli" />
   </ItemGroup>
 </Project>

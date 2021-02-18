@@ -115,11 +115,11 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 	depthStencilTextureDescriptor.Height = clientWindowHeight;
 	depthStencilTextureDescriptor.MipLevels = 1u;
 	depthStencilTextureDescriptor.ArraySize = 1u;
-	depthStencilTextureDescriptor.Format = DXGI_FORMAT_D32_FLOAT;			//No stencil part used if technique won't be used (Emil F)
+	depthStencilTextureDescriptor.Format = DXGI_FORMAT_R24G8_TYPELESS;			//No stencil part used if technique won't be used (Emil F)
 	depthStencilTextureDescriptor.SampleDesc.Count = 4u;
 	depthStencilTextureDescriptor.SampleDesc.Quality = m_MSAAQuality - 1u;
 	depthStencilTextureDescriptor.Usage = D3D11_USAGE_DEFAULT;
-	depthStencilTextureDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilTextureDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 	depthStencilTextureDescriptor.CPUAccessFlags = 0u;
 	depthStencilTextureDescriptor.MiscFlags = 0u;
 
@@ -130,7 +130,7 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 								  "CreateTexture2D");
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDescriptor = {};
-	depthStencilViewDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
+	depthStencilViewDescriptor.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthStencilViewDescriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
 	depthStencilViewDescriptor.Texture2D.MipSlice = 0u;
 
@@ -138,6 +138,18 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 										 &depthStencilViewDescriptor,
 										 &m_pDepthStencilView), 
 										 "CreateDepthStencilView");
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDescriptor = {};
+	shaderResourceViewDescriptor.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	shaderResourceViewDescriptor.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DMS;
+	shaderResourceViewDescriptor.Texture2D.MostDetailedMip = 0;
+	shaderResourceViewDescriptor.Texture2D.MipLevels = 1;
+
+	HR(m_pDevice->CreateShaderResourceView(pDepthStencilTexture.Get(),
+										   &shaderResourceViewDescriptor,
+										   &m_pDepthShaderResourceView),
+										   "CreateShaderResourceView");
+
 	m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
 
 	m_DefaultViewport.TopLeftX = 0.0f;
@@ -194,7 +206,8 @@ void DXCore::OnEvent(IEvent& event) noexcept
 		break;
 	}
 	case EventType::BindBackBufferEvent:
-		m_pDeviceContext->OMSetRenderTargets(1, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
+		ID3D11DepthStencilView* nullDSV = nullptr;
+		m_pDeviceContext->OMSetRenderTargets(1, m_pBackBuffer.GetAddressOf(), nullDSV);
 		break;
 	}
 }
@@ -215,7 +228,7 @@ void DXCore::ToggleWireFrame() noexcept
 
 void DXCore::DelegateDXHandles() noexcept
 {
-	DelegateDXEvent event(m_pDevice, m_pDeviceContext, m_pBackBuffer, m_pDepthStencilView);
+	DelegateDXEvent event(m_pDevice, m_pDeviceContext, m_pBackBuffer, m_pDepthStencilView, m_pDepthShaderResourceView);
 	EventBuss::Get().Delegate(event);
 }
 

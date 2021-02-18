@@ -27,4 +27,6 @@ public:
 	void mouseScroll(int scroll);
 	//Rotates camera when ship rotates.
 	void shipRot(float step);
+
+	DirectX::XMVECTOR GetForward();
 };

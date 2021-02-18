@@ -6,7 +6,7 @@
 #include "EventSystem/RenderEvents.h"
 #include "EventSystem\UtilityEvents.h"
 #include "GameObject.h"
-
+#include "Techniques\WaterPostProcessing.h"
 class ForwardRenderer : public EventPublisher, public IEventListener 
 {
 private:
@@ -17,7 +17,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pBackBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDepthShaderResourceView;
 	Skybox m_Skybox;
+	WaterPostProcessing m_WaterPP;
 private:
 	void BeginFrame();
 	void EndFrame();

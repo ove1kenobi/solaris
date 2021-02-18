@@ -1,6 +1,7 @@
 #pragma once
 #include "IEvent.h"
 class PlayerCamera;
+class Planet;
 class DelegateDXEvent : public IEvent
 {
 private:
@@ -8,16 +9,19 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_ppDeviceContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_ppBackBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_ppDepthStencilView;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_ppDepthShaderResourceView;
 public:
 	DelegateDXEvent(Microsoft::WRL::ComPtr<ID3D11Device>& pdevice,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pdeviceContext,
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& pbackBuffer,
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& pdepthStencilView) noexcept
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& pdepthStencilView,
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& pdepthShaderResourceView) noexcept
 	{
 		m_ppDevice = pdevice;
 		m_ppDeviceContext = pdeviceContext;
 		m_ppBackBuffer = pbackBuffer;
 		m_ppDepthStencilView = pdepthStencilView;
+		m_ppDepthShaderResourceView = pdepthShaderResourceView;
 	}
 	virtual ~DelegateDXEvent() noexcept = default;
 
@@ -45,7 +49,10 @@ public:
 	{
 		return m_ppDepthStencilView;
 	}
-
+	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetShaderResourceView() const
+	{
+		return m_ppDepthShaderResourceView;
+	}
 };
 
 class RequestCameraEvent : public IEvent
@@ -87,6 +94,48 @@ public:
 	[[nodiscard]] PlayerCamera* GetCamera() const noexcept
 	{
 		return m_Camera;
+	}
+};
+
+class RequestPlanetsEvent : public IEvent
+{
+private:
+public:
+	RequestPlanetsEvent() noexcept = default;
+	virtual ~RequestPlanetsEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::RequestPlanetsEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "RequestPlanetsEvent";
+	}
+};
+
+class DelegatePlanetsEvent : public IEvent
+{
+private:
+	std::vector<Planet*>* m_Planets;
+public:
+	DelegatePlanetsEvent(std::vector<Planet*>* planets) noexcept
+	{
+		m_Planets = planets;
+	}
+	virtual ~DelegatePlanetsEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::DelegatePlanetsEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "DelegatePlanetsEvent";
+	}
+	[[nodiscard]] std::vector<Planet*>* GetPlanets() const noexcept
+	{
+		return m_Planets;
 	}
 };
 

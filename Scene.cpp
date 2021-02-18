@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "Scene.h"
 
-void initPlanet(Planet* planet, std::vector<GameObject*>& gameObjects, int id, float x, float y, float z, float r, float xRot, float zRot, int rotDir) {
+void initPlanet(Planet* planet, std::vector<GameObject*>& gameObjects, std::vector<Planet*>& planets, int id, float x, float y, float z, float r, float xRot, float zRot, int rotDir) {
 	planet->Initialize(x, y, z, r, xRot, zRot, rotDir);
 
 	gameObjects[id] = planet;
+	planets[id] = planet;
 }
 
 Scene::Scene() noexcept
@@ -26,7 +27,9 @@ void Scene::OnEvent(IEvent& event) noexcept {
 			sendObjects();
 			break;
 
-		default:
+		case EventType::RequestPlanetsEvent:
+			DelegatePlanetsEvent event(&this->m_planets);
+			EventBuss::Get().Delegate(event);
 			break;
 	}
 }
@@ -44,7 +47,7 @@ void Scene::sendObjects() {
 
 bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext) {
 	m_pDeviceContext = pDeviceContext;
-	EventBuss::Get().AddListener(this, EventType::AskForRenderObjectsEvent);
+	EventBuss::Get().AddListener(this, EventType::AskForRenderObjectsEvent, EventType::RequestPlanetsEvent);
 
 	//Orthographic camera. Over the sun. Last parameter is how high above the sun.
 	if (!this->m_orthoCamera.init(screenWidth, screenHeight, 1000)) {
@@ -68,7 +71,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	this->m_numPlanets = 1/*distributionPlanets(generator)*/;
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
 	//World space coordinates
-	std::uniform_int_distribution<int> distributionX(0, 90000);
+	std::uniform_int_distribution<int> distributionX(1000, 1100);
 	std::uniform_int_distribution<int> distributionY(0, 0);
 	std::uniform_int_distribution<int> distributionZ(0, 0);
 	//Needs to be radians
@@ -97,6 +100,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	ModelFactory::Get().PreparePlanetDisplacement();
 	std::vector<std::thread> threads;
 	this->m_gameObjects.resize(this->m_numPlanets);
+	this->m_planets.resize(this->m_numPlanets);
 	//Create all the planets using the distributions.
 	for(int i = 0; i < this->m_numPlanets; i++){
 		Planet* planet = new Planet();
@@ -104,6 +108,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 			initPlanet,
 			planet,
 			std::ref(this->m_gameObjects),
+			std::ref(this->m_planets),
 			i,
 			static_cast<float>(distributionX(generator)),
 			static_cast<float>(distributionY(generator)),

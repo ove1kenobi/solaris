@@ -155,6 +155,10 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="Techniques\WaterPostProcessing.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Resources\IBindable.cpp">
@@ -225,6 +229,7 @@
     <ClInclude Include="Sun.h" />
     <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="Techniques\Skybox.h" />
+    <ClInclude Include="Techniques\WaterPostProcessing.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="ourMath.h" />
     <ClInclude Include="CosmicBody.h" />
@@ -298,6 +303,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />
+    <None Include="GPUmath.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
