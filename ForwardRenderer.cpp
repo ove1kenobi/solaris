@@ -83,6 +83,9 @@ const bool ForwardRenderer::Initialize() noexcept
 	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent);
 	if (!InitializeCameraBuffer())
 		return false;
+	if (!m_ShadowMapping.Initialize(m_pDevice))
+		return false;
+
 	return true;
 }
 

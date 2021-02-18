@@ -51,6 +51,7 @@
     <ClCompile Include="Resources\ComputeShader.cpp" />
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="Render2D.cpp" />
+    <ClCompile Include="Techniques\ShadowMapping.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -107,6 +108,7 @@
     <ClInclude Include="Resources\ComputeShader.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="Render2D.h" />
+    <ClInclude Include="Techniques\ShadowMapping.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

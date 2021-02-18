@@ -7,7 +7,7 @@
 #include "EventSystem\UtilityEvents.h"
 #include "GameObject.h"
 #include "PointLight.h"
-
+#include "Techniques/ShadowMapping.h"
 class ForwardRenderer : public EventPublisher, public IEventListener 
 {
 private:
@@ -22,6 +22,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pLightCBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pCameraCBuffer;
 	Skybox m_Skybox;
+	ShadowMapping m_ShadowMapping;
 private:
 	void BeginFrame();
 	void EndFrame();
