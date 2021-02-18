@@ -51,8 +51,42 @@ bool PlanetInteractionUI::CreateMainScreen() {
 		static_cast<float>(m_pWindowHeight) - 200.0f
 	);
 
+	ID2D1GradientStopCollection* pGradientStops = NULL;
+
+	D2D1_GRADIENT_STOP gradientStops[3];
+	gradientStops[0].color = D2D1::ColorF(D2D1::ColorF::DarkSlateBlue, 0.25f);
+	gradientStops[0].position = 0.0f;
+	gradientStops[1].color = D2D1::ColorF(D2D1::ColorF::Aqua, 0.25f);
+	gradientStops[1].position = 0.5f;
+	gradientStops[2].color = D2D1::ColorF(D2D1::ColorF::DarkSlateBlue, 0.25f);
+	gradientStops[2].position = 1.0f;
+
+	// Create the ID2D1GradientStopCollection from a previously
+// declared array of D2D1_GRADIENT_STOP structs.
+	HRESULT hr = m_pRenderTarget2D->CreateGradientStopCollection(
+		gradientStops,
+		3,
+		D2D1_GAMMA_2_2,
+		D2D1_EXTEND_MODE_CLAMP,
+		&pGradientStops
+	);
+
+	// The line that determines the direction of the gradient starts at
+	// the upper-left corner of the square and ends at the lower-right corner.
+
+	if (SUCCEEDED(hr))
+	{
+		hr = m_pRenderTarget2D->CreateLinearGradientBrush(
+			D2D1::LinearGradientBrushProperties(
+				D2D1::Point2F(m_pMainRectangle.left, static_cast<float>(m_pWindowHeight)),
+				D2D1::Point2F(m_pMainRectangle.right, static_cast<float>(m_pWindowHeight))),
+			pGradientStops,
+			&m_pLinearGradientBrush
+		);
+	}
+
 	//Create bottom left corner
-	HRESULT hr = m_pFactory2D->CreatePathGeometry(&m_pBottomLeft);
+	hr = m_pFactory2D->CreatePathGeometry(&m_pBottomLeft);
 	if (FAILED(hr)) {
 		printf("Error!\n");
 		return false;
@@ -330,8 +364,33 @@ void PlanetInteractionUI::RenderHelpLines() {
 
 void PlanetInteractionUI::RenderUI() {
 	//Main screen
-	this->UpdateBrush(D2D1::ColorF::Aqua, 0.25f);
+	this->UpdateBrush(D2D1::ColorF::Aqua, 0.05f);
 	m_pRenderTarget2D->FillRectangle(m_pMainRectangle, m_pBrush.Get());
+
+	unsigned int gridSize = 25;
+
+	this->UpdateBrush(D2D1::ColorF::Aqua, 0.25f);
+	for (unsigned int x = m_pMainRectangle.left; x < m_pMainRectangle.right; x += gridSize)
+	{
+		m_pRenderTarget2D->DrawLine(
+			D2D1::Point2F(static_cast<FLOAT>(x), m_pMainRectangle.top),
+			D2D1::Point2F(static_cast<FLOAT>(x), m_pMainRectangle.bottom),
+			m_pBrush.Get(),
+			0.5f
+		);
+	}
+
+	for (unsigned int y = m_pMainRectangle.top; y < m_pMainRectangle.bottom; y += gridSize)
+	{
+		m_pRenderTarget2D->DrawLine(
+			D2D1::Point2F(m_pMainRectangle.left, static_cast<FLOAT>(y)),
+			D2D1::Point2F(m_pMainRectangle.right, static_cast<FLOAT>(y)),
+			m_pBrush.Get(),
+			0.5f
+		);
+	}
+
+	m_pRenderTarget2D->FillRectangle(&m_pMainRectangle, m_pLinearGradientBrush.Get());
 
 	UpdateBrush(D2D1::ColorF::White, 1.0f);
 	m_pRenderTarget2D->DrawRectangle(m_pMainRectangle, m_pBrush.Get());

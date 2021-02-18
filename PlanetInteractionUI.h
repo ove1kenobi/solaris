@@ -7,6 +7,8 @@ private:
 	bool m_pRenderRandomEvents;
 	//Main screen
 	D2D1_RECT_F m_pMainRectangle;
+	Microsoft::WRL::ComPtr< ID2D1LinearGradientBrush> m_pLinearGradientBrush;
+
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pBottomLeft;
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pBottomRight;
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pTop;
@@ -56,4 +58,12 @@ public:
 
 	void OnEvent(IEvent& event) noexcept;
 };
+
+/*TODO:
+- every module needs these functions:
+Initialize() - only get's called once to create everything
+update() - only recreates the shapes
+render() - render the correct order for each module
+
+*/
 
