@@ -202,7 +202,7 @@ void SpaceShip::UpdatePhysics()
 	}
 
 	speed = sqrtf(powf(m_velocity.x, 2) + powf(m_velocity.y, 2) + powf(m_velocity.z, 2));
-	std::cout << speed << std::endl;
+	//std::cout << speed << std::endl;
 
 	m_center.x += static_cast<float>(m_velocity.x * m_timer.DeltaTime());
 	m_center.y += static_cast<float>(m_velocity.y * m_timer.DeltaTime());

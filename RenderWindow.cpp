@@ -60,9 +60,9 @@ RenderWindow::RenderWindow()
         // handle error
     }
 
-    AllocConsole();
-    freopen("CONOUT$", "w", stdout);
-    std::cout << "Debug console is open" << std::endl;
+    //AllocConsole();
+    //freopen("CONOUT$", "w", stdout);
+    //std::cout << "Debug console is open" << std::endl;
 }
 
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
