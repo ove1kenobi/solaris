@@ -72,7 +72,7 @@ public:
 	virtual ~PlanetInteractionUI() = default;
 
 	bool Initialize();
-	void RenderUI();
+	void Render();
 
 	//For changing the events once an event system is implimented
 	void SetPlanetName(std::wstring text);

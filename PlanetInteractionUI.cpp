@@ -859,7 +859,7 @@ void PlanetInteractionUI::RenderHelpLines() {
 	m_pRenderTarget2D->DrawRectangle(m_pEventThreeHoverTextBox, m_pBrush.Get());
 }
 
-void PlanetInteractionUI::RenderUI() {
+void PlanetInteractionUI::Render() {
 	this->RenderScreen();
 	this->RenderCorners();
 	this->RenderPlanetText();

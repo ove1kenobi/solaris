@@ -22,7 +22,7 @@ void Render2D::RenderUI() {
 	if (m_RenderPlanetInteraction) {
 		m_TestUI->BeginFrame();
 
-		m_TestUI->RenderUI();
+		m_TestUI->Render();
 
 		m_TestUI->EndFrame();
 	}

@@ -4,12 +4,13 @@
 ModuleUI::ModuleUI() noexcept {
 	EventBuss::Get().AddListener(this, EventType::DelegateDXEvent);
 	EventBuss::Get().AddListener(this, EventType::DelegateResolutionEvent);
-	m_pWindowWidth = 0;
-	m_pWindowHeight = 0;
+	m_pWindowWidth = 0.0f;
+	m_pWindowHeight = 0.0f;
 }
 
 void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {
 	DelegateDXEvent& derivedEvent = static_cast<DelegateDXEvent&>(event);
+	
 	m_pFactory2D = derivedEvent.GetFactory2D();
 	m_pRenderTarget2D = derivedEvent.GetSurfaceRenderTarget();
 	m_pTextFactory = derivedEvent.GetTextFactory();
@@ -19,14 +20,24 @@ void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {
 	#endif
 }
 
-bool ModuleUI::Initialize() {
-	HRESULT hr = m_pRenderTarget2D->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Aqua, 0.5f), &m_pBrush);
-	if (FAILED(hr)) {
-		printf("Error!\n");
+bool ModuleUI::ErrorCheck(HRESULT handle, std::string type) {
+	std::string error;
+	if (FAILED(handle)) {
+		error.append("Error: ");												\
+		error.append(type);													\
+		error.append(" couldn't be created.");
+		printf(error.c_str());
 		return false;
 	}
-
 	return true;
+}
+
+bool ModuleUI::Initialize() {
+	 return ErrorCheck(m_pRenderTarget2D->CreateSolidColorBrush(
+		 D2D1::ColorF(D2D1::ColorF::Aqua, 0.5f), 
+		 &m_pBrush), 
+		 "SolidColorBrush"
+	 );
 }
 
 void ModuleUI::UpdateBrush(D2D1::ColorF color, float opacity) {
@@ -62,8 +73,5 @@ void ModuleUI::RenderHelpGrid(int gridSize) {
 }
 
 void ModuleUI::EndFrame() {
-	HRESULT hr = m_pRenderTarget2D->EndDraw();
-	if (FAILED(hr)) {
-		printf("Error!\n");
-	}
+	ErrorCheck(m_pRenderTarget2D->EndDraw(), "EndDraw");
 }

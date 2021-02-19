@@ -15,21 +15,29 @@ protected:
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBrush;
 
 	//Window information
-	unsigned int m_pWindowWidth;
-	unsigned int m_pWindowHeight;
+	float m_pWindowWidth;
+	float m_pWindowHeight;
 
+	//Updating handlers and error checking
 	void UpdateDXHandlers(IEvent& event) noexcept;
+	bool ErrorCheck(HRESULT handle, std::string type);
 public:
 	ModuleUI() noexcept;
 	virtual ~ModuleUI() = default;
 	bool Initialize();
 
-	virtual bool UpdateModules() = 0;
+	//For dynamically changing brush without having to create a new one
 	void UpdateBrush(D2D1::ColorF color, float opacity);
 
+	//If screen resolution changes
+	virtual bool UpdateModules() = 0;
+
+	//Render functions used by Render2D
 	void BeginFrame();
-	void RenderHelpGrid(int gridSize);
-	virtual void RenderUI() = 0;
+	virtual void Render() = 0;
 	void EndFrame();
+
+	//Debugging function
+	void RenderHelpGrid(int gridSize);
 };
 
