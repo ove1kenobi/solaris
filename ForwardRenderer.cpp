@@ -19,8 +19,18 @@ ForwardRenderer::ForwardRenderer() noexcept
 //Sets everything up for forward rendering, takes information from the event handler as input
 void ForwardRenderer::BeginFrame()
 {
+	//Request-event for game objects 
+	AskForRenderObjectsEvent event;
+	EventBuss::Get().Delegate(event);
+
+	//Shadow map pass(es):
+	m_ShadowMapping.PreparePasses(m_pDeviceContext);
+	m_ShadowMapping.DoPasses(m_pDeviceContext, m_pGameObjects);
+	m_ShadowMapping.CleanUp();
+
 	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 	m_pDeviceContext->ClearRenderTargetView(m_pBackBuffer.Get(), m_Background);
+	m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
 
 	//Start by unbinding pipeline:
 	UnbindPipelineEvent ubEvent;
@@ -29,10 +39,6 @@ void ForwardRenderer::BeginFrame()
 	//Bind minimalistic:
 	BindIDEvent bindEvent(BindID::ID_Minimal);
 	EventBuss::Get().Delegate(bindEvent);
-
-	//Request-event for game objects 
-	AskForRenderObjectsEvent event;
-	EventBuss::Get().Delegate(event);
 	
 	//Bind light:
 	BindLightData();

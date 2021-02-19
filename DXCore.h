@@ -3,6 +3,7 @@
 #include "EventSystem\IEventListener.h"
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem\UtilityEvents.h"
+#include "EventSystem\RenderEvents.h"
 #include "ImGui\imgui_impl_dx11.h"
 
 #pragma comment(lib, "user32")
@@ -29,6 +30,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_pDepthStencilStateDefault;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_pDepthStencilStateSkybox;
 	D3D11_VIEWPORT	m_DefaultViewport;
+	D3D11_VIEWPORT m_ShadowMapViewPort;
 	unsigned int	m_MSAAQuality;
 	bool			m_WireFrameEnabled;
 	bool			m_SkyboxEnabled;
@@ -41,6 +43,8 @@ public:
 	DXCore() noexcept;
 	virtual ~DXCore() noexcept = default;
 	const bool Initialize(const unsigned int& clientWindowWidth, const unsigned int& clientWindowHeight, const HWND& windowHandle);
+	void CreateShadowMapViewport(IEvent& event) noexcept;
+	void ResetDefaultViewport() const noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice() const noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetDeviceContext() const noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<IDXGISwapChain>& GetSwapChain() const noexcept;

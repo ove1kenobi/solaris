@@ -29,6 +29,7 @@ public:
 	//Forces all GameObjects (planets, sun, ship) to have an update function and a function to bind their buffers.
 	virtual bool update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
 	virtual void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
+	virtual void BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) = 0;
 
 	void getWMatrix(DirectX::XMMATRIX& wMatrix);
 	UINT getVertexBufferSize();

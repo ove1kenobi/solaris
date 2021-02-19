@@ -21,7 +21,12 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 							  const unsigned int& clientWindowHeight, 
 							  const HWND& windowHandle)
 {
-	EventBuss::Get().AddListener(this, EventType::ToggleWireFrameEvent, EventType::ToggleDepthStencilStateEvent);
+	std::vector<EventType> eventTypes = { EventType::ToggleWireFrameEvent, 
+										  EventType::ToggleDepthStencilStateEvent, 
+										  EventType::CreateShadowMapViewportEvent,
+										  EventType::SetShadowMapViewportEvent,
+										  EventType::ResetDefaultViewportEvent};
+	EventBuss::Get().AddListener(this, eventTypes);
 
 	UINT flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
 	#if defined(DEBUG) || defined(_DEBUG)
@@ -48,13 +53,12 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 											    4u,
 											    &m_MSAAQuality),
 											    "CheckMultiSampleQualityLevels");
-
 	assert(m_MSAAQuality > 0u);
 
 	DXGI_SWAP_CHAIN_DESC swapChainDescriptor = {};
 	swapChainDescriptor.BufferDesc.Width = clientWindowWidth;
 	swapChainDescriptor.BufferDesc.Height = clientWindowHeight;
-	swapChainDescriptor.BufferDesc.RefreshRate.Numerator = 60u;								//TODO: Get actual monitor refreshrate (Emil F)
+	swapChainDescriptor.BufferDesc.RefreshRate.Numerator = 60u;								//TODO: Get actual monitor refresh rate (Emil F)
 	swapChainDescriptor.BufferDesc.RefreshRate.Denominator = 1u;							//*-*
 	swapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDescriptor.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
@@ -192,6 +196,20 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 	return true;
 }
 
+void DXCore::CreateShadowMapViewport(IEvent& event) noexcept
+{
+	CreateShadowMapViewportEvent& derivedEvent = static_cast<CreateShadowMapViewportEvent&>(event);
+	m_ShadowMapViewPort.TopLeftX = 0.0f;
+	m_ShadowMapViewPort.TopLeftY = 0.0f;
+	m_ShadowMapViewPort.Width = derivedEvent.GetWidth();
+	m_ShadowMapViewPort.Height = derivedEvent.GetHeight();
+}
+
+void DXCore::ResetDefaultViewport() const noexcept
+{
+	m_pDeviceContext->RSSetViewports(1u, &m_DefaultViewport);
+}
+
 void DXCore::OnEvent(IEvent& event) noexcept
 {
 	switch (event.GetEventType())
@@ -202,6 +220,15 @@ void DXCore::OnEvent(IEvent& event) noexcept
 	case EventType::ToggleDepthStencilStateEvent:
 			ToggleDepthStencilState();
 			break;
+	case EventType::CreateShadowMapViewportEvent:
+		CreateShadowMapViewport(event);
+		break;
+	case EventType::SetShadowMapViewportEvent:
+		m_pDeviceContext->RSSetViewports(1u, &m_ShadowMapViewPort);
+		break;
+	case EventType::ResetDefaultViewportEvent:
+		m_pDeviceContext->RSSetViewports(1u, &m_DefaultViewport);
+		break;
 	}
 }
 

@@ -166,3 +166,67 @@ public:
 		return m_pSunLight;
 	}
 };
+
+class ResetDefaultViewportEvent : public IEvent
+{
+private:
+public:
+	ResetDefaultViewportEvent() noexcept = default;
+	virtual ~ResetDefaultViewportEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::ResetDefaultViewportEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "ResetDefaultViewportEvent";
+	}
+};
+
+class CreateShadowMapViewportEvent : public IEvent
+{
+private:
+	float m_Width;
+	float m_Height;
+public:
+	CreateShadowMapViewportEvent(const float& width, const float& height) noexcept
+		: m_Width{ width }, m_Height{ height }
+	{
+	}
+	virtual ~CreateShadowMapViewportEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::CreateShadowMapViewportEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "CreateShadowMapViewportEvent";
+	}
+	[[nodiscard]] const float& GetWidth() const noexcept
+	{
+		return m_Width;
+	}
+	[[nodiscard]] const float& GetHeight() const noexcept
+	{
+		return m_Height;
+	}
+};
+
+class SetShadowMapViewportEvent : public IEvent
+{
+private:
+public:
+	SetShadowMapViewportEvent() noexcept = default;
+	virtual ~SetShadowMapViewportEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::SetShadowMapViewportEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "SetShadowMapViewportEvent";
+	}
+};

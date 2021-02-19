@@ -40,7 +40,7 @@ const bool ResourceManager::CreateAllBindables()
 	//InputLayouts:
 	if (!m_InputLayoutMinimal.Create(m_pDevice, m_VertexShaderMinimal, LAYOUT_MINIMAL))
 		return false;
-	if (!m_InputLayoutSkybox.Create(m_pDevice, m_VertexShaderSkybox, LAYOUT_SKYBOX))
+	if (!m_InputLayoutPositionOnly.Create(m_pDevice, m_VertexShaderSkybox, LAYOUT_POSITION))
 		return false;
 	//Primitive topologies:
 	if (!m_TopologyTriList.Create(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST))
@@ -64,9 +64,11 @@ const bool ResourceManager::CreateAllBindables()
 	//Minimal:
 	m_BindablesMinimalistic.insert(m_BindablesMinimalistic.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList });
 	//Skybox:
-	m_BindablesSkybox.insert(m_BindablesSkybox.end(), { &m_VertexShaderSkybox, &m_PixelShaderSkybox, &m_InputLayoutSkybox, 
+	m_BindablesSkybox.insert(m_BindablesSkybox.end(), { &m_VertexShaderSkybox, &m_PixelShaderSkybox, &m_InputLayoutPositionOnly,
 														&m_TopologyTriList, &m_CubeTextureSkybox, &m_SamplerSkybox,
 														&m_VertexBufferCube, &m_IndexBufferCube});
+	//Shadow mapping:
+	m_BindablesShadow.insert(m_BindablesShadow.end(), { &m_VertexShaderShadow, &m_InputLayoutPositionOnly, &m_TopologyTriList });
 	return true;
 }
 
@@ -159,6 +161,19 @@ void ResourceManager::BindToPipeline(IEvent& event)
 				bindables->Bind(m_pDeviceContext);
 			}
 		}
+		break;
+	}
+	case BindID::ID_Shadow:
+	{
+		for (auto bindables : m_BindablesShadow)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		ID3D11PixelShader* nullPS = nullptr;
+		m_pDeviceContext->PSSetShader(nullPS, nullptr, 0u);
 		break;
 	}
 	}
