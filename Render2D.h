@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "UI/TypesUI.h"
-#include "PlanetInteractionUI.h"
+#include "UI/PlanetInteractionUI.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/InputEvents.h"

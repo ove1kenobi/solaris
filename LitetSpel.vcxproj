@@ -84,6 +84,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bloom.cpp" />
+    <ClCompile Include="UI\Button.cpp" />
     <ClCompile Include="DXCore.cpp" />
     <ClCompile Include="DXDebug.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -108,7 +109,7 @@
     <ClCompile Include="LayerStack.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelFactory.cpp" />
-    <ClCompile Include="ModuleUI.cpp" />
+    <ClCompile Include="UI\ModuleUI.cpp" />
     <ClCompile Include="Orbit.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -119,7 +120,7 @@
       </PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Planet.cpp" />
-    <ClCompile Include="PlanetInteractionUI.cpp" />
+    <ClCompile Include="UI\PlanetInteractionUI.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Render2D.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
@@ -188,6 +189,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
+    <ClInclude Include="UI\Button.h" />
     <ClInclude Include="DXCore.h" />
     <ClInclude Include="DXDebug.h" />
     <ClInclude Include="Engine.h" />
@@ -211,11 +213,11 @@
     <ClInclude Include="LayerStack.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelFactory.h" />
-    <ClInclude Include="ModuleUI.h" />
+    <ClInclude Include="UI\ModuleUI.h" />
     <ClInclude Include="Orbit.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Planet.h" />
-    <ClInclude Include="PlanetInteractionUI.h" />
+    <ClInclude Include="UI\PlanetInteractionUI.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Render2D.h" />
     <ClInclude Include="RenderWindow.h" />

@@ -1,9 +1,9 @@
 #pragma once
-#include "EventSystem/IEventListener.h"
-#include "EventSystem/EventPublisher.h"
-#include "EventSystem\UtilityEvents.h"
-#include "EventSystem/InputEvents.h"
-#include "EventSystem/WindowEvents.h"
+#include "..\EventSystem/IEventListener.h"
+#include "..\EventSystem/EventPublisher.h"
+#include "..\EventSystem\UtilityEvents.h"
+#include "..\EventSystem/InputEvents.h"
+#include "..\EventSystem/WindowEvents.h"
 
 class ModuleUI : public IEventListener {
 protected:
