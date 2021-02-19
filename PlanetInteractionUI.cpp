@@ -12,9 +12,9 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pMainRectangle = D2D1::RectF();
 	m_pPlanetNameTextBox = D2D1::RectF();
 	m_pPlanetFlavourTextBox = D2D1::RectF();
-	m_pEventOneTextBox = D2D1::RectF();
-	m_pEventTwoTextBox = D2D1::RectF();
-	m_pEventThreeTextBox = D2D1::RectF();
+	m_pEventOneHoverTextBox = D2D1::RectF();
+	m_pEventTwoHoverTextBox = D2D1::RectF();
+	m_pEventThreeHoverTextBox = D2D1::RectF();
 
 	//Example text: should be removed once event system is in place.
 	m_pPlanetNameText = L"TATOOINE";
@@ -51,6 +51,10 @@ bool PlanetInteractionUI::CreateMainScreen() {
 		static_cast<float>(m_pWindowHeight) - 200.0f
 	);
 
+	return true;
+}
+
+bool PlanetInteractionUI::CreateLeftCorner() {
 	//Create bottom left corner
 	HRESULT hr = m_pFactory2D->CreatePathGeometry(&m_pBottomLeft);
 	if (FAILED(hr)) {
@@ -88,8 +92,71 @@ bool PlanetInteractionUI::CreateMainScreen() {
 		return false;
 	}
 
+	//Create bottom left corner details
+	hr = m_pFactory2D->CreatePathGeometry(&m_pBottomLeftDetailsOne);
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+	hr = m_pBottomLeftDetailsOne->Open(&m_pSink);
+	if (SUCCEEDED(hr))
+	{
+		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
+
+		m_pSink->BeginFigure(
+			D2D1::Point2F(m_pMainRectangle.left + 70.0f, m_pMainRectangle.bottom),
+			D2D1_FIGURE_BEGIN_FILLED
+		);
+		D2D1_POINT_2F points[] = {
+			D2D1::Point2F(m_pMainRectangle.left + 140.0f, m_pMainRectangle.bottom),
+		   D2D1::Point2F(m_pMainRectangle.left + 125.0f, m_pMainRectangle.bottom - 15.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 55.0f, m_pMainRectangle.bottom - 15.0f),
+		};
+		m_pSink->AddLines(points, ARRAYSIZE(points));
+		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+	}
+	hr = m_pSink->Close();
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+	//Create bottom left corner details
+	hr = m_pFactory2D->CreatePathGeometry(&m_pBottomLeftDetailsTwo);
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+	hr = m_pBottomLeftDetailsTwo->Open(&m_pSink);
+	if (SUCCEEDED(hr))
+	{
+		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
+
+		m_pSink->BeginFigure(
+			D2D1::Point2F(m_pMainRectangle.left, m_pMainRectangle.bottom - 65.0f),
+			D2D1_FIGURE_BEGIN_FILLED
+		);
+		D2D1_POINT_2F points[] = {
+			D2D1::Point2F(m_pMainRectangle.left + 15.0f, m_pMainRectangle.bottom - 50.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 15.0f, m_pMainRectangle.bottom - 110.0f),
+		   D2D1::Point2F(m_pMainRectangle.left, m_pMainRectangle.bottom - 125.0f),
+		};
+		m_pSink->AddLines(points, ARRAYSIZE(points));
+		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+	}
+	hr = m_pSink->Close();
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+	return true;
+}
+
+bool PlanetInteractionUI::CreateRightCorner() {
 	//Create bottom right corner
-	hr = m_pFactory2D->CreatePathGeometry(&m_pBottomRight);
+	HRESULT hr = m_pFactory2D->CreatePathGeometry(&m_pBottomRight);
 	if (FAILED(hr)) {
 		printf("Error!\n");
 		return false;
@@ -125,8 +192,71 @@ bool PlanetInteractionUI::CreateMainScreen() {
 		return false;
 	}
 
+	//Create bottom right corner details
+	hr = m_pFactory2D->CreatePathGeometry(&m_pBottomRightDetailsOne);
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+	hr = m_pBottomRightDetailsOne->Open(&m_pSink);
+	if (SUCCEEDED(hr))
+	{
+		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
+
+		m_pSink->BeginFigure(
+			D2D1::Point2F(m_pMainRectangle.right - 70.0f, m_pMainRectangle.bottom),
+			D2D1_FIGURE_BEGIN_FILLED
+		);
+		D2D1_POINT_2F points[] = {
+			D2D1::Point2F(m_pMainRectangle.right - 140.0f, m_pMainRectangle.bottom),
+		   D2D1::Point2F(m_pMainRectangle.right - 125.0f, m_pMainRectangle.bottom - 15.0f),
+		   D2D1::Point2F(m_pMainRectangle.right - 55.0f, m_pMainRectangle.bottom - 15.0f),
+		};
+		m_pSink->AddLines(points, ARRAYSIZE(points));
+		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+	}
+	hr = m_pSink->Close();
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+	//Create bottom right corner details
+	hr = m_pFactory2D->CreatePathGeometry(&m_pBottomRightDetailsTwo);
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+	hr = m_pBottomRightDetailsTwo->Open(&m_pSink);
+	if (SUCCEEDED(hr))
+	{
+		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
+
+		m_pSink->BeginFigure(
+			D2D1::Point2F(m_pMainRectangle.right, m_pMainRectangle.bottom - 65.0f),
+			D2D1_FIGURE_BEGIN_FILLED
+		);
+		D2D1_POINT_2F points[] = {
+			D2D1::Point2F(m_pMainRectangle.right - 15.0f, m_pMainRectangle.bottom - 50.0f),
+		   D2D1::Point2F(m_pMainRectangle.right - 15.0f, m_pMainRectangle.bottom - 110.0f),
+		   D2D1::Point2F(m_pMainRectangle.right, m_pMainRectangle.bottom - 125.0f),
+		};
+		m_pSink->AddLines(points, ARRAYSIZE(points));
+		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+	}
+	hr = m_pSink->Close();
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+	return true;
+}
+
+bool PlanetInteractionUI::CreateTopCorners() {
 	//Create top
-	hr = m_pFactory2D->CreatePathGeometry(&m_pTop);
+	HRESULT hr = m_pFactory2D->CreatePathGeometry(&m_pTop);
 	if (FAILED(hr)) {
 		printf("Error!\n");
 		return false;
@@ -175,6 +305,67 @@ bool PlanetInteractionUI::CreateMainScreen() {
 		printf("Error!\n");
 		return false;
 	}
+
+	hr = m_pFactory2D->CreatePathGeometry(&m_pTopDetailsLeft);
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+	hr = m_pTopDetailsLeft->Open(&m_pSink);
+	if (SUCCEEDED(hr))
+	{
+		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
+
+		m_pSink->BeginFigure(
+			D2D1::Point2F(m_pMainRectangle.left, m_pMainRectangle.top + 25.0f),
+			D2D1_FIGURE_BEGIN_FILLED
+		);
+		D2D1_POINT_2F points[] = {
+			D2D1::Point2F(m_pMainRectangle.left + 15.0f, m_pMainRectangle.top + 10.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 15.0f, m_pMainRectangle.top + 55.0f),
+		   D2D1::Point2F(m_pMainRectangle.left, m_pMainRectangle.top + 70.0f),
+		};
+		m_pSink->AddLines(points, ARRAYSIZE(points));
+		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+	}
+	hr = m_pSink->Close();
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+
+
+	hr = m_pFactory2D->CreatePathGeometry(&m_pTopDetailsRight);
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
+	hr = m_pTopDetailsRight->Open(&m_pSink);
+	if (SUCCEEDED(hr))
+	{
+		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
+
+		m_pSink->BeginFigure(
+			D2D1::Point2F(m_pMainRectangle.right, m_pMainRectangle.top + 25.0f),
+			D2D1_FIGURE_BEGIN_FILLED
+		);
+		D2D1_POINT_2F points[] = {
+			D2D1::Point2F(m_pMainRectangle.right - 15.0f, m_pMainRectangle.top + 10.0f),
+		   D2D1::Point2F(m_pMainRectangle.right - 15.0f, m_pMainRectangle.top + 55.0f),
+		   D2D1::Point2F(m_pMainRectangle.right, m_pMainRectangle.top + 70.0f),
+		};
+		m_pSink->AddLines(points, ARRAYSIZE(points));
+		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+	}
+	hr = m_pSink->Close();
+	if (FAILED(hr)) {
+		printf("Error!\n");
+		return false;
+	}
+
 	return true;
 }
 
@@ -185,7 +376,7 @@ bool PlanetInteractionUI::CreateTextElements() {
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		48.0f,
+		46.0f,
 		L"en-us",
 		&m_pTitleTextFormat
 	);
@@ -236,7 +427,7 @@ bool PlanetInteractionUI::CreateTextElements() {
 
 	float screenOffset = 40.0f;
 	float padding = 10.0f;
-	float blockSize = ((m_pMainRectangle.bottom - screenOffset) - (m_pMainRectangle.top + screenOffset)) / 3.0f;
+	m_pBlockSize = ((m_pMainRectangle.bottom - screenOffset) - (m_pMainRectangle.top + screenOffset)) / 3.0f;
 
 	m_pPlanetFlavourTextBox = D2D1::RectF(
 		(static_cast<float>(m_pWindowWidth) / 2.0f) + screenOffset,
@@ -245,25 +436,46 @@ bool PlanetInteractionUI::CreateTextElements() {
 		m_pMainRectangle.bottom - screenOffset
 	);
 
-	m_pEventOneTextBox = D2D1::RectF(
+	m_pEventOneHoverTextBox = D2D1::RectF(
 		m_pMainRectangle.left + screenOffset,
 		m_pMainRectangle.top + screenOffset,
-		static_cast<float>(m_pWindowWidth) / 2.0f,
-		m_pMainRectangle.top + screenOffset + blockSize - padding
+		(static_cast<float>(m_pWindowWidth) / 2.0f) - padding,
+		m_pMainRectangle.top + screenOffset + m_pBlockSize - padding - (padding / 2.0f)
 	);
 
-	m_pEventThreeTextBox = D2D1::RectF(
+	m_pEventOneTextBox = D2D1::RectF(
+		m_pEventOneHoverTextBox.left + padding,
+		m_pEventOneHoverTextBox.top + padding,
+		m_pEventOneHoverTextBox.right - padding,
+		m_pEventOneHoverTextBox.bottom - padding
+	);
+
+	m_pEventThreeHoverTextBox = D2D1::RectF(
 		m_pMainRectangle.left + screenOffset,
-		m_pMainRectangle.bottom - screenOffset - blockSize + padding,
-		static_cast<float>(m_pWindowWidth) / 2.0f,
+		m_pMainRectangle.bottom - screenOffset - m_pBlockSize + padding + (padding / 2.0f),
+		(static_cast<float>(m_pWindowWidth) / 2.0f) - padding,
 		m_pMainRectangle.bottom - screenOffset
 	);
 
-	m_pEventTwoTextBox = D2D1::RectF(
+	m_pEventThreeTextBox = D2D1::RectF(
+		m_pEventThreeHoverTextBox.left + padding,
+		m_pEventThreeHoverTextBox.top + padding,
+		m_pEventThreeHoverTextBox.right - padding,
+		m_pEventThreeHoverTextBox.bottom - padding
+	);
+
+	m_pEventTwoHoverTextBox = D2D1::RectF(
 		m_pMainRectangle.left + screenOffset,
-		m_pEventOneTextBox.bottom + padding,
-		static_cast<float>(m_pWindowWidth) / 2.0f,
-		m_pEventThreeTextBox.top - padding
+		m_pEventOneHoverTextBox.bottom + padding + (padding/2.0f),
+		(static_cast<float>(m_pWindowWidth) / 2.0f) - padding,
+		m_pEventThreeHoverTextBox.top - padding - (padding / 2.0f)
+	);
+
+	m_pEventTwoTextBox = D2D1::RectF(
+		m_pEventTwoHoverTextBox.left + padding,
+		m_pEventTwoHoverTextBox.top + padding,
+		m_pEventTwoHoverTextBox.right - padding,
+		m_pEventTwoHoverTextBox.bottom - padding
 	);
 
 	return true;
@@ -314,8 +526,19 @@ bool PlanetInteractionUI::UpdateModules() {
 	if (!this->CreateMainScreen()) {
 		return false;
 	}
-
+	if (!this->CreateLeftCorner()) {
+		return false;
+	}
+	if (!this->CreateRightCorner()) {
+		return false;
+	}
+	if (!this->CreateTopCorners()) {
+		return false;
+	}
 	if (!this->CreateTextElements()) {
+		return false;
+	}
+	if (!this->UpdateHover()) {
 		return false;
 	}
 
@@ -326,43 +549,11 @@ bool PlanetInteractionUI::UpdateModules() {
 	return true;
 }
 
-void PlanetInteractionUI::RenderRandomEvents() {
-	//Event one
-	m_pRenderTarget2D.Get()->DrawTextW(
-		m_pEventOneText.c_str(),
-		(UINT32)m_pEventOneText.length(),
-		m_pBodyTextFormat.Get(),
-		m_pEventOneTextBox,
-		m_pBrush.Get()
-	);
-
-	//Event two
-	m_pRenderTarget2D.Get()->DrawTextW(
-		m_pEventTwoText.c_str(),
-		(UINT32)m_pEventTwoText.length(),
-		m_pBodyTextFormat.Get(),
-		m_pEventTwoTextBox,
-		m_pBrush.Get()
-	);
-
-	//Event three
-	m_pRenderTarget2D.Get()->DrawTextW(
-		m_pEventThreeText.c_str(),
-		(UINT32)m_pEventThreeText.length(),
-		m_pBodyTextFormat.Get(),
-		m_pEventThreeTextBox,
-		m_pBrush.Get()
-	);
-}
-
-void PlanetInteractionUI::RenderHelpLines() {
-	//Temp function only for debuging
-	RenderHelpGrid(10);
-	m_pRenderTarget2D->DrawRectangle(m_pPlanetNameTextBox, m_pBrush.Get());
-	m_pRenderTarget2D->DrawRectangle(m_pPlanetFlavourTextBox, m_pBrush.Get());
-	m_pRenderTarget2D->DrawRectangle(m_pEventOneTextBox, m_pBrush.Get());
-	m_pRenderTarget2D->DrawRectangle(m_pEventTwoTextBox, m_pBrush.Get());
-	m_pRenderTarget2D->DrawRectangle(m_pEventThreeTextBox, m_pBrush.Get());
+bool PlanetInteractionUI::UpdateHover() {
+	if (!this->CreateHover()) {
+		return false;
+	}
+	return true;
 }
 
 void PlanetInteractionUI::RenderScreen() {
@@ -399,19 +590,161 @@ void PlanetInteractionUI::RenderScreen() {
 	//Add outline to main square
 	UpdateBrush(D2D1::ColorF::White, 0.5f);
 	m_pRenderTarget2D->DrawRectangle(m_pMainRectangle, m_pBrush.Get());
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.left, m_pEventOneHoverTextBox.bottom + 7.5f),
+		D2D1::Point2F(static_cast<FLOAT>(m_pWindowWidth)/ 2.0f, m_pEventOneHoverTextBox.bottom + 7.5f),
+		m_pBrush.Get(),
+		1.0f
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.left, m_pEventThreeHoverTextBox.top - 7.5f),
+		D2D1::Point2F(static_cast<FLOAT>(m_pWindowWidth) / 2.0f, m_pEventThreeHoverTextBox.top - 7.5f),
+		m_pBrush.Get(),
+		1.0f
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(static_cast<FLOAT>(m_pWindowWidth) / 2.0f, m_pMainRectangle.top),
+		D2D1::Point2F(static_cast<FLOAT>(m_pWindowWidth) / 2.0f, m_pMainRectangle.bottom),
+		m_pBrush.Get(),
+		1.0f
+	);
 }
 
 void PlanetInteractionUI::RenderCorners() {
-	this->UpdateBrush(D2D1::ColorF::Teal, 0.75f);
+	this->UpdateBrush(D2D1::ColorF::Teal, 1.0f);
 
 	//Left corner
 	m_pRenderTarget2D->FillGeometry(m_pBottomLeft.Get(), m_pBrush.Get());
+	this->UpdateBrush(D2D1::ColorF::Snow, 0.5f);
+	m_pRenderTarget2D->FillGeometry(m_pBottomLeftDetailsOne.Get(), m_pBrush.Get());
+	m_pRenderTarget2D->FillGeometry(m_pBottomLeftDetailsTwo.Get(), m_pBrush.Get());
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.left + 70.0f, m_pMainRectangle.bottom),
+		D2D1::Point2F(m_pMainRectangle.left + 250.0f, m_pMainRectangle.bottom),
+		m_pBrush.Get(),
+		2.0f
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.left + 250.0f, m_pMainRectangle.bottom),
+		D2D1::Point2F(m_pMainRectangle.left + 265.0f, m_pMainRectangle.bottom - 10.0f),
+		m_pBrush.Get(),
+		2.0f
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.left, m_pMainRectangle.bottom - 65.0f),
+		D2D1::Point2F(m_pMainRectangle.left, m_pMainRectangle.bottom - 240.0f),
+		m_pBrush.Get(),
+		2.0f
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.left + 15.0f, m_pMainRectangle.bottom - 110.0f),
+		D2D1::Point2F(m_pMainRectangle.left + 15.0f, m_pMainRectangle.bottom - 30.0f),
+		m_pBrush.Get(),
+		2.0f
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.left + 15.0f, m_pMainRectangle.bottom - 30.0f),
+		D2D1::Point2F(m_pMainRectangle.left + 35.0f, m_pMainRectangle.bottom - 15.0f),
+		m_pBrush.Get(),
+		2.0f
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.left + 35.0f, m_pMainRectangle.bottom - 15.0f),
+		D2D1::Point2F(m_pMainRectangle.left + 125.0f, m_pMainRectangle.bottom - 15.0f),
+		m_pBrush.Get(),
+		2.0f
+	);
 
 	//Right corner
+	this->UpdateBrush(D2D1::ColorF::Teal, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pBottomRight.Get(), m_pBrush.Get());
 
+	this->UpdateBrush(D2D1::ColorF::Snow, 0.5f);
+	m_pRenderTarget2D->FillGeometry(m_pBottomRightDetailsOne.Get(), m_pBrush.Get());
+	m_pRenderTarget2D->FillGeometry(m_pBottomRightDetailsTwo.Get(), m_pBrush.Get());
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.right - 70.0f, m_pMainRectangle.bottom),
+		D2D1::Point2F(m_pMainRectangle.right - 250.0f, m_pMainRectangle.bottom),
+		m_pBrush.Get(),
+		2.0f
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.right - 250.0f, m_pMainRectangle.bottom),
+		D2D1::Point2F(m_pMainRectangle.right - 265.0f, m_pMainRectangle.bottom - 10.0f),
+		m_pBrush.Get(),
+		2.0f
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.right, m_pMainRectangle.bottom - 65.0f),
+		D2D1::Point2F(m_pMainRectangle.right, m_pMainRectangle.bottom - 240.0f),
+		m_pBrush.Get(),
+		2.0f
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.right - 15.0f, m_pMainRectangle.bottom - 110.0f),
+		D2D1::Point2F(m_pMainRectangle.right - 15.0f, m_pMainRectangle.bottom - 30.0f),
+		m_pBrush.Get(),
+		2.0f
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.right - 15.0f, m_pMainRectangle.bottom - 30.0f),
+		D2D1::Point2F(m_pMainRectangle.right - 35.0f, m_pMainRectangle.bottom - 15.0f),
+		m_pBrush.Get(),
+		2.0f
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.right - 35.0f, m_pMainRectangle.bottom - 15.0f),
+		D2D1::Point2F(m_pMainRectangle.right - 125.0f, m_pMainRectangle.bottom - 15.0f),
+		m_pBrush.Get(),
+		2.0f
+	);
+
 	//Top corners
+	this->UpdateBrush(D2D1::ColorF::Teal, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pTop.Get(), m_pBrush.Get());
+
+	this->UpdateBrush(D2D1::ColorF::Snow, 0.5f);
+	//m_pRenderTarget2D->DrawGeometry(m_pTop.Get(), m_pBrush.Get(), 5.0f);
+
+	this->UpdateBrush(D2D1::ColorF::Snow, 0.5f);
+	m_pRenderTarget2D->FillGeometry(m_pTopDetailsLeft.Get(), m_pBrush.Get());
+	m_pRenderTarget2D->FillGeometry(m_pTopDetailsRight.Get(), m_pBrush.Get());
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.left + 15.0f, m_pMainRectangle.top + 11.0f),
+		D2D1::Point2F(m_pMainRectangle.right - 15.0f, m_pMainRectangle.top + 11.0f),
+		m_pBrush.Get(),
+		2.0f
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.left + 15.0f, m_pMainRectangle.top + 55.0f),
+		D2D1::Point2F(m_pMainRectangle.left - 10.0f, m_pMainRectangle.top + 79.0f),
+		m_pBrush.Get(),
+		2.0f
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMainRectangle.right - 15.0f, m_pMainRectangle.top + 55.0f),
+		D2D1::Point2F(m_pMainRectangle.right + 10.0f, m_pMainRectangle.top + 79.0f),
+		m_pBrush.Get(),
+		2.0f
+	);
 }
 
 void PlanetInteractionUI::RenderPlanetText() {
@@ -433,6 +766,97 @@ void PlanetInteractionUI::RenderPlanetText() {
 		m_pPlanetFlavourTextBox,
 		m_pBrush.Get()
 	);
+}
+
+void PlanetInteractionUI::RenderRandomEvents() {
+	//Event one
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pEventOneText.c_str(),
+		(UINT32)m_pEventOneText.length(),
+		m_pBodyTextFormat.Get(),
+		m_pEventOneTextBox,
+		m_pBrush.Get()
+	);
+
+	//Event two
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pEventTwoText.c_str(),
+		(UINT32)m_pEventTwoText.length(),
+		m_pBodyTextFormat.Get(),
+		m_pEventTwoTextBox,
+		m_pBrush.Get()
+	);
+
+	//Event three
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pEventThreeText.c_str(),
+		(UINT32)m_pEventThreeText.length(),
+		m_pBodyTextFormat.Get(),
+		m_pEventThreeTextBox,
+		m_pBrush.Get()
+	);
+
+	m_pRenderTarget2D->DrawRectangle(m_pEventOneHoverTextBox, m_pBrush.Get(), 5.0f);
+	m_pRenderTarget2D->DrawRectangle(m_pEventTwoHoverTextBox, m_pBrush.Get(), 5.0f);
+	m_pRenderTarget2D->DrawRectangle(m_pEventThreeHoverTextBox, m_pBrush.Get(), 5.0f);
+
+	this->UpdateBrush(D2D1::ColorF::Snow, 0.5f);
+	m_pRenderTarget2D->FillGeometry(m_pEventHover.Get(), m_pBrush.Get());
+}
+
+bool PlanetInteractionUI::CreateHover() {
+	D2D1_RECT_F hover = m_pEventOneHoverTextBox;
+	switch (m_pCurrentHover) {
+	case RandomEvent::one:
+	{
+		hover = m_pEventOneHoverTextBox;
+		break;
+	}
+	case RandomEvent::two:
+	{
+		hover = m_pEventTwoHoverTextBox;
+		break;
+	}
+	case RandomEvent::three:
+	{
+		hover = m_pEventThreeTextBox;
+		break;
+	}
+	default:
+		break;
+	}
+	HRESULT hr = m_pFactory2D->CreatePathGeometry(&m_pEventHover);
+
+	hr = m_pEventHover->Open(&m_pSink);
+	if (SUCCEEDED(hr))
+	{
+		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
+
+		m_pSink->BeginFigure(
+			D2D1::Point2F(hover.right, hover.bottom),
+			D2D1_FIGURE_BEGIN_FILLED
+		);
+		D2D1_POINT_2F points[] = {
+			D2D1::Point2F(hover.right, hover.top),
+			D2D1::Point2F(hover.left, hover.top),
+			D2D1::Point2F(hover.left, hover.bottom),
+		};
+		m_pSink->AddLines(points, ARRAYSIZE(points));
+		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+	}
+	hr = m_pSink->Close();
+
+	return true;
+}
+
+void PlanetInteractionUI::RenderHelpLines() {
+	//Temp function only for debuging
+	RenderHelpGrid(10);
+	m_pRenderTarget2D->DrawRectangle(m_pPlanetNameTextBox, m_pBrush.Get());
+	m_pRenderTarget2D->DrawRectangle(m_pPlanetFlavourTextBox, m_pBrush.Get());
+	m_pRenderTarget2D->DrawRectangle(m_pEventOneHoverTextBox, m_pBrush.Get());
+	m_pRenderTarget2D->DrawRectangle(m_pEventTwoHoverTextBox, m_pBrush.Get());
+	m_pRenderTarget2D->DrawRectangle(m_pEventThreeHoverTextBox, m_pBrush.Get());
 }
 
 void PlanetInteractionUI::RenderUI() {
@@ -477,11 +901,21 @@ bool PlanetInteractionUI::Initialize() {
 	if (!this->CreateMainScreen()) {
 		return false;
 	}
-
+	if (!this->CreateLeftCorner()) {
+		return false;
+	}
+	if (!this->CreateRightCorner()) {
+		return false;
+	}
+	if (!this->CreateTopCorners()) {
+		return false;
+	}
 	if (!this->CreateTextElements()) {
 		return false;
 	}
-
+	if (!this->CreateHover()) {
+		return false;
+	}
 	if (!this->CreateTools()) {
 		return false;
 	}
@@ -526,14 +960,28 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 	{
 		int mouseX = static_cast<DelegateMouseCoordsEvent*>(&event)->GetXCoord();
 		int mouseY = static_cast<DelegateMouseCoordsEvent*>(&event)->GetYCoord();
-		this->SetPlanetName(std::to_wstring(mouseX));
-		if (mouseX > m_pMainRectangle.left && mouseX < m_pMainRectangle.right &&
-			mouseY > m_pMainRectangle.top && mouseY < m_pMainRectangle.bottom) {
-			m_pRenderHelpGrids = true;
+		std::wstring coord = L"X: ";
+		coord.append(std::to_wstring(mouseX));
+		coord.append(L" Y: ");
+		coord.append(std::to_wstring(mouseY));
+		this->SetPlanetName(coord);
+		if (mouseX > m_pEventOneHoverTextBox.left && mouseX < m_pEventOneHoverTextBox.right &&
+			mouseY > m_pEventOneHoverTextBox.top && mouseY < m_pEventOneHoverTextBox.bottom) {
+			m_pCurrentHover = RandomEvent::one;
+		}
+		else if (mouseX > m_pEventTwoHoverTextBox.left && mouseX < m_pEventTwoHoverTextBox.right &&
+			mouseY > m_pEventTwoHoverTextBox.top && mouseY < m_pEventTwoHoverTextBox.bottom) {
+			m_pCurrentHover = RandomEvent::two;
+		}
+		else if (mouseX > m_pEventThreeHoverTextBox.left && mouseX < m_pEventThreeHoverTextBox.right &&
+			mouseY > m_pEventThreeHoverTextBox.top && mouseY < m_pEventThreeHoverTextBox.bottom) {
+			m_pCurrentHover = RandomEvent::three;
 		}
 		else {
-			m_pRenderHelpGrids = false;
+			m_pCurrentHover = RandomEvent::none;
 		}
+
+		this->UpdateHover();
 		break;
 	}
 	//For clicking on UI elements
@@ -544,8 +992,7 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
 		if (virKey == VK_LBUTTON && state == KeyState::KeyPress) {
-			this->SetPlanetName(std::to_wstring(mouseX));
-			if (mouseX > m_pEventOneTextBox.left && mouseX < m_pEventOneTextBox.right &&
+			if (mouseX > m_pEventOneHoverTextBox.left && mouseX < m_pEventOneHoverTextBox.right &&
 				mouseY > m_pMainRectangle.top && mouseY < m_pMainRectangle.bottom) {
 				if (m_pRenderRandomEvents) {
 					m_pRenderRandomEvents = false;
