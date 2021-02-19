@@ -2,32 +2,40 @@
 #include "Render2D.h"
 
 Render2D::Render2D() noexcept {
-	m_TestUI = new PlanetInteractionUI();
-	m_RenderPlanetInteraction = false;
+	//Make render2D able to UI handle events (for now, only keyboard ones)
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);
+
+	//Set start UI and load them all into an vector
+	m_CurrentUI = TypesUI::PlanetInteraction;
+	m_Modules.push_back(new PlanetInteractionUI());
+
+	m_Render = false;
 }
 
 Render2D::~Render2D() {
-	delete m_TestUI;
+	for (unsigned int i = 0; i < m_Modules.size(); i++) {
+		delete m_Modules.at(i);
+	}
 }
 
 const bool Render2D::Initialize() noexcept {
-	if (!m_TestUI->Initialize()) {
-		return false;
+	for (unsigned int i = 0; i < m_Modules.size(); i++) {
+		if (!m_Modules.at(i)->Initialize()) {
+			return false;
+		};
 	}
 	return true;
 }
 
 void Render2D::RenderUI() {
-	if (m_RenderPlanetInteraction) {
-		m_TestUI->BeginFrame();
-
-		m_TestUI->Render();
-
-		m_TestUI->EndFrame();
+	if (m_Render) {
+		m_Modules.at(static_cast<int>(m_CurrentUI))->BeginFrame();
+		m_Modules.at(static_cast<int>(m_CurrentUI))->Render();
+		m_Modules.at(static_cast<int>(m_CurrentUI))->EndFrame();
 	}
 }
 
+//Will in the future take in UI events to know what to render when
 void Render2D::OnEvent(IEvent& event) noexcept {
 	switch (event.GetEventType()) {
 		case EventType::KeyboardEvent:
@@ -37,11 +45,12 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 
 			if (state == KeyState::KeyPress) {
 				if (virKey == 'E') {
-					if (m_RenderPlanetInteraction) {
-						m_RenderPlanetInteraction = false;
+					m_CurrentUI = TypesUI::PlanetInteraction;
+					if (m_Render) {
+						m_Render = false;
 					}
 					else {
-						m_RenderPlanetInteraction = true;
+						m_Render = true;
 					}
 				}
 			}

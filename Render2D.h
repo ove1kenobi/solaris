@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "UI/TypesUI.h"
 #include "PlanetInteractionUI.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
@@ -11,8 +12,10 @@
 
 class Render2D : public EventPublisher, IEventListener {
 private:
-	PlanetInteractionUI* m_TestUI;
-	bool m_RenderPlanetInteraction;
+	TypesUI m_CurrentUI;
+	std::vector<ModuleUI*> m_Modules;
+
+	bool m_Render;
 public:
 	Render2D() noexcept;
 	virtual ~Render2D();

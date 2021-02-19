@@ -543,8 +543,8 @@ bool PlanetInteractionUI::UpdateModules() {
 	}
 
 	//Update tools
-	m_pLinearGradientBrush->SetStartPoint(D2D1::Point2F(m_pMainRectangle.left, static_cast<float>(m_pWindowHeight)));
-	m_pLinearGradientBrush->SetEndPoint(D2D1::Point2F(m_pMainRectangle.right, static_cast<float>(m_pWindowHeight)));
+	//m_pLinearGradientBrush->SetStartPoint(D2D1::Point2F(m_pMainRectangle.left, static_cast<float>(m_pWindowHeight)));
+	//m_pLinearGradientBrush->SetEndPoint(D2D1::Point2F(m_pMainRectangle.right, static_cast<float>(m_pWindowHeight)));
 
 	return true;
 }
@@ -585,7 +585,7 @@ void PlanetInteractionUI::RenderScreen() {
 	}
 
 	//Use gradient brush to add effect
-	m_pRenderTarget2D->FillRectangle(&m_pMainRectangle, m_pLinearGradientBrush.Get());
+	//m_pRenderTarget2D->FillRectangle(&m_pMainRectangle, m_pLinearGradientBrush.Get());
 
 	//Add outline to main square
 	UpdateBrush(D2D1::ColorF::White, 0.5f);
