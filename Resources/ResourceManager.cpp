@@ -61,7 +61,7 @@ const bool ResourceManager::CreateAllBindables()
 	if (!m_SamplerPostProcessing.Create(m_pDevice, BindFlag::S_PS, TechFlag::POSTPROCESSING, 0u))
 		return false;
 	//Textures:									//HÅRDKODAT
-	if (!m_RenderTextureQuad.Create(m_pDevice, 0u, 1920, 1080, D3D11_USAGE_DEFAULT, D3D11_BIND_RENDER_TARGET, 0))
+	if (!m_GBuffer.Create(m_pDevice, 1920, 1080, D3D11_USAGE_DEFAULT, 0))
 		return false;
 	if (!m_CubeTextureSkybox.Create(m_pDevice, L"skymap.dds", 0u))
 		return false;
@@ -89,10 +89,10 @@ const bool ResourceManager::CreateAllBindables()
 														&m_VertexBufferCube, &m_IndexBufferCube});
 
 	//RenderQuad First Pass:
-	m_BindablesRenderQuad.insert(m_BindablesRenderQuad.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList, &m_RenderTextureQuad });
+	m_BindablesRenderQuad.insert(m_BindablesRenderQuad.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList, &m_GBuffer });
 
 	//Water Post processing:
-	m_BindablesWater.insert(m_BindablesWater.end(), { &m_RenderTextureQuad, &m_TopologyTriList, &m_InputLayoutPostProcessing, &m_VertexShaderPostProcessing, &m_PixelShaderPostProcessing, &m_VertexBufferQuad, &m_IndexBufferQuad});
+	m_BindablesWater.insert(m_BindablesWater.end(), { &m_VertexShaderPostProcessing, &m_PixelShaderPostProcessing, &m_InputLayoutPostProcessing, &m_TopologyTriList, &m_GBuffer, &m_VertexBufferQuad, &m_IndexBufferQuad});
 	return true;
 }
 

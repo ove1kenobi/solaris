@@ -58,6 +58,11 @@ public:
 		float radius;
 	};
 
+	struct RadiusBuffer {
+		float radius;
+		DirectX::XMFLOAT3 padding;
+	};
+
 	struct WorldPosition {
 		float x;
 		float y;

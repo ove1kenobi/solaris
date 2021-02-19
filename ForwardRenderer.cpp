@@ -39,36 +39,17 @@ void ForwardRenderer::BeginFrame()
 	m_Skybox.DoPass(m_pDeviceContext);
 	m_Skybox.CleanUp();
 
-	ID3D11RenderTargetView* nullRTV[1] = { nullptr };
+	ID3D11RenderTargetView* nullRTV[2] = { nullptr };
 	ID3D11DepthStencilView* nullDSV = { nullptr };
-	m_pDeviceContext->OMSetRenderTargets(1u, nullRTV, nullDSV);
+	m_pDeviceContext->OMSetRenderTargets(2u, nullRTV, nullDSV);
 
-	//Skybox time:
-	//m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
-	
-	/* ALL BEING DONE IN WATERPOSTPROCESSING ATM
-	//Unbind pipeline:
-	EventBuss::Get().Delegate(ubEvent);
-
-	//2nd pass, postprocessing
-	BindIDEvent bindWaterEvent(BindID::ID_Water);
-	EventBuss::Get().Delegate(bindWaterEvent);
-	//Post processing DONE
-
-	//Bind backbuffer
-	BindBackBufferEvent bindBackBuffer;
-	EventBuss::Get().Delegate(bindBackBuffer);
-	*/
 	m_WaterPP.PreparePass(m_pDeviceContext);
-	m_pDeviceContext->PSSetShaderResources(1u, 1u, m_pDepthShaderResourceView.GetAddressOf());
-	//Done in PreparePass now.
-	//m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), nullDSV);
-	//Draw the quad Done in DoPass now
-	//m_pDeviceContext->DrawIndexed(6, 0u, 0u);
+
+	//Kanske inte behöver
+	//m_pDeviceContext->PSSetShaderResources(3u, 1u, m_pDepthShaderResourceView.GetAddressOf());
+	
 	m_WaterPP.DoPass(m_pDeviceContext);
 
-	//Done in cleanup now.
-	//m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
 	m_WaterPP.CleanUp();
 }
 

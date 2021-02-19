@@ -196,6 +196,34 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 	model->setIndexBufferSize(static_cast<UINT>(indices.size()));
 
 	createBuffers(sizeof(vertex_col), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
+
+	const std::lock_guard<std::mutex> lock(this->m_mutex);
+	//Create radiusbuffer for first shader
+	D3D11_BUFFER_DESC radiusBufferDesc = {};
+	radiusBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	radiusBufferDesc.ByteWidth = sizeof(RadiusBuffer);
+	radiusBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	radiusBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	radiusBufferDesc.MiscFlags = 0;
+	radiusBufferDesc.StructureByteStride = 0;
+	HR_X(this->m_device->CreateBuffer(&radiusBufferDesc,
+		nullptr,
+		&model->getRadiusBuffer()),
+		"CreateBuffer");
+
+	//Update the radiusbuffer.
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+
+	m_deviceContext->Map(model->getRadiusBuffer().Get(),
+		0,
+		D3D11_MAP_WRITE_DISCARD,
+		0,
+		&mappedSubresource);
+	ModelFactory::RadiusBuffer* data = (ModelFactory::RadiusBuffer*)mappedSubresource.pData;
+	data->radius = r;
+	m_deviceContext->Unmap(model->getRadiusBuffer().Get(), 0);
+
+	model->Loaded();
 	return model;
 }
 

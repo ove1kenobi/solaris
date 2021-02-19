@@ -9,7 +9,7 @@
 #include "SamplerState.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
-#include "Texture.h"
+#include "GBuffer.h"
 #include "..\vertex.h"
 #include "../EventSystem/RenderEvents.h"
 #include "../EventSystem/UtilityEvents.h"
@@ -41,7 +41,7 @@ private:
 	IndexBuffer m_IndexBufferCube;
 	VertexBuffer m_VertexBufferQuad;
 	IndexBuffer m_IndexBufferQuad;
-	Texture m_RenderTextureQuad;
+	GBuffer m_GBuffer;
 	std::vector<IBindable*> m_BindablesMinimalistic;
 	std::vector<IBindable*> m_BindablesRenderQuad;
 	std::vector<IBindable*> m_BindablesWater;

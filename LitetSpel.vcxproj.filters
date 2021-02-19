@@ -54,6 +54,7 @@
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="Resources\Texture.cpp" />
     <ClCompile Include="Techniques\WaterPostProcessing.cpp" />
+    <ClCompile Include="Resources\GBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -111,6 +112,7 @@
     <ClInclude Include="Planet.h" />
     <ClInclude Include="Resources\Texture.h" />
     <ClInclude Include="Techniques\WaterPostProcessing.h" />
+    <ClInclude Include="Resources\GBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

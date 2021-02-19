@@ -20,7 +20,7 @@ float2 raySphereIntersect(float3 planetCenter, float radius, float4 origin, floa
 		}
 	}
 	//Did not intersect.
-	return float2(-1.0f, 0.0f);
+	return float2(-1.0f, -1.0f);
 	
 }
 

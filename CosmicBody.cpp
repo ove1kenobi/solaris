@@ -73,7 +73,7 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	DirectX::XMMATRIX result = scaleMatrix * rotX * rotZ * rotMatrix  * transMatrix;
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, result);
 	//Angle change depends on planets radius (smaller planet = faster spin)
-	angle += 0.01f * static_cast<float>(this->m_timer.DeltaTime()) * (1000 / this->m_radius);
+	angle += 0.00f * static_cast<float>(this->m_timer.DeltaTime()) * (1000 / this->m_radius);
 
 	//Update the matrixBuffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
@@ -104,6 +104,7 @@ void CosmicBody::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& 
 									  &this->m_model->getOffset());
 	deviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, this->m_model->getMatrixBuffer().GetAddressOf());
+	deviceContext->VSSetConstantBuffers(1, 1, this->m_model->getRadiusBuffer().GetAddressOf());
 }
 
 float CosmicBody::GetRadius() {
