@@ -141,6 +141,13 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	//Add the ship to the gameObject vector.
 	this->m_gameObjects.push_back(this->m_player.getShip());
 
+	//Add an asteroid to the gameObject vector.
+	for (int i = 1; i < 10; ++i) {
+		Asteroid* ast = new Asteroid();
+		ast->init(DirectX::XMFLOAT3(0.0f, 1000.0f, 5000.0f + 50.0f * i), DirectX::XMFLOAT3(500.0f, 732.0f, 930.0f));
+		m_gameObjects.push_back(ast);
+	}
+
 	if (!m_Picking.Initialize())
 		return false;
 
@@ -148,6 +155,16 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 }
 
 void Scene::Update() noexcept {
+	ImGui::Begin("Asteroid data");
+	auto it = m_gameObjects.end();
+	for (int i = 1; i < 10; ++i) {
+		--it;
+		DirectX::XMFLOAT3 c = (*it)->GetCenter();
+		float m = (*it)->GetMass();
+		ImGui::Text("Center: (%.00f, %.00f, %.00f)", c.x, c.y, c.z);
+		ImGui::Text("Mass  : %.00f", m);
+	}
+	ImGui::End();
 	// Calculate gravity between each pair of GameObjects
 	SpaceShip* ship = this->m_player.getShip();
 	for (size_t i = 0; i < m_gameObjects.size(); ++i)

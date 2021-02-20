@@ -142,7 +142,7 @@ void SpaceShip::CalculateGravity(GameObject* other)
 	// r = |ab| -> (distance between a and b)
 	double r = sqrtf(ab.x * ab.x + ab.y * ab.y + ab.z * ab.z);
 
-	// Newton't general theory of gravity
+	// Newton's general theory of gravity
 	float f = static_cast<float>(6.674e-11 * static_cast<double>(this->m_mass) * other->GetMass() / (r * r));
 
 	// Normalize ab

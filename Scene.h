@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Sun.h"
 #include "GameObject.h"
+#include "Asteroid.h"
 #include "EventSystem/EventPublisher.h"
 #include "Layer.h"
 #include "EventSystem/RenderEvents.h"

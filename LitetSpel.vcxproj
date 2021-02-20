@@ -83,6 +83,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="Bloom.cpp" />
     <ClCompile Include="DXCore.cpp" />
     <ClCompile Include="DXDebug.cpp" />
@@ -187,6 +188,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Asteroid.h" />
     <ClInclude Include="Bloom.h" />
     <ClInclude Include="DXCore.h" />
     <ClInclude Include="DXDebug.h" />
