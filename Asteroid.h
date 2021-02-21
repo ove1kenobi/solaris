@@ -5,7 +5,7 @@ class Asteroid : public GameObject
 {
 private:
 	std::vector<DirectX::XMFLOAT3> m_forces;
-
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_AmatrixBuffer;
 public:
 	Asteroid() noexcept;
 	virtual ~Asteroid();

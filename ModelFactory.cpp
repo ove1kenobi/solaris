@@ -592,6 +592,22 @@ void ModelFactory::createBuffers(UINT stride, size_t size, void* data, const std
 									  "CreateBuffer");
 }
 
+void ModelFactory::CreateMatrixBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& matrixBuf)
+{
+	//Matrixbuffer for shader
+	D3D11_BUFFER_DESC matrixBufferDesc = {};
+	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	matrixBufferDesc.ByteWidth = sizeof(MatrixBuffer);
+	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	matrixBufferDesc.MiscFlags = 0;
+	matrixBufferDesc.StructureByteStride = 0;
+	HR_X(this->m_device->CreateBuffer(&matrixBufferDesc,
+		nullptr,
+		&matrixBuf),
+		"CreateBuffer");
+}
+
 std::vector<DirectX::XMFLOAT3> ModelFactory::calcNormals(std::vector<float> vertices, std::vector<UINT> indices) {
 	std::vector<DirectX::XMFLOAT3> faceNormals(0);
 	std::vector<DirectX::XMFLOAT3> vertexNormals(vertices.size() / 4, { 0, 0, 0 });

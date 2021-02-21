@@ -16,6 +16,7 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity)
 	m_velocity = velocity;
 	m_mass = 5000.0f;
 	m_model = ModelFactory::Get().GetModel(std::string("models/cube.obj"));
+	ModelFactory::Get().CreateMatrixBuffer(m_AmatrixBuffer);
 	return true;
 }
 
@@ -40,7 +41,7 @@ bool Asteroid::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, cons
 	PMatrix = DirectX::XMMatrixTranspose(PMatrix);
 
 	deviceContext->Map(
-		this->m_model->getMatrixBuffer().Get(),
+		m_AmatrixBuffer.Get(),
 		0,
 		D3D11_MAP_WRITE_DISCARD,
 		0,
@@ -53,7 +54,7 @@ bool Asteroid::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, cons
 	data->VMatrix = VMatrix;
 	data->PMatrix = PMatrix;
 
-	deviceContext->Unmap(m_model->getMatrixBuffer().Get(), 0);
+	deviceContext->Unmap(m_AmatrixBuffer.Get(), 0);
 	return true;
 }
 
@@ -65,7 +66,7 @@ void Asteroid::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& de
 		&m_model->getStride(),
 		&m_model->getOffset());
 	deviceContext->IASetIndexBuffer(m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
-	deviceContext->VSSetConstantBuffers(0, 1, m_model->getMatrixBuffer().GetAddressOf());
+	deviceContext->VSSetConstantBuffers(0, 1, m_AmatrixBuffer.GetAddressOf());
 }
 
 const bool Asteroid::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept

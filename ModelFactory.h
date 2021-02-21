@@ -46,6 +46,7 @@ public:
 	Model* GenerateOrbit(float major_semi_axis, float minor_semi_axis);
 	void PreparePlanetDisplacement();
 	void setDeviceAndContext(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext);
+	void CreateMatrixBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& matrixBuf);
 
 	struct MatrixBuffer {
 		DirectX::XMMATRIX WMatrix;
