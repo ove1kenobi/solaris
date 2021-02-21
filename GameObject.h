@@ -16,6 +16,7 @@ protected:
 	float m_roll;
 	float m_yaw;
 	Time m_timer;
+	DirectX::XMFLOAT3 m_sumForces;
 
 	//Where the buffers are stored
 	Model* m_model;
@@ -35,4 +36,9 @@ public:
 	//Returns the translation of the object in the world.
 	DirectX::XMFLOAT3 getTransVector();
 	float GetMass();
+	[[nodiscard]] const DirectX::XMFLOAT3& GetSumForces() const noexcept;
+	[[nodiscard]] const DirectX::XMFLOAT3& GetVelocity() const noexcept;
+	void CalculateGravity(GameObject* other);
+	void AddForce(DirectX::XMFLOAT3 f);
+	void UpdatePhysics();
 };

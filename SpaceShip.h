@@ -7,12 +7,12 @@ private:
 	float m_pitchTilt, m_rollTilt;
 
 	// Physics
-	std::vector<DirectX::XMFLOAT3> m_forces;
+	//std::vector<DirectX::XMFLOAT3> m_forces;
 public:
 	SpaceShip();
 	virtual ~SpaceShip() = default;
 
-	void UpdatePhysics();
+	//void UpdatePhysics();
 	void Move(float step);
 	void AddRotation(float yaw, float pitch);
 	void SetTilt(float pitchLerp, float rollLerp);
@@ -22,6 +22,6 @@ public:
 	virtual bool update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
 	virtual void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
 	[[nodiscard]] const bool IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept override;
-	void CalculateGravity(GameObject* other);
-	void AddForce(DirectX::XMFLOAT3 f);
+	//void CalculateGravity(GameObject* other);
+	//void AddForce(DirectX::XMFLOAT3 f);
 };

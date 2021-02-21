@@ -57,6 +57,7 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 
 bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
+	m_sumForces = { 0.0f, 0.0f, 0.0f };
 	// Update orbit
 	if (m_tetheredTo)
 	{

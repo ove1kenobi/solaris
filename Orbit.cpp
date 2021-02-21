@@ -18,6 +18,8 @@ bool Orbit::init(float major_semi_axis, float minor_semi_axis)
 
 bool Orbit::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
+	m_sumForces = { 0.0f, 0.0f, 0.0f };
+
 	//Updated the same way as a cosmicbody, with S * R * T. Rotation is around the ships up vector.
 	DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&m_upVector);
 	//100 times smaller. TODO: make variable?

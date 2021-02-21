@@ -144,7 +144,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	//Add an asteroid to the gameObject vector.
 	for (int i = 1; i < 10; ++i) {
 		Asteroid* ast = new Asteroid();
-		ast->init(DirectX::XMFLOAT3(0.0f, 1000.0f, 5000.0f + 50.0f * i), DirectX::XMFLOAT3(500.0f, 732.0f, 930.0f));
+		ast->init(DirectX::XMFLOAT3(0.0f + 500.0f * i , 1000.0f + 500.0f * i, 0.0f + 500.0f * i), DirectX::XMFLOAT3(0.0f, .0f, 0.0f));
 		m_gameObjects.push_back(ast);
 	}
 
@@ -160,17 +160,28 @@ void Scene::Update() noexcept {
 	for (int i = 1; i < 10; ++i) {
 		--it;
 		DirectX::XMFLOAT3 c = (*it)->GetCenter();
+		DirectX::XMFLOAT3 v = (*it)->GetVelocity();
+		DirectX::XMFLOAT3 f = (*it)->GetSumForces();
 		float m = (*it)->GetMass();
-		ImGui::Text("Center: (%.00f, %.00f, %.00f)", c.x, c.y, c.z);
-		ImGui::Text("Mass  : %.00f", m);
+		ImGui::Text("Center    : (%.00f, %.00f, %.00f)", c.x, c.y, c.z);
+		ImGui::Text("Velocity  : (%.00f, %.00f, %.00f)", v.x, v.y, v.z);
+		ImGui::Text("Sum forces: (%.00f, %.00f, %.00f)", f.x, f.y, f.z);
+		ImGui::Text("Mass      : %.00f", m);
 	}
 	ImGui::End();
 	// Calculate gravity between each pair of GameObjects
-	SpaceShip* ship = this->m_player.getShip();
-	for (size_t i = 0; i < m_gameObjects.size(); ++i)
+	for (size_t i = 0; i < m_gameObjects.size() - 1; ++i)
 	{
-		ship->CalculateGravity(m_gameObjects[i]);
+		for (size_t j = i + 1; j < m_gameObjects.size(); ++j)
+		{
+			m_gameObjects[i]->CalculateGravity(m_gameObjects[j]);
+		}
 	}
+	//SpaceShip* ship = this->m_player.getShip();
+	//for (size_t i = 0; i < m_gameObjects.size(); ++i)
+	//{
+	//	ship->CalculateGravity(m_gameObjects[i]);
+	//}
 	//Update the player and all the game objects.
 	m_player.update();
 	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();

@@ -58,6 +58,12 @@ DirectX::XMFLOAT3 operator+(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3&
 	return { a.x + b.x, a.y + b.y, a.z + b.z };
 }
 
+DirectX::XMFLOAT3 operator*(const DirectX::XMFLOAT3& a, const float& b)
+{
+	return { a.x * b, a.y * b, a.z * b };
+}
+
+
 float length(const DirectX::XMFLOAT3& a)
 {
 	return sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
