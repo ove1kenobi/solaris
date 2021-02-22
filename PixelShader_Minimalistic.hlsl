@@ -21,7 +21,7 @@ cbuffer cameraConstantBuffer : register(b1)
 
 struct PS_IN
 {
-    float4 inPositionSS : SV_Position;
+    float4 inPositionSS     : SV_Position;
     float3 inPositionWS     : POSITION;
     float inLengthToCenter  : LENGTHCENTER;
     float inRadius          : RADIUS;

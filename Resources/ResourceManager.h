@@ -73,5 +73,5 @@ private:
 public:
 	ResourceManager() noexcept;
 	virtual ~ResourceManager() noexcept = default;
-	[[nodiscard]] const bool Initialize(UINT screenWidth, UINT screenHeight) noexcept;
+	[[nodiscard]] const bool Initialize() noexcept;
 };

@@ -21,7 +21,7 @@ const bool InputLayout::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevi
 {
 	/*The input element descriptor will be continously expanded.
 	  The descriptor should probably be created outside of this function. */
-	if (type != LAYOUT_COSMIC && type != LAYOUT_PLAYER && type != LAYOUT_MINIMAL && type != LAYOUT_SKYBOX && type != LAYOUT_POSTPROCESSING && type != LAYOUT_SINGLEPOINT)
+	if (type != LAYOUT_COSMIC && type != LAYOUT_PLAYER && type != LAYOUT_MINIMAL && type != LAYOUT_POSTPROCESSING && type != LAYOUT_SINGLEPOINT)
 	{
 		return false;
 	}

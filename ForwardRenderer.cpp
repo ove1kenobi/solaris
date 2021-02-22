@@ -64,8 +64,10 @@ void ForwardRenderer::BeginFrame()
 		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
 
-	//Bind renderquad again: MIGHT HAVE TO CALL AGAIN
-	EventBuss::Get().Delegate(bindEvent);
+	//REDO. Need to somehow bind the ship without using minimal as that will be removed.
+	BindIDEvent bindEventMin(BindID::ID_Minimal);
+	EventBuss::Get().Delegate(bindEventMin);
+	
 	//Player:
 	for (size_t i = (*m_pGameObjects).size() - 1; i < (*m_pGameObjects).size(); ++i) {
 		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);

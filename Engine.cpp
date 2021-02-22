@@ -23,7 +23,7 @@ const bool Engine::Initialize()
 		return false;
 	
 	//Resource Manager
-	if (!m_ResourceManager.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
+	if (!m_ResourceManager.Initialize())
 		return false;
 
 	//Scene
