@@ -4,11 +4,16 @@
 ShadowMapping::ShadowMapping() noexcept
     : m_pShaderResourceView{ nullptr },
       m_pDepthStencilViews{ nullptr },
+      m_pRenderTargetViews{ nullptr },
+      m_pMatrixCBuffer{ nullptr },
+      m_pShadowDataBuffer{ nullptr },
+      m_pLightDataBuffer{ nullptr },
       m_CameraDirections{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
       m_CameraUpVectors{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
       m_SunPosition{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
-      m_TextureWidth{ 4096.0f },
-      m_TextureHeight{ 4096.0f }
+      m_TextureWidth{ 13312.0f },
+      m_TextureHeight{ 13312.0f },
+      m_ShadowBias{ 1.0f }
 {
     DirectX::XMStoreFloat4x4(&m_OrthographicProjection, DirectX::XMMatrixIdentity());
 }
@@ -24,7 +29,7 @@ const bool ShadowMapping::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>&
     textureDescriptor.SampleDesc.Count = 1u;
     textureDescriptor.SampleDesc.Quality = 0u;
     textureDescriptor.Usage = D3D11_USAGE_DEFAULT;
-    textureDescriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
+    textureDescriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;//D3D11_BIND_DEPTH_STENCIL;
     textureDescriptor.CPUAccessFlags = 0u;
     textureDescriptor.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
     Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture{ nullptr };
@@ -41,23 +46,36 @@ const bool ShadowMapping::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>&
                                          &shaderResourceViewDescriptor, 
                                          &m_pShaderResourceView), 
                                          "CreateShaderResourceView");
-    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDescriptor = {};
-    depthStencilViewDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
-    depthStencilViewDescriptor.Flags = 0u;
-    depthStencilViewDescriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
-    depthStencilViewDescriptor.Texture2DArray.MipSlice = 0u;
-    depthStencilViewDescriptor.Texture2DArray.ArraySize = 1u;
+   // D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDescriptor = {};
+   // depthStencilViewDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
+   // depthStencilViewDescriptor.Flags = 0u;
+   // depthStencilViewDescriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+   // depthStencilViewDescriptor.Texture2DArray.MipSlice = 0u;
+   // depthStencilViewDescriptor.Texture2DArray.ArraySize = 1u;
+   // for (unsigned int i{ 0u }; i < NUM_PASSES; ++i)
+   // {
+   //     depthStencilViewDescriptor.Texture2DArray.FirstArraySlice = i;
+   //     HR(pDevice->CreateDepthStencilView(pTexture.Get(), 
+   //                                        &depthStencilViewDescriptor, 
+   //                                        &m_pDepthStencilViews[i]), 
+   //                                        "CreateDepthStencilView");
+   // }
+    D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDescriptor = {};
+    renderTargetViewDescriptor.Format = DXGI_FORMAT_R32_FLOAT;
+    renderTargetViewDescriptor.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+    renderTargetViewDescriptor.Texture2DArray.MipSlice = 0u;
+    renderTargetViewDescriptor.Texture2DArray.ArraySize = 1u;
     for (unsigned int i{ 0u }; i < NUM_PASSES; ++i)
-    {
-        depthStencilViewDescriptor.Texture2DArray.FirstArraySlice = i;
-        HR(pDevice->CreateDepthStencilView(pTexture.Get(), 
-                                           &depthStencilViewDescriptor, 
-                                           &m_pDepthStencilViews[i]), 
-                                           "CreateDepthStencilView");
-    }
+       {
+           renderTargetViewDescriptor.Texture2DArray.FirstArraySlice = i;
+           HR(pDevice->CreateRenderTargetView(pTexture.Get(), 
+			                                  &renderTargetViewDescriptor,
+			                                  &m_pRenderTargetViews[i]),
+			                                  "CreateRenderTargetView");
+       }
 
-    //Currently taking in the same far plane value as the player camera has (10000):
-    DirectX::XMStoreFloat4x4(&m_OrthographicProjection, DirectX::XMMatrixPerspectiveLH(1.0f, 1.0f, 0.5f, 10000.0f));
+    //Currently taking in the same far plane value as the player camera has (100000):
+    DirectX::XMStoreFloat4x4(&m_OrthographicProjection, DirectX::XMMatrixPerspectiveLH(1.0f, 1.0f, 0.5f, 100000.0f));
 
     //The different directions:
     //+X
@@ -92,6 +110,32 @@ const bool ShadowMapping::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>&
 		                     &m_pMatrixCBuffer),
                              "CreateBuffer");
 
+	//Constant buffer for holding the shadow data:
+	D3D11_BUFFER_DESC shadowDataBufferDescriptor = {};
+    shadowDataBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
+    shadowDataBufferDescriptor.ByteWidth = sizeof(ShadowData);
+    shadowDataBufferDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    shadowDataBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    shadowDataBufferDescriptor.MiscFlags = 0;
+    shadowDataBufferDescriptor.StructureByteStride = 0;
+	HR(pDevice->CreateBuffer(&shadowDataBufferDescriptor,
+		                     nullptr,
+		                     &m_pShadowDataBuffer),
+		                     "CreateBuffer");
+
+	//Constant buffer for holding the shadow data:
+	D3D11_BUFFER_DESC lightDataBufferDescriptor = {};
+    lightDataBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
+    lightDataBufferDescriptor.ByteWidth = sizeof(ShadowData);
+    lightDataBufferDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    lightDataBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    lightDataBufferDescriptor.MiscFlags = 0;
+    lightDataBufferDescriptor.StructureByteStride = 0;
+	HR(pDevice->CreateBuffer(&lightDataBufferDescriptor,
+		                    nullptr,
+		                    &m_pLightDataBuffer),
+		                    "CreateBuffer");
+
     //We need to tell DXCore to create the proper viewport based on our preferences:
     CreateShadowMapViewportEvent event(m_TextureWidth, m_TextureHeight);
     EventBuss::Get().Delegate(event);
@@ -99,7 +143,7 @@ const bool ShadowMapping::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>&
     return true;
 }
 
-void ShadowMapping::PreparePasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept
+void ShadowMapping::PreparePasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const DirectX::XMFLOAT3& lightPosition) noexcept
 {
     //We start by unbinding the pipeline:
 	UnbindPipelineEvent ubEvent;
@@ -112,6 +156,21 @@ void ShadowMapping::PreparePasses(const Microsoft::WRL::ComPtr<ID3D11DeviceConte
     //We need to set proper Bindables on Resource manager:
     BindIDEvent bindShadowEvent(BindID::ID_Shadow);
     EventBuss::Get().Delegate(bindShadowEvent);
+
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource = {};
+    LightData buffer = {};
+    buffer.position = lightPosition;
+	HR_X(pDeviceContext->Map(m_pLightDataBuffer.Get(),
+		                       0,
+		                       D3D11_MAP_WRITE_DISCARD,
+		                       0,
+		                       &mappedSubresource),
+		                       "Map");
+    LightData* data = (LightData*)mappedSubresource.pData;
+    data->position = buffer.position;
+	pDeviceContext->Unmap(m_pLightDataBuffer.Get(), 0);
+	pDeviceContext->PSSetConstantBuffers(0u, 1u, m_pLightDataBuffer.GetAddressOf());
+    m_SunPosition = lightPosition;
 }
 
 void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const std::vector<GameObject*>* gameObjects) noexcept
@@ -123,14 +182,19 @@ void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& 
     * ...and combine the previous two to form the correct camera data.
     * Depth stencil views giving a view on the next 2Dtexture to write to.
     */
-    ID3D11RenderTargetView* nullRTV[1] = { nullptr };
+
+    //ID3D11RenderTargetView* nullRTV[1] = { nullptr };
     DirectX::XMMATRIX worldMatrix = {};
+    ID3D11DepthStencilView* nullDSV = nullptr;
     for (unsigned int i{ 0u }; i < NUM_PASSES; ++i)
     {
-        pDeviceContext->ClearDepthStencilView(m_pDepthStencilViews[i].Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
-        pDeviceContext->OMSetRenderTargets(1u, nullRTV, m_pDepthStencilViews[i].Get());
+       // pDeviceContext->ClearDepthStencilView(m_pDepthStencilViews[i].Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+       // pDeviceContext->OMSetRenderTargets(1u, nullRTV, m_pDepthStencilViews[i].Get());
+        pDeviceContext->ClearRenderTargetView(m_pRenderTargetViews[i].Get(), clearColor);
+        pDeviceContext->OMSetRenderTargets(1u, m_pRenderTargetViews[i].GetAddressOf(), nullDSV);
+        const DirectX::XMVECTOR lookAt = DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&m_SunPosition), DirectX::XMLoadFloat3(&m_CameraDirections[i]));
         DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(DirectX::XMLoadFloat3(&m_SunPosition), 
-                                                                 DirectX::XMLoadFloat3(&m_CameraDirections[i]),   //Will only work for (0,0,0) position! (Emil F)
+                                                                 lookAt,   
                                                                  DirectX::XMLoadFloat3(&m_CameraUpVectors[i]));
         for (int j{ 2 }; j > -1; --j)
         {
@@ -160,8 +224,30 @@ void ShadowMapping::CleanUp() noexcept
     //We need to reset the viewport:
     ResetDefaultViewportEvent vpEvent;
     EventBuss::Get().Delegate(vpEvent);
-    //DSV and BB is reset in the forward renderer.
-    
-    //We need to set the cube texture as shader resource!
-    
+}
+
+void ShadowMapping::BindSRV(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept
+{
+    pDeviceContext->PSSetShaderResources(0u, 1u, m_pShaderResourceView.GetAddressOf());
+}
+
+void ShadowMapping::UpdateBias(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept
+{
+    ImGui::Begin("Shadow");
+    ImGui::DragFloat("Bias", &m_ShadowBias, 0.001f, 0.0f, 10.0f);
+    ImGui::End();
+
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource = {};
+    ShadowData buffer = {};
+    buffer.bias = m_ShadowBias;
+	HR_X(pDeviceContext->Map(m_pShadowDataBuffer.Get(),
+		                     0,
+		                     D3D11_MAP_WRITE_DISCARD,
+		                     0,
+		                     &mappedSubresource),
+		                     "Map");
+    ShadowData* data = (ShadowData*)mappedSubresource.pData;
+    data->bias = buffer.bias;
+	pDeviceContext->Unmap(m_pShadowDataBuffer.Get(), 0);
+	pDeviceContext->PSSetConstantBuffers(2u, 1u, m_pShadowDataBuffer.GetAddressOf());
 }

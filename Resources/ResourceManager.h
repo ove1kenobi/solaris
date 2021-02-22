@@ -24,6 +24,7 @@ private:
 	VertexShader m_VertexShaderShadow;
 	PixelShader m_PixelShaderMinimal;
 	PixelShader m_PixelShaderSkybox;
+	PixelShader m_PixelShaderShadow;
 	ComputeShader m_ComputeShaderPlanet;
 	InputLayout m_InputLayoutCosmicBody;
 	InputLayout m_InputLayoutPlayerModel;
@@ -33,6 +34,7 @@ private:
 	PrimitiveTopology m_TopologyPatchList;
 	CubeTexture m_CubeTextureSkybox;
 	SamplerState m_SamplerSkybox;
+	SamplerState m_SamplerShadow;
 	VertexBuffer m_VertexBufferCube;
 	IndexBuffer m_IndexBufferCube;
 	std::vector<IBindable*> m_BindablesMinimalistic;

@@ -30,6 +30,8 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	if (!m_PixelShaderSkybox.Create(m_pDevice, L"PixelShader_Skybox.hlsl"))
 		return false;
+	if (!m_PixelShaderShadow.Create(m_pDevice, L"PixelShader_Shadow.hlsl"))
+		return false;
 	//Geometry Shaders:
 
 	//Hull Shaders:
@@ -52,6 +54,8 @@ const bool ResourceManager::CreateAllBindables()
 	//Samplers:
 	if (!m_SamplerSkybox.Create(m_pDevice, BindFlag::S_PS, TechFlag::SKYBOX, 0u))
 		return false;
+	if (!m_SamplerShadow.Create(m_pDevice, BindFlag::S_PS, TechFlag::SHADOW, 0u))
+		return false;
 	//Textures:
 	if (!m_CubeTextureSkybox.Create(m_pDevice, L"skymap.dds", 0u))
 		return false;
@@ -64,13 +68,13 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	//Arrange:
 	//Minimal:
-	m_BindablesMinimalistic.insert(m_BindablesMinimalistic.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList });
+	m_BindablesMinimalistic.insert(m_BindablesMinimalistic.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList, &m_SamplerShadow });
 	//Skybox:
 	m_BindablesSkybox.insert(m_BindablesSkybox.end(), { &m_VertexShaderSkybox, &m_PixelShaderSkybox, &m_InputLayoutPositionOnly,
 														&m_TopologyTriList, &m_CubeTextureSkybox, &m_SamplerSkybox,
 														&m_VertexBufferCube, &m_IndexBufferCube});
 	//Shadow mapping:
-	m_BindablesShadow.insert(m_BindablesShadow.end(), { &m_VertexShaderShadow, &m_InputLayoutPositionOnly, &m_TopologyTriList });
+	m_BindablesShadow.insert(m_BindablesShadow.end(), { &m_VertexShaderShadow, &m_PixelShaderShadow, &m_InputLayoutPositionOnly, &m_TopologyTriList });
 	return true;
 }
 
@@ -174,8 +178,8 @@ void ResourceManager::BindToPipeline(IEvent& event)
 				bindables->Bind(m_pDeviceContext);
 			}
 		}
-		ID3D11PixelShader* nullPS = nullptr;
-		m_pDeviceContext->PSSetShader(nullPS, nullptr, 0u);
+		//ID3D11PixelShader* nullPS = nullptr;
+		//m_pDeviceContext->PSSetShader(nullPS, nullptr, 0u);
 		break;
 	}
 	}

@@ -11,7 +11,8 @@ ForwardRenderer::ForwardRenderer() noexcept
 	  m_pBackBuffer{ nullptr },
 	  m_pDepthStencilView{ nullptr },
 	  m_pLightCBuffer{ nullptr },
-	  m_pCameraCBuffer{ nullptr }
+	  m_pCameraCBuffer{ nullptr },
+	  m_LightPosition{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)}
 {
 	EventBuss::Get().AddListener(this, EventType::SendRenderObjectsEvent, EventType::DelegateDXEvent, EventType::DelegateSunLightEvent);
 }
@@ -24,7 +25,7 @@ void ForwardRenderer::BeginFrame()
 	EventBuss::Get().Delegate(event);
 
 	//Shadow map pass(es):
-	m_ShadowMapping.PreparePasses(m_pDeviceContext);
+	m_ShadowMapping.PreparePasses(m_pDeviceContext, m_LightPosition);
 	m_ShadowMapping.DoPasses(m_pDeviceContext, m_pGameObjects);
 	m_ShadowMapping.CleanUp();
 
@@ -44,7 +45,9 @@ void ForwardRenderer::BeginFrame()
 	BindLightData();
 	//Bind Camera:
 	BindCameraData();
-
+	//Bind shadow resource:
+	m_ShadowMapping.BindSRV(m_pDeviceContext);
+	m_ShadowMapping.UpdateBias(m_pDeviceContext);
 	//Loop that renders and draws every GameObject.
 	for (size_t i = 0; i < (*m_pGameObjects).size(); ++i) 
 	{
@@ -196,6 +199,7 @@ void ForwardRenderer::BindLightData()
 	data->ambientLightIntensity = sAmbientLightIntensity;
 	data->specularIntensity = sSpecularIntensity;
 	data->specularPower = sSpecularPower;
+	m_LightPosition = data->lightWorldPosition;
 
 	ImGui::Begin("Lighting");
 	ImGui::DragFloat3("Light World Position", sLightWorldPosition, 20.0f);
