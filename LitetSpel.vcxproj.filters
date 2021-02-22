@@ -6,6 +6,9 @@
     <FxCompile Include="VertexShader_Skybox.hlsl" />
     <FxCompile Include="PixelShader_Skybox.hlsl" />
     <FxCompile Include="ComputeShader_Planet.hlsl" />
+    <FxCompile Include="VertexShader_Orbit.hlsl" />
+    <FxCompile Include="PixelShader_Orbit.hlsl" />
+    <FxCompile Include="PixelShader_Sun.hlsl" />
     <FxCompile Include="PixelShader_PostProcessing.hlsl" />
     <FxCompile Include="VertexShader_PostProcessing.hlsl" />
   </ItemGroup>
@@ -52,6 +55,11 @@
     <ClCompile Include="Resources\IndexBuffer.cpp" />
     <ClCompile Include="Resources\ComputeShader.cpp" />
     <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="Techniques\MousePicking.cpp" />
+    <ClCompile Include="Render2D.cpp" />
+    <ClCompile Include="PlanetInteractionUI.cpp" />
+    <ClCompile Include="ModuleUI.cpp" />
+    <ClCompile Include="Orbit.cpp" />
     <ClCompile Include="Resources\Texture.cpp" />
     <ClCompile Include="Techniques\WaterPostProcessing.cpp" />
     <ClCompile Include="Resources\GBuffer.cpp" />
@@ -110,6 +118,11 @@
     <ClInclude Include="Resources\IndexBuffer.h" />
     <ClInclude Include="Resources\ComputeShader.h" />
     <ClInclude Include="Planet.h" />
+    <ClInclude Include="Techniques\MousePicking.h" />
+    <ClInclude Include="Render2D.h" />
+    <ClInclude Include="PlanetInteractionUI.h" />
+    <ClInclude Include="ModuleUI.h" />
+    <ClInclude Include="Orbit.h" />
     <ClInclude Include="Resources\Texture.h" />
     <ClInclude Include="Techniques\WaterPostProcessing.h" />
     <ClInclude Include="Resources\GBuffer.h" />

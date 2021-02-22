@@ -4,6 +4,9 @@
 #include <windowsx.h>
 #include <wrl.h>
 #include <d3d11.h>
+#include <d2d1.h>
+#include <d2d1helper.h>
+#include <dwrite.h>
 #include <dxgi.h>
 #include <d3dcompiler.h>
 #include <directxmath.h>
@@ -22,3 +25,6 @@
 #include <chrono>
 #include <stdexcept>
 #include <stdarg.h>
+#include <thread>
+#include <sstream>
+#include <mutex>

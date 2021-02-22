@@ -6,7 +6,7 @@ Model::Model()
 	m_indexBufferSize{ 0 }, m_vertexBufferSize{ 0 },
 	m_boundingBox{ nullptr }, m_boundingSphere{ nullptr }
 {
-
+	
 }
 
 Model::~Model()

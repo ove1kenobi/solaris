@@ -6,6 +6,10 @@ DXCore::DXCore() noexcept
 	  m_pSwapChain{ nullptr },
 	  m_pBackBuffer{ nullptr },
 	  m_pDepthStencilView{ nullptr },
+	  m_pFactory2D{ nullptr },
+	  m_pSurface{ nullptr },
+	  m_pSurfaceRenderTarget{ nullptr },
+	  m_pTextFactory{ nullptr },
 	  m_pRasterizerStateFill{ nullptr},
 	  m_pRasterizerStateWireFrame{ nullptr },
 	  m_DefaultViewport { 0 },
@@ -27,6 +31,7 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 	#if defined(DEBUG) || defined(_DEBUG)
 		flags |= D3D11_CREATE_DEVICE_DEBUG;
 	#endif
+		flags |= D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
 	D3D_FEATURE_LEVEL pFeatureLevel[1] = { D3D_FEATURE_LEVEL_11_0 };
 	D3D_FEATURE_LEVEL verifiedFeatureLevel = {};
@@ -47,6 +52,7 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 											    4u,
 											    &m_MSAAQuality),
 											    "CheckMultiSampleQualityLevels");
+
 	assert(m_MSAAQuality > 0u);
 
 	DXGI_SWAP_CHAIN_DESC swapChainDescriptor = {};
@@ -152,6 +158,20 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 
 	m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
 
+	HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, IID_PPV_ARGS(&m_pFactory2D)), "CreateFactory2D");
+
+	HR(m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&m_pSurface)), "CreateSurface");
+
+	D2D1_RENDER_TARGET_PROPERTIES props =
+		D2D1::RenderTargetProperties(
+			D2D1_RENDER_TARGET_TYPE_DEFAULT,
+			D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
+		);
+
+	HR(m_pFactory2D->CreateDxgiSurfaceRenderTarget(m_pSurface.Get(), &props, &m_pSurfaceRenderTarget), "CreateSurfaceRenderTarget");
+
+	HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), &m_pTextFactory), "CreateTextFactory");
+
 	m_DefaultViewport.TopLeftX = 0.0f;
 	m_DefaultViewport.TopLeftY = 0.0f;
 	m_DefaultViewport.Width = static_cast<FLOAT>(clientWindowWidth);
@@ -228,7 +248,16 @@ void DXCore::ToggleWireFrame() noexcept
 
 void DXCore::DelegateDXHandles() noexcept
 {
-	DelegateDXEvent event(m_pDevice, m_pDeviceContext, m_pBackBuffer, m_pDepthStencilView, m_pDepthShaderResourceView);
+	DelegateDXEvent event(m_pDevice, 
+		m_pDeviceContext, 
+		m_pSwapChain, 
+		m_pBackBuffer, 
+		m_pDepthStencilView, 
+		m_pDepthShaderResourceView,
+		m_pFactory2D, 
+		m_pSurfaceRenderTarget,
+		m_pTextFactory
+	);
 	EventBuss::Get().Delegate(event);
 }
 
@@ -276,4 +305,19 @@ const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& DXCore::GetBackBuffer() co
 const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& DXCore::GetDepthStencilView() const noexcept
 {
 	return m_pDepthStencilView;
+}
+
+const Microsoft::WRL::ComPtr<ID2D1Factory>& DXCore::GetFactory2D() const noexcept
+{
+	return m_pFactory2D;
+}
+
+const Microsoft::WRL::ComPtr<ID2D1RenderTarget>& DXCore::GetSurfaceRenderTarget() const noexcept
+{
+	return m_pSurfaceRenderTarget;
+}
+
+const Microsoft::WRL::ComPtr<IDWriteFactory>& DXCore::GetTextFactory() const noexcept
+{
+	return m_pTextFactory;
 }

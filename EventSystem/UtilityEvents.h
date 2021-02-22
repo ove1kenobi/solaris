@@ -5,23 +5,36 @@ class Planet;
 class DelegateDXEvent : public IEvent
 {
 private:
-	Microsoft::WRL::ComPtr<ID3D11Device> m_ppDevice;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_ppDeviceContext;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_ppBackBuffer;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_ppDepthStencilView;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_ppDepthShaderResourceView;
+	Microsoft::WRL::ComPtr<ID3D11Device>				m_ppDevice;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext>			m_ppDeviceContext;
+	Microsoft::WRL::ComPtr<IDXGISwapChain>				m_pSwapChain;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>		m_ppBackBuffer;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>		m_ppDepthStencilView;
+	Microsoft::WRL::ComPtr<ID2D1Factory>				m_pFactory2D;
+	Microsoft::WRL::ComPtr<ID2D1RenderTarget>			m_pSurfaceRenderTarget;
+	Microsoft::WRL::ComPtr<IDWriteFactory>				m_pTextFactory;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	m_ppDepthShaderResourceView;
 public:
 	DelegateDXEvent(Microsoft::WRL::ComPtr<ID3D11Device>& pdevice,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pdeviceContext,
+		Microsoft::WRL::ComPtr<IDXGISwapChain>&	pswapChain,
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& pbackBuffer,
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& pdepthStencilView,
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& pdepthShaderResourceView) noexcept
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& pdepthShaderResourceView,
+		Microsoft::WRL::ComPtr<ID2D1Factory>& pfactory,
+		Microsoft::WRL::ComPtr<ID2D1RenderTarget>& pSurfaceRenderTarget,
+		Microsoft::WRL::ComPtr<IDWriteFactory>&	pTextFactory) noexcept
 	{
 		m_ppDevice = pdevice;
 		m_ppDeviceContext = pdeviceContext;
+		m_pSwapChain = pswapChain;
 		m_ppBackBuffer = pbackBuffer;
 		m_ppDepthStencilView = pdepthStencilView;
-		m_ppDepthShaderResourceView = pdepthShaderResourceView;
+		m_ppDepthShaderResourceView = pdepthShaderResourceView; 
+		m_pFactory2D = pfactory;
+		m_pSurfaceRenderTarget = pSurfaceRenderTarget;
+		m_pTextFactory = pTextFactory;
+
 	}
 	virtual ~DelegateDXEvent() noexcept = default;
 
@@ -41,6 +54,10 @@ public:
 	{
 		return m_ppDeviceContext;
 	}
+	[[nodiscard]] const Microsoft::WRL::ComPtr<IDXGISwapChain>& GetSwapChain() const
+	{
+		return m_pSwapChain;
+	}
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& GetBackBuffer() const
 	{
 		return m_ppBackBuffer;
@@ -48,6 +65,18 @@ public:
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& GetDepthStencilView() const
 	{
 		return m_ppDepthStencilView;
+	}
+	[[nodiscard]] const Microsoft::WRL::ComPtr<ID2D1Factory>& GetFactory2D() const
+	{
+		return m_pFactory2D;
+	}
+	[[nodiscard]] const Microsoft::WRL::ComPtr<ID2D1RenderTarget>& GetSurfaceRenderTarget() const
+	{
+		return m_pSurfaceRenderTarget;
+	}
+	[[nodiscard]] const Microsoft::WRL::ComPtr<IDWriteFactory>& GetTextFactory() const
+	{
+		return m_pTextFactory;
 	}
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetShaderResourceView() const
 	{

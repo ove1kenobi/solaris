@@ -7,10 +7,9 @@
 
 class PlayerCamera : public IEventListener, public EventPublisher, public Camera {
 private:
+	float m_maxScroll, m_minScroll;
 	float m_FOVvalue = 4.0f;
 	float m_distanceFromShip;
-	float m_sensitivity;
-	bool m_orbitModeActive;
 	void OnEvent(IEvent& event) noexcept;
 
 public:
@@ -21,12 +20,10 @@ public:
 	bool init(int screenWidth, int screenHeight);
 	//Updates the vMatrix
 	void update(DirectX::XMVECTOR shipCoords);
-	//Mouse movement
-	void mouseRot(int xValue, int yValue);
+	//Rotate orbit camera movement
+	void OrbitRotation(float yaw, float pitch);
 	//Zoom
 	void mouseScroll(int scroll);
-	//Rotates camera when ship rotates.
-	void shipRot(float step);
 
 	DirectX::XMVECTOR GetForward();
 };

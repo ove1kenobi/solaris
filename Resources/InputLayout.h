@@ -2,7 +2,7 @@
 #define LAYOUT_COSMIC 0
 #define LAYOUT_PLAYER 1
 #define LAYOUT_MINIMAL 2
-#define LAYOUT_SKYBOX 3
+#define LAYOUT_SINGLEPOINT 3
 #define LAYOUT_POSTPROCESSING 4
 class IBindable;
 #include "VertexShader.h"

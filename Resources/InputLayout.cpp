@@ -21,7 +21,7 @@ const bool InputLayout::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevi
 {
 	/*The input element descriptor will be continously expanded.
 	  The descriptor should probably be created outside of this function. */
-	if (type != LAYOUT_COSMIC && type != LAYOUT_PLAYER && type != LAYOUT_MINIMAL && type != LAYOUT_SKYBOX && type != LAYOUT_POSTPROCESSING)
+	if (type != LAYOUT_COSMIC && type != LAYOUT_PLAYER && type != LAYOUT_MINIMAL && type != LAYOUT_SKYBOX && type != LAYOUT_POSTPROCESSING && type != LAYOUT_SINGLEPOINT)
 	{
 		return false;
 	}
@@ -74,7 +74,7 @@ const bool InputLayout::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevi
 									  &m_pInputLayout),
 									  "CreateInputLayout");
 	}
-	else if (type == LAYOUT_SKYBOX)
+	else if (type == LAYOUT_SINGLEPOINT)
 	{
 		D3D11_INPUT_ELEMENT_DESC ieDesc[] =
 		{
