@@ -1,11 +1,6 @@
 #include "pch.h"
 #include "SpaceShip.h"
 
-float SpaceShip::GetSpeed()
-{
-	return sqrtf(powf(m_velocity.x, 2) + powf(m_velocity.y, 2) + powf(m_velocity.z, 2));
-}
-
 SpaceShip::SpaceShip()
 {
 	this->m_model = ModelFactory::Get().GetModel(std::string("models/SciFi_Fighter_AK5.obj"));
@@ -30,7 +25,7 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 	ImGui::Begin("Spaceship");
 	ImGui::Text("Center  : (%f, %f, %f)", m_center.x, m_center.y, m_center.z);
 	ImGui::Text("Velocity: (%f, %f, %f)", m_velocity.x, m_velocity.y, m_velocity.z);
-	ImGui::Text("Speed	: %f", GetSpeed());
+	ImGui::Text("Speed	: %f", length(m_velocity));
 	ImGui::DragFloat("Mass", &m_mass, 500.0f);
 	ImGui::End();
 #endif
@@ -74,20 +69,6 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
 	return true;
-}
-
-void SpaceShip::Move(float step)
-{
-	DirectX::XMFLOAT3 pos;
-
-	pos.x = step * m_forwardVector.x;
-	pos.y = step * m_forwardVector.y;
-	pos.z = step * m_forwardVector.z;
-
-	//m_center.x += pos.x;
-	//m_center.y += pos.y;
-	//m_center.z += pos.z;
-	AddForce(pos);
 }
 
 void SpaceShip::AddRotation(float yaw, float pitch)
@@ -179,7 +160,7 @@ void SpaceShip::AddForce(DirectX::XMFLOAT3 f)
 
 void SpaceShip::Deceleration(float breakingStrenght)
 {
-	float speed = GetSpeed();
+	float speed = length(m_velocity);
 
 	if (speed != 0.0f) {
 		DirectX::XMFLOAT3 breakingForce{ -m_velocity.x, -m_velocity.y, -m_velocity.z };
@@ -216,15 +197,14 @@ void SpaceShip::UpdatePhysics()
 	m_velocity.y += sumForces.y;
 	m_velocity.z += sumForces.z;
 
-	float speed = GetSpeed();
+	float speed = length(m_velocity);
 	
-	/*
 	if (speed > m_topSpeed) {
 		m_velocity = normalize(m_velocity);
 		m_velocity.x = m_topSpeed * m_velocity.x;
 		m_velocity.y = m_topSpeed * m_velocity.y;
 		m_velocity.z = m_topSpeed * m_velocity.z;
-	}*/
+	}
 
 	m_center.x += static_cast<float>(m_velocity.x * m_timer.DeltaTime());
 	m_center.y += static_cast<float>(m_velocity.y * m_timer.DeltaTime());

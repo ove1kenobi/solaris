@@ -13,12 +13,10 @@ public:
 	SpaceShip();
 	virtual ~SpaceShip() = default;
 
-	void Move(float step);
 	void AddRotation(float yaw, float pitch);
 	void SetTilt(float pitchLerp, float rollLerp);
 	void SetForwardVector(DirectX::XMFLOAT3 forwardVector);
 	void UpdatePhysics();
-	float GetSpeed();
 
 	DirectX::XMFLOAT3 GetVelocity();
 	DirectX::XMFLOAT3 getCenter();
