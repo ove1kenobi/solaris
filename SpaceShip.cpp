@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "SpaceShip.h"
 
+float SpaceShip::GetSpeed()
+{
+	return sqrtf(powf(m_velocity.x, 2) + powf(m_velocity.y, 2) + powf(m_velocity.z, 2));
+}
+
 SpaceShip::SpaceShip()
 {
 	this->m_model = ModelFactory::Get().GetModel(std::string("models/SciFi_Fighter_AK5.obj"));
@@ -25,6 +30,7 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 	ImGui::Begin("Spaceship");
 	ImGui::Text("Center  : (%f, %f, %f)", m_center.x, m_center.y, m_center.z);
 	ImGui::Text("Velocity: (%f, %f, %f)", m_velocity.x, m_velocity.y, m_velocity.z);
+	ImGui::Text("Speed	: %f", GetSpeed());
 	ImGui::DragFloat("Mass", &m_mass, 500.0f);
 	ImGui::End();
 #endif
@@ -103,19 +109,14 @@ void SpaceShip::SetTilt(float pitchLerp, float rollLerp)
 	m_rollTilt = rollLerp * (float)M_PI_4;
 }
 
-void SpaceShip::SetForwardVector(DirectX::XMFLOAT3 cameraPos)
+void SpaceShip::SetForwardVector(DirectX::XMFLOAT3 forwardVector)
 {
-	// Create a vector from the camera to the ship 
-	m_forwardVector.x = m_center.x - cameraPos.x;
-	m_forwardVector.y = m_center.y - cameraPos.y;
-	m_forwardVector.z = m_center.z - cameraPos.z;
-	
-	float length = sqrtf(powf(m_forwardVector.x, 2) + powf(m_forwardVector.y, 2) + powf(m_forwardVector.z, 2));
+	m_forwardVector = forwardVector;
+}
 
-	// Normalize the vector
-	m_forwardVector.x /= length;
-	m_forwardVector.y /= length;
-	m_forwardVector.z /= length;
+DirectX::XMFLOAT3 SpaceShip::GetVelocity()
+{
+	return m_velocity;
 }
 
 DirectX::XMFLOAT3 SpaceShip::getCenter() {
@@ -176,6 +177,28 @@ void SpaceShip::AddForce(DirectX::XMFLOAT3 f)
 	m_forces.push_back(f);
 }
 
+void SpaceShip::Deceleration(float breakingStrenght)
+{
+	float speed = GetSpeed();
+
+	if (speed != 0.0f) {
+		DirectX::XMFLOAT3 breakingForce{ -m_velocity.x, -m_velocity.y, -m_velocity.z };
+		breakingForce = normalize(breakingForce);
+		breakingForce.x *= breakingStrenght;
+		breakingForce.y *= breakingStrenght;
+		breakingForce.z *= breakingStrenght;
+		m_velocity.x += breakingForce.x;
+		m_velocity.y += breakingForce.y;
+		m_velocity.z += breakingForce.z;
+		
+		if (dot(m_velocity, breakingForce) > 0.0f) {
+			m_velocity.x = 0.0f;
+			m_velocity.y = 0.0f;
+			m_velocity.z = 0.0f;
+		}
+	}
+}
+
 void SpaceShip::UpdatePhysics()
 {
 	// Sum forces working on GameObject and apply
@@ -193,16 +216,15 @@ void SpaceShip::UpdatePhysics()
 	m_velocity.y += sumForces.y;
 	m_velocity.z += sumForces.z;
 
-	float speed = sqrtf(powf(m_velocity.x, 2) + powf(m_velocity.y, 2) + powf(m_velocity.z, 2));
+	float speed = GetSpeed();
 	
+	/*
 	if (speed > m_topSpeed) {
-		m_velocity.x = m_topSpeed * m_velocity.x / speed;
-		m_velocity.y = m_topSpeed * m_velocity.y / speed;
-		m_velocity.z = m_topSpeed * m_velocity.z / speed;
-	}
-
-	speed = sqrtf(powf(m_velocity.x, 2) + powf(m_velocity.y, 2) + powf(m_velocity.z, 2));
-	//std::cout << speed << std::endl;
+		m_velocity = normalize(m_velocity);
+		m_velocity.x = m_topSpeed * m_velocity.x;
+		m_velocity.y = m_topSpeed * m_velocity.y;
+		m_velocity.z = m_topSpeed * m_velocity.z;
+	}*/
 
 	m_center.x += static_cast<float>(m_velocity.x * m_timer.DeltaTime());
 	m_center.y += static_cast<float>(m_velocity.y * m_timer.DeltaTime());

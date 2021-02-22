@@ -1,18 +1,23 @@
 #include "pch.h"
 #include "ourMath.h"
 
-float dot(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
-	//Normalize the vectors.
-	float aLen = std::sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
-	float bLen = std::sqrt(b.x * b.x + b.y * b.y + b.z * b.z);
-	a.x = a.x / aLen;
-	a.y = a.y / aLen;
-	a.z = a.z / aLen;
+float length(DirectX::XMFLOAT3 vector) {
+	return sqrtf(powf(vector.x, 2) + powf(vector.y, 2) + powf(vector.z, 2));
+}
 
-	b.x = b.x / bLen;
-	b.y = b.y / bLen;
-	b.z = b.z / bLen;
-	
+DirectX::XMFLOAT3 normalize(DirectX::XMFLOAT3 vector) {
+	float length = sqrtf(powf(vector.x, 2) + powf(vector.y, 2) + powf(vector.z, 2));
+
+	if (length != 0.0f) {
+		vector.x /= length;
+		vector.y /= length;
+		vector.z /= length;
+	}
+
+	return vector;
+}
+
+float dot(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
 	return a.x * b.x + a.y * b.y + a.z * b.z;
 };
 
@@ -28,7 +33,7 @@ DirectX::XMFLOAT3 cross(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
 
 //Here be dragons. Look on wikipedia how this works xD
 DirectX::XMFLOAT3 slerp(DirectX::XMFLOAT3 p0, DirectX::XMFLOAT3 p1, float t) {
-	float ohm = std::acos(dot(p0, p1));
+	float ohm = std::acos( dot(normalize(p0), normalize(p1)) );
 
 	float left = (std::sin(std::abs((1 - t) * ohm)) / std::sin(ohm));
 	p0.x = p0.x * left;
