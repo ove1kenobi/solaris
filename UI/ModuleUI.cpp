@@ -8,6 +8,14 @@ ModuleUI::ModuleUI() noexcept {
 	m_pWindowHeight = 0.0f;
 }
 
+bool ModuleUI::CreateBrush() {
+	return ErrorCheck(m_pRenderTarget2D->CreateSolidColorBrush(
+		D2D1::ColorF(D2D1::ColorF::Aqua, 0.5f),
+		&m_pBrush),
+		"SolidColorBrush"
+	);
+}
+
 void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {
 	DelegateDXEvent& derivedEvent = static_cast<DelegateDXEvent&>(event);
 	
@@ -30,14 +38,6 @@ bool ModuleUI::ErrorCheck(HRESULT handle, std::string type) {
 		return false;
 	}
 	return true;
-}
-
-bool ModuleUI::Initialize() {
-	 return ErrorCheck(m_pRenderTarget2D->CreateSolidColorBrush(
-		 D2D1::ColorF(D2D1::ColorF::Aqua, 0.5f), 
-		 &m_pBrush), 
-		 "SolidColorBrush"
-	 );
 }
 
 void ModuleUI::UpdateBrush(D2D1::ColorF color, float opacity) {

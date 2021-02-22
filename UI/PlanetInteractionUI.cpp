@@ -11,12 +11,6 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pPlanetNameTextBox = D2D1::RectF();
 	m_pPlanetFlavourTextBox = D2D1::RectF();
 
-	/*
-	m_pEventOneHoverTextBox = D2D1::RectF();
-	m_pEventTwoHoverTextBox = D2D1::RectF();
-	m_pEventThreeHoverTextBox = D2D1::RectF();
-	*/
-
 	//Example text: should be removed once event system is in place.
 	m_pPlanetNameText = L"TATOOINE";
 
@@ -46,18 +40,16 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 }
 
 bool PlanetInteractionUI::Initialize() {
-	if (!ModuleUI::Initialize()) {
-		return false;
-	}
 	if (!this->CreateScreen()) {
 		return false;
 	}
 	if (!this->CreateTextElements()) {
 		return false;
 	}
+	/*
 	if (!this->CreateHover()) {
 		return false;
-	}
+	}*/
 	if (!this->CreateTools()) {
 		return false;
 	}
@@ -88,11 +80,6 @@ bool PlanetInteractionUI::CreateScreen() {
 }
 
 bool PlanetInteractionUI::CreateTextElements() {
-	//Module information
-	m_pScreenOffset = 40.0f;
-	m_pPadding = 10.0f;
-	m_pBlockSize = ((m_pMainRectangle.bottom - m_pScreenOffset) - (m_pMainRectangle.top + m_pScreenOffset)) / 3.0f;
-
 	//Planet name
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
 		L"Arial",					
@@ -107,13 +94,6 @@ bool PlanetInteractionUI::CreateTextElements() {
 
 	ErrorCheck(m_pTitleTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
 
-	m_pPlanetNameTextBox = D2D1::RectF(
-		m_pMainRectangle.left + 300.0f,
-		m_pMainRectangle.top - 30.0f,
-		m_pMainRectangle.right - 300.0f,
-		m_pMainRectangle.top + 30.0f
-	);
-
 	//Screen text
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
 		L"Arial",
@@ -126,16 +106,9 @@ bool PlanetInteractionUI::CreateTextElements() {
 		&m_pBodyTextFormat
 	), "TextFormat");
 
-	m_pPlanetFlavourTextBox = D2D1::RectF(
-		(m_pWindowWidth / 2.0f) + m_pScreenOffset,
-		m_pMainRectangle.top + m_pScreenOffset,
-		m_pMainRectangle.right - m_pScreenOffset,
-		m_pMainRectangle.bottom - m_pScreenOffset
-	);
-
-	m_pRandomEvents.push_back(Button());
-	m_pRandomEvents.push_back(Button());
-	m_pRandomEvents.push_back(Button());
+	//m_pRandomEvents.push_back(Button());
+	//m_pRandomEvents.push_back(Button());
+	//m_pRandomEvents.push_back(Button());
 
 	/*
 	m_pEventOneHoverTextBox = D2D1::RectF(
@@ -209,6 +182,8 @@ bool PlanetInteractionUI::CreateHover() {
 }
 
 bool PlanetInteractionUI::CreateTools() {
+	this->CreateBrush();
+
 	ID2D1GradientStopCollection* pGradientStops = NULL;
 
 	D2D1_GRADIENT_STOP gradientStops[3];
@@ -256,11 +231,17 @@ bool PlanetInteractionUI::UpdateScreen() {
 		m_pWindowWidth - 100.0f,
 		m_pWindowHeight - 200.0f
 	);
+
+	//Module information
+	m_pScreenOffset = 40.0f;
+	m_pPadding = 10.0f;
+	m_pBlockSize = ((m_pMainRectangle.bottom - m_pScreenOffset) - (m_pMainRectangle.top + m_pScreenOffset)) / 3.0f;
 	return true;
 }
 
 bool PlanetInteractionUI::UpdateLeftCorner() {
 	bool updated = false;
+
 	//Set corner
 	if (ErrorCheck(m_pBottomLeft->Open(&m_pSink), "OpenGeometry")) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
@@ -478,9 +459,28 @@ bool PlanetInteractionUI::UpdateTopCorners() {
 	return updated;
 }
 
-bool PlanetInteractionUI::UpdateTools()
-{
-	return false;
+bool PlanetInteractionUI::UpdateTools() {
+	m_pLinearGradientBrush->SetStartPoint(D2D1::Point2F(m_pMainRectangle.left, m_pWindowHeight));
+	m_pLinearGradientBrush->SetEndPoint(D2D1::Point2F(m_pMainRectangle.right, m_pWindowHeight));
+	return true;
+}
+
+bool PlanetInteractionUI::UpdateTextElements() {
+	m_pPlanetNameTextBox = D2D1::RectF(
+		m_pMainRectangle.left + 300.0f,
+		m_pMainRectangle.top - 30.0f,
+		m_pMainRectangle.right - 300.0f,
+		m_pMainRectangle.top + 30.0f
+	);
+
+	m_pPlanetFlavourTextBox = D2D1::RectF(
+		(m_pWindowWidth / 2.0f) + m_pScreenOffset,
+		m_pMainRectangle.top + m_pScreenOffset,
+		m_pMainRectangle.right - m_pScreenOffset,
+		m_pMainRectangle.bottom - m_pScreenOffset
+	);
+
+	return true;
 }
 
 bool PlanetInteractionUI::UpdateModules() {
@@ -497,16 +497,12 @@ bool PlanetInteractionUI::UpdateModules() {
 	if (!this->UpdateTopCorners()) {
 		return false;
 	}
-	if (!this->CreateTextElements()) {
+	if (!this->UpdateTextElements()) {
 		return false;
 	}
-	if (!this->UpdateHover()) {
+	if (!this->UpdateTools()) {
 		return false;
 	}
-
-	//Update tools
-	//m_pLinearGradientBrush->SetStartPoint(D2D1::Point2F(m_pMainRectangle.left, static_cast<float>(m_pWindowHeight)));
-	//m_pLinearGradientBrush->SetEndPoint(D2D1::Point2F(m_pMainRectangle.right, static_cast<float>(m_pWindowHeight)));
 
 	return true;
 }
@@ -548,7 +544,7 @@ void PlanetInteractionUI::RenderScreen() {
 	}
 
 	//Use gradient brush to add effect
-	//m_pRenderTarget2D->FillRectangle(&m_pMainRectangle, m_pLinearGradientBrush.Get());
+	m_pRenderTarget2D->FillRectangle(&m_pMainRectangle, m_pLinearGradientBrush.Get());
 
 	//Add outline to main square
 	UpdateBrush(D2D1::ColorF::White, 0.5f);
@@ -733,6 +729,7 @@ void PlanetInteractionUI::RenderPlanetText() {
 }
 
 void PlanetInteractionUI::RenderRandomEvents() {
+	//this->m_pTest.Render();
 	/*
 	//Event one
 	m_pRenderTarget2D.Get()->DrawTextW(
@@ -785,6 +782,7 @@ void PlanetInteractionUI::Render() {
 	this->RenderScreen();
 	this->RenderCorners();
 	this->RenderPlanetText();
+	this->RenderRandomEvents();
 
 	//Random event text UI
 	/*

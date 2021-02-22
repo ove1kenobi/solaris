@@ -32,27 +32,8 @@ private:
 	float m_pScreenOffset;
 	float m_pPadding;
 	float m_pBlockSize;
+	Button m_pTest;
 	std::vector<Button> m_pRandomEvents;
-
-	//------------
-	/*
-	D2D1_RECT_F m_pEventOneHoverTextBox;
-	D2D1_RECT_F m_pEventOneTextBox;
-	std::wstring m_pEventOneText;
-
-	D2D1_RECT_F m_pEventTwoHoverTextBox;
-	D2D1_RECT_F m_pEventTwoTextBox;
-	std::wstring m_pEventTwoText;
-
-	D2D1_RECT_F m_pEventThreeHoverTextBox;
-	D2D1_RECT_F m_pEventThreeTextBox;
-	std::wstring m_pEventThreeText;
-
-	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pEventHover;
-	D2D1_RECT_F m_pEventHoverTextBox;
-	std::wstring m_pEventHoverText;
-	*/
-	//--------------------
 
 	//Creation functions
 	bool CreateScreen();
@@ -65,6 +46,7 @@ private:
 	bool UpdateLeftCorner();
 	bool UpdateRightCorner();
 	bool UpdateTopCorners();
+	bool UpdateTextElements();
 	bool UpdateTools();
 	bool UpdateHover();
 	bool UpdateModules();

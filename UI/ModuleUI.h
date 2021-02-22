@@ -18,13 +18,16 @@ protected:
 	float m_pWindowWidth;
 	float m_pWindowHeight;
 
+	//Create functions
+	bool CreateBrush();
+
 	//Updating handlers and error checking
 	void UpdateDXHandlers(IEvent& event) noexcept;
 	bool ErrorCheck(HRESULT handle, std::string type);
 public:
 	ModuleUI() noexcept;
 	virtual ~ModuleUI() = default;
-	bool Initialize();
+	virtual bool Initialize() = 0;
 
 	//For dynamically changing brush without having to create a new one
 	void UpdateBrush(D2D1::ColorF color, float opacity);

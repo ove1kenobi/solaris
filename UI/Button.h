@@ -15,6 +15,7 @@ protected:
 public:
 	Button() noexcept;
 	virtual ~Button() = default;
+	bool Initialize();
 	bool Initialize(D2D1_RECT_F hoverBox, float TextPadding);
 
 	void SetText(std::wstring text);
