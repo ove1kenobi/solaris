@@ -7,8 +7,8 @@ ShadowMapping::ShadowMapping() noexcept
       m_CameraDirections{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
       m_CameraUpVectors{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
       m_SunPosition{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
-      m_TextureWidth{ 8192.0f },
-      m_TextureHeight{ 8192.0f }
+      m_TextureWidth{ 4096.0f },
+      m_TextureHeight{ 4096.0f }
 {
     DirectX::XMStoreFloat4x4(&m_OrthographicProjection, DirectX::XMMatrixIdentity());
 }
@@ -21,8 +21,8 @@ const bool ShadowMapping::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>&
     textureDescriptor.MipLevels = 1u;
     textureDescriptor.ArraySize = 6u;
     textureDescriptor.Format = DXGI_FORMAT::DXGI_FORMAT_R32_TYPELESS;
-    textureDescriptor.SampleDesc.Count = 1u; //WARNING MSAA4x
-    textureDescriptor.SampleDesc.Quality = 0u; //-*-
+    textureDescriptor.SampleDesc.Count = 1u;
+    textureDescriptor.SampleDesc.Quality = 0u;
     textureDescriptor.Usage = D3D11_USAGE_DEFAULT;
     textureDescriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
     textureDescriptor.CPUAccessFlags = 0u;
@@ -132,7 +132,7 @@ void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& 
         DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(DirectX::XMLoadFloat3(&m_SunPosition), 
                                                                  DirectX::XMLoadFloat3(&m_CameraDirections[i]),   //Will only work for (0,0,0) position! (Emil F)
                                                                  DirectX::XMLoadFloat3(&m_CameraUpVectors[i]));
-        for (unsigned int j{ 0u }; j < (*gameObjects).size(); ++j)
+        for (int j{ 2 }; j > -1; --j)
         {
             (*gameObjects)[j]->BindShadowUniques(pDeviceContext);
             (*gameObjects)[j]->getWMatrix(worldMatrix);
@@ -145,11 +145,11 @@ void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& 
 				                     &mappedSubresource),
 				                     "Map");
             MatrixBufferShadow* data = (MatrixBufferShadow*)mappedSubresource.pData;
-            data->worldMatrix = worldMatrix;
-            data->viewMatrix = viewMatrix;
-            data->projectionMatrix = DirectX::XMLoadFloat4x4(&m_OrthographicProjection);
+            data->worldMatrix = DirectX::XMMatrixTranspose(worldMatrix);
+            data->viewMatrix = DirectX::XMMatrixTranspose(viewMatrix);
+            data->projectionMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&m_OrthographicProjection));
 			pDeviceContext->Unmap(m_pMatrixCBuffer.Get(), 0);
-
+            pDeviceContext->VSSetConstantBuffers(0u, 1u, m_pMatrixCBuffer.GetAddressOf());
             pDeviceContext->DrawIndexed((*gameObjects)[j]->getIndexBufferSize(), 0u, 0);
         }
     }

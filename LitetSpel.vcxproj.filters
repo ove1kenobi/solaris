@@ -6,6 +6,7 @@
     <FxCompile Include="VertexShader_Skybox.hlsl" />
     <FxCompile Include="PixelShader_Skybox.hlsl" />
     <FxCompile Include="ComputeShader_Planet.hlsl" />
+    <FxCompile Include="VertexShader_Shadow.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bloom.cpp" />

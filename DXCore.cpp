@@ -203,6 +203,8 @@ void DXCore::CreateShadowMapViewport(IEvent& event) noexcept
 	m_ShadowMapViewPort.TopLeftY = 0.0f;
 	m_ShadowMapViewPort.Width = derivedEvent.GetWidth();
 	m_ShadowMapViewPort.Height = derivedEvent.GetHeight();
+	m_ShadowMapViewPort.MinDepth = 0.0f;
+	m_ShadowMapViewPort.MaxDepth = 1.0f;
 }
 
 void DXCore::ResetDefaultViewport() const noexcept

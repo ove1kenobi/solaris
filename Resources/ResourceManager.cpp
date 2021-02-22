@@ -23,6 +23,8 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	if (!m_VertexShaderSkybox.Create(m_pDevice, L"VertexShader_Skybox.hlsl"))
 		return false;
+	if (!m_VertexShaderShadow.Create(m_pDevice, L"VertexShader_Shadow.hlsl"))
+		return false;
 	//Pixel Shaders:
 	if (!m_PixelShaderMinimal.Create(m_pDevice, L"PixelShader_Minimalistic.hlsl"))
 		return false;
