@@ -11,6 +11,10 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pPlanetNameTextBox = D2D1::RectF();
 	m_pPlanetFlavourTextBox = D2D1::RectF();
 
+	m_pRandomEvents.push_back(new Button());
+	m_pRandomEvents.push_back(new Button());
+	m_pRandomEvents.push_back(new Button());
+
 	//Example text: should be removed once event system is in place.
 	m_pPlanetNameText = L"TATOOINE";
 
@@ -21,22 +25,20 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 		L"When completed, this ultimate weapon will spell certain doom for the small band "
 		L"of rebels struggling to restore freedom to the galaxy...";
 
-	/*
-	m_pEventOneText = L"It is a period of civil war. Rebel spaceships, striking from a hidden base, "
+	m_pRandomEvents.at(0)->SetText(L"It is a period of civil war. Rebel spaceships, striking from a hidden base, "
 		L"have won their first victory against the evil Galactic Empire.During the battle, "
 		L"Rebel spies managed to steal secret plans to the Empire’s ultimate weapon, the DEATH STAR, "
-		L"an armored space station with enough power to destroy an entire planet. ";
+		L"an armored space station with enough power to destroy an entire planet. ");
 
-	m_pEventTwoText = L"It is a dark time for the Rebellion.Although the Death Star has been destroyed, "
+	m_pRandomEvents.at(1)->SetText(L"It is a dark time for the Rebellion.Although the Death Star has been destroyed, "
 		L"Imperial troops have driven the Rebel forces from their hidden baseand pursued them across the galaxy."
 		L"Evading the dreaded Imperial Starfleet, a group of freedom fighters led by Luke Skywalker has"
-		L" established a new secret base on the remote ice world of Hoth.";
+		L" established a new secret base on the remote ice world of Hoth.");
 
-	m_pEventThreeText = L"Turmoil has engulfed the Galactic Republic. "
+	m_pRandomEvents.at(2)->SetText(L"Turmoil has engulfed the Galactic Republic. "
 		L"The taxation of trade routes to outlying star systems is in dispute."
 		L"Hoping to resolve the matter with a blockade of deadly battleships, "
-		L"the greedy Trade Federation has stopped all shipping to the small planet of Naboo.";
-		*/
+		L"the greedy Trade Federation has stopped all shipping to the small planet of Naboo.");
 }
 
 bool PlanetInteractionUI::Initialize() {
@@ -46,16 +48,17 @@ bool PlanetInteractionUI::Initialize() {
 	if (!this->CreateTextElements()) {
 		return false;
 	}
-	/*
-	if (!this->CreateHover()) {
-		return false;
-	}*/
 	if (!this->CreateTools()) {
 		return false;
 	}
 	return true;
 }
 
+PlanetInteractionUI::~PlanetInteractionUI() {
+	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
+		delete m_pRandomEvents.at(i);
+	}
+}
 //Creation functions
 bool PlanetInteractionUI::CreateScreen() {
 	//Main screen
@@ -106,10 +109,12 @@ bool PlanetInteractionUI::CreateTextElements() {
 		&m_pBodyTextFormat
 	), "TextFormat");
 
-	//m_pRandomEvents.push_back(Button());
-	//m_pRandomEvents.push_back(Button());
-	//m_pRandomEvents.push_back(Button());
 
+	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
+		if (!m_pRandomEvents.at(i)->Initialize()) {
+			return false;
+		};
+	}
 	/*
 	m_pEventOneHoverTextBox = D2D1::RectF(
 		m_pMainRectangle.left + m_pScreenOffset,
@@ -507,13 +512,6 @@ bool PlanetInteractionUI::UpdateModules() {
 	return true;
 }
 
-bool PlanetInteractionUI::UpdateHover() {
-	if (!this->CreateHover()) {
-		return false;
-	}
-	return true;
-}
-
 //Render functions
 void PlanetInteractionUI::RenderScreen() {
 	//Main square
@@ -523,7 +521,7 @@ void PlanetInteractionUI::RenderScreen() {
 	//Grid for the square
 	unsigned int gridSize = 25;
 	this->UpdateBrush(D2D1::ColorF::Aqua, 0.25f);
-	for (unsigned int x = m_pMainRectangle.left; x < m_pMainRectangle.right; x += gridSize)
+	for (float x = m_pMainRectangle.left; x < m_pMainRectangle.right; x += gridSize)
 	{
 		m_pRenderTarget2D->DrawLine(
 			D2D1::Point2F(static_cast<FLOAT>(x), m_pMainRectangle.top),
@@ -533,7 +531,7 @@ void PlanetInteractionUI::RenderScreen() {
 		);
 	}
 
-	for (unsigned int y = m_pMainRectangle.top; y < m_pMainRectangle.bottom; y += gridSize)
+	for (float y = m_pMainRectangle.top; y < m_pMainRectangle.bottom; y += gridSize)
 	{
 		m_pRenderTarget2D->DrawLine(
 			D2D1::Point2F(m_pMainRectangle.left, static_cast<FLOAT>(y)),
@@ -729,7 +727,9 @@ void PlanetInteractionUI::RenderPlanetText() {
 }
 
 void PlanetInteractionUI::RenderRandomEvents() {
-	//this->m_pTest.Render();
+	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
+		m_pRandomEvents.at(i)->Render();
+	}
 	/*
 	//Event one
 	m_pRenderTarget2D.Get()->DrawTextW(
@@ -865,8 +865,6 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		else {
 			m_pCurrentHover = RandomEvent::none;
 		}*/
-
-		this->UpdateHover();
 		break;
 	}
 	//For clicking on UI elements

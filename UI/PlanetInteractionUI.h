@@ -1,6 +1,6 @@
 #pragma once
 #include "ModuleUI.h"
-#include "Button.h"
+#include "RandomEventUI.h"
 
 class PlanetInteractionUI : public ModuleUI {
 private:
@@ -32,8 +32,7 @@ private:
 	float m_pScreenOffset;
 	float m_pPadding;
 	float m_pBlockSize;
-	Button m_pTest;
-	std::vector<Button> m_pRandomEvents;
+	std::vector<Button*> m_pRandomEvents;
 
 	//Creation functions
 	bool CreateScreen();
@@ -48,7 +47,6 @@ private:
 	bool UpdateTopCorners();
 	bool UpdateTextElements();
 	bool UpdateTools();
-	bool UpdateHover();
 	bool UpdateModules();
 
 	//Render functions
@@ -59,7 +57,7 @@ private:
 	void RenderHelpLines();
 public:
 	PlanetInteractionUI() noexcept;
-	virtual ~PlanetInteractionUI() = default;
+	virtual ~PlanetInteractionUI();
 	bool Initialize();
 
 	void Render();

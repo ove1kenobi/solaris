@@ -1,33 +1,18 @@
 #include "..\pch.h"
 #include "Button.h"
-
-bool Button::CreateButton() {
-	return false;
-}
-
-void Button::RenderHover() {
-
-}
-
-void Button::RenderClick() {
-
-}
-
 Button::Button() noexcept {
+
+}
+
+bool Button::Initialize() {
 	m_pHoverBox = D2D1::RectF(
 		100.0f,
 		50.0f,
 		m_pWindowWidth - 100.0f,
 		m_pWindowHeight - 200.0f
 	);
-}
-
-bool Button::Initialize()
-{
-	return false;
-}
-
-bool Button::Initialize(D2D1_RECT_F hoverBox, float TextPadding) {
+	return this->CreateBrush();
+	/*
 	m_pHoverBox = hoverBox;
 
 	m_pTextBox = D2D1::RectF(
@@ -47,19 +32,27 @@ bool Button::Initialize(D2D1_RECT_F hoverBox, float TextPadding) {
 		L"en-us",
 		&m_pTextFormat
 	), "TextFormat");
+	*/
+	return false;
 }
 
 void Button::SetText(std::wstring text) {
 	m_pText = text;
 }
 
-bool Button::UpdateModules()
-{
-	return false;
+bool Button::UpdateModules() {
+	m_pHoverBox = D2D1::RectF(
+		100.0f,
+		50.0f,
+		m_pWindowWidth - 100.0f,
+		m_pWindowHeight - 200.0f
+	);
+	return true;
 }
 
 void Button::Render() {
-	this->UpdateBrush(D2D1::ColorF::Green, 0.5f);
+	//this->UpdateModules();
+	this->UpdateBrush(D2D1::ColorF::Green, 0.25f);
 	m_pRenderTarget2D->FillRectangle(m_pHoverBox, m_pBrush.Get());
 
 	/*

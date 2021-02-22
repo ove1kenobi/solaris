@@ -59,6 +59,7 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="UI\ModuleUI.cpp" />
     <ClCompile Include="UI\PlanetInteractionUI.cpp" />
+    <ClCompile Include="UI\RandomEventUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -121,6 +122,7 @@
     <ClInclude Include="UI\Button.h" />
     <ClInclude Include="UI\ModuleUI.h" />
     <ClInclude Include="UI\PlanetInteractionUI.h" />
+    <ClInclude Include="UI\RandomEventUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />
