@@ -5,7 +5,8 @@ GBuffer::GBuffer() noexcept
     : 
     m_pDepthStencilView{ nullptr },
     m_isRenderTarget{ false },
-    m_background{ 0.5f, 0.5f, 0.5f, 1.0f }
+    m_background{ 0.5f, 0.5f, 0.5f, 1.0f },
+    m_RTVArray{ nullptr }
 {
 
 }
@@ -45,10 +46,10 @@ void GBuffer::Unbind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceC
 #if defined(DEBUG) | defined(_DEBUG)
     assert(pDeviceContext);
 #endif
-    ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
-    ID3D11RenderTargetView* nullRTV[1] = { nullptr };
+    ID3D11ShaderResourceView* nullSRV[4] = { nullptr };
+    ID3D11RenderTargetView* nullRTV[4] = { nullptr };
     pDeviceContext->PSSetShaderResources(0u, (UINT)m_Textures.size(), nullSRV);
-    pDeviceContext->OMSetRenderTargets((UINT)m_Textures.size(), nullRTV, m_pDepthStencilView.Get());
+    pDeviceContext->OMSetRenderTargets(ARRAYSIZE(m_RTVArray), nullRTV, m_pDepthStencilView.Get());
 }
 
 const bool GBuffer::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, int width, int height, D3D11_USAGE usage, UINT cpuaccessflags)

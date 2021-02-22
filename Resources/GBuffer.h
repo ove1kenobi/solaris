@@ -5,6 +5,7 @@
 #include "../EventSystem/UtilityEvents.h"
 #include "Texture.h"
 
+//Holds all the textures that are sent to the last shader pass.
 class GBuffer : public IBindable, public EventPublisher, public IEventListener {
 private:
 

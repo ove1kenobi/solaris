@@ -39,14 +39,12 @@ void ForwardRenderer::BeginFrame()
 	m_Skybox.DoPass(m_pDeviceContext);
 	m_Skybox.CleanUp();
 
-	ID3D11RenderTargetView* nullRTV[2] = { nullptr };
+	//size is number of textures in the gbuffer.
+	ID3D11RenderTargetView* nullRTV[4] = { nullptr };
 	ID3D11DepthStencilView* nullDSV = { nullptr };
-	m_pDeviceContext->OMSetRenderTargets(2u, nullRTV, nullDSV);
+	m_pDeviceContext->OMSetRenderTargets(ARRAYSIZE(nullRTV), nullRTV, nullDSV);
 
 	m_WaterPP.PreparePass(m_pDeviceContext);
-
-	//Kanske inte behöver
-	//m_pDeviceContext->PSSetShaderResources(3u, 1u, m_pDepthShaderResourceView.GetAddressOf());
 	
 	m_WaterPP.DoPass(m_pDeviceContext);
 
@@ -76,11 +74,11 @@ void ForwardRenderer::UpdateDXHandlers(IEvent& event) noexcept
 #endif
 }
 
-const bool ForwardRenderer::Initialize() noexcept
+const bool ForwardRenderer::Initialize(UINT screenWidth, UINT screenHeight) noexcept
 {
 	if (!m_Skybox.Initialize(m_pDevice))
 		return false;
-	if (!m_WaterPP.Initialize(m_pDevice))
+	if (!m_WaterPP.Initialize(m_pDevice, screenWidth, screenHeight))
 		return false;
 	return true;
 }

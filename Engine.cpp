@@ -19,11 +19,11 @@ const bool Engine::Initialize()
 	ModelFactory::Get().setDeviceAndContext(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext());
 
 	//Forward Renderer:
-	if (!m_ForwardRenderer.Initialize())
+	if (!m_ForwardRenderer.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
 		return false;
 	
 	//Resource Manager
-	if (!m_ResourceManager.Initialize())
+	if (!m_ResourceManager.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
 		return false;
 
 	//Scene

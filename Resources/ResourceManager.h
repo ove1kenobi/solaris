@@ -18,6 +18,8 @@
 class ResourceManager : public IEventListener
 {
 private:
+	UINT m_screenWidth;
+	UINT m_screenHeight;
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
 	VertexShader m_VertexShaderMinimal;
@@ -62,5 +64,5 @@ private:
 public:
 	ResourceManager() noexcept;
 	virtual ~ResourceManager() noexcept = default;
-	[[nodiscard]] const bool Initialize() noexcept;
+	[[nodiscard]] const bool Initialize(UINT screenWidth, UINT screenHeight) noexcept;
 };

@@ -3,7 +3,9 @@
 
 WaterPostProcessing::WaterPostProcessing() noexcept
 	: m_pCameraCBuffer{ nullptr },
-	m_pCamera{ nullptr }
+	m_pCamera{ nullptr },
+	m_screenWidth{ 0 },
+	m_screenHeight{ 0 }
 {
 
 }
@@ -34,8 +36,11 @@ void WaterPostProcessing::OnEvent(IEvent& event) noexcept
 	
 }
 
-const bool WaterPostProcessing::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice) noexcept
+const bool WaterPostProcessing::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, UINT screenWidth, UINT screenHeight) noexcept
 {
+	m_screenWidth = screenWidth;
+	m_screenHeight = screenHeight;
+
 	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent, EventType::DelegatePlanetsEvent);
 
 	//Constant buffer for the planet data:
@@ -61,6 +66,19 @@ const bool WaterPostProcessing::Initialize(const Microsoft::WRL::ComPtr<ID3D11De
 	HR(pDevice->CreateBuffer(&cameraBufferDesc,
 		nullptr,
 		&m_pCameraCBuffer), "CreateBuffer");
+
+	//Constant buffer for screen:
+	D3D11_BUFFER_DESC screenBufferDesc = {};
+	screenBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	screenBufferDesc.ByteWidth = sizeof(ScreenData);
+	screenBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	screenBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	screenBufferDesc.MiscFlags = 0;
+	screenBufferDesc.StructureByteStride = 0;
+	HR(pDevice->CreateBuffer(&screenBufferDesc,
+		nullptr,
+		&m_pScreenCBuffer), "CreateBuffer");
+
 	return true;
 }
 
@@ -129,9 +147,24 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 
 	pDeviceContext->Unmap(m_pCameraCBuffer.Get(), 0);
 
+	//Screen Constant Buffer
+	D3D11_MAPPED_SUBRESOURCE mappedSubresourceScreen = {};
+	HR_X(pDeviceContext->Map(m_pScreenCBuffer.Get(),
+		0,
+		D3D11_MAP_WRITE_DISCARD,
+		0,
+		&mappedSubresourceScreen), "Map");
+
+	ScreenData* dataScreen = (ScreenData*)mappedSubresourceScreen.pData;
+
+	dataScreen->screenWidth = (float)m_screenWidth;
+	dataScreen->screenHeight = (float)m_screenHeight;
+
+	pDeviceContext->Unmap(m_pScreenCBuffer.Get(), 0);
+
 	pDeviceContext->PSSetConstantBuffers(0u, 1u, m_pPlanetCBuffer.GetAddressOf());
 	pDeviceContext->PSSetConstantBuffers(1u, 1u, m_pCameraCBuffer.GetAddressOf());
-
+	pDeviceContext->PSSetConstantBuffers(2u, 1u, m_pScreenCBuffer.GetAddressOf());
 	
 	ToggleDepthStencilStateEvent dsEvent;
 	EventBuss::Get().Delegate(dsEvent);
