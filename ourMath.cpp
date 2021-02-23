@@ -1,10 +1,6 @@
 #include "pch.h"
 #include "ourMath.h"
 
-float length(DirectX::XMFLOAT3 vector) {
-	return sqrtf(powf(vector.x, 2) + powf(vector.y, 2) + powf(vector.z, 2));
-}
-
 DirectX::XMFLOAT3 normalize(DirectX::XMFLOAT3 vector) {
 	float length = sqrtf(powf(vector.x, 2) + powf(vector.y, 2) + powf(vector.z, 2));
 
@@ -61,6 +57,26 @@ DirectX::XMFLOAT3 operator-(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3&
 DirectX::XMFLOAT3 operator+(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b)
 {
 	return { a.x + b.x, a.y + b.y, a.z + b.z };
+}
+
+DirectX::XMFLOAT3 operator*(const DirectX::XMFLOAT3& a, const float b)
+{
+	return { a.x * b, a.y * b, a.z * b };
+}
+
+DirectX::XMFLOAT3 operator*(const float b, const DirectX::XMFLOAT3& a)
+{
+	return { a.x * b, a.y * b, a.z * b };
+}
+
+DirectX::XMFLOAT3 operator/(const DirectX::XMFLOAT3& a, const float b)
+{
+	return { a.x / b, a.y / b, a.z / b };
+}
+
+DirectX::XMFLOAT3 operator/(const float b, const DirectX::XMFLOAT3& a)
+{
+	return { a.x / b, a.y / b, a.z / b };
 }
 
 float length(const DirectX::XMFLOAT3& a)

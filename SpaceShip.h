@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "ourMath.h"
 
 class SpaceShip : public GameObject
 {
@@ -18,6 +19,7 @@ public:
 	void SetTilt(float pitchLerp, float rollLerp);
 	void SetForwardVector(DirectX::XMFLOAT3 forwardVector);
 
+	float GetTopSpeed();
 	DirectX::XMFLOAT3 GetVelocity();
 	DirectX::XMFLOAT3 getCenter();
 	virtual bool update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
@@ -25,5 +27,4 @@ public:
 	[[nodiscard]] const bool IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept override;
 	void CalculateGravity(GameObject* other);
 	void AddForce(DirectX::XMFLOAT3 f);
-	void Deceleration(float breakingStrenght);
 };

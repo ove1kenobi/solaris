@@ -20,8 +20,6 @@ SpaceShip::SpaceShip()
 
 bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
-	this->UpdatePhysics();
-
 #if defined(DEBUG) | defined(_DEBUG)
 	ImGui::Begin("Spaceship");
 	ImGui::Text("Center  : (%f, %f, %f)", m_center.x, m_center.y, m_center.z);
@@ -91,6 +89,11 @@ void SpaceShip::SetForwardVector(DirectX::XMFLOAT3 forwardVector)
 	m_forwardVector = forwardVector;
 }
 
+float SpaceShip::GetTopSpeed()
+{
+	return m_topSpeed;
+}
+
 DirectX::XMFLOAT3 SpaceShip::GetVelocity()
 {
 	return m_velocity;
@@ -139,9 +142,7 @@ void SpaceShip::CalculateGravity(GameObject* other)
 	ab.z = static_cast<float>(ab.z * inverse_r);
 
 	// Force working on GameObject a
-	ab.x *= f;
-	ab.y *= f;
-	ab.z *= f;
+	ab = ab * f;
 	m_forces.push_back(ab);
 }
 
@@ -149,28 +150,6 @@ void SpaceShip::AddForce(DirectX::XMFLOAT3 f)
 {
 	// Adds a force to the forces influencing the GameObject this frame
 	m_forces.push_back(f);
-}
-
-void SpaceShip::Deceleration(float breakingStrenght)
-{
-	float speed = length(m_velocity);
-
-	if (speed != 0.0f) {
-		DirectX::XMFLOAT3 breakingForce{ -m_velocity.x, -m_velocity.y, -m_velocity.z };
-		breakingForce = normalize(breakingForce);
-		breakingForce.x *= breakingStrenght;
-		breakingForce.y *= breakingStrenght;
-		breakingForce.z *= breakingStrenght;
-		m_velocity.x += breakingForce.x;
-		m_velocity.y += breakingForce.y;
-		m_velocity.z += breakingForce.z;
-		
-		if (dot(m_velocity, breakingForce) > 0.0f) {
-			m_velocity.x = 0.0f;
-			m_velocity.y = 0.0f;
-			m_velocity.z = 0.0f;
-		}
-	}
 }
 
 void SpaceShip::UpdatePhysics()
@@ -185,18 +164,14 @@ void SpaceShip::UpdatePhysics()
 	m_forces.clear();
 
 	if (m_mass != 0.0f) {
-		m_velocity.x += sumForces.x / m_mass;
-		m_velocity.y += sumForces.y / m_mass;
-		m_velocity.z += sumForces.z / m_mass;
+		m_velocity = m_velocity + sumForces / m_mass;
 	}
 
 	float speed = length(m_velocity);
 	
 	if (speed > m_topSpeed) {
 		m_velocity = normalize(m_velocity);
-		m_velocity.x = m_topSpeed * m_velocity.x;
-		m_velocity.y = m_topSpeed * m_velocity.y;
-		m_velocity.z = m_topSpeed * m_velocity.z;
+		m_velocity = m_topSpeed * m_velocity;
 	}
 
 	m_center.x += static_cast<float>(m_velocity.x * m_timer.DeltaTime());

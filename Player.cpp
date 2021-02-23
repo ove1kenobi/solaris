@@ -19,20 +19,14 @@ DirectX::XMFLOAT3 Player::Stabilize()
 {
 	DirectX::XMFLOAT3 velocity = m_ship->GetVelocity();
 	DirectX::XMFLOAT3 desierdVelocity = m_camera->GetForwardVector();
-	desierdVelocity.x *= m_desiredSpeed;
-	desierdVelocity.y *= m_desiredSpeed;
-	desierdVelocity.z *= m_desiredSpeed;
+	desierdVelocity = desierdVelocity * m_desiredSpeed;
 
-	DirectX::XMFLOAT3 stabilizingForce = { desierdVelocity.x - velocity.x,  desierdVelocity.y - velocity.y, desierdVelocity.z - velocity.z };
-	stabilizingForce.x *= m_ship->GetMass();
-	stabilizingForce.y *= m_ship->GetMass();
-	stabilizingForce.z *= m_ship->GetMass();
+	DirectX::XMFLOAT3 stabilizingForce = desierdVelocity - velocity;
+	stabilizingForce = stabilizingForce * m_ship->GetMass();
 
 	if (length(stabilizingForce) > m_thrusterForce * (float)m_time.DeltaTime()) {
 		stabilizingForce = normalize(stabilizingForce);
-		stabilizingForce.x *= m_thrusterForce * (float)m_time.DeltaTime();
-		stabilizingForce.y *= m_thrusterForce * (float)m_time.DeltaTime();
-		stabilizingForce.z *= m_thrusterForce * (float)m_time.DeltaTime();
+		stabilizingForce = stabilizingForce * m_thrusterForce * (float)m_time.DeltaTime();
 	}
 
 	return stabilizingForce;
@@ -44,7 +38,7 @@ Player::Player()
 	m_moveBackwards = false;
 	m_stopMovement = false;
 	m_playerControlsActive = true;
-	m_stabilizerActive = false;
+	m_stabilizerActive = true;
 	m_mousePosX = 0.0f;
 	m_mousePosY = 0.0f;
 
@@ -52,7 +46,7 @@ Player::Player()
 	m_camera = nullptr;
 	m_rotationSpeed = 1.0f;
 
-	m_topSpeed = 3000.0f;
+	m_topSpeed = 0.0f;
 	m_desiredSpeed = 0.0f;
 	m_thrusterForce = 10000000.0f;
 }
@@ -68,6 +62,7 @@ bool Player::Initialize(PlayerCamera* camera)
 
 	m_camera = camera;
 	m_ship = new SpaceShip();
+	m_topSpeed = m_ship->GetTopSpeed();
 
 	return true;
 }
@@ -88,9 +83,7 @@ bool Player::update()
 			else {
 				float step = m_thrusterForce * (float)m_time.DeltaTime();
 				DirectX::XMFLOAT3 direction = m_camera->GetForwardVector();
-				shipForce.x += step * direction.x;
-				shipForce.y += step * direction.y;
-				shipForce.z += step * direction.z;
+				shipForce = shipForce + direction * step;
 			}
 		}
 		if (m_moveBackwards) {
@@ -101,9 +94,7 @@ bool Player::update()
 			else {
 				float step = -1.0f * m_thrusterForce * (float)m_time.DeltaTime();
 				DirectX::XMFLOAT3 direction = m_camera->GetForwardVector();
-				shipForce.x += step * direction.x;
-				shipForce.y += step * direction.y;
-				shipForce.z += step * direction.z;
+				shipForce = shipForce + direction * step;
 			}
 		}
 		if (m_stopMovement) {
@@ -117,19 +108,13 @@ bool Player::update()
 				float speed = length(velocity);
 
 				if (speed != 0.0f) {
-					DirectX::XMFLOAT3 breakingForce{ -velocity.x, -velocity.y, -velocity.z };
+					DirectX::XMFLOAT3 breakingForce = -1.0f * velocity;
 					breakingForce = normalize(breakingForce);
-					breakingForce.x *= step;
-					breakingForce.y *= step;
-					breakingForce.z *= step;
-					shipForce.x += breakingForce.x;
-					shipForce.y += breakingForce.y;
-					shipForce.z += breakingForce.z;
+					breakingForce = breakingForce * step;
+					shipForce = shipForce + breakingForce;
 
 					if (dot(velocity, breakingForce) > 0.0f) {
-						shipForce.x = velocity.x * m_ship->GetMass();
-						shipForce.y = velocity.y * m_ship->GetMass();
-						shipForce.z = velocity.z * m_ship->GetMass();
+						shipForce = velocity * m_ship->GetMass();
 					}
 				}
 			}
@@ -138,17 +123,9 @@ bool Player::update()
 
 	if (m_stabilizerActive) {
 		DirectX::XMFLOAT3 stabilizingForce = Stabilize();
-		shipForce.x += stabilizingForce.x;
-		shipForce.y += stabilizingForce.y;
-		shipForce.z += stabilizingForce.z;
+		shipForce = shipForce + stabilizingForce;
 	}
 	m_ship->AddForce(shipForce);
-	m_ship->UpdatePhysics();
-
-	DirectX::XMFLOAT3 a = m_ship->getCenter();
-	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
-	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
-
 	m_ship->UpdatePhysics();
 
 	DirectX::XMFLOAT3 a = m_ship->getCenter();

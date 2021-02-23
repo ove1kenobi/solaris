@@ -16,7 +16,7 @@ CosmicBody::~CosmicBody()
 bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo, Orbit* orbit) {
 	//Set initial values. All randomized.
 	this->m_radius = r;
-	this->m_mass = r * 10000000;
+	this->m_mass = r * 1000000000;
 	this->m_center.x = x;
 	this->m_center.y = y;
 	this->m_center.z = z;
