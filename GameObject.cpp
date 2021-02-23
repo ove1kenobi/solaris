@@ -46,6 +46,11 @@ const DirectX::XMFLOAT3& GameObject::GetCenter() const noexcept
 	return m_center;
 }
 
+void GameObject::SetCenter(const DirectX::XMFLOAT3& center) noexcept
+{
+	m_center = center;
+}
+
 DirectX::XMFLOAT3 GameObject::getTransVector() {
 	DirectX::XMFLOAT3 transVector = {};
 	transVector.x = this->m_wMatrix._41;

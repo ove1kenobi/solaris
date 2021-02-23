@@ -35,6 +35,7 @@ public:
 	UINT getVertexBufferSize();
 	UINT getIndexBufferSize();
 	[[nodiscard]] const DirectX::XMFLOAT3& GetCenter() const noexcept;
+	void SetCenter(const DirectX::XMFLOAT3& center) noexcept;
 	//Returns the translation of the object in the world.
 	DirectX::XMFLOAT3 getTransVector();
 	float GetMass();

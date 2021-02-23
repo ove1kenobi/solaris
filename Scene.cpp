@@ -148,4 +148,16 @@ void Scene::Update() noexcept {
 	for (auto r : this->m_gameObjects) {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
+
+	ImGui::Begin("Planets");
+	float v0[3] = { m_gameObjects[0]->GetCenter().x, m_gameObjects[0]->GetCenter().y , m_gameObjects[0]->GetCenter().z };
+	float v1[3] = { m_gameObjects[1]->GetCenter().x, m_gameObjects[1]->GetCenter().y , m_gameObjects[1]->GetCenter().z };
+	float v2[3] = { m_gameObjects[2]->GetCenter().x, m_gameObjects[2]->GetCenter().y , m_gameObjects[2]->GetCenter().z };
+	ImGui::DragFloat3("Planet 0: ", v0, 5.0f);
+	ImGui::DragFloat3("Planet 1: ", v1, 5.0f);
+	ImGui::DragFloat3("Planet 2: ", v2, 5.0f);
+	m_gameObjects[0]->SetCenter(DirectX::XMFLOAT3(v0[0], v0[1], v0[2]));
+	m_gameObjects[1]->SetCenter(DirectX::XMFLOAT3(v1[0], v1[1], v1[2]));
+	m_gameObjects[2]->SetCenter(DirectX::XMFLOAT3(v2[0], v2[1], v2[2]));
+	ImGui::End();
 }

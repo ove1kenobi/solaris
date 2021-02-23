@@ -63,11 +63,11 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	// Static or dynamic center coordinates
 	DirectX::XMFLOAT4X4 transMatrixFloats;
 	DirectX::XMStoreFloat4x4(&transMatrixFloats, transMatrix);
-	transMatrixFloats._41 = getTransVector().x;
-	transMatrixFloats._42 = getTransVector().y;
-	transMatrixFloats._43 = getTransVector().z;
-	transMatrix = DirectX::XMLoadFloat4x4(&transMatrixFloats);
-	//transMatrix = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);	// dynamic center coordinates
+	//transMatrixFloats._41 = getTransVector().x;
+	//transMatrixFloats._42 = getTransVector().y;
+	//transMatrixFloats._43 = getTransVector().z;
+	//transMatrix = DirectX::XMLoadFloat4x4(&transMatrixFloats);
+	transMatrix = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);	// dynamic center coordinates
 
 	//Update the wMatrix and the angle.
 	DirectX::XMMATRIX result = scaleMatrix * rotX * rotZ * rotMatrix  * transMatrix;

@@ -8,11 +8,13 @@ ShadowMapping::ShadowMapping() noexcept
       m_pMatrixCBuffer{ nullptr },
       m_pShadowDataBuffer{ nullptr },
       m_pLightDataBuffer{ nullptr },
+      m_pShadowBlendState{ nullptr },
+      m_pDefaultBlendState{ nullptr },
       m_CameraDirections{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
       m_CameraUpVectors{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
       m_SunPosition{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
-      m_TextureWidth{ 13312.0f },
-      m_TextureHeight{ 13312.0f },
+      m_TextureWidth{ 8192.0f },
+      m_TextureHeight{ 8192.0f },
       m_ShadowBias{ 1.0f }
 {
     DirectX::XMStoreFloat4x4(&m_OrthographicProjection, DirectX::XMMatrixIdentity());
@@ -140,6 +142,26 @@ const bool ShadowMapping::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>&
     CreateShadowMapViewportEvent event(m_TextureWidth, m_TextureHeight);
     EventBuss::Get().Delegate(event);
 
+    //Create Shadow blend state:
+    D3D11_BLEND_DESC blendDescriptor = {};
+
+    blendDescriptor.AlphaToCoverageEnable = FALSE;
+    blendDescriptor.IndependentBlendEnable = FALSE;
+    blendDescriptor.RenderTarget[0].BlendEnable = TRUE;
+    blendDescriptor.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+    blendDescriptor.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+    blendDescriptor.RenderTarget[0].BlendOp = D3D11_BLEND_OP_MIN;
+    blendDescriptor.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+    blendDescriptor.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+    blendDescriptor.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_MIN;
+    blendDescriptor.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+    HR(pDevice->CreateBlendState(&blendDescriptor, &m_pShadowBlendState), "CreateBlendState");
+
+    //Create default blend state:
+    blendDescriptor.RenderTarget[0].BlendEnable = FALSE;
+    blendDescriptor.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+    blendDescriptor.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    HR(pDevice->CreateBlendState(&blendDescriptor, &m_pDefaultBlendState), "CreateBlendState");
     return true;
 }
 
@@ -171,9 +193,14 @@ void ShadowMapping::PreparePasses(const Microsoft::WRL::ComPtr<ID3D11DeviceConte
 	pDeviceContext->Unmap(m_pLightDataBuffer.Get(), 0);
 	pDeviceContext->PSSetConstantBuffers(0u, 1u, m_pLightDataBuffer.GetAddressOf());
     m_SunPosition = lightPosition;
+
+    //Set shadow blend state:
+    pDeviceContext->OMSetBlendState(m_pShadowBlendState.Get(), NULL, 0xffffffff);
 }
 
-void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const std::vector<GameObject*>* gameObjects) noexcept
+void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, 
+                             const std::vector<GameObject*>* gameObjects,
+                             const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& pDSV) noexcept
 {
     /*
     * We need to write depth data in 6 passes, choosing new:
@@ -186,6 +213,7 @@ void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& 
     //ID3D11RenderTargetView* nullRTV[1] = { nullptr };
     DirectX::XMMATRIX worldMatrix = {};
     ID3D11DepthStencilView* nullDSV = nullptr;
+    pDeviceContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
     for (unsigned int i{ 0u }; i < NUM_PASSES; ++i)
     {
        // pDeviceContext->ClearDepthStencilView(m_pDepthStencilViews[i].Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
@@ -219,11 +247,13 @@ void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& 
     }
 }
 
-void ShadowMapping::CleanUp() noexcept
+void ShadowMapping::CleanUp(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept
 {
     //We need to reset the viewport:
     ResetDefaultViewportEvent vpEvent;
     EventBuss::Get().Delegate(vpEvent);
+
+    pDeviceContext->OMSetBlendState(m_pDefaultBlendState.Get(), NULL, 0xffffffff);
 }
 
 void ShadowMapping::BindSRV(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept

@@ -32,6 +32,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pMatrixCBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pShadowDataBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pLightDataBuffer;
+	Microsoft::WRL::ComPtr<ID3D11BlendState> m_pShadowBlendState;
+	Microsoft::WRL::ComPtr<ID3D11BlendState> m_pDefaultBlendState;
 	DirectX::XMFLOAT3 m_CameraDirections[6];
 	DirectX::XMFLOAT3 m_CameraUpVectors[6];
 	DirectX::XMFLOAT3 m_SunPosition;
@@ -45,8 +47,8 @@ public:
 	virtual ~ShadowMapping() noexcept = default;
 	[[nodiscard]] const bool Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice);
 	void PreparePasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const DirectX::XMFLOAT3& lightPosition) noexcept;
-	void DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const std::vector<GameObject*>* gameObjects) noexcept;
-	void CleanUp() noexcept;
+	void DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const std::vector<GameObject*>* gameObjects, const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& pDSV) noexcept;
+	void CleanUp(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
 	void BindSRV(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
 	void UpdateBias(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
 };
