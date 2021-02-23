@@ -17,13 +17,16 @@ void Player::UpdateRotation()
 
 DirectX::XMFLOAT3 Player::Stabilize()
 {
-	DirectX::XMFLOAT3 velocityVec = m_ship->GetVelocity();
-	DirectX::XMFLOAT3 desierdVec = m_camera->GetForwardVector();
-	desierdVec.x *= m_desiredSpeed;
-	desierdVec.y *= m_desiredSpeed;
-	desierdVec.z *= m_desiredSpeed;
+	DirectX::XMFLOAT3 velocity = m_ship->GetVelocity();
+	DirectX::XMFLOAT3 desierdVelocity = m_camera->GetForwardVector();
+	desierdVelocity.x *= m_desiredSpeed;
+	desierdVelocity.y *= m_desiredSpeed;
+	desierdVelocity.z *= m_desiredSpeed;
 
-	DirectX::XMFLOAT3 stabilizingForce = { desierdVec.x - velocityVec.x,  desierdVec.y - velocityVec.y, desierdVec.z - velocityVec.z };
+	DirectX::XMFLOAT3 stabilizingForce = { desierdVelocity.x - velocity.x,  desierdVelocity.y - velocity.y, desierdVelocity.z - velocity.z };
+	stabilizingForce.x *= m_ship->GetMass();
+	stabilizingForce.y *= m_ship->GetMass();
+	stabilizingForce.z *= m_ship->GetMass();
 
 	if (length(stabilizingForce) > m_thrusterForce * (float)m_time.DeltaTime()) {
 		stabilizingForce = normalize(stabilizingForce);
@@ -51,7 +54,7 @@ Player::Player()
 
 	m_topSpeed = 3000.0f;
 	m_desiredSpeed = 0.0f;
-	m_thrusterForce = 1000.0f;
+	m_thrusterForce = 10000000.0f;
 }
 
 Player::~Player()
@@ -79,7 +82,7 @@ bool Player::update()
 
 		if (m_moveForwards) {
 			if (m_stabilizerActive) {
-				m_desiredSpeed += m_thrusterForce * m_time.DeltaTime();
+				m_desiredSpeed += m_thrusterForce / m_ship->GetMass() * m_time.DeltaTime();
 				if (m_desiredSpeed > m_topSpeed) m_desiredSpeed = m_topSpeed;
 			}
 			else {
@@ -92,7 +95,7 @@ bool Player::update()
 		}
 		if (m_moveBackwards) {
 			if (m_stabilizerActive) {
-				m_desiredSpeed -= m_thrusterForce * m_time.DeltaTime();
+				m_desiredSpeed -= m_thrusterForce / m_ship->GetMass() * m_time.DeltaTime();
 				if (m_desiredSpeed < -m_topSpeed) m_desiredSpeed = -m_topSpeed;
 			}
 			else {
@@ -105,7 +108,7 @@ bool Player::update()
 		}
 		if (m_stopMovement) {
 			if (m_stabilizerActive) {
-				m_desiredSpeed -= m_thrusterForce * m_time.DeltaTime();
+				m_desiredSpeed -= m_thrusterForce / m_ship->GetMass() * m_time.DeltaTime();
 				if (m_desiredSpeed < 0.0f) m_desiredSpeed = 0.0f;
 			}
 			else {
@@ -124,9 +127,9 @@ bool Player::update()
 					shipForce.z += breakingForce.z;
 
 					if (dot(velocity, breakingForce) > 0.0f) {
-						shipForce.x = velocity.x;
-						shipForce.y = velocity.y;
-						shipForce.z = velocity.z;
+						shipForce.x = velocity.x * m_ship->GetMass();
+						shipForce.y = velocity.y * m_ship->GetMass();
+						shipForce.z = velocity.z * m_ship->GetMass();
 					}
 				}
 			}

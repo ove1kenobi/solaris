@@ -26,7 +26,7 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 	ImGui::Text("Center  : (%f, %f, %f)", m_center.x, m_center.y, m_center.z);
 	ImGui::Text("Velocity: (%f, %f, %f)", m_velocity.x, m_velocity.y, m_velocity.z);
 	ImGui::Text("Speed	: %f", length(m_velocity));
-	ImGui::DragFloat("Mass", &m_mass, 500.0f);
+	//ImGui::DragFloat("Mass", &m_mass, 500.0f);
 	ImGui::End();
 #endif
 
@@ -128,7 +128,8 @@ void SpaceShip::CalculateGravity(GameObject* other)
 	ab.z -= this->m_center.z;
 
 	// r = |ab| -> (distance between a and b)
-	double r = sqrtf(ab.x * ab.x + ab.y * ab.y + ab.z * ab.z);
+	double r = length(ab);
+	if (r == 0.0f) r = 0.001f;
 
 	// Newton't general theory of gravity
 	float f = static_cast<float>(6.674e-11 * static_cast<double>(this->m_mass) * other->GetMass() / (r * r));
@@ -193,9 +194,11 @@ void SpaceShip::UpdatePhysics()
 
 	m_forces.clear();
 
-	m_velocity.x += sumForces.x;
-	m_velocity.y += sumForces.y;
-	m_velocity.z += sumForces.z;
+	if (m_mass != 0.0f) {
+		m_velocity.x += sumForces.x / m_mass;
+		m_velocity.y += sumForces.y / m_mass;
+		m_velocity.z += sumForces.z / m_mass;
+	}
 
 	float speed = length(m_velocity);
 	
