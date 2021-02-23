@@ -7,16 +7,12 @@ struct VS_IN
 struct VS_OUT
 {
     float4 outPositionPS : SV_Position;
-    float4 outPositionWS : POSITION;
-    float2 outTexUVPS    : TEXUV;
 };
 
 VS_OUT vs_main(in VS_IN vsIn)
 {
     VS_OUT vsOut = (VS_OUT)0;
     vsOut.outPositionPS = float4(vsIn.inPositionLS, 1.0f);
-    vsOut.outPositionWS = float4(vsIn.inPositionLS, 1.0f);
-    vsOut.outTexUVPS = vsIn.inTexUVLS;
 
 	return vsOut;
 }

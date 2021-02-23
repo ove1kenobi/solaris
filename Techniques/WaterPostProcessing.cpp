@@ -4,10 +4,11 @@
 WaterPostProcessing::WaterPostProcessing() noexcept
 	: m_pCameraCBuffer{ nullptr },
 	m_pCamera{ nullptr },
+	m_pSunLight{ nullptr },
 	m_screenWidth{ 0 },
 	m_screenHeight{ 0 }
 {
-
+	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent, EventType::DelegatePlanetsEvent, EventType::DelegateSunLightEvent);
 }
 
 void WaterPostProcessing::AssignCamera(IEvent& event) noexcept
@@ -22,6 +23,12 @@ void WaterPostProcessing::AssignPlanets(IEvent& event) noexcept
 	m_planets = *derivedEvent.GetPlanets();
 }
 
+void WaterPostProcessing::AssignSun(IEvent& event) noexcept
+{
+	DelegateSunLightEvent& derivedEvent = static_cast<DelegateSunLightEvent&>(event);
+	m_pSunLight = derivedEvent.GetSunLight();
+}
+
 void WaterPostProcessing::OnEvent(IEvent& event) noexcept
 {
 	switch (event.GetEventType())
@@ -32,16 +39,19 @@ void WaterPostProcessing::OnEvent(IEvent& event) noexcept
 
 	case EventType::DelegatePlanetsEvent:
 		AssignPlanets(event);
+		break;
+	case EventType::DelegateSunLightEvent:
+	{
+		AssignSun(event);
+		break;
 	}
-	
+	}
 }
 
 const bool WaterPostProcessing::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, UINT screenWidth, UINT screenHeight) noexcept
 {
 	m_screenWidth = screenWidth;
 	m_screenHeight = screenHeight;
-
-	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent, EventType::DelegatePlanetsEvent);
 
 	//Constant buffer for the planet data:
 	D3D11_BUFFER_DESC planetBufferDesc = {};
@@ -78,6 +88,21 @@ const bool WaterPostProcessing::Initialize(const Microsoft::WRL::ComPtr<ID3D11De
 	HR(pDevice->CreateBuffer(&screenBufferDesc,
 		nullptr,
 		&m_pScreenCBuffer), "CreateBuffer");
+
+	//Constant buffer for light:
+	D3D11_BUFFER_DESC lightBufferDesc = {};
+	lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	lightBufferDesc.ByteWidth = sizeof(BlinnPhongLightCB);
+	lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	lightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	lightBufferDesc.MiscFlags = 0;
+	lightBufferDesc.StructureByteStride = 0;
+	HR(pDevice->CreateBuffer(&lightBufferDesc,
+		nullptr,
+		&m_pLightCBuffer), "CreateBuffer");
+
+	RequestSunLightEvent sunEvent;
+	EventBuss::Get().Delegate(sunEvent);
 
 	return true;
 }
@@ -162,10 +187,73 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 
 	pDeviceContext->Unmap(m_pScreenCBuffer.Get(), 0);
 
+	//Light constant buffer
+	D3D11_MAPPED_SUBRESOURCE mappedSubresourceLight = {};
+	HR_X(pDeviceContext->Map(m_pLightCBuffer.Get(),
+		0,
+		D3D11_MAP_WRITE_DISCARD,
+		0,
+		&mappedSubresourceLight),
+		"Map");
+	BlinnPhongLightCB* dataLight = (BlinnPhongLightCB*)mappedSubresourceLight.pData;
+#if defined(DEBUG) | defined(_DEBUG)
+	static float sAmbientColor[3] = { 0.5f, 0.5f, 0.5f };
+	static float sDiffuseColor[3] = { 1.0f, 0.95f, 0.93f };
+	static float sDiffuseLightIntensity = m_pSunLight->GetDiffuseLightIntensity();
+	static float sLightWorldPosition[3] = { 0.0f, 0.0f, 0.0f };
+	static float sAmbientLightIntensity = 0.5f;
+	static float sSpecularIntensity = 1.0f;
+	static float sSpecularPower = 16.0f;
+
+	dataLight->ambientColor = DirectX::XMFLOAT3(sAmbientColor[0], sAmbientColor[1], sAmbientColor[2]);
+	dataLight->diffuseColor = DirectX::XMFLOAT3(sDiffuseColor[0], sDiffuseColor[1], sDiffuseColor[2]);
+	dataLight->diffuseLightIntensity = sDiffuseLightIntensity;
+	dataLight->lightWorldPosition = DirectX::XMFLOAT3(sLightWorldPosition[0], sLightWorldPosition[1], sLightWorldPosition[2]);
+	dataLight->ambientLightIntensity = sAmbientLightIntensity;
+	dataLight->specularIntensity = sSpecularIntensity;
+	dataLight->specularPower = sSpecularPower;
+
+	ImGui::Begin("Lighting");
+	ImGui::DragFloat3("Light World Position", sLightWorldPosition, 20.0f);
+	ImGui::DragFloat3("Ambient Color", sAmbientColor, 0.05f, 0.0f, 1.0f);
+	ImGui::DragFloat("Ambient Light Intensity", &sAmbientLightIntensity, 0.05f, 0.0f, 1.0f);
+	ImGui::DragFloat3("Diffuse Color", sDiffuseColor, 0.05f, 0.0f, 1.0f);
+	ImGui::DragFloat("Diffuse Light Intensity", &sDiffuseLightIntensity, 0.05f, 0.0f, 1.0f);
+	ImGui::DragFloat("Specular intensity", &sSpecularIntensity, 0.05f, 0.0f, 1.0f);
+	ImGui::DragFloat("Specular Power", &sSpecularPower, 0.05f, 1.0f, 80.0f);
+	bool isPressed = ImGui::Button("Reset all");
+	if (isPressed)
+	{
+		sAmbientColor[0] = 0.5f;
+		sAmbientColor[1] = 0.5f;
+		sAmbientColor[2] = 0.5f;
+		sDiffuseColor[0] = 1.0f;
+		sDiffuseColor[1] = 0.95f;
+		sDiffuseColor[2] = 0.93f;
+		sDiffuseLightIntensity = m_pSunLight->GetDiffuseLightIntensity();
+		sLightWorldPosition[0] = sLightWorldPosition[1] = sLightWorldPosition[2] = 0.0f;
+		sAmbientLightIntensity = 0.5f;
+		sSpecularIntensity = 1.0f;
+		sSpecularPower = 16.0f;
+	}
+	ImGui::End();
+#else
+	dataLight->ambientColor = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f);
+	dataLight->diffuseColor = m_pSunLight->GetDiffuseColor();
+	dataLight->diffuseLightIntensity = m_pSunLight->GetDiffuseLightIntensity();
+	dataLight->lightWorldPosition = m_pSunLight->GetWorldPosition();
+	dataLight->ambientLightIntensity = 0.5f;
+	dataLight->specularIntensity = 1.0f;  //Should be material property later (Emil F)
+	dataLight->specularPower = 16.0f; //Should be material property later (Emil F)
+#endif
+	pDeviceContext->Unmap(m_pLightCBuffer.Get(), 0);
+
+	
 	pDeviceContext->PSSetConstantBuffers(0u, 1u, m_pPlanetCBuffer.GetAddressOf());
 	pDeviceContext->PSSetConstantBuffers(1u, 1u, m_pCameraCBuffer.GetAddressOf());
 	pDeviceContext->PSSetConstantBuffers(2u, 1u, m_pScreenCBuffer.GetAddressOf());
-	
+	pDeviceContext->PSSetConstantBuffers(3u, 1u, m_pLightCBuffer.GetAddressOf());
+
 	ToggleDepthStencilStateEvent dsEvent;
 	EventBuss::Get().Delegate(dsEvent);
 }

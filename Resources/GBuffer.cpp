@@ -46,8 +46,8 @@ void GBuffer::Unbind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceC
 #if defined(DEBUG) | defined(_DEBUG)
     assert(pDeviceContext);
 #endif
-    ID3D11ShaderResourceView* nullSRV[4] = { nullptr };
-    ID3D11RenderTargetView* nullRTV[4] = { nullptr };
+    ID3D11ShaderResourceView* nullSRV[nr] = { nullptr };
+    ID3D11RenderTargetView* nullRTV[nr] = { nullptr };
     pDeviceContext->PSSetShaderResources(0u, (UINT)m_Textures.size(), nullSRV);
     pDeviceContext->OMSetRenderTargets(ARRAYSIZE(m_RTVArray), nullRTV, m_pDepthStencilView.Get());
 }
@@ -73,6 +73,11 @@ const bool GBuffer::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, 
     if (!wPosTexture->Create(pDevice, 3, width, height, usage, cpuaccessflags))
         return false;
     m_Textures.push_back(wPosTexture);
+
+    Texture* normalTexture = new Texture();
+    if (!normalTexture->Create(pDevice, 4, width, height, usage, cpuaccessflags))
+        return false;
+    m_Textures.push_back(normalTexture);
 
     for (int i = 0; i < ARRAYSIZE(m_RTVArray); i++) {
         m_RTVArray[i] = m_Textures[i]->getRTV().Get();

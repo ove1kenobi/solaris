@@ -108,37 +108,37 @@ const bool ResourceManager::CreateAllBindables()
 
 void ResourceManager::UnbindPipeline()
 {
-	ID3D11ShaderResourceView*	nullSRV[4] = { nullptr };
-	ID3D11SamplerState*			nullSampler[4] = { nullptr };
-	ID3D11Buffer*				nullBuffer[4] = { nullptr };
+	ID3D11ShaderResourceView*	nullSRV[5] = { nullptr };
+	ID3D11SamplerState*			nullSampler[5] = { nullptr };
+	ID3D11Buffer*				nullBuffer[5] = { nullptr };
 
 	m_pDeviceContext->VSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->VSSetShaderResources(0u, 4u, nullSRV);
-	m_pDeviceContext->VSSetSamplers(0u, 4u, nullSampler);
-	m_pDeviceContext->VSSetConstantBuffers(0u, 4u, nullBuffer);
+	m_pDeviceContext->VSSetShaderResources(0u, 5u, nullSRV);
+	m_pDeviceContext->VSSetSamplers(0u, 5u, nullSampler);
+	m_pDeviceContext->VSSetConstantBuffers(0u, 5u, nullBuffer);
 
 	m_pDeviceContext->PSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->PSSetShaderResources(0u, 4u, nullSRV);
-	m_pDeviceContext->PSSetSamplers(0u, 4u, nullSampler);
-	m_pDeviceContext->PSSetConstantBuffers(0u, 4u, nullBuffer);
+	m_pDeviceContext->PSSetShaderResources(0u, 5u, nullSRV);
+	m_pDeviceContext->PSSetSamplers(0u, 5u, nullSampler);
+	m_pDeviceContext->PSSetConstantBuffers(0u, 5u, nullBuffer);
 
 	m_pDeviceContext->DSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->DSSetShaderResources(0u, 4u, nullSRV);
-	m_pDeviceContext->DSSetSamplers(0u, 4u, nullSampler);
-	m_pDeviceContext->DSSetConstantBuffers(0u, 4u, nullBuffer);
+	m_pDeviceContext->DSSetShaderResources(0u, 5u, nullSRV);
+	m_pDeviceContext->DSSetSamplers(0u, 5u, nullSampler);
+	m_pDeviceContext->DSSetConstantBuffers(0u, 5u, nullBuffer);
 
 	m_pDeviceContext->HSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->HSSetShaderResources(0u, 4u, nullSRV);
-	m_pDeviceContext->HSSetSamplers(0u, 4u, nullSampler);
-	m_pDeviceContext->HSSetConstantBuffers(0u, 4u, nullBuffer);
+	m_pDeviceContext->HSSetShaderResources(0u, 5u, nullSRV);
+	m_pDeviceContext->HSSetSamplers(0u, 5u, nullSampler);
+	m_pDeviceContext->HSSetConstantBuffers(0u, 5u, nullBuffer);
 
 	m_pDeviceContext->GSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->GSSetShaderResources(0u, 4u, nullSRV);
-	m_pDeviceContext->GSSetSamplers(0u, 4u, nullSampler);
-	m_pDeviceContext->GSSetConstantBuffers(0u, 4u, nullBuffer);
+	m_pDeviceContext->GSSetShaderResources(0u, 5u, nullSRV);
+	m_pDeviceContext->GSSetSamplers(0u, 5u, nullSampler);
+	m_pDeviceContext->GSSetConstantBuffers(0u, 5u, nullBuffer);
 
 	m_pDeviceContext->CSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->CSSetShaderResources(0u, 4u, nullSRV);
+	m_pDeviceContext->CSSetShaderResources(0u, 5u, nullSRV);
 	m_pDeviceContext->CSSetConstantBuffers(0u, 0u, nullBuffer);
 }
 

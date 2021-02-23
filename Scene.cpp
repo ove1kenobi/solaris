@@ -146,7 +146,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 
 	// Push sun to stack
 	this->m_gameObjects.push_back(sun);
-
 	//Add the ship to the gameObject vector.
 	this->m_gameObjects.push_back(this->m_player.getShip());
 
