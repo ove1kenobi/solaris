@@ -1,18 +1,19 @@
 #pragma once
 #include "IEvent.h"
-//#include "../GameObject.h"
 #include "../Resources/BindIDs.h"
-
 class GameObject;
+class PointLight;
 
 class SendRenderObjectsEvent : public IEvent
 {
 private:
 	std::vector<GameObject*>* m_gameObjects;
+	size_t m_numPlanets;
 public:
-	SendRenderObjectsEvent(std::vector<GameObject*> *gameObjects) noexcept
+	SendRenderObjectsEvent(std::vector<GameObject*> *gameObjects, const size_t& numPlanets) noexcept
 	{
-		this->m_gameObjects = gameObjects;
+		m_gameObjects = gameObjects;
+		m_numPlanets = numPlanets;
 	};
 	virtual ~SendRenderObjectsEvent() noexcept = default;
 
@@ -26,6 +27,10 @@ public:
 	}
 	std::vector<GameObject*> *getGameObjectVector() {
 		return this->m_gameObjects;
+	}
+	const size_t& GetNumPlanets()
+	{
+		return m_numPlanets;
 	}
 };
 
@@ -123,5 +128,47 @@ public:
 	[[nodiscard]] const std::string GetDebugName() const noexcept override
 	{
 		return "ToggleDepthStencilStateEvent";
+	}
+};
+
+class RequestSunLightEvent : public IEvent
+{
+private:
+public:
+	RequestSunLightEvent() noexcept = default;
+	virtual ~RequestSunLightEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::RequestSunLightEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "RequestSunLightEvent";
+	}
+};
+
+class DelegateSunLightEvent : public IEvent
+{
+private:
+	PointLight* m_pSunLight;
+public:
+	DelegateSunLightEvent(PointLight* pSunLight) noexcept
+	{
+		m_pSunLight = pSunLight;
+	}
+	virtual ~DelegateSunLightEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::DelegateSunLightEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "DelegateSunLightEvent";
+	}
+	[[nodiscard]] PointLight* GetSunLight() const noexcept
+	{
+		return m_pSunLight;
 	}
 };

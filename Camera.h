@@ -2,6 +2,12 @@
 #include "time.h"
 #include "EventSystem\IEventListener.h"
 #include "EventSystem\EventPublisher.h"
+
+struct CameraCB
+{
+	DirectX::XMFLOAT3 cameraWorldPosition;
+	float padding;
+};
 //Orthographic camera.
 //Used as Base class for the PlayerCamera.
 class Camera{

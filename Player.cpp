@@ -149,6 +149,12 @@ bool Player::update()
 	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
 	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
 
+	m_ship->UpdatePhysics();
+
+	DirectX::XMFLOAT3 a = m_ship->getCenter();
+	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
+	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
+
 	return false;
 }
 

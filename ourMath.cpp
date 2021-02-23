@@ -45,10 +45,25 @@ DirectX::XMFLOAT3 slerp(DirectX::XMFLOAT3 p0, DirectX::XMFLOAT3 p1, float t) {
 	p1.y = p1.y * right;
 	p1.z = p1.z * right;
 
-	DirectX::XMFLOAT3 result;
+	DirectX::XMFLOAT3 result = {};
 	result.x = p0.x + p1.x;
 	result.y = p0.y + p1.y;
 	result.z = p0.z + p1.z;
 
 	return result;
+}
+
+DirectX::XMFLOAT3 operator-(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b)
+{
+	return { a.x - b.x, a.y - b.y, a.z - b.z };
+}
+
+DirectX::XMFLOAT3 operator+(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b)
+{
+	return { a.x + b.x, a.y + b.y, a.z + b.z };
+}
+
+float length(const DirectX::XMFLOAT3& a)
+{
+	return sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
 }
