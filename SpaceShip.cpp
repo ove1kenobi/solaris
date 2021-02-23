@@ -15,9 +15,10 @@ SpaceShip::SpaceShip()
 	m_yaw = (float)M_PI;
 	m_pitchTilt = 0.0f;
 	m_rollTilt = 0.0f;
+	m_velocity = { 1.0f, 1.0f, 1.0f };
 }
 
-bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
+GameObject* SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	ImGui::Begin("Spaceship");
@@ -60,7 +61,7 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 	data->PMatrix = PMatrix;
 
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
-	return true;
+	return nullptr;
 }
 
 void SpaceShip::Move(float step)
@@ -130,54 +131,3 @@ void SpaceShip::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& d
 	deviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, this->m_model->getMatrixBuffer().GetAddressOf());
 }
-
-//void SpaceShip::CalculateGravity(GameObject* other)
-//{
-//	if (this == other) return;
-//	// Calculates the force of gravity between GameObjects a and b
-//
-//	// ab = vector from a to b
-//	DirectX::XMFLOAT3 ab = other->GetCenter() - m_center;
-//
-//	// r = |ab| -> (distance between a and b)
-//	double r = sqrtf(ab.x * ab.x + ab.y * ab.y + ab.z * ab.z);
-//
-//	// Newton's general theory of gravity
-//	float f = static_cast<float>(6.674e-11 * static_cast<double>(this->m_mass) * other->GetMass() / (r * r));
-//
-//	// Normalize ab
-//	double inverse_r = 1.0f / r;
-//	ab.x = static_cast<float>(ab.x * inverse_r);
-//	ab.y = static_cast<float>(ab.y * inverse_r);
-//	ab.z = static_cast<float>(ab.z * inverse_r);
-//
-//	// Force working on GameObject a
-//	ab.x *= f;
-//	ab.y *= f;
-//	ab.z *= f;
-//	m_forces.push_back(ab);
-//}
-
-//void SpaceShip::AddForce(DirectX::XMFLOAT3 f)
-//{
-//	// Adds a force to the forces influencing the GameObject this frame
-//	m_forces.push_back(f);
-//}
-
-//void SpaceShip::UpdatePhysics()
-//{
-//	// Sum forces working on GameObject and apply
-//	DirectX::XMFLOAT3 sumForces = {};
-//	for (size_t i = 0; i < m_forces.size(); ++i)
-//	{
-//		sumForces = sumForces + m_forces[i];
-//	}
-//
-//	m_forces.clear();
-//
-//	m_velocity = m_velocity + sumForces;
-//
-//	m_center.x += static_cast<float>(m_velocity.x * m_timer.DeltaTime());
-//	m_center.y += static_cast<float>(m_velocity.y * m_timer.DeltaTime());
-//	m_center.z += static_cast<float>(m_velocity.z * m_timer.DeltaTime());
-//}

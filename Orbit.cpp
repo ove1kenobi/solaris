@@ -16,7 +16,7 @@ bool Orbit::init(float major_semi_axis, float minor_semi_axis)
 	return true;
 }
 
-bool Orbit::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
+GameObject* Orbit::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
 	m_sumForces = { 0.0f, 0.0f, 0.0f };
 
@@ -53,7 +53,7 @@ bool Orbit::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const M
 	data->PMatrix = PMatrix;
 
 	deviceContext->Unmap(m_model->getMatrixBuffer().Get(), 0);
-	return true;
+	return nullptr;
 }
 
 void Orbit::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)

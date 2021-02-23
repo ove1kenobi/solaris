@@ -19,6 +19,7 @@ private:
 	Player m_player;
 	std::vector<GameObject*> m_gameObjects;
 	MousePicking m_Picking;
+	size_t m_persistentObjEnd;
 public:
 	Scene() noexcept;
 	virtual ~Scene();
@@ -27,4 +28,6 @@ public:
 	void OnEvent(IEvent& event) noexcept override;
 	[[nodiscard]] const std::string GetDebugName() const noexcept override;
 	void sendObjects();
+	void AddGameObject(GameObject* obj);
+	void RemoveGameObject(GameObject* obj);
 };

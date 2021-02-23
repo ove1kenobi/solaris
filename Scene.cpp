@@ -9,7 +9,7 @@ void initPlanet(Planet* planet, Orbit* orbit, std::vector<GameObject*>& gameObje
 }
 
 Scene::Scene() noexcept
-	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }
+	: m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }, m_persistentObjEnd{ 0u }
 {
 
 }
@@ -141,12 +141,9 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	//Add the ship to the gameObject vector.
 	this->m_gameObjects.push_back(this->m_player.getShip());
 
-	//Add an asteroid to the gameObject vector.
-	for (int i = 1; i < 10; ++i) {
-		Asteroid* ast = new Asteroid();
-		ast->init(DirectX::XMFLOAT3(0.0f + 500.0f * i , 1000.0f + 500.0f * i, 0.0f + 500.0f * i), DirectX::XMFLOAT3(0.0f, .0f, 0.0f));
-		m_gameObjects.push_back(ast);
-	}
+	// Finished creating persistent objects
+	// The rest of m_gameObjects contain eventual transient objects
+	m_persistentObjEnd = m_gameObjects.size() - 1;
 
 	if (!m_Picking.Initialize())
 		return false;
@@ -154,21 +151,43 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	return true;
 }
 
-void Scene::Update() noexcept {
-	ImGui::Begin("Asteroid data");
-	auto it = m_gameObjects.end();
-	for (int i = 1; i < 10; ++i) {
-		--it;
-		DirectX::XMFLOAT3 c = (*it)->GetCenter();
-		DirectX::XMFLOAT3 v = (*it)->GetVelocity();
-		DirectX::XMFLOAT3 f = (*it)->GetSumForces();
-		float m = (*it)->GetMass();
-		ImGui::Text("Center    : (%.00f, %.00f, %.00f)", c.x, c.y, c.z);
-		ImGui::Text("Velocity  : (%.00f, %.00f, %.00f)", v.x, v.y, v.z);
-		ImGui::Text("Sum forces: (%.00f, %.00f, %.00f)", f.x, f.y, f.z);
-		ImGui::Text("Mass      : %.00f", m);
+void Scene::AddGameObject(GameObject* obj)
+{
+	m_gameObjects.push_back(obj);
+}
+
+void Scene::RemoveGameObject(GameObject* obj)
+{
+	auto i = m_gameObjects.begin() + m_persistentObjEnd;
+
+	while (++i < m_gameObjects.end() && *i != obj);
+	if (i != m_gameObjects.end())
+	{
+		delete* i;
+		m_gameObjects.erase(i);
 	}
-	ImGui::End();
+}
+
+
+void Scene::Update() noexcept {
+	//Generator and distributions used for generating planet values.
+	using t_clock = std::chrono::high_resolution_clock;
+	std::default_random_engine gen(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
+	std::uniform_real_distribution<float> dist(200.0f, 900.0f);
+
+	//Update the player and all the game objects.
+	size_t num = m_gameObjects.size() - m_persistentObjEnd;
+	if (m_player.update() &&  num < 30)
+	{
+		//Add an asteroid to the gameObject vector.
+		GameObject* ship = m_player.getShip();
+		DirectX::XMFLOAT3 pos = ship->GetCenter() + norm(ship->GetVelocity()) * 3000.0f;
+		pos = pos + DirectX::XMFLOAT3(dist(gen), dist(gen), dist(gen));
+		Asteroid* ast = new Asteroid();
+		ast->init(pos, DirectX::XMFLOAT3(0.0f, .0f, 0.0f), ship);
+		m_gameObjects.push_back(ast);
+	}
+
 	// Calculate gravity between each pair of GameObjects
 	for (size_t i = 0; i < m_gameObjects.size() - 1; ++i)
 	{
@@ -177,18 +196,18 @@ void Scene::Update() noexcept {
 			m_gameObjects[i]->CalculateGravity(m_gameObjects[j]);
 		}
 	}
-	//SpaceShip* ship = this->m_player.getShip();
-	//for (size_t i = 0; i < m_gameObjects.size(); ++i)
-	//{
-	//	ship->CalculateGravity(m_gameObjects[i]);
-	//}
-	//Update the player and all the game objects.
-	m_player.update();
+
 	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
 	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
 
+	GameObject* del = nullptr;
+	std::vector<GameObject*> remove;
 	for (auto r : this->m_gameObjects) {
-		r->update(vMatrix, pMatrix, m_pDeviceContext);
+		del = r->update(vMatrix, pMatrix, m_pDeviceContext);
+		if (del) remove.push_back(del);
+	}
+	for (auto r : remove) {
+		RemoveGameObject(r);
 	}
 	m_Picking.DisplayPickedObject();
 }

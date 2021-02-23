@@ -2,6 +2,7 @@
 #include "Asteroid.h"
 
 Asteroid::Asteroid() noexcept
+	: m_scale { 1.0f }
 {
 
 }
@@ -10,24 +11,43 @@ Asteroid::~Asteroid()
 {
 }
 
-bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity)
+bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObject* ship)
 {
+	//Generator and distributions used for generating planet values.
+	using t_clock = std::chrono::high_resolution_clock;
+	std::default_random_engine gen(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
+	std::uniform_int_distribution<int> distributionPlanets(20, 30);
+	std::uniform_real_distribution<float> distScale(0.1f, 1.0f);
+	std::uniform_real_distribution<float> distRot(static_cast<float>(-M_PI_2), static_cast<float>(M_PI_2));
+
+	m_ship = ship;
 	m_center = pos;
 	m_velocity = velocity;
-	m_mass = 500000.0f;
+	m_pitch = distRot(gen);
+	m_deltaPitch = distScale(gen);
+	m_roll = distRot(gen);
+	m_deltaRoll = distScale(gen);
+	m_yaw = distRot(gen);
+	m_deltaYaw = distScale(gen);
 	m_model = ModelFactory::Get().GetModel(std::string("models/cube.obj"));
+	m_scale = distScale(gen) * 3.0f;
+	m_mass = length(m_model->GetBoundingBox()->Extents) * 50000.0f * m_scale;
 	ModelFactory::Get().CreateMatrixBuffer(m_AmatrixBuffer);
 	return true;
 }
 
-bool Asteroid::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
+GameObject* Asteroid::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
+	float distance = length(m_center - m_ship->GetCenter());
+	if (distance > 20000) return this;
+	m_pitch += m_deltaPitch * m_timer.DeltaTime();
+	m_roll += m_deltaRoll * m_timer.DeltaTime();
+	m_yaw += m_deltaYaw * m_timer.DeltaTime();
 	UpdatePhysics();
 	//Updated the same way as a cosmicbody, with S * R * T. Rotation is around the ships up vector.
 	DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&m_upVector);
-	//100 times smaller. TODO: make variable?
-	DirectX::XMMATRIX scale = DirectX::XMMatrixIdentity();
-	DirectX::XMMATRIX rot = DirectX::XMMatrixIdentity();
+	DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(m_scale, m_scale, m_scale);
+	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationRollPitchYaw(m_roll, m_pitch, m_yaw);
 	DirectX::XMMATRIX trans = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);
 	DirectX::XMMATRIX final = scale * rot * trans;
 	DirectX::XMStoreFloat4x4(&m_wMatrix, final);
@@ -56,7 +76,7 @@ bool Asteroid::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, cons
 	data->PMatrix = PMatrix;
 
 	deviceContext->Unmap(m_AmatrixBuffer.Get(), 0);
-	return true;
+	return nullptr;
 }
 
 void Asteroid::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
@@ -76,54 +96,3 @@ const bool Asteroid::IntersectRayObject(const DirectX::FXMVECTOR& origin, const 
 	b.Center = m_center;
 	return b.Intersects(origin, direction, distance);
 }
-
-//void Asteroid::CalculateGravity(GameObject* other)
-//{
-//	if (this == other) return;
-//	// Calculates the force of gravity between GameObjects a and b
-//
-//	// ab = vector from a to b
-//	DirectX::XMFLOAT3 ab = other->GetCenter() - m_center;
-//
-//	// r = |ab| -> (distance between a and b)
-//	double r = sqrtf(ab.x * ab.x + ab.y * ab.y + ab.z * ab.z);
-//
-//	// Newton't general theory of gravity
-//	float f = static_cast<float>(6.674e-11 * static_cast<double>(this->m_mass) * other->GetMass() / (r * r));
-//
-//	// Normalize ab
-//	double inverse_r = 1.0f / r;
-//	ab.x = static_cast<float>(ab.x * inverse_r);
-//	ab.y = static_cast<float>(ab.y * inverse_r);
-//	ab.z = static_cast<float>(ab.z * inverse_r);
-//
-//	// Force working on GameObject a
-//	ab.x *= f;
-//	ab.y *= f;
-//	ab.z *= f;
-//	m_forces.push_back(ab);
-//}
-//
-//void Asteroid::AddForce(DirectX::XMFLOAT3 f)
-//{
-//	// Adds a force to the forces influencing the GameObject this frame
-//	m_forces.push_back(f);
-//}
-
-//void Asteroid::UpdatePhysics()
-//{
-//	// Sum forces working on GameObject and apply
-//	DirectX::XMFLOAT3 sumForces = {};
-//	for (size_t i = 0; i < m_forces.size(); ++i)
-//	{
-//		sumForces = sumForces + m_forces[i];
-//	}
-//
-//	m_forces.clear();
-//
-//	m_velocity = m_velocity + sumForces;
-//
-//	m_center.x += static_cast<float>(m_velocity.x * m_timer.DeltaTime());
-//	m_center.y += static_cast<float>(m_velocity.y * m_timer.DeltaTime());
-//	m_center.z += static_cast<float>(m_velocity.z * m_timer.DeltaTime());
-//}

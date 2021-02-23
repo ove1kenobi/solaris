@@ -65,7 +65,8 @@ bool Player::update()
 	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
 	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
 
-	return false;
+	if (m_time.SinceStart() < 5.0f) return false;
+	return true;
 }
 
 SpaceShip* Player::getShip() {

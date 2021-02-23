@@ -55,7 +55,7 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	return true;
 }
 
-bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
+GameObject* CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
 	m_sumForces = { 0.0f, 0.0f, 0.0f };
 	// Update orbit
@@ -113,7 +113,7 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	//Bounding sphere:
 	m_model->GetBoundingSphere()->Center = m_center;
 
-	return true;
+	return nullptr;
 }
 
 void CosmicBody::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {

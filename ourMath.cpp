@@ -68,3 +68,8 @@ float length(const DirectX::XMFLOAT3& a)
 {
 	return sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
 }
+
+DirectX::XMFLOAT3 norm(const DirectX::XMFLOAT3& a)
+{
+	return a * (1.0f / length(a));
+}
