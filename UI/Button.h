@@ -3,6 +3,7 @@
 
 class Button : public ModuleUI {
 protected:
+	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pTextFont;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTextFormat;
 	D2D1_RECT_F m_pHoverBox;
 	D2D1_RECT_F m_pTextBox;

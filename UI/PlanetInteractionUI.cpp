@@ -26,8 +26,8 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 		L"of rebels struggling to restore freedom to the galaxy...";
 
 	m_pRandomEvents.at(0)->SetText(L"It is a period of civil war. Rebel spaceships, striking from a hidden base, "
-		L"have won their first victory against the evil Galactic Empire.During the battle, "
-		L"Rebel spies managed to steal secret plans to the Empire’s ultimate weapon, the DEATH STAR, "
+		L"have won their first victory against the evil Galactic Empire. During the battle, "
+		L"Rebel spies managed to steal secret plans to the Empire’s ultimate weapon, the death star, "
 		L"an armored space station with enough power to destroy an entire planet. ");
 
 	m_pRandomEvents.at(1)->SetText(L"It is a dark time for the Rebellion.Although the Death Star has been destroyed, "
@@ -85,31 +85,37 @@ bool PlanetInteractionUI::CreateScreen() {
 
 bool PlanetInteractionUI::CreateTextElements() {
 	//Planet name
+	AddFontResource(L"AwareBold-qZo3x.ttf");
+	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pTitleFont, false), "GetSystemFont");
+
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
-		L"Arial",					
-		NULL,                       
+		L"Aware",
+		NULL,
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		46.0f,
+		41.0f,
 		L"en-us",
-		&m_pTitleTextFormat
+		&m_pTitleFormat
 	), "TextFormat");
-
-	ErrorCheck(m_pTitleTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
+	RemoveFontResource(L"AwareBold-qZo3x.ttf");
+	ErrorCheck(m_pTitleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
 
 	//Screen text
+	AddFontResource(L"Tenika400Regular-Rpyql.ttf");
+	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pBodyFont, false), "GetSystemFont");
+
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
-		L"Arial",
-		NULL,
+		L"Tenika",
+		m_pBodyFont.Get(),
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
 		16.0f,
 		L"en-us",
-		&m_pBodyTextFormat
+		&m_pBodyFormat
 	), "TextFormat");
-
+	RemoveFontResource(L"Tenika400Regular-Rpyql.ttf");
 
 	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
 		if (!m_pRandomEvents.at(i)->Initialize()) {
@@ -119,57 +125,10 @@ bool PlanetInteractionUI::CreateTextElements() {
 	return true;
 }
 
-bool PlanetInteractionUI::CreateHover() {
-	/*
-	D2D1_RECT_F hover = m_pEventOneHoverTextBox;
-	switch (m_pCurrentHover) {
-	case RandomEvent::one:
-	{
-		hover = m_pEventOneHoverTextBox;
-		break;
-	}
-	case RandomEvent::two:
-	{
-		hover = m_pEventTwoHoverTextBox;
-		break;
-	}
-	case RandomEvent::three:
-	{
-		hover = m_pEventThreeTextBox;
-		break;
-	}
-	default:
-		break;
-	}
-	HRESULT hr = m_pFactory2D->CreatePathGeometry(&m_pEventHover);
-
-	hr = m_pEventHover->Open(&m_pSink);
-	if (SUCCEEDED(hr))
-	{
-		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
-
-		m_pSink->BeginFigure(
-			D2D1::Point2F(hover.right, hover.bottom),
-			D2D1_FIGURE_BEGIN_FILLED
-		);
-		D2D1_POINT_2F points[] = {
-			D2D1::Point2F(hover.right, hover.top),
-			D2D1::Point2F(hover.left, hover.top),
-			D2D1::Point2F(hover.left, hover.bottom),
-		};
-		m_pSink->AddLines(points, ARRAYSIZE(points));
-		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
-	}
-	hr = m_pSink->Close();
-	*/
-	return true;
-}
-
 bool PlanetInteractionUI::CreateTools() {
 	this->CreateBrush();
 
-	ID2D1GradientStopCollection* pGradientStops = NULL;
-
+	//Main gradient
 	D2D1_GRADIENT_STOP gradientStops[3];
 	gradientStops[0].color = D2D1::ColorF(D2D1::ColorF::DarkSlateBlue, 0.25f);
 	gradientStops[0].position = 0.0f;
@@ -178,42 +137,61 @@ bool PlanetInteractionUI::CreateTools() {
 	gradientStops[2].color = D2D1::ColorF(D2D1::ColorF::DarkSlateBlue, 0.25f);
 	gradientStops[2].position = 1.0f;
 
-	HRESULT hr = m_pRenderTarget2D->CreateGradientStopCollection(
+	ErrorCheck(m_pRenderTarget2D->CreateGradientStopCollection(
 		gradientStops,
 		3,
 		D2D1_GAMMA_1_0,
 		D2D1_EXTEND_MODE_CLAMP,
-		&pGradientStops
-	);
-	if (FAILED(hr)) {
-		printf("Error!\n");
-		return false;
-	}
+		&m_pMainGradientStops
+	), "GradientStops");
 
-	hr = m_pRenderTarget2D->CreateLinearGradientBrush(
+	ErrorCheck(m_pRenderTarget2D->CreateLinearGradientBrush(
 		D2D1::LinearGradientBrushProperties(
-			D2D1::Point2F(m_pMainRectangle.left, static_cast<float>(m_pWindowHeight)),
-			D2D1::Point2F(m_pMainRectangle.right, static_cast<float>(m_pWindowHeight))),
-		pGradientStops,
-		&m_pLinearGradientBrush
-	);
-	if (FAILED(hr)) {
-		printf("Error!\n");
-		return false;
-	}
+			D2D1::Point2F(m_pMainRectangle.left, m_pWindowHeight),
+			D2D1::Point2F(m_pMainRectangle.right, m_pWindowHeight)),
+		m_pMainGradientStops.Get(),
+		&m_pMainGradientBrush),"GradientBrush");
 
-	pGradientStops->Release();
+	//Corner gradient
+	gradientStops[0].color = D2D1::ColorF(D2D1::ColorF::Aqua, 0.25f);
+	gradientStops[0].position = 0.0f;
+	gradientStops[1].color = D2D1::ColorF(D2D1::ColorF::DarkSlateBlue, 0.25f);
+	gradientStops[1].position = 0.5f;
+	gradientStops[2].color = D2D1::ColorF(D2D1::ColorF::Aqua, 0.25f);
+	gradientStops[2].position = 1.0f;
 
+	ErrorCheck(m_pRenderTarget2D->CreateGradientStopCollection(
+		gradientStops,
+		3,
+		D2D1_GAMMA_1_0,
+		D2D1_EXTEND_MODE_CLAMP,
+		&m_pCornerGradientStops
+	), "GradientStops");
+
+	ErrorCheck(m_pRenderTarget2D->CreateLinearGradientBrush(
+		D2D1::LinearGradientBrushProperties(
+			D2D1::Point2F(m_pMainRectangle.left, m_pWindowHeight),
+			D2D1::Point2F(m_pMainRectangle.right, m_pWindowHeight)),
+		m_pCornerGradientStops.Get(),
+		&m_pCornerGradientBrush), "GradientBrush");
 	return true;
 }
 
 //Update functions
 bool PlanetInteractionUI::UpdateScreen() {
+	/*
 	m_pMainRectangle = D2D1::RectF(
 		100.0f,
 		50.0f,
 		m_pWindowWidth - 100.0f,
 		m_pWindowHeight - 200.0f
+	);*/
+
+	m_pMainRectangle = D2D1::RectF(
+		(m_pWindowWidth/2.0f) - 500.0f,
+		(m_pWindowHeight / 2.0f) - 350.0f,
+		(m_pWindowWidth/2.0f) + 500.0f,
+		(m_pWindowHeight/2.0f) + 200.0f
 	);
 
 	//Module information
@@ -444,21 +422,23 @@ bool PlanetInteractionUI::UpdateTopCorners() {
 }
 
 bool PlanetInteractionUI::UpdateTools() {
-	m_pLinearGradientBrush->SetStartPoint(D2D1::Point2F(m_pMainRectangle.left, m_pWindowHeight));
-	m_pLinearGradientBrush->SetEndPoint(D2D1::Point2F(m_pMainRectangle.right, m_pWindowHeight));
+	m_pMainGradientBrush->SetStartPoint(D2D1::Point2F(m_pMainRectangle.left, m_pWindowHeight));
+	m_pMainGradientBrush->SetEndPoint(D2D1::Point2F(m_pMainRectangle.right, m_pWindowHeight));
+	m_pCornerGradientBrush->SetStartPoint(D2D1::Point2F(m_pMainRectangle.left, m_pWindowHeight));
+	m_pCornerGradientBrush->SetEndPoint(D2D1::Point2F(m_pMainRectangle.right, m_pWindowHeight));
 	return true;
 }
 
 bool PlanetInteractionUI::UpdateTextElements() {
 	m_pPlanetNameTextBox = D2D1::RectF(
-		m_pMainRectangle.left + 300.0f,
-		m_pMainRectangle.top - 30.0f,
-		m_pMainRectangle.right - 300.0f,
-		m_pMainRectangle.top + 30.0f
+		m_pMainRectangle.left + 310.0f,
+		m_pMainRectangle.top - 35.0f,
+		m_pMainRectangle.right - 310.0f,
+		m_pMainRectangle.top + 15.0f
 	);
 
 	m_pPlanetFlavourTextBox = D2D1::RectF(
-		(m_pWindowWidth / 2.0f) + m_pScreenOffset,
+		(m_pWindowWidth / 2.0f) + m_pScreenOffset - 30.0f,
 		m_pMainRectangle.top + m_pScreenOffset,
 		m_pMainRectangle.right - m_pScreenOffset,
 		m_pMainRectangle.bottom - m_pScreenOffset
@@ -542,7 +522,7 @@ void PlanetInteractionUI::RenderScreen() {
 	}
 
 	//Use gradient brush to add effect
-	m_pRenderTarget2D->FillRectangle(&m_pMainRectangle, m_pLinearGradientBrush.Get());
+	m_pRenderTarget2D->FillRectangle(&m_pMainRectangle, m_pMainGradientBrush.Get());
 
 	//Add outline to main square
 	UpdateBrush(D2D1::ColorF::White, 0.5f);
@@ -572,13 +552,20 @@ void PlanetInteractionUI::RenderScreen() {
 }
 
 void PlanetInteractionUI::RenderCorners() {
-	this->UpdateBrush(D2D1::ColorF::Teal, 1.0f);
-
 	//Left corner
+	this->UpdateBrush(D2D1::ColorF::Teal, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pBottomLeft.Get(), m_pBrush.Get());
-	this->UpdateBrush(D2D1::ColorF::Snow, 0.5f);
+	m_pRenderTarget2D->FillGeometry(m_pBottomLeft.Get(), m_pCornerGradientBrush.Get());
+	m_pRenderTarget2D->DrawGeometry(m_pBottomLeft.Get(), m_pBrush.Get(), 2.0f);
+
+	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	this->UpdateBrush(D2D1::ColorF::Orange, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pBottomLeftDetailsOne.Get(), m_pBrush.Get());
 	m_pRenderTarget2D->FillGeometry(m_pBottomLeftDetailsTwo.Get(), m_pBrush.Get());
+	this->UpdateBrush(D2D1::ColorF::Orange, 1.0f);
+	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	m_pRenderTarget2D->DrawGeometry(m_pBottomLeftDetailsOne.Get(), m_pBrush.Get(), 2.0f);
+	m_pRenderTarget2D->DrawGeometry(m_pBottomLeftDetailsTwo.Get(), m_pBrush.Get(), 2.0f);
 
 	m_pRenderTarget2D->DrawLine(
 		D2D1::Point2F(m_pMainRectangle.left + 70.0f, m_pMainRectangle.bottom),
@@ -625,10 +612,15 @@ void PlanetInteractionUI::RenderCorners() {
 	//Right corner
 	this->UpdateBrush(D2D1::ColorF::Teal, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pBottomRight.Get(), m_pBrush.Get());
+	m_pRenderTarget2D->FillGeometry(m_pBottomRight.Get(), m_pCornerGradientBrush.Get());
+	m_pRenderTarget2D->DrawGeometry(m_pBottomRight.Get(), m_pBrush.Get(), 2.0f);
 
-	this->UpdateBrush(D2D1::ColorF::Snow, 0.5f);
+	this->UpdateBrush(D2D1::ColorF::Orange, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pBottomRightDetailsOne.Get(), m_pBrush.Get());
 	m_pRenderTarget2D->FillGeometry(m_pBottomRightDetailsTwo.Get(), m_pBrush.Get());
+	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	m_pRenderTarget2D->DrawGeometry(m_pBottomRightDetailsOne.Get(), m_pBrush.Get(), 2.0f);
+	m_pRenderTarget2D->DrawGeometry(m_pBottomRightDetailsTwo.Get(), m_pBrush.Get(), 2.0f);
 
 	m_pRenderTarget2D->DrawLine(
 		D2D1::Point2F(m_pMainRectangle.right - 70.0f, m_pMainRectangle.bottom),
@@ -675,17 +667,19 @@ void PlanetInteractionUI::RenderCorners() {
 	//Top corners
 	this->UpdateBrush(D2D1::ColorF::Teal, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pTop.Get(), m_pBrush.Get());
+	m_pRenderTarget2D->FillGeometry(m_pTop.Get(), m_pCornerGradientBrush.Get());
+	m_pRenderTarget2D->DrawGeometry(m_pTop.Get(), m_pBrush.Get(), 2.0f);
 
-	this->UpdateBrush(D2D1::ColorF::Snow, 0.5f);
-	//m_pRenderTarget2D->DrawGeometry(m_pTop.Get(), m_pBrush.Get(), 5.0f);
-
-	this->UpdateBrush(D2D1::ColorF::Snow, 0.5f);
+	this->UpdateBrush(D2D1::ColorF::Orange, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pTopDetailsLeft.Get(), m_pBrush.Get());
 	m_pRenderTarget2D->FillGeometry(m_pTopDetailsRight.Get(), m_pBrush.Get());
+	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	m_pRenderTarget2D->DrawGeometry(m_pTopDetailsLeft.Get(), m_pBrush.Get(), 2.0f);
+	m_pRenderTarget2D->DrawGeometry(m_pTopDetailsRight.Get(), m_pBrush.Get(), 2.0f);
 
 	m_pRenderTarget2D->DrawLine(
-		D2D1::Point2F(m_pMainRectangle.left + 15.0f, m_pMainRectangle.top + 11.0f),
-		D2D1::Point2F(m_pMainRectangle.right - 15.0f, m_pMainRectangle.top + 11.0f),
+		D2D1::Point2F(m_pMainRectangle.left + 15.0f, m_pMainRectangle.top + 9.0f),
+		D2D1::Point2F(m_pMainRectangle.right - 15.0f, m_pMainRectangle.top + 9.0f),
 		m_pBrush.Get(),
 		2.0f
 	);
@@ -706,12 +700,15 @@ void PlanetInteractionUI::RenderCorners() {
 }
 
 void PlanetInteractionUI::RenderPlanetText() {
+	this->UpdateBrush(D2D1::ColorF::Aqua, 0.05f);
+	m_pRenderTarget2D->FillRectangle(m_pPlanetFlavourTextBox, m_pBrush.Get());
+
 	//Planet name
 	UpdateBrush(D2D1::ColorF::White, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pPlanetNameText.c_str(),
 		(UINT32)m_pPlanetNameText.length(),
-		m_pTitleTextFormat.Get(),
+		m_pTitleFormat.Get(),
 		m_pPlanetNameTextBox,
 		m_pBrush.Get()
 	);
@@ -720,7 +717,7 @@ void PlanetInteractionUI::RenderPlanetText() {
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pPlanetFlavourText.c_str(),
 		(UINT32)m_pPlanetFlavourText.length(),
-		m_pBodyTextFormat.Get(),
+		m_pBodyFormat.Get(),
 		m_pPlanetFlavourTextBox,
 		m_pBrush.Get()
 	);
@@ -728,7 +725,7 @@ void PlanetInteractionUI::RenderPlanetText() {
 
 void PlanetInteractionUI::RenderRandomEvents() {
 	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
-		m_pRandomEvents.at(i)->Render();
+		m_pRandomEvents.at(i)->Render(this->mouseX, this->mouseY);
 	}
 }
 
@@ -744,11 +741,11 @@ void PlanetInteractionUI::Render() {
 	this->RenderCorners();
 	this->RenderPlanetText();
 	this->RenderRandomEvents();
-	RenderHelpGrid(50);
 }
 
 //Event functions
 void PlanetInteractionUI::SetPlanetName(std::wstring text) {
+	std::transform(text.begin(), text.end(), text.begin(), ::toupper);
 	m_pPlanetNameText = text;
 }
 
@@ -763,80 +760,29 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		UpdateDXHandlers(event);
 		break;
 	}
-	case EventType::KeyboardEvent:
-	{
-		//TODO: make it possible to nagivate the choices with the keys too
-		KeyState state = static_cast<KeyboardEvent*>(&event)->GetKeyState();
-		int virKey = static_cast<KeyboardEvent*>(&event)->GetVirtualKeyCode();
-
-		if (state == KeyState::KeyPress) {
-			if (virKey == 'R') {
-				/*
-				if (m_pRenderRandomEvents) {
-					m_pRenderRandomEvents = false;
-				}
-				else {
-					m_pRenderRandomEvents = true;
-				}*/
-			}
-			if (virKey == 'H') {
-				/*
-				if (m_pRenderHelpGrids) {
-					m_pRenderHelpGrids = false;
-				}
-				else {
-					m_pRenderHelpGrids = true;
-				}*/
-			}
-		}
-		break;
-	}
 	//For hovering over UI elements
 	case EventType::DelegateMouseCoordsEvent:
 	{
-		int mouseX = static_cast<DelegateMouseCoordsEvent*>(&event)->GetXCoord();
-		int mouseY = static_cast<DelegateMouseCoordsEvent*>(&event)->GetYCoord();
+		this->mouseX = static_cast<DelegateMouseCoordsEvent*>(&event)->GetXCoord();
+		this->mouseY = static_cast<DelegateMouseCoordsEvent*>(&event)->GetYCoord();
 		std::wstring coord = L"X: ";
-		coord.append(std::to_wstring(mouseX));
+		coord.append(std::to_wstring(this->mouseX));
 		coord.append(L" Y: ");
-		coord.append(std::to_wstring(mouseY));
-		this->SetPlanetName(coord);
-		/*
-		if (mouseX > m_pEventOneHoverTextBox.left && mouseX < m_pEventOneHoverTextBox.right &&
-			mouseY > m_pEventOneHoverTextBox.top && mouseY < m_pEventOneHoverTextBox.bottom) {
-			m_pCurrentHover = RandomEvent::one;
-		}
-		else if (mouseX > m_pEventTwoHoverTextBox.left && mouseX < m_pEventTwoHoverTextBox.right &&
-			mouseY > m_pEventTwoHoverTextBox.top && mouseY < m_pEventTwoHoverTextBox.bottom) {
-			m_pCurrentHover = RandomEvent::two;
-		}
-		else if (mouseX > m_pEventThreeHoverTextBox.left && mouseX < m_pEventThreeHoverTextBox.right &&
-			mouseY > m_pEventThreeHoverTextBox.top && mouseY < m_pEventThreeHoverTextBox.bottom) {
-			m_pCurrentHover = RandomEvent::three;
-		}
-		else {
-			m_pCurrentHover = RandomEvent::none;
-		}*/
+		coord.append(std::to_wstring(this->mouseY));
+		//this->SetPlanetName(coord);
 		break;
 	}
 	//For clicking on UI elements
 	case EventType::MouseButtonEvent:
 	{
-		int mouseX = static_cast<MouseButtonEvent*>(&event)->GetXCoord();
-		int mouseY = static_cast<MouseButtonEvent*>(&event)->GetYCoord();
+		this->mouseX = static_cast<MouseButtonEvent*>(&event)->GetXCoord();
+		this->mouseY = static_cast<MouseButtonEvent*>(&event)->GetYCoord();
 		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
 		if (virKey == VK_LBUTTON && state == KeyState::KeyPress) {
-			/*
-			if (mouseX > m_pEventOneHoverTextBox.left && mouseX < m_pEventOneHoverTextBox.right &&
-				mouseY > m_pMainRectangle.top && mouseY < m_pMainRectangle.bottom) {
-				if (m_pRenderRandomEvents) {
-					m_pRenderRandomEvents = false;
-				}
-				else {
-					m_pRenderRandomEvents = true;
-				}
-			}*/
+			for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
+				m_pRandomEvents.at(i)->OnClick(mouseX, mouseY);
+			}
 		}
 		break;
 	}

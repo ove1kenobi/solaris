@@ -3,6 +3,7 @@
 Button::Button() noexcept {
 	m_pHoverBox = D2D1::RectF();
 	m_pTextBox = D2D1::RectF();
+	m_pTextPadding = 20.0f;
 }
 
 bool Button::Initialize() {

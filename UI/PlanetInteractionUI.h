@@ -6,7 +6,10 @@ class PlanetInteractionUI : public ModuleUI {
 private:
 	//Main screen
 	D2D1_RECT_F m_pMainRectangle;
-	Microsoft::WRL::ComPtr< ID2D1LinearGradientBrush> m_pLinearGradientBrush;
+	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pMainGradientBrush;
+	Microsoft::WRL::ComPtr<ID2D1GradientStopCollection> m_pMainGradientStops;
+	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pCornerGradientBrush;
+	Microsoft::WRL::ComPtr<ID2D1GradientStopCollection> m_pCornerGradientStops;
 
 	//Corners and details
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pBottomLeft;
@@ -20,11 +23,13 @@ private:
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pTopDetailsRight;
 
 	//Planet text boxes
-	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTitleTextFormat;
+	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pTitleFont;
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTitleFormat;
 	D2D1_RECT_F m_pPlanetNameTextBox;
 	std::wstring m_pPlanetNameText;
 
-	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pBodyTextFormat;
+	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pBodyFont;
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pBodyFormat;
 	D2D1_RECT_F m_pPlanetFlavourTextBox;
 	std::wstring m_pPlanetFlavourText;
 
@@ -34,10 +39,12 @@ private:
 	float m_pBlockSize;
 	std::vector<RandomEventUI*> m_pRandomEvents;
 
+	int mouseX;
+	int mouseY;
+
 	//Creation functions
 	bool CreateScreen();
 	bool CreateTextElements();
-	bool CreateHover();
 	bool CreateTools();
 
 	//Update fuctions
