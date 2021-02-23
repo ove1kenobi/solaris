@@ -210,4 +210,9 @@ void Scene::Update() noexcept {
 		RemoveGameObject(r);
 	}
 	m_Picking.DisplayPickedObject();
+
+	ImGui::Begin("Asteroids");
+	ImGui::Text("gameObjects: %d", m_gameObjects.size());
+	ImGui::Text("Asteroids  : %d", m_gameObjects.size() - m_persistentObjEnd - 1);
+	ImGui::End();
 }

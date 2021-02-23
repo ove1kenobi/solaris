@@ -16,9 +16,17 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
 	std::default_random_engine gen(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
-	std::uniform_int_distribution<int> distributionPlanets(20, 30);
+	std::uniform_int_distribution<int> distAst(0, 3);
 	std::uniform_real_distribution<float> distScale(0.1f, 1.0f);
 	std::uniform_real_distribution<float> distRot(static_cast<float>(-M_PI_2), static_cast<float>(M_PI_2));
+
+	std::vector<std::string> asteroids;
+	asteroids.insert(asteroids.end(), {
+		"models/Asteroid_1_LOW_MODEL_.obj",
+		"models/Asteroid_2_LOW_MODEL_.obj",
+		"models/Asteroid_3_LOW_MODEL_.obj",
+		"models/Asteroid_4_LOW_MODEL_.obj"
+		});
 
 	m_ship = ship;
 	m_center = pos;
@@ -29,8 +37,8 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 	m_deltaRoll = distScale(gen);
 	m_yaw = distRot(gen);
 	m_deltaYaw = distScale(gen);
-	m_model = ModelFactory::Get().GetModel(std::string("models/cube.obj"));
-	m_scale = distScale(gen) * 3.0f;
+	m_model = ModelFactory::Get().GetModel(asteroids[distAst(gen)]);
+	m_scale = distScale(gen) * 30.0f;
 	m_mass = length(m_model->GetBoundingBox()->Extents) * 50000.0f * m_scale;
 	ModelFactory::Get().CreateMatrixBuffer(m_AmatrixBuffer);
 	return true;
