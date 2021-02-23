@@ -17,13 +17,13 @@ void Player::UpdateRotation()
 
 DirectX::XMFLOAT3 Player::Stabilize()
 {
+	// Get the current velocity vector
 	DirectX::XMFLOAT3 velocity = m_ship->GetVelocity();
-	DirectX::XMFLOAT3 desierdVelocity = m_camera->GetForwardVector();
-	desierdVelocity = desierdVelocity * m_desiredSpeed;
-
-	DirectX::XMFLOAT3 stabilizingForce = desierdVelocity - velocity;
-	stabilizingForce = stabilizingForce * m_ship->GetMass();
-
+	// Get the velocity vector the player wants based on there direction and given speed
+	DirectX::XMFLOAT3 desierdVelocity = m_camera->GetForwardVector() * m_desiredSpeed;
+	// Calculate how much force would be required to redirect the ships velocity to the desierd velocity
+	DirectX::XMFLOAT3 stabilizingForce = (desierdVelocity - velocity) * m_ship->GetMass();
+	// Check if the trusters have enouth power to produce that force
 	if (length(stabilizingForce) > m_thrusterForce * (float)m_time.DeltaTime()) {
 		stabilizingForce = normalize(stabilizingForce);
 		stabilizingForce = stabilizingForce * m_thrusterForce * (float)m_time.DeltaTime();
@@ -77,7 +77,7 @@ bool Player::update()
 
 		if (m_moveForwards) {
 			if (m_stabilizerActive) {
-				m_desiredSpeed += m_thrusterForce / m_ship->GetMass() * m_time.DeltaTime();
+				m_desiredSpeed += m_thrusterForce / m_ship->GetMass() * (float)m_time.DeltaTime();
 				if (m_desiredSpeed > m_topSpeed) m_desiredSpeed = m_topSpeed;
 			}
 			else {
@@ -88,7 +88,7 @@ bool Player::update()
 		}
 		if (m_moveBackwards) {
 			if (m_stabilizerActive) {
-				m_desiredSpeed -= m_thrusterForce / m_ship->GetMass() * m_time.DeltaTime();
+				m_desiredSpeed -= m_thrusterForce / m_ship->GetMass() * (float)m_time.DeltaTime();
 				if (m_desiredSpeed < -m_topSpeed) m_desiredSpeed = -m_topSpeed;
 			}
 			else {
@@ -99,7 +99,7 @@ bool Player::update()
 		}
 		if (m_stopMovement) {
 			if (m_stabilizerActive) {
-				m_desiredSpeed -= m_thrusterForce / m_ship->GetMass() * m_time.DeltaTime();
+				m_desiredSpeed -= m_thrusterForce / m_ship->GetMass() * (float)m_time.DeltaTime();
 				if (m_desiredSpeed < 0.0f) m_desiredSpeed = 0.0f;
 			}
 			else {
@@ -108,11 +108,11 @@ bool Player::update()
 				float speed = length(velocity);
 
 				if (speed != 0.0f) {
+					// Create a force in the opposite direction of the ships velocity
 					DirectX::XMFLOAT3 breakingForce = -1.0f * velocity;
-					breakingForce = normalize(breakingForce);
-					breakingForce = breakingForce * step;
+					breakingForce = normalize(breakingForce) * step;
 					shipForce = shipForce + breakingForce;
-
+					// We don't want the ship to go backwards, check if to much backwards trust is used
 					if (dot(velocity, breakingForce) > 0.0f) {
 						shipForce = velocity * m_ship->GetMass();
 					}

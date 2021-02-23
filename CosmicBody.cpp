@@ -28,7 +28,7 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	{
 		this->m_major_semi_axis = length(m_center - tetherTo->GetCenter());
 		this->m_minor_semi_axis = this->m_major_semi_axis * 0.8f;
-		this->m_orbital_speed = 6.2831853f * m_major_semi_axis / m_mass * 1000.0f;
+		this->m_orbital_speed = 6.2831853f * m_major_semi_axis / m_mass * 100000.0f;
 		m_orbit = orbit;
 		m_orbit->init(m_major_semi_axis, m_minor_semi_axis);
 	}

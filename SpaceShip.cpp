@@ -164,11 +164,12 @@ void SpaceShip::UpdatePhysics()
 	m_forces.clear();
 
 	if (m_mass != 0.0f) {
+		// Divide the force by the objects mass to get the acceleration F = m*a -> a = F/m
 		m_velocity = m_velocity + sumForces / m_mass;
 	}
 
 	float speed = length(m_velocity);
-	
+	// Limit how fast an object can travel
 	if (speed > m_topSpeed) {
 		m_velocity = normalize(m_velocity);
 		m_velocity = m_topSpeed * m_velocity;
