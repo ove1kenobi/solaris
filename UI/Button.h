@@ -7,6 +7,7 @@ protected:
 	D2D1_RECT_F m_pHoverBox;
 	D2D1_RECT_F m_pTextBox;
 	std::wstring m_pText;
+	float m_pTextPadding;
 public:
 	Button() noexcept;
 	virtual ~Button() = default;

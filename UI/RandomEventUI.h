@@ -12,7 +12,7 @@ private:
 	std::wstring m_pHoverText;
 
 	//For User Story 30:
-	//std::vector<std::wstring> m_pIconPicture;
+	//std::vector<> m_pIconPicture;
 	std::vector<std::wstring> m_pIconText;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pIconTextFormat;
 
@@ -26,6 +26,7 @@ public:
 	~RandomEventUI();
 	bool Initialize();
 
+	void SetHoverBox(D2D1_RECT_F hoverBox, float textPadding);
 	//For User Story 30:
 	void AddIcon(std::wstring amount);
 

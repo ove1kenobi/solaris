@@ -32,7 +32,7 @@ private:
 	float m_pScreenOffset;
 	float m_pPadding;
 	float m_pBlockSize;
-	std::vector<Button*> m_pRandomEvents;
+	std::vector<RandomEventUI*> m_pRandomEvents;
 
 	//Creation functions
 	bool CreateScreen();
