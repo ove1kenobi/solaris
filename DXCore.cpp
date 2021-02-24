@@ -6,15 +6,22 @@ DXCore::DXCore() noexcept
 	  m_pSwapChain{ nullptr },
 	  m_pBackBuffer{ nullptr },
 	  m_pDepthStencilView{ nullptr },
-	  m_pFactory{ nullptr },
 	  m_pRasterizerStateFill{ nullptr},
 	  m_pRasterizerStateWireFrame{ nullptr },
+	  m_pFactory{ nullptr },
+	  m_pSurface{ nullptr },
+	  m_pSurfaceRenderTarget{ nullptr },
+	  m_pRasterizerStateNoCull{ nullptr },
+	  m_pRasterizerStateNoCullWF{ nullptr },
+	  m_pDepthStencilStateDefault{ nullptr },
+	  m_pDepthStencilStateSkybox{ nullptr },
+	  m_pBlendStateDefault{ nullptr },
+	  m_pBlendStateShadow{ nullptr },
 	  m_DefaultViewport { 0 },
 	  m_MSAAQuality{ 4u },
 	  m_WireFrameEnabled{ false },
 	  m_SkyboxEnabled{ false }
 {
-
 }
 
 const bool DXCore::Initialize(const unsigned int& clientWindowWidth, 
@@ -25,7 +32,9 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 										  EventType::ToggleDepthStencilStateEvent, 
 										  EventType::CreateShadowMapViewportEvent,
 										  EventType::SetShadowMapViewportEvent,
-										  EventType::ResetDefaultViewportEvent};
+										  EventType::ResetDefaultViewportEvent,
+										  EventType::SetShadowBlendStateEvent,
+										  EventType::ResetDefaultBlendStateEvent};
 	EventBuss::Get().AddListener(this, eventTypes);
 
 	UINT flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
@@ -190,6 +199,27 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 	HR(m_pDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerStateWireFrame), "CreateRasterizerState");
 	m_pDeviceContext->RSSetState(m_pRasterizerStateFill.Get());
 
+	/*Create Blend States*/
+	//Create Shadow blend state:
+	D3D11_BLEND_DESC blendDescriptor = {};
+	blendDescriptor.AlphaToCoverageEnable = FALSE;
+	blendDescriptor.IndependentBlendEnable = FALSE;
+	blendDescriptor.RenderTarget[0].BlendEnable = TRUE;
+	blendDescriptor.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	blendDescriptor.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+	blendDescriptor.RenderTarget[0].BlendOp = D3D11_BLEND_OP_MIN;
+	blendDescriptor.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendDescriptor.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendDescriptor.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_MIN;
+	blendDescriptor.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	HR(m_pDevice->CreateBlendState(&blendDescriptor, &m_pBlendStateShadow), "CreateBlendState");
+
+	//Create default blend state:
+	blendDescriptor.RenderTarget[0].BlendEnable = FALSE;
+	blendDescriptor.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDescriptor.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	HR(m_pDevice->CreateBlendState(&blendDescriptor, &m_pBlendStateDefault), "CreateBlendState");
+
 	ImGui_ImplDX11_Init(m_pDevice.Get(), m_pDeviceContext.Get());
 
 	DelegateDXHandles();
@@ -217,11 +247,11 @@ void DXCore::OnEvent(IEvent& event) noexcept
 	switch (event.GetEventType())
 	{
 	case EventType::ToggleWireFrameEvent:
-			ToggleWireFrame();
-			break;
+		ToggleWireFrame();
+		break;
 	case EventType::ToggleDepthStencilStateEvent:
-			ToggleDepthStencilState();
-			break;
+		ToggleDepthStencilState();
+		break;
 	case EventType::CreateShadowMapViewportEvent:
 		CreateShadowMapViewport(event);
 		break;
@@ -230,6 +260,12 @@ void DXCore::OnEvent(IEvent& event) noexcept
 		break;
 	case EventType::ResetDefaultViewportEvent:
 		m_pDeviceContext->RSSetViewports(1u, &m_DefaultViewport);
+		break;
+	case EventType::SetShadowBlendStateEvent:
+		m_pDeviceContext->OMSetBlendState(m_pBlendStateShadow.Get(), NULL, 0xffffffff);
+		break;
+	case EventType::ResetDefaultBlendStateEvent:
+		m_pDeviceContext->OMSetBlendState(m_pBlendStateDefault.Get(), NULL, 0xffffffff);
 		break;
 	}
 }

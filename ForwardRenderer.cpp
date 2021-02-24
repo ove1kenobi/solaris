@@ -26,7 +26,7 @@ void ForwardRenderer::BeginFrame()
 
 	//Shadow map pass(es):
 	m_ShadowMapping.PreparePasses(m_pDeviceContext, m_LightPosition);
-	m_ShadowMapping.DoPasses(m_pDeviceContext, m_pGameObjects, m_pDepthStencilView);
+	m_ShadowMapping.DoPasses(m_pDeviceContext, m_pGameObjects);
 	m_ShadowMapping.CleanUp(m_pDeviceContext);
 
 	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);

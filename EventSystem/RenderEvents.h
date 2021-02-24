@@ -230,3 +230,37 @@ public:
 		return "SetShadowMapViewportEvent";
 	}
 };
+
+class SetShadowBlendStateEvent : public IEvent
+{
+private:
+public:
+	SetShadowBlendStateEvent() noexcept = default;
+	virtual ~SetShadowBlendStateEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::SetShadowBlendStateEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "SetShadowBlendStateEvent";
+	}
+};
+
+class ResetDefaultBlendStateEvent : public IEvent
+{
+private:
+public:
+	ResetDefaultBlendStateEvent() noexcept = default;
+	virtual ~ResetDefaultBlendStateEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::ResetDefaultBlendStateEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "ResetDefaultBlendStateEvent";
+	}
+};

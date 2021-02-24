@@ -40,14 +40,14 @@ private:
 	DirectX::XMFLOAT4X4 m_OrthographicProjection;
 	float m_TextureWidth;
 	float m_TextureHeight;
-	const FLOAT clearColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
+	const FLOAT m_ClearColor[4];
 	float m_ShadowBias;
 public:
 	ShadowMapping() noexcept;
 	virtual ~ShadowMapping() noexcept = default;
 	[[nodiscard]] const bool Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice);
 	void PreparePasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const DirectX::XMFLOAT3& lightPosition) noexcept;
-	void DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const std::vector<GameObject*>* gameObjects, const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& pDSV) noexcept;
+	void DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const std::vector<GameObject*>* gameObjects) noexcept;
 	void CleanUp(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
 	void BindSRV(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
 	void UpdateBias(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;

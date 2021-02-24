@@ -29,6 +29,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_pRasterizerStateNoCullWF;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_pDepthStencilStateDefault;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_pDepthStencilStateSkybox;
+	Microsoft::WRL::ComPtr<ID3D11BlendState>		m_pBlendStateDefault;
+	Microsoft::WRL::ComPtr<ID3D11BlendState>		m_pBlendStateShadow;
 	D3D11_VIEWPORT	m_DefaultViewport;
 	D3D11_VIEWPORT m_ShadowMapViewPort;
 	unsigned int	m_MSAAQuality;

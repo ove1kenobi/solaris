@@ -24,7 +24,7 @@ cbuffer cameraConstantBuffer : register(b1)
 
 cbuffer shadowData : register(b2)
 {
-    float bias;
+    float shadowBias;
     float3 shadowPadding;
 }
 
@@ -38,13 +38,19 @@ struct PS_IN
 
 static const float farPlane = 100000.0f;
 
-float ShadowCalculations(in float3 positionWS)
+float CalculateShadowFactor(in float3 positionWS)
 {
+    /*Create the vector from the surface to the light*/
     float3 surfaceToLight = positionWS - lightPositionWS;
-    float closestDepth = shadowMap.Sample(pointSampler, surfaceToLight).r;
-    closestDepth *= farPlane;
-    float currentDepth = length(surfaceToLight);
-    float shadow = currentDepth - bias > closestDepth ? 1.0f : 0.0f;
+    /*This vector can act as the direction to sample from the cubemap (no need to normalize! =) )*/
+    float closestTexelDepth = shadowMap.Sample(pointSampler, surfaceToLight).r;
+    /*The value sampled is in the range 0-1, expand to full range*/
+    closestTexelDepth *= farPlane;
+    /*Get the current depth of the surface as seen from the light being used now in PS*/
+    float currentSurfaceDepth = length(surfaceToLight);
+    /*Is the current depth as seen from the light (minus bias) greater than the depth saved in the texture?
+      If so, this specific surface is in shadow, else it's not!*/
+    float shadow = currentSurfaceDepth - shadowBias > closestTexelDepth ? 1.0f : 0.0f;
     return shadow;
 }
 
@@ -53,20 +59,17 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
     float3 normalWS = normalize(psIn.inNormalWS);
     
     /*SHADOW*/
-    float shadow = ShadowCalculations(psIn.inPositionWS);
+    float shadow = CalculateShadowFactor(psIn.inPositionWS);
     
     /*LIGHTING*/
     /*Note, attenuation is not relevant FOR THE SUN, and is as such not included in the calculations*/
     /*AMBIENT*/
     //Calculate ambient light:
-    float3 finalAmbientColor = ambientColor * ambientLightIntensity;
+    float3 finalAmbientColor = ambientLightIntensity * ambientColor;
     
     /*DIFFUSE*/
-    //Calculate vector from surface position to light position:
-    float3 surfaceToLightVector = lightPositionWS - psIn.inPositionWS;
-    
-    //Calculate the direction from surface position to light position:
-    float3 directionToLightVector = normalize(surfaceToLightVector);
+    //Calculate  direction vector from surface position towards light position:
+    float3 directionToLightVector = normalize(lightPositionWS - psIn.inPositionWS);
     
     //Calculate the diffuse scalar depending on the angle at which the light strikes the surface.
     //Clamp the value between 0 and 1, inclusively:
@@ -93,7 +96,6 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
     float3 finalSpecularColor = (diffuseColor * diffuseLightIntensity) * specularIntensity * specularScalar;
     
     //We now return the final TOTAL color, taking into consideration the model color, ambient color, diffuse color and specular color contributions: 
-    //return float4(saturate((finalAmbientColor * (1 - shadow)) + finalDiffuseColor + finalSpecularColor) * psIn.inColor.xyz, 1.0f);
-    float3 lighting = (finalAmbientColor + (1.0 - shadow) * (finalDiffuseColor + finalSpecularColor)) * psIn.inColor.xyz;
+    float3 lighting = saturate((finalAmbientColor + (1.0 - shadow) * (finalDiffuseColor + finalSpecularColor)) * psIn.inColor.xyz);
     return float4(lighting, 1.0f);
 }
