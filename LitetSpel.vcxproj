@@ -149,6 +149,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Sun.cpp" />
     <ClCompile Include="SpaceShip.cpp" />
     <ClCompile Include="Techniques\MousePicking.cpp">
@@ -229,6 +230,7 @@
     <ClInclude Include="Resources\SamplerState.h" />
     <ClInclude Include="Resources\VertexBuffer.h" />
     <ClInclude Include="Resources\ComputeShader.h" />
+    <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Sun.h" />
     <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="Techniques\MousePicking.h" />
