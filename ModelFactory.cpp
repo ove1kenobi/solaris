@@ -71,16 +71,16 @@ Model* ModelFactory::GetModel(std::string filePath)
 						vtx.texcoord.x = mesh->mTextureCoords[iMesh][i].x;
 						vtx.texcoord.y = mesh->mTextureCoords[iMesh][i].y;
 					}
-					vtx.normal.x = mesh->mVertices[i].x;	// temporary for
-					vtx.normal.y = 0.3f;//mesh->mVertices[i].y;	// vertex color
-					vtx.normal.z = mesh->mVertices[i].z;	// use section below.
+					//vtx.normal.x = mesh->mVertices[i].x;	// temporary for
+					//vtx.normal.y = 0.3f;//mesh->mVertices[i].y;	// vertex color
+					//vtx.normal.z = mesh->mVertices[i].z;	// use section below.
 
-					//if (mesh->HasNormals())
-					//{
-					//	vtx.normal.x = mesh->mNormals[i].x;
-					//	vtx.normal.y = mesh->mNormals[i].y;
-					//	vtx.normal.z = mesh->mNormals[i].z;
-					//}
+					if (mesh->HasNormals())
+					{
+						vtx.normal.x = mesh->mNormals[i].x;
+						vtx.normal.y = mesh->mNormals[i].y;
+						vtx.normal.z = mesh->mNormals[i].z;
+					}
 					if (mesh->HasTangentsAndBitangents())
 					{
 						vtx.tangent.x = mesh->mTangents[i].x;
@@ -91,6 +91,16 @@ Model* ModelFactory::GetModel(std::string filePath)
 						vtx.bitangent.z = mesh->mBitangents[i].z;
 					}
 					vertices.push_back(vtx);
+				}
+
+				aiString texFile;
+				if (scene->mMaterials[mesh->mMaterialIndex]->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+				{
+					scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &texFile);
+					ModelTexture* tex = new ModelTexture();
+					std::string texPath = std::string("models/") + std::string(texFile.C_Str());
+					tex->LoadTexture(m_device, CA2W(texPath.c_str()), 0);
+					model->AddTexture(tex, 0);
 				}
 
 				// Create bounding box
@@ -702,7 +712,7 @@ Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
 Model* ModelFactory::GenerateOrbit(float major_semi_axis, float minor_semi_axis)
 {
 	std::vector<DirectX::XMFLOAT3> vertices;
-	vertices.resize(60);
+	vertices.resize(static_cast<size_t>(major_semi_axis / 100));
 	std::vector<UINT> indices;
 	float segment = 2 * 3.14159265f / (vertices.size() - 1);
 	for (size_t i = 0; i < vertices.size(); ++i)

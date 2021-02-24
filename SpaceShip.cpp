@@ -122,6 +122,10 @@ DirectX::XMFLOAT3 SpaceShip::getCenter() {
 
 void SpaceShip::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
+	for (auto tex : m_model->GetTextures())
+	{
+		if (tex) tex->Bind(deviceContext);
+	}
 	deviceContext->IASetVertexBuffers(0u,
 									  1u,
 									  this->m_model->getVertexBuffer().GetAddressOf(),

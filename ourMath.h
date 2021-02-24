@@ -14,6 +14,8 @@ DirectX::XMFLOAT3 operator+(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3&
 
 DirectX::XMFLOAT3 operator*(const DirectX::XMFLOAT3& a, const float& b);
 
+DirectX::XMFLOAT3 operator*(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b);
+
 float length(const DirectX::XMFLOAT3& a);
 
 DirectX::XMFLOAT3 norm(const DirectX::XMFLOAT3& a);

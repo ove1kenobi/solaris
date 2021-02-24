@@ -26,6 +26,8 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	if (!m_VertexShaderOrbit.Create(m_pDevice, L"VertexShader_Orbit.hlsl"))
 		return false;
+	if (!m_VertexShaderTextured.Create(m_pDevice, L"VertexShader_Textured.hlsl"))
+		return false;
 	//Pixel Shaders:
 	if (!m_PixelShaderMinimal.Create(m_pDevice, L"PixelShader_Minimalistic.hlsl"))
 		return false;
@@ -34,6 +36,8 @@ const bool ResourceManager::CreateAllBindables()
 	if (!m_PixelShaderOrbit.Create(m_pDevice, L"PixelShader_Orbit.hlsl"))
 		return false;
 	if (!m_PixelShaderSun.Create(m_pDevice, L"PixelShader_Sun.hlsl"))
+		return false;
+	if (!m_PixelShaderTextured.Create(m_pDevice, L"PixelShader_Textured.hlsl"))
 		return false;
 	//Geometry Shaders:
 
@@ -48,6 +52,8 @@ const bool ResourceManager::CreateAllBindables()
 	if (!m_InputLayoutMinimal.Create(m_pDevice, m_VertexShaderMinimal, LAYOUT_MINIMAL))
 		return false;
 	if (!m_InputLayoutSinglePoint.Create(m_pDevice, m_VertexShaderSkybox, LAYOUT_SINGLEPOINT))
+		return false;
+	if (!m_InputLayoutPlayerModel.Create(m_pDevice, m_VertexShaderTextured, LAYOUT_PLAYER))
 		return false;
 	//Primitive topologies:
 	if (!m_TopologyTriList.Create(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST))
@@ -69,15 +75,20 @@ const bool ResourceManager::CreateAllBindables()
 	if (!m_IndexBufferCube.Create(m_pDevice, D3D11_USAGE::D3D11_USAGE_IMMUTABLE, 0u,
 								  static_cast<UINT>(m_CubeIndices.size() * sizeof(unsigned int)), sizeof(unsigned int), m_CubeIndices.data()))
 		return false;
-	//Arrange:
-	//Minimal:
+	// Arrange:
+	// Minimal:
 	m_BindablesMinimalistic.insert(m_BindablesMinimalistic.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList });
-	//Skybox:
+	// Skybox:
 	m_BindablesSkybox.insert(m_BindablesSkybox.end(), { &m_VertexShaderSkybox, &m_PixelShaderSkybox, &m_InputLayoutSinglePoint, 
 														&m_TopologyTriList, &m_CubeTextureSkybox, &m_SamplerSkybox,
 														&m_VertexBufferCube, &m_IndexBufferCube});
+	// Orbits
 	m_BindablesOrbit.insert(m_BindablesOrbit.end(), { &m_VertexShaderOrbit, &m_PixelShaderOrbit, &m_InputLayoutSinglePoint, &m_TopologyLineStrip });
+	// Sun
 	m_BindablesSun.insert(m_BindablesSun.end(), { &m_VertexShaderMinimal, &m_PixelShaderSun, &m_InputLayoutMinimal, &m_TopologyTriList });
+	//Textured models
+	m_BindablesTextured.insert(m_BindablesTextured.end(), { &m_VertexShaderTextured, &m_PixelShaderTextured, 
+															&m_InputLayoutPlayerModel, &m_TopologyTriList, & m_SamplerSkybox });
 	return true;
 }
 
@@ -194,7 +205,18 @@ void ResourceManager::BindToPipeline(IEvent& event)
 		}
 		break;
 	}
+	case BindID::ID_Textured:
+	{
+		for (auto bindables : m_BindablesTextured)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		break;
 	}
+}
 }
 
 void ResourceManager::UpdateDXHandlers(IEvent& event) noexcept

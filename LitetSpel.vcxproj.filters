@@ -9,6 +9,8 @@
     <FxCompile Include="VertexShader_Orbit.hlsl" />
     <FxCompile Include="PixelShader_Orbit.hlsl" />
     <FxCompile Include="PixelShader_Sun.hlsl" />
+    <FxCompile Include="PixelShader_Textured.hlsl" />
+    <FxCompile Include="VertexShader_Textured.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bloom.cpp" />
@@ -59,6 +61,7 @@
     <ClCompile Include="ModuleUI.cpp" />
     <ClCompile Include="Orbit.cpp" />
     <ClCompile Include="Asteroid.cpp" />
+    <ClCompile Include="ModelTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -120,6 +123,7 @@
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="Orbit.h" />
     <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="ModelTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

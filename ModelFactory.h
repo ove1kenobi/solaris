@@ -1,4 +1,5 @@
 #pragma once
+#include <atlbase.h>
 #include "DXDebug.h"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"

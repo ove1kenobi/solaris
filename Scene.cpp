@@ -81,7 +81,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	this->m_numPlanets = distributionPlanets(generator);
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
 	//World space coordinates
-	std::uniform_int_distribution<int> distributionX(0, 90000);
+	std::uniform_int_distribution<int> distributionX(1000, 70000);
 	std::uniform_int_distribution<int> distributionY(0, 0);
 	std::uniform_int_distribution<int> distributionZ(0, 0);
 	//Needs to be radians
@@ -174,17 +174,23 @@ void Scene::Update() noexcept {
 	using t_clock = std::chrono::high_resolution_clock;
 	std::default_random_engine gen(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
 	std::uniform_real_distribution<float> dist(200.0f, 900.0f);
+	std::uniform_real_distribution<float> adj(0.1f, 10.0f);
 
 	//Update the player and all the game objects.
 	size_t num = m_gameObjects.size() - m_persistentObjEnd;
 	if (m_player.update() &&  num < 30)
 	{
-		//Add an asteroid to the gameObject vector.
+		// Add an asteroid to the gameObject vector.
 		GameObject* ship = m_player.getShip();
-		DirectX::XMFLOAT3 pos = ship->GetCenter() + norm(ship->GetVelocity()) * 3000.0f;
+		DirectX::XMFLOAT3 velocity = norm(ship->GetVelocity());
+		// Start pos in front of spaceship, and randomise it slightly
+		DirectX::XMFLOAT3 pos = ship->GetCenter() + velocity * 3000.0f;
 		pos = pos + DirectX::XMFLOAT3(dist(gen), dist(gen), dist(gen));
+		// Give asteroid a random velocity in the general direction of spaceship
+		//velocity = velocity * DirectX::XMFLOAT3(-adj(gen), -adj(gen), -adj(gen));
+		velocity = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 		Asteroid* ast = new Asteroid();
-		ast->init(pos, DirectX::XMFLOAT3(0.0f, .0f, 0.0f), ship);
+		ast->init(pos, velocity, ship);
 		m_gameObjects.push_back(ast);
 	}
 

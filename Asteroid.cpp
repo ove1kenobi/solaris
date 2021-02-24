@@ -48,9 +48,9 @@ GameObject* Asteroid::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatri
 {
 	float distance = length(m_center - m_ship->GetCenter());
 	if (distance > 20000) return this;
-	m_pitch += m_deltaPitch * m_timer.DeltaTime();
-	m_roll += m_deltaRoll * m_timer.DeltaTime();
-	m_yaw += m_deltaYaw * m_timer.DeltaTime();
+	m_pitch += static_cast<float>(m_deltaPitch * m_timer.DeltaTime());
+	m_roll += static_cast<float>(m_deltaRoll * m_timer.DeltaTime());
+	m_yaw += static_cast<float>(m_deltaYaw * m_timer.DeltaTime());
 	UpdatePhysics();
 	//Updated the same way as a cosmicbody, with S * R * T. Rotation is around the ships up vector.
 	DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&m_upVector);
@@ -89,6 +89,10 @@ GameObject* Asteroid::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatri
 
 void Asteroid::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
+	for (auto tex : m_model->GetTextures())
+	{
+		if (tex) tex->Bind(deviceContext);
+	}
 	deviceContext->IASetVertexBuffers(0u,
 		1u,
 		m_model->getVertexBuffer().GetAddressOf(),
