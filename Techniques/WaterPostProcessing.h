@@ -11,14 +11,13 @@
 struct PlanetData
 {
 	DirectX::XMVECTOR center[50];
+	DirectX::XMVECTOR sun;
 };
 
 struct CameraData
 {
-	DirectX::XMVECTOR cameraDir;
 	DirectX::XMVECTOR cameraPos;
 	DirectX::XMMATRIX inverseVMatrix;
-	DirectX::XMMATRIX inversePMatrix;
 	DirectX::XMMATRIX PMatrix;
 };
 
@@ -38,14 +37,17 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pLightCBuffer;
 
 	PlayerCamera* m_pCamera;
-	std::vector<Planet*> m_planets;
+	std::vector<Planet*> m_pPlanets;
 	PointLight* m_pSunLight;
+	DirectX::XMFLOAT3* m_pSunCenter;
+	float* m_pSunRadius;
 
 	UINT m_screenWidth;
 	UINT m_screenHeight;
 private:
 	void AssignCamera(IEvent& event) noexcept;
 	void AssignPlanets(IEvent& event) noexcept;
+	void AssignSunLight(IEvent& event) noexcept;
 	void AssignSun(IEvent& event) noexcept;
 	void OnEvent(IEvent& event) noexcept override;
 public:

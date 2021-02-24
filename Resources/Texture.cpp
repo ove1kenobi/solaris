@@ -9,7 +9,7 @@ Texture::Texture() noexcept
     
 }
 
-const bool Texture::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, const unsigned int& slot, int width, int height, D3D11_USAGE usage, UINT cpuaccessflags)
+const bool Texture::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, const unsigned int& slot, int width, int height)
 {
     D3D11_TEXTURE2D_DESC texDesc;
     ZeroMemory(&texDesc, sizeof(texDesc));
@@ -19,9 +19,9 @@ const bool Texture::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, 
     texDesc.ArraySize = 1;
     texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
     texDesc.SampleDesc.Count = 4u;
-    texDesc.Usage = usage;
+    texDesc.Usage = D3D11_USAGE_DEFAULT;
     texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
-    texDesc.CPUAccessFlags = cpuaccessflags;
+    texDesc.CPUAccessFlags = 0;
     texDesc.MiscFlags = 0;
 
     Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;

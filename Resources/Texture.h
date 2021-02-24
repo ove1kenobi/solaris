@@ -12,7 +12,7 @@ private:
 public:
 	Texture() noexcept;
 	virtual ~Texture() noexcept = default;
-	[[nodiscard]] const bool Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, const unsigned int& slot, int width, int height, D3D11_USAGE usage, UINT cpuaccessflags);
+	[[nodiscard]] const bool Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, const unsigned int& slot, int width, int height);
 
 	const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& getSRV();
 	const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& getRTV();

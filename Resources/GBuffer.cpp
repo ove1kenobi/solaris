@@ -51,30 +51,30 @@ void GBuffer::Unbind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceC
     pDeviceContext->OMSetRenderTargets(ARRAYSIZE(m_RTVArray), nullRTV, m_pDepthStencilView.Get());
 }
 
-const bool GBuffer::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, int width, int height, D3D11_USAGE usage, UINT cpuaccessflags)
+const bool GBuffer::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, int width, int height)
 {
     Texture* colorTexture = new Texture();
-    if (!colorTexture->Create(pDevice, 0, width, height, usage, cpuaccessflags))
+    if (!colorTexture->Create(pDevice, 0, width, height))
         return false;
     m_Textures.push_back(colorTexture);
 
     Texture* waterBoolTexture = new Texture();
-    if (!waterBoolTexture->Create(pDevice, 1, width, height, usage, cpuaccessflags))
+    if (!waterBoolTexture->Create(pDevice, 1, width, height))
         return false;
     m_Textures.push_back(waterBoolTexture);
 
     Texture* lengthCenterTexture = new Texture();
-    if (!lengthCenterTexture->Create(pDevice, 2, width, height, usage, cpuaccessflags))
+    if (!lengthCenterTexture->Create(pDevice, 2, width, height))
         return false;
     m_Textures.push_back(lengthCenterTexture);
 
     Texture* wPosTexture = new Texture();
-    if (!wPosTexture->Create(pDevice, 3, width, height, usage, cpuaccessflags))
+    if (!wPosTexture->Create(pDevice, 3, width, height))
         return false;
     m_Textures.push_back(wPosTexture);
 
     Texture* normalTexture = new Texture();
-    if (!normalTexture->Create(pDevice, 4, width, height, usage, cpuaccessflags))
+    if (!normalTexture->Create(pDevice, 4, width, height))
         return false;
     m_Textures.push_back(normalTexture);
 

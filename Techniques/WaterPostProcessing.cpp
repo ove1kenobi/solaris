@@ -9,6 +9,7 @@ WaterPostProcessing::WaterPostProcessing() noexcept
 	m_screenHeight{ 0 }
 {
 	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent, EventType::DelegatePlanetsEvent, EventType::DelegateSunLightEvent);
+	EventBuss::Get().AddListener(this, EventType::DelegateSunEvent);
 }
 
 WaterPostProcessing::~WaterPostProcessing() {
@@ -23,13 +24,20 @@ void WaterPostProcessing::AssignCamera(IEvent& event) noexcept
 void WaterPostProcessing::AssignPlanets(IEvent& event) noexcept
 {
 	DelegatePlanetsEvent& derivedEvent = static_cast<DelegatePlanetsEvent&>(event);
-	m_planets = *derivedEvent.GetPlanets();
+	m_pPlanets = *derivedEvent.GetPlanets();
+}
+
+void WaterPostProcessing::AssignSunLight(IEvent& event) noexcept
+{
+	DelegateSunLightEvent& derivedEvent = static_cast<DelegateSunLightEvent&>(event);
+	m_pSunLight = derivedEvent.GetSunLight();
 }
 
 void WaterPostProcessing::AssignSun(IEvent& event) noexcept
 {
-	DelegateSunLightEvent& derivedEvent = static_cast<DelegateSunLightEvent&>(event);
-	m_pSunLight = derivedEvent.GetSunLight();
+	DelegateSunEvent& derivedEvent = static_cast<DelegateSunEvent&>(event);
+	m_pSunCenter = derivedEvent.GetCenter();
+	m_pSunRadius = derivedEvent.GetRadius();
 }
 
 void WaterPostProcessing::OnEvent(IEvent& event) noexcept
@@ -45,9 +53,12 @@ void WaterPostProcessing::OnEvent(IEvent& event) noexcept
 		break;
 	case EventType::DelegateSunLightEvent:
 	{
-		AssignSun(event);
+		AssignSunLight(event);
 		break;
 	}
+	case EventType::DelegateSunEvent:
+		AssignSun(event);
+		break;
 	}
 }
 
@@ -104,7 +115,19 @@ const bool WaterPostProcessing::Initialize(const Microsoft::WRL::ComPtr<ID3D11De
 		nullptr,
 		&m_pLightCBuffer), "CreateBuffer");
 
-	RequestSunLightEvent sunEvent;
+	//Get the camera for its matrices
+	RequestCameraEvent requestCameraEvent;
+	EventBuss::Get().Delegate(requestCameraEvent);
+
+	//Get the planets for their radius' and centerpoints.
+	RequestPlanetsEvent requestPlanetsEvent;
+	EventBuss::Get().Delegate(requestPlanetsEvent);
+
+	//Get the sunlight
+	RequestSunLightEvent sunLightEvent;
+	EventBuss::Get().Delegate(sunLightEvent);
+
+	RequestSunEvent sunEvent;
 	EventBuss::Get().Delegate(sunEvent);
 
 	return true;
@@ -120,14 +143,6 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 	BindIDEvent bindWaterEvent(BindID::ID_Water);
 	EventBuss::Get().Delegate(bindWaterEvent);
 
-	//Get the camera for its matrices
-	RequestCameraEvent requestCameraEvent;
-	EventBuss::Get().Delegate(requestCameraEvent);
-
-	//Get the planets for their radius' and centerpoints.
-	RequestPlanetsEvent requestPlanetsEvent;
-	EventBuss::Get().Delegate(requestPlanetsEvent);
-
 	//Bind backbuffer
 	BindBackBufferEvent bindBackBuffer;
 	EventBuss::Get().Delegate(bindBackBuffer);
@@ -142,16 +157,19 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 
 	PlanetData* data = (PlanetData*)mappedSubresource.pData;
 
-	for (size_t i = 0; i < m_planets.size(); i++) {
-		DirectX::XMFLOAT3 center = m_planets[i]->GetCenter();
-		DirectX::XMFLOAT4 centerRadius = { center.x, center.y, center.z, m_planets[i]->GetRadius() };
+	for (size_t i = 0; i < m_pPlanets.size(); i++) {
+		DirectX::XMFLOAT3 center = m_pPlanets[i]->GetCenter();
+		DirectX::XMFLOAT4 centerRadius = { center.x, center.y, center.z, m_pPlanets[i]->GetRadius() };
 		data->center[i] = DirectX::XMLoadFloat4(&centerRadius);
 	}
 	//Fill the rest with zero's
 	DirectX::XMFLOAT4 nullXMF4 = { 0.0f, 0.0f, 0.0f, 0.0f };
-	for (size_t i = m_planets.size(); i < 50; i++) {
+	for (size_t i = m_pPlanets.size(); i < 50; i++) {
 		data->center[i] = DirectX::XMLoadFloat4(&nullXMF4);
 	}
+
+	DirectX::XMFLOAT4 sunData = { m_pSunCenter->x, m_pSunCenter->y, m_pSunCenter->z, *m_pSunRadius };
+	data->sun = DirectX::XMLoadFloat4(&sunData);
 
 	pDeviceContext->Unmap(m_pPlanetCBuffer.Get(), 0);
 
@@ -165,12 +183,10 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 
 	CameraData* dataCamera = (CameraData*)mappedSubresourceCamera.pData;
 
-	dataCamera->cameraDir = m_pCamera->GetForward();
 	DirectX::XMFLOAT3 cameraPos3 = m_pCamera->getPos();
 	DirectX::XMFLOAT4 cameraPos = { cameraPos3.x, cameraPos3.y, cameraPos3.z, 1.0f };
 	dataCamera->cameraPos = DirectX::XMLoadFloat4(&cameraPos);
 	dataCamera->inverseVMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, m_pCamera->getVMatrix()));
-	dataCamera->inversePMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, m_pCamera->getPMatrix()));
 	dataCamera->PMatrix = m_pCamera->getPMatrix();
 
 	pDeviceContext->Unmap(m_pCameraCBuffer.Get(), 0);

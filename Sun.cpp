@@ -11,12 +11,18 @@ void Sun::OnEvent(IEvent& event) noexcept
 		EventBuss::Get().Delegate(event);
 		break;
 	}
+	case EventType::RequestSunEvent:
+	{
+		DelegateSunEvent event(&m_center, &m_radius);
+		EventBuss::Get().Delegate(event);
+		break;
+	}
 	}
 }
 
 Sun::Sun() noexcept
 {
-	EventBuss::Get().AddListener(this, EventType::RequestSunLightEvent);
+	EventBuss::Get().AddListener(this, EventType::RequestSunLightEvent, EventType::RequestSunEvent);
 }
 
 const bool Sun::Initialize() noexcept

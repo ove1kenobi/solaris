@@ -31,10 +31,9 @@ VS_OUT vs_main(in VS_IN vsIn)
     vsOut.outLengthToCenter = length(vsIn.inPositionLS); 
     
     vsOut.outPositionCS = mul(float4(vsIn.inPositionLS, 1.0f), WMatrix);
+    vsOut.outPositionWS = vsOut.outPositionCS;
     vsOut.outPositionCS = mul(vsOut.outPositionCS, VMatrix);
     vsOut.outPositionCS = mul(vsOut.outPositionCS, PMatrix);
-
-    vsOut.outPositionWS = mul(float4(vsIn.inPositionLS, 1.0f), WMatrix).xyz;
     
     vsOut.outColor = vsIn.inColor;
 

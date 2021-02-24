@@ -2,6 +2,7 @@
 #include "IEvent.h"
 class PlayerCamera;
 class Planet;
+class Sun;
 class DelegateDXEvent : public IEvent
 {
 private:
@@ -207,5 +208,53 @@ public:
 	[[nodiscard]] const std::string GetDebugName() const noexcept override
 	{
 		return "RequestDSVEvent";
+	}
+};
+
+class RequestSunEvent : public IEvent
+{
+private:
+public:
+	RequestSunEvent() noexcept = default;
+	virtual ~RequestSunEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::RequestSunEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "RequestSunEvent";
+	}
+};
+
+class DelegateSunEvent : public IEvent
+{
+private:
+	DirectX::XMFLOAT3* m_Center;
+	float* m_Radius;
+public:
+	DelegateSunEvent(DirectX::XMFLOAT3* center, float* radius) noexcept
+	{
+		m_Center = center;
+		m_Radius = radius;
+	}
+	virtual ~DelegateSunEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::DelegateSunEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "DelegateSunEvent";
+	}
+	[[nodiscard]] DirectX::XMFLOAT3* GetCenter() const noexcept
+	{
+		return m_Center;
+	}
+	[[nodiscard]] float* GetRadius() const noexcept
+	{
+		return m_Radius;
 	}
 };

@@ -69,7 +69,7 @@ const bool ResourceManager::CreateAllBindables()
 	if (!m_SamplerPostProcessing.Create(m_pDevice, BindFlag::S_PS, TechFlag::POSTPROCESSING, 0u))
 		return false;
 	//Textures:
-	if (!m_GBuffer.Create(m_pDevice, m_ClientWindowWidth, m_ClientWindowHeight, D3D11_USAGE_DEFAULT, 0))
+	if (!m_GBuffer.Create(m_pDevice, m_ClientWindowWidth, m_ClientWindowHeight))
 		return false;
 	if (!m_CubeTextureSkybox.Create(m_pDevice, L"skymap.dds", 0u))
 		return false;

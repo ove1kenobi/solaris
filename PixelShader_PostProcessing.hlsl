@@ -8,14 +8,13 @@ Texture2DMS<float4> normalTexture		: register(t4);
 cbuffer PlanetData : register(b0)
 {
 	float4 center[50]; //Radius is in w.
+	float4 sun; //Radius is in w.
 };
 
 cbuffer CameraData : register(b1)
 {
-	float4 cameraDir;
 	float4 cameraPos;
 	matrix inverseVMatrix;
-	matrix inversePMatrix;
 	float4x4 PMatrix;
 };
 
@@ -112,7 +111,7 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 
 	//Skybox & sun
 	//Hårdkodad solradie & position
-	tempPlanet = raySphereIntersect(float3(0.0f, 0.0f, 0.0f), 900.0f, cameraPos, normalize(float3(DirectionWorldSpace.xyz)));
+	tempPlanet = raySphereIntersect(sun.xyz, sun.w, cameraPos, normalize(float3(DirectionWorldSpace.xyz)));
 	if ((closestPlanet.y == -1.0f && waterBool.x == 0.5f) || (tempPlanet.x != -1.0f && depth > tempPlanet.x && tempPlanet.x < closestPlanet.x)) {
 		return texCol;
 	}
@@ -126,9 +125,10 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	float3 normal = normalize(normalTemp.xyz);
 
 	//If it hit a planet.
-	//And the player is less than 10000 units away from the point.
+	//And the player is less than 12000 units away from the point.
 	//And if there is supposed to be water in that pixel or we are looking through water.
 	//Calculate water
+	[flatten]
 	if (closestPlanet.y != -1.0f && depth < 12000.0f && (waterBool.x != 0.0f || depth - closestPlanet.x > 0.0f)) {
 		/*LIGHTING ON BOTTOM OF THE OCEAN*/
 		//Does not use specular.
@@ -170,8 +170,6 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 
 		texCol = oceanCol;
 
-		//Why does this not work?
-		//float3 wPosX = normalize(wPos.xyz - cameraPos.xyz) * closestPlanet.x;
 		normal = normalize(wPos.xyz - centerPlanet.xyz);
 		
 		/*LIGHTING FOR WATER*/
@@ -213,7 +211,7 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 		float3 finalSpecularColor = (diffuseColor * diffuseLightIntensity) * specularIntensity * specularScalar;
 
 		//We now return the final TOTAL color, taking into consideration the model color, ambient color, diffuse color and specular color contributions: 
-		texCol = float4(saturate(finalAmbientColor + finalDiffuseColor) * texCol, 1.0f);
+		texCol = float4(saturate(finalAmbientColor + finalDiffuseColor) * texCol.xyz, 1.0f);
 
 		texCol = lerp(groundCol, texCol, alpha);
 

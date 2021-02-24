@@ -96,24 +96,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	//negative rotation direction if 0.
 	std::uniform_int_distribution<int> distributionRotDir(0, 1);
 
-	//Planet in the middle for testing.
-	/*
-	Planet* planetmiddle = new Planet();
-	if (!planetmiddle->init(
-		0,
-		0,
-		0,
-		50,
-		M_PI_2,
-		0
-	))
-	{
-		//Throw
-		return false;
-	}
-	this->m_gameObjects.push_back(planetmiddle);
-	*/
-
 	ModelFactory::Get().PreparePlanetDisplacement();
 	std::vector<std::thread> threads;
 	this->m_gameObjects.resize(this->m_numPlanets * 2);
