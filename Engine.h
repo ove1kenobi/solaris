@@ -9,6 +9,7 @@
 #include "EventSystem\IEventListener.h"
 #include "ImGui\ImGuiManager.h"
 #include "LayerStack.h"
+#include "Techniques/MousePicking.h"
 
 class Engine : IEventListener
 {
@@ -24,7 +25,7 @@ private:
 	LayerStack m_LayerStack;
 	bool m_Running;
 	long double m_time;
-	int fps;
+	int m_fps;
 private:
 	void Update() noexcept;
 	void Render();

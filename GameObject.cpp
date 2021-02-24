@@ -14,7 +14,6 @@ GameObject::GameObject() noexcept
 		0.0f, 0.0f, 0.0f, 1.0f
 		},
 		m_mass{ 0.0f },
-		m_1byMass{ 0.0f },
 		m_pitch{ 0.0f },
 		m_roll{ 0.0f },
 		m_yaw{ 0.0f },

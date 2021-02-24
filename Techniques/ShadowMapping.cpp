@@ -183,7 +183,7 @@ void ShadowMapping::PreparePasses(const Microsoft::WRL::ComPtr<ID3D11DeviceConte
     EventBuss::Get().Delegate(shadowBlendEvent);
 }
 
-void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const std::vector<GameObject*>* gameObjects) noexcept
+void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const std::vector<GameObject*>* gameObjects, const size_t& numPlanets) noexcept
 {
     /*
     * We need to write depth data in 6 passes, choosing new:
@@ -202,7 +202,7 @@ void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& 
         DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(DirectX::XMLoadFloat3(&m_SunPosition), 
                                                                  focusPosition,
                                                                  DirectX::XMLoadFloat3(&m_CameraUpVectors[i]));
-        for (int j{ 0 }; j < (*gameObjects).size(); ++j)
+        for (int j{ 0 }; j < numPlanets/*(*gameObjects).size()*/; ++j)
         {
             (*gameObjects)[j]->BindShadowUniques(pDeviceContext);
             (*gameObjects)[j]->getWMatrix(worldMatrix);
@@ -222,6 +222,7 @@ void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& 
             pDeviceContext->VSSetConstantBuffers(0u, 1u, m_pMatrixCBuffer.GetAddressOf());
             pDeviceContext->DrawIndexed((*gameObjects)[j]->getIndexBufferSize(), 0u, 0);
         }
+
     }
 }
 

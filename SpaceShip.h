@@ -4,22 +4,24 @@
 class SpaceShip : public GameObject
 {
 private:
-	float m_rotationAngle;
-	float pi;
+	float m_pitchTilt, m_rollTilt;
 
 	// Physics
 	std::vector<DirectX::XMFLOAT3> m_forces;
-	void UpdatePhysics();
 public:
 	SpaceShip();
 	virtual ~SpaceShip() = default;
 
-	void move(DirectX::XMFLOAT4 deltaPos);
-	void rotate(float step);
+	void UpdatePhysics();
+	void Move(float step);
+	void AddRotation(float yaw, float pitch);
+	void SetTilt(float pitchLerp, float rollLerp);
+	void SetForwardVector(DirectX::XMFLOAT3 cameraPos);
 
 	DirectX::XMFLOAT3 getCenter();
 	virtual bool update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
 	virtual void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
+	[[nodiscard]] const bool IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept override;
 	void BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) override;
 	void CalculateGravity(GameObject* other);
 	void AddForce(DirectX::XMFLOAT3 f);

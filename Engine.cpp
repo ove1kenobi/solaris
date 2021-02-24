@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 Engine::Engine() noexcept
-	: m_Running{ true }
+	: m_Running{ true }, m_time{ 0.0 }, m_fps{ 0 }
 {
 	m_gameTime.Update();
 }
@@ -33,6 +33,9 @@ const bool Engine::Initialize()
 	//Forward Renderer
 	if (!m_ForwardRenderer.Initialize())
 		return false;
+
+	//All components must have the correct monitor resolution: (Emil F)
+	m_Window.DelegateResolution();
 
 	m_LayerStack.Push(&m_scene);
 	m_LayerStack.PushOverlay(&m_imguiManager);
@@ -71,16 +74,18 @@ void Engine::OnEvent(IEvent& event) noexcept
 void Engine::Update() noexcept
 {
 	m_gameTime.Update();
-
+	
 	m_time += m_gameTime.DeltaTime();
-	fps++;
+	m_fps++;
 
 	if (m_time >= 1.0f) {
 		m_time -= 1.0f;
-		m_Window.SetFPS(fps);
-		fps = 0;
+		m_Window.SetFPS(m_fps);
+		m_fps = 0;
 	}
+	//Should RenderWindow be a layer...? (Emil F)
 	m_LayerStack.Update();
+	m_Window.Update();
 }
 
 void Engine::Render()

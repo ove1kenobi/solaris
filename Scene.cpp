@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "Scene.h"
 
-void initPlanet(Planet* planet, std::vector<GameObject*>& gameObjects, int id, float x, float y, float z, float r, float xRot, float zRot, int rotDir) {
-	planet->Initialize(x, y, z, r, xRot, zRot, rotDir);
+void initPlanet(Planet* planet, Orbit* orbit, std::vector<GameObject*>& gameObjects, size_t id, size_t num, float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo) {
+	planet->Initialize(x, y, z, r, xRot, zRot, rotDir, tetherTo, orbit);
 
 	gameObjects[id] = planet;
+	gameObjects[id + num] = orbit;
 }
 
 Scene::Scene() noexcept
@@ -25,7 +26,12 @@ void Scene::OnEvent(IEvent& event) noexcept {
 		case EventType::AskForRenderObjectsEvent:
 			sendObjects();
 			break;
-
+		case EventType::DelegateMouseCoordsEvent:
+		{
+			DelegateMouseCoordsEvent& derivedEvent = static_cast<DelegateMouseCoordsEvent&>(event);
+			m_Picking.DoIntersectionTests(derivedEvent.GetXCoord(), derivedEvent.GetYCoord(), m_gameObjects);
+			break;
+		}
 		default:
 			break;
 	}
@@ -38,13 +44,13 @@ const std::string Scene::GetDebugName() const noexcept
 
 //Send gameObjects for rendering after being asked.
 void Scene::sendObjects() {
-	SendRenderObjectsEvent event(&this->m_gameObjects);
+	SendRenderObjectsEvent event(&this->m_gameObjects, m_numPlanets);
 	EventBuss::Get().Delegate(event);
 }
 
 bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext) {
 	m_pDeviceContext = pDeviceContext;
-	EventBuss::Get().AddListener(this, EventType::AskForRenderObjectsEvent);
+	EventBuss::Get().AddListener(this, EventType::AskForRenderObjectsEvent, EventType::DelegateMouseCoordsEvent);
 
 	//Orthographic camera. Over the sun. Last parameter is how high above the sun.
 	if (!this->m_orthoCamera.init(screenWidth, screenHeight, 1000)) {
@@ -61,14 +67,21 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 		return false;
 	}
 	
+	//Generate sun.
+	Sun* sun = new Sun();
+	if (!sun->Initialize()) {
+		return false;
+	}
+
+
 	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
 	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
-	std::uniform_int_distribution<int> distributionPlanets(3, 3);
+	std::uniform_int_distribution<int> distributionPlanets(20, 30);
 	this->m_numPlanets = distributionPlanets(generator);
-	std::uniform_int_distribution<int> distributionRadius(300, 300);
+	std::uniform_int_distribution<int> distributionRadius(100, 500);
 	//World space coordinates
-	std::uniform_int_distribution<int> distributionX(2000, 18000);
+	std::uniform_int_distribution<int> distributionX(1000, 30000);
 	std::uniform_int_distribution<int> distributionY(0, 0);
 	std::uniform_int_distribution<int> distributionZ(0, 0);
 	//Needs to be radians
@@ -96,38 +109,40 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 
 	ModelFactory::Get().PreparePlanetDisplacement();
 	std::vector<std::thread> threads;
-	this->m_gameObjects.resize(this->m_numPlanets);
+	this->m_gameObjects.resize(this->m_numPlanets * 2);
 	//Create all the planets using the distributions.
-	for(int i = 0; i < this->m_numPlanets; i++){
+	for(size_t i = 0; i < this->m_numPlanets; ++i){
 		Planet* planet = new Planet();
+		Orbit* orbit = new Orbit();
 		threads.push_back(std::thread(
 			initPlanet,
 			planet,
+			orbit,
 			std::ref(this->m_gameObjects),
 			i,
+			m_numPlanets,
 			static_cast<float>(distributionX(generator)),
 			static_cast<float>(distributionY(generator)),
 			static_cast<float>(distributionZ(generator)),
 			static_cast<float>(distributionRadius(generator)),
 			static_cast<float>(distributionXZRot(generator)),
 			static_cast<float>(distributionXZRot(generator)),
-			static_cast<int>(distributionRotDir(generator))
+			static_cast<int>(distributionRotDir(generator)),
+			sun
 		));
 	}
-	
 	for (int i = 0; i < this->m_numPlanets; i++) {
 		threads[i].join();
 	}
 
-	//Generate sun.
-	Sun* sun = new Sun();
-	if (!sun->Initialize()) {
-		return false;
-	}
+	// Push sun to stack
 	this->m_gameObjects.push_back(sun);
 
 	//Add the ship to the gameObject vector.
 	this->m_gameObjects.push_back(this->m_player.getShip());
+
+	if (!m_Picking.Initialize())
+		return false;
 
 	return true;
 }
@@ -139,7 +154,6 @@ void Scene::Update() noexcept {
 	{
 		ship->CalculateGravity(m_gameObjects[i]);
 	}
-
 	//Update the player and all the game objects.
 	m_player.update();
 	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
@@ -148,16 +162,5 @@ void Scene::Update() noexcept {
 	for (auto r : this->m_gameObjects) {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
-
-	ImGui::Begin("Planets");
-	float v0[3] = { m_gameObjects[0]->GetCenter().x, m_gameObjects[0]->GetCenter().y , m_gameObjects[0]->GetCenter().z };
-	float v1[3] = { m_gameObjects[1]->GetCenter().x, m_gameObjects[1]->GetCenter().y , m_gameObjects[1]->GetCenter().z };
-	float v2[3] = { m_gameObjects[2]->GetCenter().x, m_gameObjects[2]->GetCenter().y , m_gameObjects[2]->GetCenter().z };
-	ImGui::DragFloat3("Planet 0: ", v0, 5.0f);
-	ImGui::DragFloat3("Planet 1: ", v1, 5.0f);
-	ImGui::DragFloat3("Planet 2: ", v2, 5.0f);
-	m_gameObjects[0]->SetCenter(DirectX::XMFLOAT3(v0[0], v0[1], v0[2]));
-	m_gameObjects[1]->SetCenter(DirectX::XMFLOAT3(v1[0], v1[1], v1[2]));
-	m_gameObjects[2]->SetCenter(DirectX::XMFLOAT3(v2[0], v2[1], v2[2]));
-	ImGui::End();
+	m_Picking.DisplayPickedObject();
 }

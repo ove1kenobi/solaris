@@ -8,9 +8,10 @@ DXCore::DXCore() noexcept
 	  m_pDepthStencilView{ nullptr },
 	  m_pRasterizerStateFill{ nullptr},
 	  m_pRasterizerStateWireFrame{ nullptr },
-	  m_pFactory{ nullptr },
+	  m_pFactory2D{ nullptr },
 	  m_pSurface{ nullptr },
 	  m_pSurfaceRenderTarget{ nullptr },
+	  m_pTextFactory{ nullptr },
 	  m_pRasterizerStateNoCull{ nullptr },
 	  m_pRasterizerStateNoCullWF{ nullptr },
 	  m_pDepthStencilStateDefault{ nullptr },
@@ -155,8 +156,7 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 										 "CreateDepthStencilView");
 	m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
 
-	//----ADD STUFF HERE----
-	HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, IID_PPV_ARGS(&m_pFactory)), "CreateFactory");
+	HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, IID_PPV_ARGS(&m_pFactory2D)), "CreateFactory2D");
 
 	HR(m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&m_pSurface)), "CreateSurface");
 
@@ -166,8 +166,9 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 			D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
 		);
 
-	HR(m_pFactory->CreateDxgiSurfaceRenderTarget(m_pSurface.Get(), &props, &m_pSurfaceRenderTarget), "CreateSurfaceRenderTarget");
-	//----------------------
+	HR(m_pFactory2D->CreateDxgiSurfaceRenderTarget(m_pSurface.Get(), &props, &m_pSurfaceRenderTarget), "CreateSurfaceRenderTarget");
+
+	HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), &m_pTextFactory), "CreateTextFactory");
 
 	m_DefaultViewport.TopLeftX = 0.0f;
 	m_DefaultViewport.TopLeftY = 0.0f;
@@ -291,8 +292,9 @@ void DXCore::DelegateDXHandles() noexcept
 		m_pSwapChain, 
 		m_pBackBuffer, 
 		m_pDepthStencilView, 
-		m_pFactory, 
-		m_pSurfaceRenderTarget
+		m_pFactory2D, 
+		m_pSurfaceRenderTarget,
+		m_pTextFactory
 	);
 	EventBuss::Get().Delegate(event);
 }
@@ -343,12 +345,17 @@ const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& DXCore::GetDepthStencilVie
 	return m_pDepthStencilView;
 }
 
-const Microsoft::WRL::ComPtr<ID2D1Factory>& DXCore::GetFactory() const noexcept
+const Microsoft::WRL::ComPtr<ID2D1Factory>& DXCore::GetFactory2D() const noexcept
 {
-	return m_pFactory;
+	return m_pFactory2D;
 }
 
 const Microsoft::WRL::ComPtr<ID2D1RenderTarget>& DXCore::GetSurfaceRenderTarget() const noexcept
 {
 	return m_pSurfaceRenderTarget;
+}
+
+const Microsoft::WRL::ComPtr<IDWriteFactory>& DXCore::GetTextFactory() const noexcept
+{
+	return m_pTextFactory;
 }
