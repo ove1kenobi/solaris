@@ -1,5 +1,8 @@
 #include "..\pch.h"
 #include "Button.h"
+
+/*A lot of functions are left empty here for now, as I've yet to need the button class.*/
+
 Button::Button() noexcept {
 	m_pHoverBox = D2D1::RectF();
 	m_pTextBox = D2D1::RectF();
@@ -14,6 +17,12 @@ void Button::SetText(std::wstring text) {
 	m_pText = text;
 }
 
+void Button::SetHoverBox(D2D1_RECT_F hoverBox, float textPadding) {
+	m_pHoverBox = hoverBox;
+	m_pTextPadding = textPadding;
+	UpdateModules();
+}
+
 bool Button::UpdateModules() {
 	return true;
 }
@@ -21,6 +30,15 @@ bool Button::UpdateModules() {
 void Button::Render() {
 
 }
+
+void Button::Render(int mouseX, int mouseY) {
+
+}
+
+void Button::OnClick(int mouseX, int mouseY) {
+
+}
+
 
 void Button::OnEvent(IEvent& event) noexcept {
 	switch (event.GetEventType()) {

@@ -5,6 +5,7 @@
 #include "..\EventSystem/InputEvents.h"
 #include "..\EventSystem/WindowEvents.h"
 
+//Starting class for all UI elements, contains everything they will need
 class ModuleUI : public IEventListener {
 protected:
 	//For creating UI elements

@@ -2,9 +2,10 @@
 #include "ModuleUI.h"
 #include "RandomEventUI.h"
 
+//Module handeling everything related to planet interaction UI
 class PlanetInteractionUI : public ModuleUI {
 private:
-	//Main screen
+	//Main screen and brushes
 	D2D1_RECT_F m_pMainRectangle;
 	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pMainGradientBrush;
 	Microsoft::WRL::ComPtr<ID2D1GradientStopCollection> m_pMainGradientStops;
@@ -39,8 +40,9 @@ private:
 	float m_pBlockSize;
 	std::vector<RandomEventUI*> m_pRandomEvents;
 
-	int mouseX;
-	int mouseY;
+	//Current mouse coords
+	unsigned int m_pMouseX;
+	unsigned int m_pMouseY;
 
 	//Creation functions
 	bool CreateScreen();
@@ -54,19 +56,20 @@ private:
 	bool UpdateTopCorners();
 	bool UpdateTextElements();
 	bool UpdateTools();
+
 	bool UpdateModules();
 
-	//Render functions
+	//Private render functions
 	void RenderScreen();
 	void RenderCorners();
 	void RenderPlanetText();
 	void RenderRandomEvents();
-	void RenderHelpLines();
 public:
 	PlanetInteractionUI() noexcept;
 	virtual ~PlanetInteractionUI();
 	bool Initialize();
 
+	//Main render function
 	void Render();
 
 	//Event functions

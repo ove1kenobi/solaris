@@ -3,7 +3,7 @@
 
 class RandomEventUI : public Button {
 private:
-	//For hovering
+	//Hovering details
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pLeftHover;
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pRightHover;
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pBottomHover;
@@ -12,7 +12,7 @@ private:
 	D2D1_RECT_F m_pHoverTextBox;
 	std::wstring m_pHoverText;
 
-	//For User Story 30:
+	//For User Story 30: icons
 	//std::vector<> m_pIconPicture;
 	std::vector<std::wstring> m_pIconText;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pIconTextFormat;
@@ -27,7 +27,6 @@ public:
 	~RandomEventUI();
 	bool Initialize();
 
-	void SetHoverBox(D2D1_RECT_F hoverBox, float textPadding);
 	//For User Story 30:
 	void AddIcon(std::wstring amount);
 

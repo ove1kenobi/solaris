@@ -1,6 +1,7 @@
 #pragma once
 #include "ModuleUI.h"
 
+//Contains everything a simple button would need, can be inherited for complicated buttons
 class Button : public ModuleUI {
 protected:
 	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pTextFont;
@@ -15,9 +16,12 @@ public:
 	virtual bool Initialize();
 
 	void SetText(std::wstring text);
+	void SetHoverBox(D2D1_RECT_F hoverBox, float textPadding);
 
 	virtual bool UpdateModules();
-	virtual void Render();
+	void Render();
+	virtual void Render(int mouseX, int mouseY);
+	virtual void OnClick(int mouseX, int mouseY);
 
 	void OnEvent(IEvent& event) noexcept;
 };

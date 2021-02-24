@@ -6,10 +6,24 @@ RandomEventUI::RandomEventUI() {
 	m_pHoverText = L"SELECT";
 }
 
+bool RandomEventUI::Initialize() {
+	if (!CreateBrush()) {
+		return false;
+	}
+	if (!CreateText()) {
+		return false;
+	}
+	if (!CreateDetails()) {
+		return false;
+	}
+	return true;
+}
+
 RandomEventUI::~RandomEventUI() {
 
 }
 
+//Create functions
 bool RandomEventUI::CreateText() {
 	//Event text
 	AddFontResource(L"Tenika400Regular-Rpyql.ttf");
@@ -68,6 +82,7 @@ bool RandomEventUI::CreateDetails() {
 	return true;
 }
 
+//Update functions
 bool RandomEventUI::UpdateDetails() {
 	bool updated = false;
 	if (ErrorCheck(m_pLeftHover->Open(&m_pSink), "OpenGeometry")) {
@@ -151,30 +166,6 @@ bool RandomEventUI::UpdateTextBoxes() {
 	return true;
 }
 
-bool RandomEventUI::Initialize() {
-	if (!CreateBrush()) {
-		return false;
-	}
-	if (!CreateText()) {
-		return false;
-	}
-	if (!CreateDetails()) {
-		return false;
-	}
-	return true;
-}
-
-void RandomEventUI::SetHoverBox(D2D1_RECT_F hoverBox, float textPadding) {
-	m_pHoverBox = hoverBox;
-	m_pTextPadding = textPadding;
-	UpdateModules();
-}
-
-void RandomEventUI::AddIcon(std::wstring amount) {
-	/*Will in the future take in a picture and a string,
-	which will be stored in the icon vectors */
-}
-
 bool RandomEventUI::UpdateModules() {
 	if (!UpdateTextBoxes()) {
 		return false;
@@ -185,7 +176,9 @@ bool RandomEventUI::UpdateModules() {
 	return true;
 }
 
+//Render functions
 void RandomEventUI::Render(int mouseX, int mouseY) {
+	//What should always be rendered
 	this->UpdateBrush(D2D1::ColorF::Aqua, 0.05f);
 	m_pRenderTarget2D->FillRectangle(m_pHoverBox, m_pBrush.Get());
 
@@ -199,6 +192,7 @@ void RandomEventUI::Render(int mouseX, int mouseY) {
 		m_pBrush.Get()
 	);
 
+	//if hover
 	if (mouseX > m_pHoverBox.left && mouseX < m_pHoverBox.right &&
 		mouseY > m_pHoverBox.top && mouseY < m_pHoverBox.bottom) {
 		m_pRenderTarget2D->FillGeometry(m_pLeftHover.Get(), m_pBrush.Get());
@@ -215,6 +209,7 @@ void RandomEventUI::Render(int mouseX, int mouseY) {
 	}
 }
 
+//Event related functions
 void RandomEventUI::OnClick(int mouseX, int mouseY) {
 	if (mouseX > m_pHoverBox.left && mouseX < m_pHoverBox.right &&
 		mouseY > m_pHoverBox.top && mouseY < m_pHoverBox.bottom) {
@@ -222,3 +217,9 @@ void RandomEventUI::OnClick(int mouseX, int mouseY) {
 		//Create event here to readjust the player inventory based on an random event ID
 	}
 }
+
+void RandomEventUI::AddIcon(std::wstring amount) {
+	/*Will in the future take in a picture and a string,
+	which will be stored in the icon vectors */
+}
+

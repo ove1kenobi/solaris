@@ -725,15 +725,8 @@ void PlanetInteractionUI::RenderPlanetText() {
 
 void PlanetInteractionUI::RenderRandomEvents() {
 	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
-		m_pRandomEvents.at(i)->Render(this->mouseX, this->mouseY);
+		m_pRandomEvents.at(i)->Render(m_pMouseX, m_pMouseY);
 	}
-}
-
-void PlanetInteractionUI::RenderHelpLines() {
-	//Temp function only for debuging
-	RenderHelpGrid(10);
-	m_pRenderTarget2D->DrawRectangle(m_pPlanetNameTextBox, m_pBrush.Get());
-	m_pRenderTarget2D->DrawRectangle(m_pPlanetFlavourTextBox, m_pBrush.Get());
 }
 
 void PlanetInteractionUI::Render() {
@@ -763,25 +756,20 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 	//For hovering over UI elements
 	case EventType::DelegateMouseCoordsEvent:
 	{
-		this->mouseX = static_cast<DelegateMouseCoordsEvent*>(&event)->GetXCoord();
-		this->mouseY = static_cast<DelegateMouseCoordsEvent*>(&event)->GetYCoord();
-		std::wstring coord = L"X: ";
-		coord.append(std::to_wstring(this->mouseX));
-		coord.append(L" Y: ");
-		coord.append(std::to_wstring(this->mouseY));
-		//this->SetPlanetName(coord);
+		m_pMouseX = static_cast<DelegateMouseCoordsEvent*>(&event)->GetXCoord();
+		m_pMouseY = static_cast<DelegateMouseCoordsEvent*>(&event)->GetYCoord();
 		break;
 	}
 	//For clicking on UI elements
 	case EventType::MouseButtonEvent:
 	{
-		this->mouseX = static_cast<MouseButtonEvent*>(&event)->GetXCoord();
-		this->mouseY = static_cast<MouseButtonEvent*>(&event)->GetYCoord();
+		m_pMouseX = static_cast<MouseButtonEvent*>(&event)->GetXCoord();
+		m_pMouseY = static_cast<MouseButtonEvent*>(&event)->GetYCoord();
 		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
 		if (virKey == VK_LBUTTON && state == KeyState::KeyPress) {
 			for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
-				m_pRandomEvents.at(i)->OnClick(mouseX, mouseY);
+				m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY);
 			}
 		}
 		break;
