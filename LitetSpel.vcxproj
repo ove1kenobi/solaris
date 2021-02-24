@@ -96,6 +96,7 @@
     </ClCompile>
     <ClCompile Include="UI\Button.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="DXCore.cpp" />
     <ClCompile Include="DXDebug.cpp" />
@@ -123,6 +124,7 @@
     <ClCompile Include="ModelFactory.cpp" />
     <ClCompile Include="UI\ModuleUI.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Orbit.cpp" />
     <ClCompile Include="pch.cpp">
@@ -136,6 +138,7 @@
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="UI\PlanetInteractionUI.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Render2D.cpp" />
