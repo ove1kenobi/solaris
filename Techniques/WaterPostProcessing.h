@@ -50,7 +50,7 @@ private:
 	void OnEvent(IEvent& event) noexcept override;
 public:
 	WaterPostProcessing() noexcept;
-	virtual ~WaterPostProcessing() noexcept = default;
+	virtual ~WaterPostProcessing();
 	[[nodiscard]] const bool Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, UINT screenWidth, UINT screenHeight) noexcept;
 	void PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
 	void DoPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;

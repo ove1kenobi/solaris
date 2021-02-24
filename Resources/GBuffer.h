@@ -10,7 +10,7 @@ class GBuffer : public IBindable, public EventPublisher, public IEventListener {
 private:
 	static const UINT nr = 5;
 	std::vector<Texture*> m_Textures;
-	ID3D11RenderTargetView* m_RTVArray[nr];
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_RTVArray[nr];
 	bool m_isRenderTarget;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
 	float m_background[nr];

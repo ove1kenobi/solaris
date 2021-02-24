@@ -15,7 +15,6 @@ GBuffer::~GBuffer()
 {
     for (int i = 0; i < m_Textures.size(); i++) {
         delete m_Textures[i];
-        m_RTVArray[i]->Release();
     }
 }
 
@@ -26,9 +25,9 @@ void GBuffer::Bind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceCon
 #endif
 
     if (m_isRenderTarget) {
-        pDeviceContext->OMSetRenderTargets(ARRAYSIZE(m_RTVArray), m_RTVArray, m_pDepthStencilView.Get());
+        pDeviceContext->OMSetRenderTargets(ARRAYSIZE(m_RTVArray), m_RTVArray->GetAddressOf(), m_pDepthStencilView.Get());
         for (int i = 0; i < ARRAYSIZE(m_RTVArray); i++) {
-            pDeviceContext->ClearRenderTargetView(m_RTVArray[i], m_background);
+            pDeviceContext->ClearRenderTargetView(m_RTVArray[i].Get(), m_background);
         }
         m_isRenderTarget = false;
     }
@@ -80,7 +79,7 @@ const bool GBuffer::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, 
     m_Textures.push_back(normalTexture);
 
     for (int i = 0; i < ARRAYSIZE(m_RTVArray); i++) {
-        m_RTVArray[i] = m_Textures[i]->getRTV().Get();
+        m_RTVArray[i] = m_Textures[i]->getRTV();
     }
     m_isRenderTarget = true;
 

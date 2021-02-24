@@ -221,7 +221,7 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 	m_deviceContext->Unmap(model->getRadiusBuffer().Get(), 0);
 
 	model->SetBoundingVolume(new DirectX::BoundingSphere(center, r + (r / 5.0f)));
-	model->Loaded();
+	
 	return model;
 }
 

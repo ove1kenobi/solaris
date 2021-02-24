@@ -131,6 +131,7 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	//Calculate water
 	if (closestPlanet.y != -1.0f && depth < 12000.0f && (waterBool.x != 0.0f || depth - closestPlanet.x > 0.0f)) {
 		/*LIGHTING ON BOTTOM OF THE OCEAN*/
+		//Does not use specular.
 		/*Note, attenuation is not relevant FOR THE SUN, and is as such not included in the calculations*/
 		/*AMBIENT*/
 		//Calculate ambient light:
@@ -150,23 +151,6 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 		//Final diffuse color, taking "everything diffuse" into consideration:
 		float3 finalDiffuseColor = diffuseColor * diffuseLightIntensity * diffuseScalar;
 
-		/*SPECULAR*/
-		//Direction vector from surface position towards light position:
-		float3 surfaceTolightDirection = normalize(lightPositionWS - wPos.xyz);
-
-		//Direction vector from surface position towards camera position:
-		float3 surfaceToCameraDirection = normalize(cameraPos.xyz - wPos.xyz);
-
-		//The halfway vector between the previous two vectors:
-		float3 halfwayVector = normalize(surfaceTolightDirection + surfaceToCameraDirection);
-
-		//The specular scalar constant given by the angle between the normal and haldway vector, raised to some power.
-		//The lower the power is, the greater area of specular light, and vice versa:
-		float specularScalar = pow(saturate(dot(normal, halfwayVector)), specularPower);
-
-		//The final specular color, using the diffuse color as its own color, also taking into account specular intensity:
-		float3 finalSpecularColor = (diffuseColor * diffuseLightIntensity) * specularIntensity * specularScalar;
-
 		//We now return the final TOTAL color, taking into consideration the model color, ambient color, diffuse color and specular color contributions: 
 		texCol = float4(saturate(finalAmbientColor + finalDiffuseColor) * texCol.xyz, 1.0f);
 
@@ -174,7 +158,8 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 
 		//How much water we are looking through.
 		float oceanViewDepth = min(closestPlanet.y, depth - closestPlanet.x);
-		//If we are not looking at the planet, but through the water.
+		
+		//Removes artefacts around the ocean "line".
 		if (oceanViewDepth < 0.0f) {
 			oceanViewDepth = closestPlanet.y;
 		}
@@ -211,21 +196,21 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 
 		/*SPECULAR*/
 		//Direction vector from surface position towards light position:
-		surfaceTolightDirection = normalize(lightPositionWS - wPos.xyz);
+		float3 surfaceTolightDirection = normalize(lightPositionWS - wPos.xyz);
 
 		//Direction vector from surface position towards camera position:
-		surfaceToCameraDirection = normalize(cameraPos.xyz - wPos.xyz);
+		float3 surfaceToCameraDirection = normalize(cameraPos.xyz - wPos.xyz);
 
 		//The halfway vector between the previous two vectors:
-		halfwayVector = normalize(surfaceTolightDirection + surfaceToCameraDirection);
+		float3 halfwayVector = normalize(surfaceTolightDirection + surfaceToCameraDirection);
 
 		//The specular scalar constant given by the angle between the normal and haldway vector, raised to some power.
 		//The lower the power is, the greater area of specular light, and vice versa:
 		//Specular power is hard coded for the water.
-		specularScalar = pow(saturate(dot(normal, halfwayVector)), 300.0f);
+		float specularScalar = pow(saturate(dot(normal, halfwayVector)), 300.0f);
 
 		//The final specular color, using the diffuse color as its own color, also taking into account specular intensity:
-		finalSpecularColor = (diffuseColor * diffuseLightIntensity) * specularIntensity * specularScalar;
+		float3 finalSpecularColor = (diffuseColor * diffuseLightIntensity) * specularIntensity * specularScalar;
 
 		//We now return the final TOTAL color, taking into consideration the model color, ambient color, diffuse color and specular color contributions: 
 		texCol = float4(saturate(finalAmbientColor + finalDiffuseColor) * texCol, 1.0f);

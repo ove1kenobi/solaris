@@ -11,6 +11,9 @@ WaterPostProcessing::WaterPostProcessing() noexcept
 	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent, EventType::DelegatePlanetsEvent, EventType::DelegateSunLightEvent);
 }
 
+WaterPostProcessing::~WaterPostProcessing() {
+}
+
 void WaterPostProcessing::AssignCamera(IEvent& event) noexcept
 {
 	DelegateCameraEvent& derivedEvent = static_cast<DelegateCameraEvent&>(event);
