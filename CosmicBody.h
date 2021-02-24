@@ -5,9 +5,9 @@
 class CosmicBody : public GameObject
 {
 private:
-	DirectX::XMFLOAT4 m_yAxis;
 	int m_rotationDir;
 protected:
+	DirectX::XMFLOAT4 m_yAxis;
 	float m_radius;
 	GameObject* m_tetheredTo;
 	float m_major_semi_axis;

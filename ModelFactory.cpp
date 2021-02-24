@@ -129,7 +129,7 @@ Model* ModelFactory::GetModel(std::string filePath)
 	return model;
 }
 
-Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
+Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r, DirectX::XMFLOAT3 yAxis) {
 	//Create the sphere vertices and indices. The vertices are just raw float values.
 	Model* model = new Model();
 	std::vector<float> vertexPositionValues;
@@ -154,29 +154,82 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r) {
 		distance.y = newVertex.position.y;
 		distance.z = newVertex.position.z;
 
-		float len = sqrt(distance.x * distance.x + distance.y * distance.y + distance.z * distance.z);
-		if (len < r/*r - (r / 50)*/ ) {
-			newVertex.color.x = 0.0f;
-			newVertex.color.y = 0.0f;
-			newVertex.color.z = static_cast<float>(std::pow(len / r, 5));
-			newVertex.color.w = 1.0f;
-		}
-		else if (len >= r && len <= r + (r / 15)){
-			newVertex.color.x = 0.0f;
-			newVertex.color.y = 0.5f;
-			newVertex.color.z = 0.0f;
-			newVertex.color.w = 1.0f;
-		}
-		else {
-			newVertex.color.x = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
-			newVertex.color.y = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
-			newVertex.color.z = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
-			newVertex.color.w = 1.0f;
-		}
-
 		newVertex.normal.x = normals[i / 4].x;
 		newVertex.normal.y = normals[i / 4].y;
 		newVertex.normal.z = normals[i / 4].z;
+
+		float len = sqrt(distance.x * distance.x + distance.y * distance.y + distance.z * distance.z);
+
+		DirectX::XMFLOAT3 minusYAxis;
+		minusYAxis.x = -yAxis.x;
+		minusYAxis.y = -yAxis.y;
+		minusYAxis.z = -yAxis.z;
+
+		float angle = dot(distance, yAxis);
+		//Snow
+		if ((angle > 0.95f || angle < -0.95f) && len >= r) {
+			newVertex.color.x = std::pow(1.0f, std::abs(angle));
+			newVertex.color.y = std::pow(1.0f, std::abs(angle));
+			newVertex.color.z = std::pow(1.0f, std::abs(angle));
+			newVertex.color.w = std::pow(1.0f, std::abs(angle));
+		}
+		else {
+			//water
+			if (len < r) {
+				newVertex.color.x = 0.0f;
+				newVertex.color.y = 0.0f;
+				newVertex.color.z = static_cast<float>(std::pow(len / r, 5));
+				newVertex.color.w = 1.0f;
+			}
+			//Land
+			else if (len >= r && len <= r + (r / 15)) {
+				newVertex.color.x = 0.0f;
+				newVertex.color.y = 0.5f;
+				newVertex.color.z = 0.0f;
+				newVertex.color.w = 1.0f;
+
+				//Brown
+				if (dot(distance, newVertex.normal) < 0.6f && dot(distance, newVertex.normal) > -0.6f) {
+					newVertex.color.x = 139.0f / 255.0f;
+					newVertex.color.y = 69.0f / 255.0f;
+					newVertex.color.z = 19.0f / 255.0f;
+				}
+
+				//kx + m
+				angle = 9.5f * (std::abs(angle) + 0.05f) - 8.5f;
+				if (angle < 0) {
+					angle = 0;
+				}
+				else if (angle > 1) {
+					angle = 1;
+				}
+				newVertex.color.x = lerp(newVertex.color.x, 1.0f, angle);
+				newVertex.color.y = lerp(newVertex.color.y, 1.0f, angle);
+				newVertex.color.z = lerp(newVertex.color.z, 1.0f, angle);
+			}
+			//Mountain
+			else if (len > r + (r / 15) && len < r + (r / 15) + (r / 15)) {
+				newVertex.color.x = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
+				newVertex.color.y = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
+				newVertex.color.z = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
+				newVertex.color.w = 1.0f;
+
+				//Brown
+				if (dot(distance, newVertex.normal) < 0.6f && dot(distance, newVertex.normal) > -0.6f) {
+					newVertex.color.x = 139.0f / 255.0f;
+					newVertex.color.y = 69.0f / 255.0f;
+					newVertex.color.z = 19.0f / 255.0f;
+				}
+			}
+			//Snowy tops
+			else {
+				newVertex.color.x = 1.0f;
+				newVertex.color.y = 1.0f;
+				newVertex.color.z = 1.0f;
+				newVertex.color.w = 1.0f;
+			}
+			
+		}
 
 		newVertex.bitangent.x = 1.0f;
 		newVertex.bitangent.y = 1.0f;

@@ -7,6 +7,7 @@
 #include "ourMath.h"
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/RenderEvents.h"
+#include <algorithm>
 class ModelFactory : public EventPublisher
 {
 private:
@@ -41,7 +42,7 @@ private:
 public:
 	static ModelFactory& Get() noexcept;
 	Model* GetModel(std::string filePath);
-	Model* GeneratePlanet(float x, float y, float z, float r);
+	Model* GeneratePlanet(float x, float y, float z, float r, DirectX::XMFLOAT3 yAxis);
 	Model* GenerateSun(float x, float y, float z, float r);
 	Model* GenerateOrbit(float major_semi_axis, float minor_semi_axis);
 	void PreparePlanetDisplacement();

@@ -68,8 +68,8 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 
 	//Construct rotation matrices
 	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixIdentity();
-	DirectX::XMMATRIX rotX = DirectX::XMMatrixRotationX(this->m_pitch);
-	DirectX::XMMATRIX rotZ = DirectX::XMMatrixRotationZ(this->m_roll);
+	//DirectX::XMMATRIX rotX = DirectX::XMMatrixRotationX(this->m_pitch);
+	//DirectX::XMMATRIX rotZ = DirectX::XMMatrixRotationZ(this->m_roll);
 	//Angle change is positive or negative depending on a randomized value PER PLANET.
 	DirectX::XMMATRIX rotMatrix = DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat4(&this->m_yAxis), angle * this->m_rotationDir);
 	
@@ -87,7 +87,7 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	transMatrix = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);	// dynamic center coordinates
 
 	//Update the wMatrix and the angle.
-	DirectX::XMMATRIX result = scaleMatrix * rotX * rotZ * rotMatrix  * transMatrix;
+	DirectX::XMMATRIX result = scaleMatrix * rotMatrix  * transMatrix;
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, result);
 	//Angle change depends on planets radius (smaller planet = faster spin)
 	angle += 0.001f * static_cast<float>(this->m_timer.DeltaTime()) * (1000 / this->m_radius);
