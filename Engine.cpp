@@ -34,6 +34,10 @@ const bool Engine::Initialize()
 	if (!m_ForwardRenderer.Initialize())
 		return false;
 
+	// Sound Manager
+	if (!m_SoundManager.Initialize())
+		return false;
+
 	//All components must have the correct monitor resolution: (Emil F)
 	m_Window.DelegateResolution();
 
