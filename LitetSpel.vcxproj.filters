@@ -58,6 +58,7 @@
     <ClCompile Include="PlanetInteractionUI.cpp" />
     <ClCompile Include="ModuleUI.cpp" />
     <ClCompile Include="Orbit.cpp" />
+    <ClCompile Include="Techniques\FrustumCulling.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -118,6 +119,7 @@
     <ClInclude Include="PlanetInteractionUI.h" />
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="Orbit.h" />
+    <ClInclude Include="Techniques\FrustumCulling.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

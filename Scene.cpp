@@ -73,7 +73,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 		return false;
 	}
 
-
 	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
 	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
@@ -88,24 +87,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	std::uniform_real_distribution<float> distributionXZRot(static_cast<float>(-M_PI_2), static_cast<float>(M_PI_2));
 	//negative rotation direction if 0.
 	std::uniform_int_distribution<int> distributionRotDir(0, 1);
-
-	//Planet in the middle for testing.
-	/*
-	Planet* planetmiddle = new Planet();
-	if (!planetmiddle->init(
-		0,
-		0,
-		0,
-		50,
-		M_PI_2,
-		0
-	))
-	{
-		//Throw
-		return false;
-	}
-	this->m_gameObjects.push_back(planetmiddle);
-	*/
 
 	ModelFactory::Get().PreparePlanetDisplacement();
 	std::vector<std::thread> threads;
@@ -143,6 +124,8 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 
 	if (!m_Picking.Initialize())
 		return false;
+	if (!m_FrustumCulling.Initialize(m_perspectiveCamera))
+		return false;
 
 	return true;
 }
@@ -162,5 +145,9 @@ void Scene::Update() noexcept {
 	for (auto r : this->m_gameObjects) {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
+
+	m_FrustumCulling.UpdateFrustum(m_perspectiveCamera);
+	m_CulledObjects = m_FrustumCulling.CullObjects(m_gameObjects, m_perspectiveCamera);
+
 	m_Picking.DisplayPickedObject();
 }

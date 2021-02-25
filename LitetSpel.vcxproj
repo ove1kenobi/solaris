@@ -151,6 +151,10 @@
     </ClCompile>
     <ClCompile Include="Sun.cpp" />
     <ClCompile Include="SpaceShip.cpp" />
+    <ClCompile Include="Techniques\FrustumCulling.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="Techniques\MousePicking.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
@@ -231,6 +235,7 @@
     <ClInclude Include="Resources\ComputeShader.h" />
     <ClInclude Include="Sun.h" />
     <ClInclude Include="SpaceShip.h" />
+    <ClInclude Include="Techniques\FrustumCulling.h" />
     <ClInclude Include="Techniques\MousePicking.h" />
     <ClInclude Include="Techniques\Skybox.h" />
     <ClInclude Include="Time.h" />

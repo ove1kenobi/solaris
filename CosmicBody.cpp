@@ -52,6 +52,8 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, final);
 	
+	m_HasBoundingVolume = true;
+
 	return true;
 }
 

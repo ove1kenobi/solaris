@@ -28,6 +28,7 @@ const bool Sun::Initialize() noexcept
 	//The light
 	//Uses RGB-values as taken from the net from a paper discussing correct sun-RGB-values. Intensity is 1, center is same as sun. 
 	m_PointLight.Initialize(DirectX::XMFLOAT3(1.0f, 0.95f, 0.93f), 1.0f, m_center);
+	m_HasBoundingVolume = true;
 	return true;
 }
 

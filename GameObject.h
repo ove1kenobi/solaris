@@ -16,6 +16,7 @@ protected:
 	float m_roll;
 	float m_yaw;
 	Time m_timer;
+	bool m_HasBoundingVolume;
 
 	//Where the buffers are stored
 	Model* m_model;
@@ -35,4 +36,6 @@ public:
 	//Returns the translation of the object in the world.
 	DirectX::XMFLOAT3 getTransVector();
 	float GetMass();
+	[[nodiscard]] const bool& HasBoundingVolume() const noexcept;
+	[[nodiscard]] Model* GetModel() const noexcept;
 };
