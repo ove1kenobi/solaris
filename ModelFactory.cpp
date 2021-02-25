@@ -161,10 +161,10 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r, DirectX:
 		float elevation = sqrt(distance.x * distance.x + distance.y * distance.y + distance.z * distance.z);
 
 		//relative to the closest pole
-		float poleAngle = dot(distance, yAxis);
+		float poleAngle = dot(normalize(distance), normalize(yAxis));
 		poleAngle = std::abs(poleAngle);
 
-		float vertexAngle = dot(distance, newVertex.normal);
+		float vertexAngle = dot(normalize(distance), normalize(newVertex.normal));
 
 		setColorVertex(r, elevation, poleAngle, vertexAngle, newVertex.normal, &newVertex.color);
 		

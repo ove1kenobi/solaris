@@ -16,7 +16,7 @@ CosmicBody::~CosmicBody()
 bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo, Orbit* orbit) {
 	//Set initial values. All randomized.
 	this->m_radius = r;
-	this->m_mass = r * 10000000;
+	this->m_mass = r * 1000000000;
 	this->m_center.x = x;
 	this->m_center.y = y;
 	this->m_center.z = z;
@@ -28,7 +28,7 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	{
 		this->m_major_semi_axis = length(m_center - tetherTo->GetCenter());
 		this->m_minor_semi_axis = this->m_major_semi_axis * 0.8f;
-		this->m_orbital_speed = 6.2831853f * m_major_semi_axis / m_mass * 1000.0f;
+		this->m_orbital_speed = 6.2831853f * m_major_semi_axis / m_mass * 100000.0f;
 		m_orbit = orbit;
 		m_orbit->init(m_major_semi_axis, m_minor_semi_axis);
 	}

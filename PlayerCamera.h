@@ -24,6 +24,5 @@ public:
 	void OrbitRotation(float yaw, float pitch);
 	//Zoom
 	void mouseScroll(int scroll);
-
-	DirectX::XMVECTOR GetForward();
+	DirectX::XMFLOAT3 GetForwardVector();
 };

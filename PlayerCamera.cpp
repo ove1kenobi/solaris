@@ -64,6 +64,15 @@ void PlayerCamera::mouseScroll(int scroll) {
 		this->m_distanceFromShip = m_minScroll + 0.1f;
 }
 
+DirectX::XMFLOAT3 PlayerCamera::GetForwardVector()
+{
+	return DirectX::XMFLOAT3(
+		DirectX::XMVectorGetX(m_forwardVector),
+		DirectX::XMVectorGetY(m_forwardVector),
+		DirectX::XMVectorGetZ(m_forwardVector)
+	);
+}
+
 void PlayerCamera::OnEvent(IEvent& event) noexcept {
 	switch (event.GetEventType()) {
 		case EventType::MouseScrollEvent:
@@ -79,8 +88,4 @@ void PlayerCamera::OnEvent(IEvent& event) noexcept {
 			break;
 		}
 	}
-}
-
-DirectX::XMVECTOR PlayerCamera::GetForward() {
-	return m_forwardVector;
 }
