@@ -6,7 +6,9 @@ WaterPostProcessing::WaterPostProcessing() noexcept
 	m_pCamera{ nullptr },
 	m_pSunLight{ nullptr },
 	m_screenWidth{ 0 },
-	m_screenHeight{ 0 }
+	m_screenHeight{ 0 },
+	m_pSunCenter{ nullptr },
+	m_pSunRadius{ nullptr } 
 {
 	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent, EventType::DelegatePlanetsEvent, EventType::DelegateSunLightEvent);
 	EventBuss::Get().AddListener(this, EventType::DelegateSunEvent);
