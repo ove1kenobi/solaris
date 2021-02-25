@@ -16,6 +16,7 @@ private:
 	std::vector<ModuleUI*> m_Modules;
 
 	bool m_Render;
+	std::wstring GetFontFilePath(std::wstring fontFile);
 public:
 	Render2D() noexcept;
 	virtual ~Render2D();

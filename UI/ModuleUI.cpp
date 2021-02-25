@@ -31,8 +31,8 @@ void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {
 bool ModuleUI::ErrorCheck(HRESULT handle, std::string type) {
 	std::string error;
 	if (FAILED(handle)) {
-		error.append("Error: ");												\
-		error.append(type);													\
+		error.append("Error: ");
+		error.append(type);
 		error.append(" couldn't be created.");
 		printf(error.c_str());
 		return false;
