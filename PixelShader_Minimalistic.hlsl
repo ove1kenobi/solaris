@@ -17,7 +17,7 @@ struct PS_OUT
     float4 normal           : SV_target4;
 };
 
-PS_OUT ps_main(in PS_IN psIn) : SV_TARGET
+PS_OUT ps_main(in PS_IN psIn)
 {
     PS_OUT psOut = (PS_OUT)0;
 
