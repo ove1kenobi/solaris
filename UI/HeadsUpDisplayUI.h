@@ -3,23 +3,50 @@
 
 class HeadsUpDisplayUI : public ModuleUI {
 private:
-	/*Modules the HUD needs:
-	* - a CO2 bar (seperate class)
-	* - a hull/health bar (seperate class)
-	* - weight capacity number display
-	* - planet distance number display
-	* - 10x resource picture display (vector, will be reused for UpgradesUI as well)
-	* - 10x resource amount number display (vector, will be reused for UpgradesUI as well)
-	* - minimap picture display
-	* - Hitcross shapes
-	*/
+	//Crosshair
+	float m_pCrosshairSize;
+	float m_pCrosshairLength;
+	float m_pCrosshairDistance;
+
+	//CO2 and health bar
+	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pRedGradientBrush;
+	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pBlueGradientBrush;
+	/*Will need 10 blocks each, can be created with a for loop,
+	* but needs to be kept track of so we know which block should be rendered
+	will also need 10 numbers*/
+
+	//Weight capacity
+	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pHUDFont;
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pCapacityFormat;
+	//D2D1_RECT_F m_pCapacityTextBox;
+	std::wstring m_pCapacityText;
+
+	//Warning modules (Might be better to covert to a class as we will need one for each bar)
+
+	//Distance to planet
+
+	//Resources 10x per resource
+
+	//Minimap
+
+	//Current mouse coords (will be removed once event handler is in place)
+	unsigned int m_pMouseX;
+	unsigned int m_pMouseY;
+
+	bool CreateCrosshair();
+	bool CreateTools();
+
+	bool UpdateCrosshair();
+	bool UpdateTools();
+
+	bool UpdateModules();
+
+	void RenderCrosshair();
 protected:
 public:
 	HeadsUpDisplayUI();
 	~HeadsUpDisplayUI();
 	bool Initialize();
-
-	bool UpdateModules();
 
 	void Render();
 
