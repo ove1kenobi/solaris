@@ -90,6 +90,7 @@ void Engine::Update() noexcept
 	//Should RenderWindow be a layer...? (Emil F)
 	m_LayerStack.Update();
 	m_Window.Update();
+	m_SoundManager.Update();
 }
 
 void Engine::Render()

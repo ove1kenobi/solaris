@@ -1,5 +1,7 @@
 #pragma once
 #include "EventSystem\IEventListener.h"
+#include "EventSystem/EventBuss.h"
+#include "EventSystem/SoundEvents.h"
 #include <SFML/Audio.hpp>
 #include <queue>
 #include <vector>

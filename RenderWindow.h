@@ -2,6 +2,7 @@
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem\WindowEvents.h"
 #include "EventSystem/InputEvents.h"
+#include "EventSystem/SoundEvents.h"
 #include "EventSystem\RenderEvents.h"
 #include "ImGui\imgui_impl_win32.h"
 

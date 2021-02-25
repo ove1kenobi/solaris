@@ -201,6 +201,7 @@
     <ClInclude Include="EventSystem\InputEvents.h" />
     <ClInclude Include="EventSystem\RenderEvents.h" />
     <ClInclude Include="EventSystem\KeyState.h" />
+    <ClInclude Include="EventSystem\SoundEvents.h" />
     <ClInclude Include="EventSystem\UtilityEvents.h" />
     <ClInclude Include="EventSystem\WindowEvents.h" />
     <ClInclude Include="ForwardRenderer.h" />

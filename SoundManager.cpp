@@ -14,6 +14,8 @@ SoundManager::~SoundManager()
 
 bool SoundManager::Initialize()
 {
+	EventBuss::Get().AddListener(this, EventType::PlaySoundEvent, EventType::SetMusicEvent);
+
 	sf::SoundBuffer buffer;
 	
 	if (!buffer.loadFromFile("Sounds/forceField_001.ogg"))
@@ -30,14 +32,25 @@ bool SoundManager::Initialize()
 }
 
 void SoundManager::Update()
-{/*
-	test1.setBuffer(m_sounds[0]);
-	test2.setBuffer(m_sounds[1]);
-
-	test1.play();
-	test2.play();*/
+{
+	while (!m_playingSounds.empty() && m_playingSounds.front().getStatus() == sf::Sound::Status::Stopped) {
+		m_playingSounds.pop();
+	}
 }
 
 void SoundManager::OnEvent(IEvent& event) noexcept
 {
+	switch (event.GetEventType())
+	{
+		case EventType::PlaySoundEvent:
+		{
+			sf::Sound sound(m_sounds[0]);
+			sound.play();
+			m_playingSounds.push(sound);
+		}
+		case EventType::SetMusicEvent:
+		{
+
+		}
+	}
 }
