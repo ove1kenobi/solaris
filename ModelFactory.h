@@ -39,6 +39,8 @@ private:
 	std::vector<DirectX::XMFLOAT3> calcNormals(std::vector<float> vertices, std::vector<UINT> indices);
 
 	void createBuffers(UINT stride, size_t size, void* data, const std::vector<UINT>& indexBuffer, Model* model);
+
+	void setColorVertex(float r, float elevation, float poleAngle, float vertexAngle, DirectX::XMFLOAT3 normal, DirectX::XMFLOAT4* color);
 public:
 	static ModelFactory& Get() noexcept;
 	Model* GetModel(std::string filePath);

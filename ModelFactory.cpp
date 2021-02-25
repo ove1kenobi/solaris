@@ -158,78 +158,16 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r, DirectX:
 		newVertex.normal.y = normals[i / 4].y;
 		newVertex.normal.z = normals[i / 4].z;
 
-		float len = sqrt(distance.x * distance.x + distance.y * distance.y + distance.z * distance.z);
+		float elevation = sqrt(distance.x * distance.x + distance.y * distance.y + distance.z * distance.z);
 
-		DirectX::XMFLOAT3 minusYAxis;
-		minusYAxis.x = -yAxis.x;
-		minusYAxis.y = -yAxis.y;
-		minusYAxis.z = -yAxis.z;
+		//relative to the closest pole
+		float poleAngle = dot(distance, yAxis);
+		poleAngle = std::abs(poleAngle);
 
-		float angle = dot(distance, yAxis);
-		//Snow
-		if ((angle > 0.95f || angle < -0.95f) && len >= r) {
-			newVertex.color.x = std::pow(1.0f, std::abs(angle));
-			newVertex.color.y = std::pow(1.0f, std::abs(angle));
-			newVertex.color.z = std::pow(1.0f, std::abs(angle));
-			newVertex.color.w = std::pow(1.0f, std::abs(angle));
-		}
-		else {
-			//water
-			if (len < r) {
-				newVertex.color.x = 0.0f;
-				newVertex.color.y = 0.0f;
-				newVertex.color.z = static_cast<float>(std::pow(len / r, 5));
-				newVertex.color.w = 1.0f;
-			}
-			//Land
-			else if (len >= r && len <= r + (r / 15)) {
-				newVertex.color.x = 0.0f;
-				newVertex.color.y = 0.5f;
-				newVertex.color.z = 0.0f;
-				newVertex.color.w = 1.0f;
+		float vertexAngle = dot(distance, newVertex.normal);
 
-				//Brown
-				if (dot(distance, newVertex.normal) < 0.6f && dot(distance, newVertex.normal) > -0.6f) {
-					newVertex.color.x = 139.0f / 255.0f;
-					newVertex.color.y = 69.0f / 255.0f;
-					newVertex.color.z = 19.0f / 255.0f;
-				}
-
-				//kx + m
-				angle = 9.5f * (std::abs(angle) + 0.05f) - 8.5f;
-				if (angle < 0) {
-					angle = 0;
-				}
-				else if (angle > 1) {
-					angle = 1;
-				}
-				newVertex.color.x = lerp(newVertex.color.x, 1.0f, angle);
-				newVertex.color.y = lerp(newVertex.color.y, 1.0f, angle);
-				newVertex.color.z = lerp(newVertex.color.z, 1.0f, angle);
-			}
-			//Mountain
-			else if (len > r + (r / 15) && len < r + (r / 15) + (r / 15)) {
-				newVertex.color.x = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
-				newVertex.color.y = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
-				newVertex.color.z = 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / len), 10)));
-				newVertex.color.w = 1.0f;
-
-				//Brown
-				if (dot(distance, newVertex.normal) < 0.6f && dot(distance, newVertex.normal) > -0.6f) {
-					newVertex.color.x = 139.0f / 255.0f;
-					newVertex.color.y = 69.0f / 255.0f;
-					newVertex.color.z = 19.0f / 255.0f;
-				}
-			}
-			//Snowy tops
-			else {
-				newVertex.color.x = 1.0f;
-				newVertex.color.y = 1.0f;
-				newVertex.color.z = 1.0f;
-				newVertex.color.w = 1.0f;
-			}
-			
-		}
+		setColorVertex(r, elevation, poleAngle, vertexAngle, newVertex.normal, &newVertex.color);
+		
 
 		newVertex.bitangent.x = 1.0f;
 		newVertex.bitangent.y = 1.0f;
@@ -783,4 +721,110 @@ Model* ModelFactory::GenerateOrbit(float major_semi_axis, float minor_semi_axis)
 	model->setIndexBufferSize(static_cast<UINT>(vertices.size()));
 	createBuffers(sizeof(DirectX::XMFLOAT3), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
 	return model;
+}
+
+void ModelFactory::setColorVertex(float r, float elevation, float poleAngle, float vertexAngle, DirectX::XMFLOAT3 normal, DirectX::XMFLOAT4* color) {
+
+	//Describes how "wide" the north/south poles are.
+	float poleWide = 0.95f;
+	//If the angle is less than this value we get the dirtColor. (0 is a 90 degree wall, 1 is flat floor)
+	float dirtAngle = 0.7f;
+
+	//HEIGHTS:
+	float waterHigh = r;
+	float landLow = r;
+	float landHigh = r + (r / 20);
+	float mountainLow = r + (r / 15);
+	float mountainHigh = r + (r / 15) + (r / 20);
+	float topLow = r + (r / 15) + (r / 20) + (r / 20);
+	//TEMP COLORS: (the 3 letters in the end signify what colors they are used for.
+	DirectX::XMFLOAT3 snowRGB = { std::pow(0.9f, poleAngle), std::pow(0.9f, poleAngle), std::pow(0.9f, poleAngle) }; //Snow that changes from white to grey-ish dpeending on pole angle.
+	DirectX::XMFLOAT3 mountainRGB = { 1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))),  1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))),  1.0f - (0.7f * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))) } ; //Mountain grey, gets more white the higher elevation thre is.
+	DirectX::XMFLOAT3 landRGB = { 0.0f, 0.5f, 0.0f };
+	DirectX::XMFLOAT3 waterRGB = { 0.0f, 0.0f, static_cast<float>(std::pow(elevation / waterHigh, 5)) };
+	DirectX::XMFLOAT3 dirtRGB = { 160.0f / 255.0f , 82.0f / 255.0f , 45.0f / 255.0f };
+
+	//Nothing below this point should have to be changed. Only the parameters above get changed depending on planet data.
+	bool checkDirt = false;
+	//Snow around the poles.
+	if ((poleAngle > poleWide || poleAngle < -poleWide) && elevation >= r) {
+		color->x = snowRGB.x;
+		color->y = snowRGB.y;
+		color->z = snowRGB.z;
+
+		//If there is a mountain in the snow, lerp between mountain color & snow.
+		if (elevation > mountainLow) {
+			color->x = lerp(mountainRGB.x, snowRGB.x, poleAngle);
+			color->y = lerp(mountainRGB.y, snowRGB.y, poleAngle);
+			color->z = lerp(mountainRGB.z, snowRGB.z, poleAngle);
+		}
+	}
+	else {
+		//water
+		if (elevation < waterHigh) {
+			color->x = waterRGB.x;
+			color->y = waterRGB.y;
+			color->z = waterRGB.z;
+		}
+		//Land
+		else if (elevation >= landLow && elevation <= landHigh) {
+			color->x = landRGB.x;
+			color->y = landRGB.y;
+			color->z = landRGB.z;
+
+			checkDirt = true;
+		}
+		//Blend between land & mountain
+		else if (elevation > landHigh && elevation <= mountainLow) {
+			color->x = lerp(landRGB.x, mountainRGB.x, (elevation - landHigh) / (mountainLow - landHigh));
+			color->y = lerp(landRGB.y, mountainRGB.y, (elevation - landHigh) / (mountainLow - landHigh));
+			color->z = lerp(landRGB.z, mountainRGB.z, (elevation - landHigh) / (mountainLow - landHigh));
+		}
+		//Mountain
+		else if (elevation > mountainLow && elevation < mountainHigh) {
+			color->x = mountainRGB.x;
+			color->y = mountainRGB.y;
+			color->z = mountainRGB.z;
+
+			checkDirt = true;
+		}
+		//Blend between mountain & snowy top
+		else if (elevation >= mountainHigh && elevation < topLow) {
+			color->x = lerp(mountainRGB.x, snowRGB.x, (elevation - mountainHigh) / (topLow - mountainHigh));
+			color->y = lerp(mountainRGB.y, snowRGB.y, (elevation - mountainHigh) / (topLow - mountainHigh));
+			color->z = lerp(mountainRGB.z, snowRGB.z, (elevation - mountainHigh) / (topLow - mountainHigh));
+		}
+		//Snowy tops
+		else {
+			color->x = snowRGB.x;
+			color->y = snowRGB.y;
+			color->z = snowRGB.z;
+		}
+
+	}
+
+	//add tilt-color (not in water or on mountain tops)
+	if (checkDirt == true && vertexAngle < dirtAngle && vertexAngle > -dirtAngle) {
+		color->x = lerp(color->x, dirtRGB.x, vertexAngle);
+		color->y = lerp(color->y, dirtRGB.y, vertexAngle);
+		color->z = lerp(color->z, dirtRGB.z, vertexAngle);
+	}
+
+	//Smooth transition from snowy poles to the rest of the landscape.
+	//Happens between poleWide (edge of snowpole) and 0.1 less than that. Example: 0.95 & 0.85
+	if (poleAngle <= poleWide && poleAngle >= poleWide - 0.1f) {
+		float adjustedAngle = poleWide * 10.0f * (poleAngle + 0.05f) - (poleWide * 10.0f - 1.0f);
+		//Clamp it
+		if (adjustedAngle < 0) {
+			adjustedAngle = 0;
+		}
+		else if (adjustedAngle > 1) {
+			adjustedAngle = 1;
+		}
+		color->x = lerp(color->x, snowRGB.x, adjustedAngle);
+		color->y = lerp(color->y, snowRGB.y, adjustedAngle);
+		color->z = lerp(color->z, snowRGB.z, adjustedAngle);
+	}
+
+	color->w = 1.0f;
 }
