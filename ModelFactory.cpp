@@ -99,6 +99,9 @@ Model* ModelFactory::GetModel(std::string filePath)
 					scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &texFile);
 					ModelTexture* tex = new ModelTexture();
 					std::string texPath = std::string("models/") + std::string(texFile.C_Str());
+#ifdef _DEBUG
+					loadDebug += std::string("Texture file: ") + texPath + std::string("\n");
+#endif
 					tex->LoadTexture(m_device, CA2W(texPath.c_str()), 0);
 					model->AddTexture(tex, 0);
 				}

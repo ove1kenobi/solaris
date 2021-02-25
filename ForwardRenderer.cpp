@@ -46,7 +46,7 @@ void ForwardRenderer::BeginFrame()
 		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
 
-	EventBuss::Get().Delegate(ubEvent);
+	//EventBuss::Get().Delegate(ubEvent);
 
 	//Bind orbit:
 	BindIDEvent bindEventOrbit(BindID::ID_Orbit);
@@ -58,7 +58,7 @@ void ForwardRenderer::BeginFrame()
 		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
 
-	EventBuss::Get().Delegate(ubEvent);
+	//EventBuss::Get().Delegate(ubEvent);
 
 	//Bind Sun:
 	BindIDEvent bindEventSun(BindID::ID_SUN);
@@ -67,14 +67,14 @@ void ForwardRenderer::BeginFrame()
 	(*m_pGameObjects)[m_numPlanets * 2]->bindUniques(m_pDeviceContext);
 	m_pDeviceContext->DrawIndexed((*m_pGameObjects)[m_numPlanets * 2]->getIndexBufferSize(), 0u, 0u);
 
-	EventBuss::Get().Delegate(ubEvent);
-	BindLightData();
-	BindCameraData();
+	//EventBuss::Get().Delegate(ubEvent);
+	//BindLightData();
+	//BindCameraData();
 
-	//Bind Player:
-	BindIDEvent bindEventPlayer(BindID::ID_Player);
-	EventBuss::Get().Delegate(bindEventPlayer);
-	//Player:
+	//Bind Textured models:
+	BindIDEvent bindEventTextured(BindID::ID_Textured);
+	EventBuss::Get().Delegate(bindEventTextured);
+	// Textured models:
 	for (size_t i = m_numPlanets * 2 + 1; i < (*m_pGameObjects).size(); ++i) {
 		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
 		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
