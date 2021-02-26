@@ -34,6 +34,6 @@ VS_OUT vs_main(in VS_IN vsIn)
     vsOut.outTexCoord = vsIn.inTexCoord;
 
     vsOut.outNormalWS = normalize(mul(float4(vsIn.inNormalLS, 0.0f), WMatrix).xyz);
-    
+
     return vsOut;
 }

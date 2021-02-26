@@ -67,13 +67,10 @@ Model* ModelFactory::GetModel(std::string filePath)
 					if (vmax.z < vtx.position.z) vmax.z = vtx.position.z;
 
 					if (mesh->HasTextureCoords(iMesh))
-					{
+					{	// If model has several meshes iMesh refers to current mesh
 						vtx.texcoord.x = mesh->mTextureCoords[iMesh][i].x;
 						vtx.texcoord.y = mesh->mTextureCoords[iMesh][i].y;
 					}
-					//vtx.normal.x = mesh->mVertices[i].x;	// temporary for
-					//vtx.normal.y = 0.3f;//mesh->mVertices[i].y;	// vertex color
-					//vtx.normal.z = mesh->mVertices[i].z;	// use section below.
 
 					if (mesh->HasNormals())
 					{

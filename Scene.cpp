@@ -187,8 +187,7 @@ void Scene::Update() noexcept {
 		DirectX::XMFLOAT3 pos = ship->GetCenter() + velocity * 3000.0f;
 		pos = pos + DirectX::XMFLOAT3(dist(gen), dist(gen), dist(gen));
 		// Give asteroid a random velocity in the general direction of spaceship
-		//velocity = velocity * DirectX::XMFLOAT3(-adj(gen), -adj(gen), -adj(gen));
-		velocity = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+		velocity = velocity * DirectX::XMFLOAT3(-adj(gen), -adj(gen), -adj(gen));
 		Asteroid* ast = new Asteroid();
 		ast->init(pos, velocity, ship);
 		m_gameObjects.push_back(ast);
