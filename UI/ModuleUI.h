@@ -24,7 +24,7 @@ protected:
 
 	//Updating handlers and error checking
 	void UpdateDXHandlers(IEvent& event) noexcept;
-	bool ErrorCheck(HRESULT handle, std::string type);
+	bool ErrorCheck(HRESULT handle, std::wstring type);
 public:
 	ModuleUI() noexcept;
 	virtual ~ModuleUI() = default;

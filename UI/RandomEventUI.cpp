@@ -27,7 +27,7 @@ RandomEventUI::~RandomEventUI() {
 //Create functions
 bool RandomEventUI::CreateText() {
 	//Event text
-	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pTextFont, false), "GetSystemFont");
+	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pTextFont, false), L"GetSystemFont");
 
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
 		L"Tenika",
@@ -38,10 +38,10 @@ bool RandomEventUI::CreateText() {
 		14.0f,
 		L"en-us",
 		&m_pTextFormat
-	), "TextFormat");
+	), L"TextFormat");
 
 	//Hover text
-	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pHoverFont, false), "GetSystemFont");
+	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pHoverFont, false), L"GetSystemFont");
 
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
 		L"NEOTERIQUE",
@@ -52,9 +52,9 @@ bool RandomEventUI::CreateText() {
 		20.0f,
 		L"en-us",
 		&m_pHoverTextFormat
-	), "TextFormat");
+	), L"TextFormat");
 
-	ErrorCheck(m_pHoverTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
+	ErrorCheck(m_pHoverTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), L"TextAlignment");
 
 
 	//Icon text
@@ -67,22 +67,22 @@ bool RandomEventUI::CreateText() {
 		8.0f,
 		L"en-us",
 		&m_pIconTextFormat
-	), "TextFormat");
+	), L"TextFormat");
 
 	return true;
 }
 
 bool RandomEventUI::CreateDetails() {
-	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pLeftHover), "PathGeometry");
-	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pRightHover), "PathGeometry");
-	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pBottomHover), "PathGeometry");
+	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pLeftHover), L"PathGeometry");
+	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pRightHover), L"PathGeometry");
+	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pBottomHover), L"PathGeometry");
 	return true;
 }
 
 //Update functions
 bool RandomEventUI::UpdateDetails() {
 	bool updated = false;
-	if (ErrorCheck(m_pLeftHover->Open(&m_pSink), "OpenGeometry")) {
+	if (ErrorCheck(m_pLeftHover->Open(&m_pSink), L"OpenGeometry")) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -101,10 +101,10 @@ bool RandomEventUI::UpdateDetails() {
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
-		updated = ErrorCheck(m_pSink->Close(), "CloseGeometry");
+		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
 	}
 
-	if (ErrorCheck(m_pRightHover->Open(&m_pSink), "OpenGeometry") && updated) {
+	if (ErrorCheck(m_pRightHover->Open(&m_pSink), L"OpenGeometry") && updated) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -123,10 +123,10 @@ bool RandomEventUI::UpdateDetails() {
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
-		updated = ErrorCheck(m_pSink->Close(), "CloseGeometry");
+		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
 	}
 
-	if (ErrorCheck(m_pBottomHover->Open(&m_pSink), "OpenGeometry") && updated) {
+	if (ErrorCheck(m_pBottomHover->Open(&m_pSink), L"OpenGeometry") && updated) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -141,7 +141,7 @@ bool RandomEventUI::UpdateDetails() {
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
-		updated = ErrorCheck(m_pSink->Close(), "CloseGeometry");
+		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
 	}
 	return updated;
 }

@@ -13,10 +13,10 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 
 
 	//AddFontResource(this->GetFontFilePath(L"AwareBold-qZo3x.ttf").c_str());
+	m_pRandomEvents.push_back(new RandomEventUI());
+	m_pRandomEvents.push_back(new RandomEventUI());
+	m_pRandomEvents.push_back(new RandomEventUI());
 
-	m_pRandomEvents.push_back(new RandomEventUI());
-	m_pRandomEvents.push_back(new RandomEventUI());
-	m_pRandomEvents.push_back(new RandomEventUI());
 	//Example text: should be removed once event system is in place.
 	m_pPlanetNameText = L"TATOOINE";
 
@@ -69,26 +69,26 @@ bool PlanetInteractionUI::CreateScreen() {
 	UpdateScreen();
 
 	//Left corner
-	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pBottomLeft), "PathGeometry");
-	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pBottomLeftDetailsOne), "PathGeometry");
-	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pBottomLeftDetailsTwo), "PathGeometry");
+	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pBottomLeft), L"PathGeometry");
+	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pBottomLeftDetailsOne), L"PathGeometry");
+	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pBottomLeftDetailsTwo), L"PathGeometry");
 
 	//Right corner
-	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pBottomRight), "PathGeometry");
-	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pBottomRightDetailsOne), "PathGeometry");
-	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pBottomRightDetailsTwo), "PathGeometry");
+	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pBottomRight), L"PathGeometry");
+	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pBottomRightDetailsOne), L"PathGeometry");
+	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pBottomRightDetailsTwo), L"PathGeometry");
 
 	//Top corners
-	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pTop), "PathGeometry");
-	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pTopDetailsLeft), "PathGeometry");
-	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pTopDetailsRight), "PathGeometry");
+	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pTop), L"PathGeometry");
+	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pTopDetailsLeft), L"PathGeometry");
+	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pTopDetailsRight), L"PathGeometry");
 
 	return true;
 }
 
 bool PlanetInteractionUI::CreateTextElements() {
 	//Planet name
-	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pTitleFont, false), "GetSystemFont");
+	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pTitleFont, false), L"GetSystemFont");
 
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
 		L"Aware",
@@ -99,11 +99,11 @@ bool PlanetInteractionUI::CreateTextElements() {
 		41.0f,
 		L"en-us",
 		&m_pTitleFormat
-	), "TextFormat");
-	ErrorCheck(m_pTitleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
+	), L"TextFormat");
+	ErrorCheck(m_pTitleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), L"TextAlignment");
 
 	//Screen text
-	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pBodyFont, false), "GetSystemFont");
+	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pBodyFont, false), L"GetSystemFont");
 
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
 		L"Tenika",
@@ -114,7 +114,7 @@ bool PlanetInteractionUI::CreateTextElements() {
 		16.0f,
 		L"en-us",
 		&m_pBodyFormat
-	), "TextFormat");
+	), L"TextFormat");
 
 	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
 		if (!m_pRandomEvents.at(i)->Initialize()) {
@@ -142,14 +142,14 @@ bool PlanetInteractionUI::CreateTools() {
 		D2D1_GAMMA_1_0,
 		D2D1_EXTEND_MODE_CLAMP,
 		&m_pMainGradientStops
-	), "GradientStops");
+	), L"GradientStops");
 
 	ErrorCheck(m_pRenderTarget2D->CreateLinearGradientBrush(
 		D2D1::LinearGradientBrushProperties(
 			D2D1::Point2F(m_pMainRectangle.left, m_pWindowHeight),
 			D2D1::Point2F(m_pMainRectangle.right, m_pWindowHeight)),
 		m_pMainGradientStops.Get(),
-		&m_pMainGradientBrush),"GradientBrush");
+		&m_pMainGradientBrush),L"GradientBrush");
 
 	//Corner gradient
 	gradientStops[0].color = D2D1::ColorF(D2D1::ColorF::Aqua, 0.25f);
@@ -165,14 +165,14 @@ bool PlanetInteractionUI::CreateTools() {
 		D2D1_GAMMA_1_0,
 		D2D1_EXTEND_MODE_CLAMP,
 		&m_pCornerGradientStops
-	), "GradientStops");
+	), L"GradientStops");
 
 	ErrorCheck(m_pRenderTarget2D->CreateLinearGradientBrush(
 		D2D1::LinearGradientBrushProperties(
 			D2D1::Point2F(m_pMainRectangle.left, m_pWindowHeight),
 			D2D1::Point2F(m_pMainRectangle.right, m_pWindowHeight)),
 		m_pCornerGradientStops.Get(),
-		&m_pCornerGradientBrush), "GradientBrush");
+		&m_pCornerGradientBrush), L"GradientBrush");
 	return true;
 }
 
@@ -205,7 +205,7 @@ bool PlanetInteractionUI::UpdateLeftCorner() {
 	bool updated = false;
 
 	//Set corner
-	if (ErrorCheck(m_pBottomLeft->Open(&m_pSink), "OpenGeometry")) {
+	if (ErrorCheck(m_pBottomLeft->Open(&m_pSink), L"OpenGeometry")) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -227,11 +227,11 @@ bool PlanetInteractionUI::UpdateLeftCorner() {
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
-		updated = ErrorCheck(m_pSink->Close(), "CloseGeometry");
+		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
 	}
 
 	//Set corner details
-	if (ErrorCheck(m_pBottomLeftDetailsOne->Open(&m_pSink), "OpenGeometry") && updated) {
+	if (ErrorCheck(m_pBottomLeftDetailsOne->Open(&m_pSink), L"OpenGeometry") && updated) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -246,10 +246,10 @@ bool PlanetInteractionUI::UpdateLeftCorner() {
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
-		updated = ErrorCheck(m_pSink->Close(), "CloseGeometry");
+		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
 	}
 
-	if (ErrorCheck(m_pBottomLeftDetailsTwo->Open(&m_pSink), "OpenGeometry") && updated) {
+	if (ErrorCheck(m_pBottomLeftDetailsTwo->Open(&m_pSink), L"OpenGeometry") && updated) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -264,7 +264,7 @@ bool PlanetInteractionUI::UpdateLeftCorner() {
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
-		updated = ErrorCheck(m_pSink->Close(), "CloseGeometry");
+		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
 	}
 	return updated;
 }
@@ -273,7 +273,7 @@ bool PlanetInteractionUI::UpdateRightCorner() {
 	bool updated = false;
 
 	//Set corner
-	if (ErrorCheck(m_pBottomRight->Open(&m_pSink), "OpenGeometry")) {
+	if (ErrorCheck(m_pBottomRight->Open(&m_pSink), L"OpenGeometry")) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -295,11 +295,11 @@ bool PlanetInteractionUI::UpdateRightCorner() {
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
-		updated = ErrorCheck(m_pSink->Close(), "CloseGeometry");
+		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
 	}
 
 	//Set corner details
-	if (ErrorCheck(m_pBottomRightDetailsOne->Open(&m_pSink), "OpenGeometry") && updated) {
+	if (ErrorCheck(m_pBottomRightDetailsOne->Open(&m_pSink), L"OpenGeometry") && updated) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -314,10 +314,10 @@ bool PlanetInteractionUI::UpdateRightCorner() {
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
-		updated = ErrorCheck(m_pSink->Close(), "CloseGeometry");
+		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
 	}
 
-	if (ErrorCheck(m_pBottomRightDetailsTwo->Open(&m_pSink), "OpenGeometry") && updated) {
+	if (ErrorCheck(m_pBottomRightDetailsTwo->Open(&m_pSink), L"OpenGeometry") && updated) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -332,7 +332,7 @@ bool PlanetInteractionUI::UpdateRightCorner() {
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
-		updated = ErrorCheck(m_pSink->Close(), "CloseGeometry");
+		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
 	}
 
 	return updated;
@@ -342,7 +342,7 @@ bool PlanetInteractionUI::UpdateTopCorners() {
 	bool updated = false;
 
 	//Set top corners
-	if (ErrorCheck(m_pTop->Open(&m_pSink), "OpenGeometry")) {
+	if (ErrorCheck(m_pTop->Open(&m_pSink), L"OpenGeometry")) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -378,10 +378,10 @@ bool PlanetInteractionUI::UpdateTopCorners() {
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
-		updated = ErrorCheck(m_pSink->Close(), "CloseGeometry");
+		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
 	}
 
-	if (ErrorCheck(m_pTopDetailsLeft->Open(&m_pSink), "OpenGeometry") && updated) {
+	if (ErrorCheck(m_pTopDetailsLeft->Open(&m_pSink), L"OpenGeometry") && updated) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -396,11 +396,11 @@ bool PlanetInteractionUI::UpdateTopCorners() {
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
-		updated = ErrorCheck(m_pSink->Close(), "CloseGeometry");
+		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
 	}
 
 
-	if (ErrorCheck(m_pTopDetailsRight->Open(&m_pSink), "OpenGeometry") && updated) {
+	if (ErrorCheck(m_pTopDetailsRight->Open(&m_pSink), L"OpenGeometry") && updated) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -415,7 +415,7 @@ bool PlanetInteractionUI::UpdateTopCorners() {
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
-		updated = ErrorCheck(m_pSink->Close(), "CloseGeometry");
+		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
 	}
 
 	return updated;

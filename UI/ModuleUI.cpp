@@ -12,7 +12,7 @@ bool ModuleUI::CreateBrush() {
 	return ErrorCheck(m_pRenderTarget2D->CreateSolidColorBrush(
 		D2D1::ColorF(D2D1::ColorF::Aqua, 0.5f),
 		&m_pBrush),
-		"SolidColorBrush"
+		L"SolidColorBrush"
 	);
 }
 
@@ -28,13 +28,13 @@ void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {
 	#endif
 }
 
-bool ModuleUI::ErrorCheck(HRESULT handle, std::string type) {
-	std::string error;
+bool ModuleUI::ErrorCheck(HRESULT handle, std::wstring type) {
+	std::wstring error;
 	if (FAILED(handle)) {
-		error.append("Error: ");
+		error.append(L"Error: ");
 		error.append(type);
-		error.append(" couldn't be created.");
-		printf(error.c_str());
+		error.append(L" couldn't be created.");
+		OutputDebugString(error.c_str());
 		return false;
 	}
 	return true;
@@ -73,5 +73,5 @@ void ModuleUI::RenderHelpGrid(int gridSize) {
 }
 
 void ModuleUI::EndFrame() {
-	ErrorCheck(m_pRenderTarget2D->EndDraw(), "EndDraw");
+	ErrorCheck(m_pRenderTarget2D->EndDraw(), L"EndDraw");
 }
