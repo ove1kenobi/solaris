@@ -112,17 +112,17 @@ void GameObject::UpdatePhysics()
 	if (m_mass != 0.0f) {
 		// Divide the force by the objects mass to get the acceleration F = m*a -> a = F/m
 		m_velocity = m_velocity + m_sumForces / m_mass;
+
+		float speed = length(m_velocity);
+		// Limit how fast an object can travel
+		if (speed > m_topSpeed) {
+			m_velocity = normalize(m_velocity);
+			m_velocity = m_topSpeed * m_velocity;
+		}
+
+		m_center.x += static_cast<float>(m_velocity.x * m_timer.DeltaTime());
+		m_center.y += static_cast<float>(m_velocity.y * m_timer.DeltaTime());
+		m_center.z += static_cast<float>(m_velocity.z * m_timer.DeltaTime());
 	}
 	m_sumForces = { 0.0f, 0.0f , 0.0f };
-
-	float speed = length(m_velocity);
-	// Limit how fast an object can travel
-	if (speed > m_topSpeed) {
-		m_velocity = normalize(m_velocity);
-		m_velocity = m_topSpeed * m_velocity;
-	}
-
-	m_center.x += static_cast<float>(m_velocity.x * m_timer.DeltaTime());
-	m_center.y += static_cast<float>(m_velocity.y * m_timer.DeltaTime());
-	m_center.z += static_cast<float>(m_velocity.z * m_timer.DeltaTime());
 }
