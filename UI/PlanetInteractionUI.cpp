@@ -11,10 +11,12 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pPlanetNameTextBox = D2D1::RectF();
 	m_pPlanetFlavourTextBox = D2D1::RectF();
 
-	m_pRandomEvents.push_back(new RandomEventUI());
-	m_pRandomEvents.push_back(new RandomEventUI());
-	m_pRandomEvents.push_back(new RandomEventUI());
 
+	//AddFontResource(this->GetFontFilePath(L"AwareBold-qZo3x.ttf").c_str());
+
+	m_pRandomEvents.push_back(new RandomEventUI());
+	m_pRandomEvents.push_back(new RandomEventUI());
+	m_pRandomEvents.push_back(new RandomEventUI());
 	//Example text: should be removed once event system is in place.
 	m_pPlanetNameText = L"TATOOINE";
 
@@ -55,6 +57,7 @@ bool PlanetInteractionUI::Initialize() {
 }
 
 PlanetInteractionUI::~PlanetInteractionUI() {
+	//Release memory
 	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
 		delete m_pRandomEvents.at(i);
 	}
@@ -85,7 +88,6 @@ bool PlanetInteractionUI::CreateScreen() {
 
 bool PlanetInteractionUI::CreateTextElements() {
 	//Planet name
-	AddFontResource(L"AwareBold-qZo3x.ttf");
 	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pTitleFont, false), "GetSystemFont");
 
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
@@ -98,11 +100,9 @@ bool PlanetInteractionUI::CreateTextElements() {
 		L"en-us",
 		&m_pTitleFormat
 	), "TextFormat");
-	RemoveFontResource(L"AwareBold-qZo3x.ttf");
 	ErrorCheck(m_pTitleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
 
 	//Screen text
-	AddFontResource(L"Tenika400Regular-Rpyql.ttf");
 	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pBodyFont, false), "GetSystemFont");
 
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
@@ -115,7 +115,6 @@ bool PlanetInteractionUI::CreateTextElements() {
 		L"en-us",
 		&m_pBodyFormat
 	), "TextFormat");
-	RemoveFontResource(L"Tenika400Regular-Rpyql.ttf");
 
 	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
 		if (!m_pRandomEvents.at(i)->Initialize()) {
@@ -179,14 +178,15 @@ bool PlanetInteractionUI::CreateTools() {
 
 //Update functions
 bool PlanetInteractionUI::UpdateScreen() {
-	/*
-	m_pMainRectangle = D2D1::RectF(
+	//In case we want to make it dynamic:
+	/*m_pMainRectangle = D2D1::RectF(
 		100.0f,
 		50.0f,
 		m_pWindowWidth - 100.0f,
 		m_pWindowHeight - 200.0f
 	);*/
 
+	//Locked UI size
 	m_pMainRectangle = D2D1::RectF(
 		(m_pWindowWidth/2.0f) - 500.0f,
 		(m_pWindowHeight / 2.0f) - 350.0f,
@@ -460,9 +460,9 @@ bool PlanetInteractionUI::UpdateTextElements() {
 
 	m_pRandomEvents.at(1)->SetHoverBox(D2D1::RectF(
 		m_pMainRectangle.left + m_pScreenOffset,
-		m_pMainRectangle.top + m_pScreenOffset + m_pBlockSize + m_pPadding,// + (m_pPadding / 2.0f),
+		m_pMainRectangle.top + m_pScreenOffset + m_pBlockSize + m_pPadding,
 		(static_cast<float>(m_pWindowWidth) / 2.0f) - m_pPadding,
-		m_pMainRectangle.bottom - m_pScreenOffset - m_pBlockSize - m_pPadding// - (m_pPadding / 2.0f)
+		m_pMainRectangle.bottom - m_pScreenOffset - m_pBlockSize - m_pPadding
 	), m_pPadding);
 
 	return true;
@@ -527,21 +527,6 @@ void PlanetInteractionUI::RenderScreen() {
 	//Add outline to main square
 	UpdateBrush(D2D1::ColorF::White, 0.5f);
 	m_pRenderTarget2D->DrawRectangle(m_pMainRectangle, m_pBrush.Get());
-
-	/*
-	m_pRenderTarget2D->DrawLine(
-		D2D1::Point2F(m_pMainRectangle.left, m_pEventOneHoverTextBox.bottom + 7.5f),
-		D2D1::Point2F(static_cast<FLOAT>(m_pWindowWidth)/ 2.0f, m_pEventOneHoverTextBox.bottom + 7.5f),
-		m_pBrush.Get(),
-		1.0f
-	);
-
-	m_pRenderTarget2D->DrawLine(
-		D2D1::Point2F(m_pMainRectangle.left, m_pEventThreeHoverTextBox.top - 7.5f),
-		D2D1::Point2F(static_cast<FLOAT>(m_pWindowWidth) / 2.0f, m_pEventThreeHoverTextBox.top - 7.5f),
-		m_pBrush.Get(),
-		1.0f
-	);*/
 
 	m_pRenderTarget2D->DrawLine(
 		D2D1::Point2F(static_cast<FLOAT>(m_pWindowWidth) / 2.0f, m_pMainRectangle.top),

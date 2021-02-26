@@ -1,5 +1,6 @@
 #include "..\pch.h"
 #include "RandomEventUI.h"
+#include <atlstr.h>
 
 RandomEventUI::RandomEventUI() {
 	m_pHoverTextBox = D2D1::RectF();
@@ -26,7 +27,6 @@ RandomEventUI::~RandomEventUI() {
 //Create functions
 bool RandomEventUI::CreateText() {
 	//Event text
-	AddFontResource(L"Tenika400Regular-Rpyql.ttf");
 	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pTextFont, false), "GetSystemFont");
 
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
@@ -39,10 +39,8 @@ bool RandomEventUI::CreateText() {
 		L"en-us",
 		&m_pTextFormat
 	), "TextFormat");
-	RemoveFontResource(L"Tenika400Regular-Rpyql.ttf");
 
 	//Hover text
-	AddFontResource(L"Fonts/NeoteriqueItalic-rAVK.ttf");
 	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pHoverFont, false), "GetSystemFont");
 
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
@@ -55,7 +53,6 @@ bool RandomEventUI::CreateText() {
 		L"en-us",
 		&m_pHoverTextFormat
 	), "TextFormat");
-	RemoveFontResource(L"Fonts/NeoteriqueItalic-rAVK.ttf");
 
 	ErrorCheck(m_pHoverTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
 

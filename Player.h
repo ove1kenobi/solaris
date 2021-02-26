@@ -6,6 +6,7 @@
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventBuss.h"
 #include "EventSystem/InputEvents.h"
+
 class Player : public IEventListener
 {
 private:
@@ -15,13 +16,16 @@ private:
 	PlayerCamera* m_camera;
 	Time m_time;
 
+	float m_thrusterForce, m_desiredSpeed, m_topSpeed;
+
 	float m_mousePosX, m_mousePosY;
 	bool m_moveForwards, m_moveBackwards;
-	bool m_playerControlsActive;
-	float m_speed, m_rotationSpeed;
+	bool m_stopMovement;
+	bool m_playerControlsActive, m_stabilizerActive;
+	float m_rotationSpeed;
 	// Updates the rotation for the camera and the ship
 	void UpdateRotation();
-
+	DirectX::XMFLOAT3 Stabilize();
 public:
 	Player();
 	~Player();
