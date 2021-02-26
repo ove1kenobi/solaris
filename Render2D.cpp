@@ -1,33 +1,81 @@
 #include "pch.h"
 #include "Render2D.h"
 
-Render2D::Render2D() noexcept {
-	m_TestUI = new PlanetInteractionUI();
-	m_RenderPlanetInteraction = false;
-	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);
-}
-
-Render2D::~Render2D() {
-	delete m_TestUI;
-}
-
-const bool Render2D::Initialize() noexcept {
-	if (!m_TestUI->Initialize()) {
+bool Render2D::AddFonts() {
+	//Load in fonts which the UI will use
+	if (AddFontResource(this->GetFontFilePath(L"AwareBold-qZo3x.ttf").c_str()) == 0) {
+		return false;
+	}
+	if (AddFontResource(this->GetFontFilePath(L"Tenika400Regular-Rpyql.ttf").c_str()) == 0) {
+		return false;
+	}
+	if (AddFontResource(this->GetFontFilePath(L"Neoterique-Y08L.ttf").c_str()) == 0) {
+		return false;
+	}
+	if (AddFontResource(this->GetFontFilePath(L"NeoteriqueItalic-rAVK.ttf").c_str()) == 0) {
 		return false;
 	}
 	return true;
 }
 
+Render2D::Render2D() noexcept {
+	//Make render2D able to UI handle events (for now, only keyboard ones)
+	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);
+
+	if (AddFonts()) {
+		//Set start UI and load them all into an vector
+		m_CurrentUI = TypesUI::PlanetInteraction;
+		m_Modules.push_back(new PlanetInteractionUI());
+		m_Modules.push_back(new HeadsUpDisplayUI());
+	}
+
+	m_Render = false;
+}
+
+Render2D::~Render2D() {
+	for (unsigned int i = 0; i < m_Modules.size(); i++) {
+		delete m_Modules.at(i);
+	}
+	//Remove fonts used
+	RemoveFontResource(this->GetFontFilePath(L"AwareBold-qZo3x.ttf").c_str());
+	RemoveFontResource(this->GetFontFilePath(L"Tenika400Regular-Rpyql.ttf").c_str());
+	RemoveFontResource(this->GetFontFilePath(L"NeoteriqueItalic-rAVK.ttf").c_str());
+	RemoveFontResource(this->GetFontFilePath(L"Neoterique-Y08L.ttf").c_str());
+}
+
+const bool Render2D::Initialize() noexcept {
+	for (unsigned int i = 0; i < m_Modules.size(); i++) {
+		if (!m_Modules.at(i)->Initialize()) {
+			return false;
+		};
+	}
+	return true;
+}
+
+std::wstring Render2D::GetFontFilePath(std::wstring fontFile) {
+	std::wstring FilePath;
+
+	//Get current directory
+	TCHAR NPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, NPath);
+	FilePath.append(NPath);
+
+	//Get font file
+	FilePath.append(L"\\UI\\Fonts\\");
+	FilePath.append(fontFile);
+
+	return FilePath;
+}
+
 void Render2D::RenderUI() {
-	if (m_RenderPlanetInteraction) {
-		m_TestUI->BeginFrame();
-
-		m_TestUI->RenderUI();
-
-		m_TestUI->EndFrame();
+	if (m_Render) {
+		m_Modules.at(static_cast<int>(m_CurrentUI))->BeginFrame();
+		m_Modules.at(static_cast<int>(m_CurrentUI))->Render();
+		m_Modules.at(static_cast<int>(m_CurrentUI))->EndFrame();
 	}
 }
 
+//Will in the future take in UI events to know what to render when
 void Render2D::OnEvent(IEvent& event) noexcept {
 	switch (event.GetEventType()) {
 		case EventType::KeyboardEvent:
@@ -37,11 +85,21 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 
 			if (state == KeyState::KeyPress) {
 				if (virKey == 'E') {
-					if (m_RenderPlanetInteraction) {
-						m_RenderPlanetInteraction = false;
+					m_CurrentUI = TypesUI::PlanetInteraction;
+					if (m_Render) {
+						m_Render = false;
 					}
 					else {
-						m_RenderPlanetInteraction = true;
+						m_Render = true;
+					}
+				}
+				if (virKey == 'R') {
+					m_CurrentUI = TypesUI::HUD;
+					if (m_Render) {
+						m_Render = false;
+					}
+					else {
+						m_Render = true;
 					}
 				}
 			}

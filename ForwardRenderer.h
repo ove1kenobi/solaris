@@ -29,5 +29,5 @@ public:
 	ForwardRenderer() noexcept;
 	virtual ~ForwardRenderer() noexcept = default;
 	[[nodiscard]] const bool Initialize(UINT screenWidth, UINT screenHeight) noexcept;
-	ID3D11RenderTargetView* RenderFrame();
+	void RenderFrame();
 };

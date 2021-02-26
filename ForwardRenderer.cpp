@@ -116,10 +116,9 @@ const bool ForwardRenderer::Initialize(UINT screenWidth, UINT screenHeight) noex
 }
 
 //Calls private functions to render the frame
-ID3D11RenderTargetView* ForwardRenderer::RenderFrame()
+void ForwardRenderer::RenderFrame()
 {
 	BeginFrame();
-	return nullptr;
 }
 
 void ForwardRenderer::OnEvent(IEvent& event) noexcept 
