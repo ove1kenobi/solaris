@@ -7,8 +7,7 @@
 struct MatrixBufferShadow
 {
 	DirectX::XMMATRIX worldMatrix;
-	DirectX::XMMATRIX viewMatrix;
-	DirectX::XMMATRIX projectionMatrix;
+	DirectX::XMMATRIX worldViewProjectionMatrix;
 };
 struct ShadowData
 {
