@@ -17,6 +17,7 @@ protected:
 	float m_yaw;
 	Time m_timer;
 	DirectX::XMFLOAT3 m_sumForces;
+	float m_topSpeed;
 
 	//Where the buffers are stored
 	Model* m_model;

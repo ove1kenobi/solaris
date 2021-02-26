@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "ourMath.h"
 
 class SpaceShip : public GameObject
 {
@@ -10,11 +11,13 @@ public:
 	SpaceShip();
 	virtual ~SpaceShip() = default;
 
-	void Move(float step);
+
 	void AddRotation(float yaw, float pitch);
 	void SetTilt(float pitchLerp, float rollLerp);
-	void SetForwardVector(DirectX::XMFLOAT3 cameraPos);
+	void SetForwardVector(DirectX::XMFLOAT3 forwardVector);
 
+	float GetTopSpeed();
+	DirectX::XMFLOAT3 GetVelocity();
 	DirectX::XMFLOAT3 getCenter();
 	virtual GameObject* update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
 	virtual void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;

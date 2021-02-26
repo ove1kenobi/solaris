@@ -25,7 +25,8 @@ GameObject* SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatr
 	ImGui::Begin("Spaceship");
 	ImGui::Text("Center  : (%f, %f, %f)", m_center.x, m_center.y, m_center.z);
 	ImGui::Text("Velocity: (%f, %f, %f)", m_velocity.x, m_velocity.y, m_velocity.z);
-	ImGui::DragFloat("Mass", &m_mass, 500.0f);
+	ImGui::Text("Speed	: %f", length(m_velocity));
+	//ImGui::DragFloat("Mass", &m_mass, 500.0f);
 	ImGui::End();
 #endif
 
@@ -65,19 +66,6 @@ GameObject* SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatr
 	return nullptr;
 }
 
-void SpaceShip::Move(float step)
-{
-	DirectX::XMFLOAT3 pos;
-
-	pos.x = step * m_forwardVector.x;
-	pos.y = step * m_forwardVector.y;
-	pos.z = step * m_forwardVector.z;
-
-	m_center.x += pos.x;
-	m_center.y += pos.y;
-	m_center.z += pos.z;
-}
-
 void SpaceShip::AddRotation(float yaw, float pitch)
 {
 	float alpha = 0.1f;
@@ -97,19 +85,19 @@ void SpaceShip::SetTilt(float pitchLerp, float rollLerp)
 	m_rollTilt = rollLerp * (float)M_PI_4;
 }
 
-void SpaceShip::SetForwardVector(DirectX::XMFLOAT3 cameraPos)
+void SpaceShip::SetForwardVector(DirectX::XMFLOAT3 forwardVector)
 {
-	// Create a vector from the camera to the ship 
-	m_forwardVector.x = m_center.x - cameraPos.x;
-	m_forwardVector.y = m_center.y - cameraPos.y;
-	m_forwardVector.z = m_center.z - cameraPos.z;
-	
-	float length = sqrtf(powf(m_forwardVector.x, 2) + powf(m_forwardVector.y, 2) + powf(m_forwardVector.z, 2));
+	m_forwardVector = forwardVector;
+}
 
-	// Normalize the vector
-	m_forwardVector.x /= length;
-	m_forwardVector.y /= length;
-	m_forwardVector.z /= length;
+float SpaceShip::GetTopSpeed()
+{
+	return m_topSpeed;
+}
+
+DirectX::XMFLOAT3 SpaceShip::GetVelocity()
+{
+	return m_velocity;
 }
 
 const bool SpaceShip::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
