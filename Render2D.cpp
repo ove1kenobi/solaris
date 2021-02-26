@@ -26,6 +26,7 @@ Render2D::Render2D() noexcept {
 		//Set start UI and load them all into an vector
 		m_CurrentUI = TypesUI::PlanetInteraction;
 		m_Modules.push_back(new PlanetInteractionUI());
+		m_Modules.push_back(new HeadsUpDisplayUI());
 	}
 
 	m_Render = false;
@@ -85,6 +86,15 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 			if (state == KeyState::KeyPress) {
 				if (virKey == 'E') {
 					m_CurrentUI = TypesUI::PlanetInteraction;
+					if (m_Render) {
+						m_Render = false;
+					}
+					else {
+						m_Render = true;
+					}
+				}
+				if (virKey == 'R') {
+					m_CurrentUI = TypesUI::HUD;
 					if (m_Render) {
 						m_Render = false;
 					}

@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "UI/TypesUI.h"
 #include "UI/PlanetInteractionUI.h"
+#include "UI/HeadsUpDisplayUI.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/InputEvents.h"
