@@ -135,3 +135,7 @@ GameObject* CosmicBody::GetOrbit()
 float CosmicBody::GetRadius() {
 	return m_radius;
 }
+
+int CosmicBody::GetRotDir() {
+	return m_rotationDir;
+}

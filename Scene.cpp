@@ -9,6 +9,12 @@ void initPlanet(Planet* planet, Orbit* orbit, std::vector<GameObject*>& gameObje
 	planets[id] = planet;
 }
 
+void initWaterSphere(Planet* planet, Orbit* orbit, std::vector<Planet*>& waterSpheres, size_t id, float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo) {
+	planet->Initialize(x, y, z, r, xRot, zRot, rotDir, tetherTo, orbit);
+
+	waterSpheres[id] = planet;
+}
+
 Scene::Scene() noexcept
 	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }
 {
@@ -17,6 +23,9 @@ Scene::Scene() noexcept
 
 Scene::~Scene() {
 	for (auto r : this->m_gameObjects) {
+		delete r;
+	}
+	for (auto r : this->m_waterSpheres) {
 		delete r;
 	}
 }
@@ -99,6 +108,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 
 	ModelFactory::Get().PreparePlanetDisplacement();
 	std::vector<std::thread> threads;
+
 	this->m_gameObjects.resize(this->m_numPlanets * 2);
 	this->m_planets.resize(this->m_numPlanets);
 	//Create all the planets using the distributions.
@@ -127,6 +137,33 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	for (int i = 0; i < this->m_numPlanets; i++) {
 		threads[i].join();
 	}
+	//threads = {};
+
+	std::vector<std::thread> threadsWater;
+	this->m_waterSpheres.resize(this->m_numPlanets);
+	for (size_t i = 0; i < this->m_numPlanets; i++) {
+		DirectX::XMFLOAT3 center = m_gameObjects[i]->GetCenter();
+		Planet* planet = new Planet();
+		threadsWater.push_back(std::thread(
+			initWaterSphere,
+			planet,
+			static_cast<Orbit*>(static_cast<Planet*>(m_gameObjects[i])->GetOrbit()),
+			std::ref(this->m_waterSpheres),
+			i,
+			center.x,
+			center.y,
+			center.z,
+			static_cast<Planet*>(m_gameObjects[i])->GetRadius(),
+			m_gameObjects[i]->GetPitch(),
+			m_gameObjects[i]->GetRoll(),
+			static_cast<Planet*>(m_gameObjects[i])->GetRotDir(),
+			sun
+		));
+	}
+	for (int i = 0; i < this->m_numPlanets; i++) {
+		threadsWater[i].join();
+	}
+	//threads = {};
 
 	// Push sun to stack
 	this->m_gameObjects.push_back(sun);
@@ -154,5 +191,9 @@ void Scene::Update() noexcept {
 	for (auto r : this->m_gameObjects) {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
+	for (auto r : this->m_waterSpheres) {
+		r->update(vMatrix, pMatrix, m_pDeviceContext);
+	}
+
 	m_Picking.DisplayPickedObject();
 }

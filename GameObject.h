@@ -35,4 +35,6 @@ public:
 	//Returns the translation of the object in the world.
 	DirectX::XMFLOAT3 getTransVector();
 	float GetMass();
+	float GetPitch();
+	float GetRoll();
 };

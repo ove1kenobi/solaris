@@ -58,3 +58,11 @@ float GameObject::GetMass()
 {
 	return m_mass;
 }
+
+float GameObject::GetPitch() {
+	return m_pitch;
+}
+
+float GameObject::GetRoll() {
+	return m_roll;
+}

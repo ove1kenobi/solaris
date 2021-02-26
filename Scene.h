@@ -18,6 +18,7 @@ private:
 	Player m_player;
 	std::vector<GameObject*> m_gameObjects;
 	std::vector<Planet*> m_planets; //USED FOR SENDING DATA TO THE SHADER
+	std::vector<Planet*> m_waterSpheres;
 	MousePicking m_Picking;
 public:
 	Scene() noexcept;

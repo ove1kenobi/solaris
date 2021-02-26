@@ -134,7 +134,7 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r, UINT typ
 	Model* model = new Model();
 	std::vector<float> vertexPositionValues;
 	std::vector<UINT> indices;
-	createSphere(r, vertexPositionValues, indices);
+	createSphere(r, 0, vertexPositionValues, indices);
 
 	DirectX::XMFLOAT3 center = { x, y, z };
 	vertexPositionValues = createHeightOffset(vertexPositionValues.size(), static_cast<void*>(vertexPositionValues.data()), center, r);
@@ -216,7 +216,36 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r, UINT typ
 	return model;
 }
 
-void ModelFactory::createSphere(float r, std::vector<float> &vertexBuffer, std::vector<UINT> &indexBuffer) {
+Model* ModelFactory::GenerateWaterSphere(float x, float y, float z, float r, DirectX::XMFLOAT3 yAxis) {
+	//Create the sphere vertices and indices. The vertices are just raw float values.
+	DirectX::XMFLOAT3 center = { x, y, z };
+	Model* model = new Model();
+	std::vector<float> vertexPositionValues;
+	std::vector<UINT> indices;
+	createSphere(r + (r / 10), 2, vertexPositionValues, indices);
+
+	//Convert the data to vertex_col.
+	std::vector<Vertex_Position> vertices;
+	for (size_t i = 0; i < vertexPositionValues.size(); i += 4) {
+		Vertex_Position newVertex = {};
+		newVertex.position.x = vertexPositionValues[i];
+		newVertex.position.y = vertexPositionValues[i + 1];
+		newVertex.position.z = vertexPositionValues[i + 2];
+
+		vertices.push_back(newVertex);
+	}
+
+	model->setVertexBufferSize(static_cast<UINT>(vertices.size()));
+	model->setIndexBufferSize(static_cast<UINT>(indices.size()));
+
+	createBuffers(sizeof(Vertex_Position), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
+
+	model->SetBoundingVolume(new DirectX::BoundingSphere(center, r + (r / 5.0f)));
+
+	return model;
+}
+
+void ModelFactory::createSphere(float r, UINT setDivisions, std::vector<float> &vertexBuffer, std::vector<UINT> &indexBuffer) {
 	//Starting octahedron points.
 	DirectX::XMFLOAT3 p0, p1, p2, p3, p4, p5;
 	//So that the triangles have the same length on all 3 sides.
@@ -264,7 +293,13 @@ void ModelFactory::createSphere(float r, std::vector<float> &vertexBuffer, std::
 	};
 
 	//Calculate the number of divisions that are to be made of each edge. 100 easily changable.
-	unsigned int divisions = static_cast<int>(std::ceil(r / 3));
+	unsigned int divisions = 0;
+	if (setDivisions == 0) {
+		divisions = static_cast<int>(std::ceil(r / 3));
+	}
+	else {
+		divisions = setDivisions;
+	}
 	//Number of vertices on 1 face.
 	unsigned int vertsPerTriangle = ((divisions + 3) * (divisions + 3) - (divisions + 3)) / 2;
 	//Number of triangles on 1 face.
@@ -664,7 +699,7 @@ Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
 	Model* model = new Model();
 	std::vector<float> vertexPositionValues;
 	std::vector<UINT> indices;
-	createSphere(r, vertexPositionValues, indices);
+	createSphere(r, 3, vertexPositionValues, indices);
 
 	std::vector<DirectX::XMFLOAT3> normals = calcNormals(vertexPositionValues, indices);
 

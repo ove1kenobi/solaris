@@ -24,4 +24,5 @@ public:
 	void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
 	GameObject* GetOrbit();
 	float GetRadius();
+	int GetRotDir();
 };

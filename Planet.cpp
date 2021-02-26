@@ -26,6 +26,17 @@ bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zR
 	return true;
 }
 
+//Overloaded funciton for water sphere.
+bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo, Orbit* orbit) {
+	this->init(x, y, z, r, xRot, zRot, rotDir, tetherTo, orbit);
+
+	DirectX::XMFLOAT3 yAxis = { m_yAxis.x, m_yAxis.y, m_yAxis.z };
+
+	//Generate the Planet.
+	this->m_model = ModelFactory::Get().GenerateWaterSphere(x, y, z, r, yAxis);
+	return true;
+}
+
 const bool Planet::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
 {
 	return m_model->GetBoundingSphere()->Intersects(origin, direction, distance);
