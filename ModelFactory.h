@@ -40,11 +40,11 @@ private:
 
 	void createBuffers(UINT stride, size_t size, void* data, const std::vector<UINT>& indexBuffer, Model* model);
 
-	void setColorVertex(float r, float elevation, float poleAngle, float vertexAngle, DirectX::XMFLOAT3 normal, DirectX::XMFLOAT4* color);
+	void setColorVertex(float r, UINT type, float elevation, float poleAngle, float vertexAngle, DirectX::XMFLOAT3 normal, DirectX::XMFLOAT4* color);
 public:
 	static ModelFactory& Get() noexcept;
 	Model* GetModel(std::string filePath);
-	Model* GeneratePlanet(float x, float y, float z, float r, DirectX::XMFLOAT3 yAxis);
+	Model* GeneratePlanet(float x, float y, float z, float r, UINT type, DirectX::XMFLOAT3 yAxis);
 	Model* GenerateSun(float x, float y, float z, float r);
 	Model* GenerateOrbit(float major_semi_axis, float minor_semi_axis);
 	void PreparePlanetDisplacement();

@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "Scene.h"
 
-void initPlanet(Planet* planet, Orbit* orbit, std::vector<GameObject*>& gameObjects, std::vector<Planet*>& planets, size_t id, size_t num, float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo) {
-	planet->Initialize(x, y, z, r, xRot, zRot, rotDir, tetherTo, orbit);
+void initPlanet(Planet* planet, Orbit* orbit, std::vector<GameObject*>& gameObjects, std::vector<Planet*>& planets, size_t id, size_t num, float x, float y, float z, float r, float xRot, float zRot, int rotDir, UINT type, GameObject* tetherTo) {
+	planet->Initialize(x, y, z, r, xRot, zRot, rotDir, type, tetherTo, orbit);
 
 	gameObjects[id] = planet;
 	gameObjects[id + num] = orbit;
@@ -88,13 +88,14 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	this->m_numPlanets = distributionPlanets(generator);
 	std::uniform_int_distribution<int> distributionRadius(100, 500);
 	//World space coordinates
-	std::uniform_int_distribution<int> distributionX(1000, 30000);
+	std::uniform_int_distribution<int> distributionX(1000, 50000);
 	std::uniform_int_distribution<int> distributionY(0, 0);
 	std::uniform_int_distribution<int> distributionZ(0, 0);
 	//Needs to be radians
 	std::uniform_real_distribution<float> distributionXZRot(static_cast<float>(-M_PI_2), static_cast<float>(M_PI_2));
 	//negative rotation direction if 0.
 	std::uniform_int_distribution<int> distributionRotDir(0, 1);
+	std::uniform_int_distribution<UINT> distributionType(2, 5);
 
 	ModelFactory::Get().PreparePlanetDisplacement();
 	std::vector<std::thread> threads;
@@ -119,6 +120,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 			static_cast<float>(distributionXZRot(generator)),
 			static_cast<float>(distributionXZRot(generator)),
 			static_cast<int>(distributionRotDir(generator)),
+			static_cast<UINT>(distributionType(generator)),
 			sun
 		));
 	}
