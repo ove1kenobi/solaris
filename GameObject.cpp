@@ -60,12 +60,17 @@ float GameObject::GetMass()
 	return m_mass;
 }
 
-const bool& GameObject::HasBoundingVolume() const noexcept
-{
-	return m_HasBoundingVolume;
-}
-
 Model* GameObject::GetModel() const noexcept
 {
 	return m_model;
+}
+
+const float& GameObject::GetDistanceToCamera() const noexcept
+{
+	return m_DistanceToCamera;
+}
+
+void GameObject::SetDistanceToCamera(const float& distance) noexcept
+{
+	m_DistanceToCamera = distance;
 }

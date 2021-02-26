@@ -3,7 +3,7 @@
 
 ForwardRenderer::ForwardRenderer() noexcept
 	: m_Background{ 0.0f, 0.0f, 0.0f, 1.0f },
-	  m_pGameObjects{ nullptr },
+	  m_pCulledData{ nullptr },
 	  m_pSunLight{ nullptr },
 	  m_pCamera{ nullptr },
 	  m_pDevice{ nullptr },
@@ -11,8 +11,7 @@ ForwardRenderer::ForwardRenderer() noexcept
 	  m_pBackBuffer{ nullptr },
 	  m_pDepthStencilView{ nullptr },
 	  m_pLightCBuffer{ nullptr },
-	  m_pCameraCBuffer{ nullptr },
-	  m_numPlanets{ 0 }
+	  m_pCameraCBuffer{ nullptr }
 {
 	EventBuss::Get().AddListener(this, EventType::SendRenderObjectsEvent, EventType::DelegateDXEvent, EventType::DelegateSunLightEvent);
 }
@@ -41,9 +40,10 @@ void ForwardRenderer::BeginFrame()
 	BindCameraData();
 
 	//Planets:
-	for (size_t i = 0; i < m_numPlanets; ++i) {
-		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
-		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
+	size_t i = 0;
+	for (i; i < m_pCulledData->nrOfPlanetsInView; ++i) {
+		(m_pCulledData->culledObjects)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((m_pCulledData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
 
 	//Bind orbit:
@@ -51,28 +51,26 @@ void ForwardRenderer::BeginFrame()
 	EventBuss::Get().Delegate(bindEventOrbit);
 
 	//Orbits:
-	for (size_t i = m_numPlanets; i < m_numPlanets * 2; ++i) {
-		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
-		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
+	for (i; i < m_pCulledData->totalNrOfOrbits + m_pCulledData->nrOfPlanetsInView; ++i) {
+		(m_pCulledData->culledObjects)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((m_pCulledData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
-
-	//Bind Sun:
-	BindIDEvent bindEventSun(BindID::ID_SUN);
-	EventBuss::Get().Delegate(bindEventSun);
-	//Sun:
-	for (size_t i = m_numPlanets * 2; i < (*m_pGameObjects).size() - 1; ++i) {
-		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
-		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
+	if (m_pCulledData->sunCulled == false)
+	{
+		//Bind Sun:
+		BindIDEvent bindEventSun(BindID::ID_SUN);
+		EventBuss::Get().Delegate(bindEventSun);
+		//Sun:
+		(m_pCulledData->culledObjects)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((m_pCulledData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
+		i++;
 	}
 
 	//Bind minimalistic:
 	EventBuss::Get().Delegate(bindEventMinimal);
 	//Player:
-	for (size_t i = (*m_pGameObjects).size() - 1; i < (*m_pGameObjects).size(); ++i) {
-		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
-		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
-	}
-
+	(m_pCulledData->culledObjects)[i]->bindUniques(m_pDeviceContext);
+	m_pDeviceContext->DrawIndexed((m_pCulledData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
 
 	//Skybox time:
 	m_Skybox.PreparePass(m_pDeviceContext);
@@ -128,8 +126,7 @@ void ForwardRenderer::OnEvent(IEvent& event) noexcept
 	case EventType::SendRenderObjectsEvent:
 	{
 		SendRenderObjectsEvent& derivedEvent = static_cast<SendRenderObjectsEvent&>(event);
-		m_pGameObjects = derivedEvent.getGameObjectVector();
-		m_numPlanets = derivedEvent.GetNumPlanets();
+		m_pCulledData = derivedEvent.GetCulledData();
 		break;
 	}
 	case EventType::DelegateDXEvent:

@@ -15,6 +15,8 @@ void Sun::OnEvent(IEvent& event) noexcept
 }
 
 Sun::Sun() noexcept
+	: m_Tag{ "Sun" },
+	  m_TestForCulling{ true }
 {
 	EventBuss::Get().AddListener(this, EventType::RequestSunLightEvent);
 }
@@ -40,4 +42,14 @@ const bool Sun::IntersectRayObject(const DirectX::FXMVECTOR& origin, const Direc
 const PointLight& Sun::GetPointLight() const
 {
 	return m_PointLight;
+}
+
+const std::string& Sun::GetTag() const noexcept
+{
+	return m_Tag;
+}
+
+const bool& Sun::ShallBeTestedForCulling() const noexcept
+{
+	return m_TestForCulling;
 }

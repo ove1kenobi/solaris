@@ -1,19 +1,18 @@
 #pragma once
 #include "IEvent.h"
 #include "../Resources/BindIDs.h"
-class GameObject;
+//class GameObject;
 class PointLight;
+class Scene;
 
 class SendRenderObjectsEvent : public IEvent
 {
 private:
-	std::vector<GameObject*>* m_gameObjects;
-	size_t m_numPlanets;
+	struct CulledData* m_CulledData;
 public:
-	SendRenderObjectsEvent(std::vector<GameObject*> *gameObjects, const size_t& numPlanets) noexcept
+	SendRenderObjectsEvent(CulledData* culledData) noexcept
 	{
-		m_gameObjects = gameObjects;
-		m_numPlanets = numPlanets;
+		m_CulledData = culledData;
 	};
 	virtual ~SendRenderObjectsEvent() noexcept = default;
 
@@ -25,12 +24,9 @@ public:
 	{
 		return "SendRenderObjectsEvent";
 	}
-	std::vector<GameObject*> *getGameObjectVector() {
-		return this->m_gameObjects;
-	}
-	const size_t& GetNumPlanets()
+	CulledData* GetCulledData() const noexcept
 	{
-		return m_numPlanets;
+		return m_CulledData;
 	}
 };
 

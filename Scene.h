@@ -18,9 +18,9 @@ private:
 	PlayerCamera m_perspectiveCamera;
 	Player m_player;
 	std::vector<GameObject*> m_gameObjects;
-	std::vector<GameObject*> m_CulledObjects;
 	MousePicking m_Picking;
 	FrustumCulling m_FrustumCulling;
+	CulledData m_CulledData;
 public:
 	Scene() noexcept;
 	virtual ~Scene();
