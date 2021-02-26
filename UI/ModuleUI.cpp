@@ -16,6 +16,21 @@ bool ModuleUI::CreateBrush() {
 	);
 }
 
+std::wstring ModuleUI::GetFontFilePath(std::wstring fontFile) {
+	std::wstring FilePath;
+
+	//Get current directory
+	TCHAR NPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, NPath);
+	FilePath.append(NPath);
+
+	//Get font file
+	FilePath.append(L"\\UI\\Fonts\\");
+	FilePath.append(fontFile);
+
+	return FilePath;
+}
+
 void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {
 	DelegateDXEvent& derivedEvent = static_cast<DelegateDXEvent&>(event);
 	
@@ -33,7 +48,7 @@ bool ModuleUI::ErrorCheck(HRESULT handle, std::wstring type) {
 	if (FAILED(handle)) {
 		error.append(L"Error: ");
 		error.append(type);
-		error.append(L" couldn't be created.");
+		error.append(L"\n");
 		OutputDebugString(error.c_str());
 		return false;
 	}

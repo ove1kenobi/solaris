@@ -21,6 +21,7 @@ protected:
 
 	//Create functions
 	bool CreateBrush();
+	std::wstring GetFontFilePath(std::wstring fontFile);
 
 	//Updating handlers and error checking
 	void UpdateDXHandlers(IEvent& event) noexcept;

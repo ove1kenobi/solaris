@@ -88,9 +88,11 @@ bool PlanetInteractionUI::CreateScreen() {
 
 bool PlanetInteractionUI::CreateTextElements() {
 	//Planet name
-	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pTitleFont, false), L"GetSystemFont");
+	if (!ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pTitleFont, true), L"GetSystemFont")) {
+		OutputDebugString(L"Failed to retrieve system font collection at line 92.\n");
+	}
 
-	ErrorCheck(m_pTextFactory->CreateTextFormat(
+	if (!ErrorCheck(m_pTextFactory->CreateTextFormat(
 		L"Aware",
 		NULL,
 		DWRITE_FONT_WEIGHT_REGULAR,
@@ -99,13 +101,17 @@ bool PlanetInteractionUI::CreateTextElements() {
 		41.0f,
 		L"en-us",
 		&m_pTitleFormat
-	), L"TextFormat");
+	), L"TextFormat")) {
+		OutputDebugString(L"Failed to create Aware text format at line 105.\n");
+	}
 	ErrorCheck(m_pTitleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), L"TextAlignment");
 
 	//Screen text
-	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pBodyFont, false), L"GetSystemFont");
+	if (!ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pBodyFont, true), L"GetSystemFont")) {
+		OutputDebugString(L"Failed to retrieve system font collection at line 111.\n");
+	}
 
-	ErrorCheck(m_pTextFactory->CreateTextFormat(
+	if (!ErrorCheck(m_pTextFactory->CreateTextFormat(
 		L"Tenika",
 		m_pBodyFont.Get(),
 		DWRITE_FONT_WEIGHT_REGULAR,
@@ -114,7 +120,9 @@ bool PlanetInteractionUI::CreateTextElements() {
 		16.0f,
 		L"en-us",
 		&m_pBodyFormat
-	), L"TextFormat");
+	), L"TextFormat")) {
+		OutputDebugString(L"Failed to create Tenika text format at line 124.\n");
+	}
 
 	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
 		if (!m_pRandomEvents.at(i)->Initialize()) {
@@ -698,6 +706,7 @@ void PlanetInteractionUI::RenderPlanetText() {
 		m_pBrush.Get()
 	);
 
+	//ERROR
 	//Planet flavour text
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pPlanetFlavourText.c_str(),
@@ -716,7 +725,7 @@ void PlanetInteractionUI::RenderRandomEvents() {
 
 void PlanetInteractionUI::Render() {
 	this->RenderScreen();
-	this->RenderCorners();
+	this->RenderCorners(); 
 	this->RenderPlanetText();
 	this->RenderRandomEvents();
 }

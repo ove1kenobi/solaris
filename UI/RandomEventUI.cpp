@@ -27,9 +27,25 @@ RandomEventUI::~RandomEventUI() {
 //Create functions
 bool RandomEventUI::CreateText() {
 	//Event text
-	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pTextFont, false), L"GetSystemFont");
+	if (AddFontResource(this->GetFontFilePath(L"Tenika400Regular-Rpyql.ttf").c_str()) == 0) {
+		OutputDebugString(L"Could not get path for Tenika.\n");
+	}
+	if (!ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pTextFont, true), L"GetSystemFont")) {
+		OutputDebugString(L"Failed to retrieve system font collection.\n");
+	}
+	UINT32 index;
+	BOOL exists;
+	if (!ErrorCheck(m_pTextFont.Get()->FindFamilyName(L"Tenika", &index, &exists), L"FindFamilyName")) {
+		OutputDebugString(L"Could not find Tenika within the font collection.\n");
+	}
+	IDWriteFontFamily* family;
+	if (exists) {
+		if (!ErrorCheck(m_pTextFont.Get()->GetFontFamily(index, &family), L"GetFontFamily")) {
+			OutputDebugString(L"Could not get Tenika within the font collection.\n");
+		}
+	}
 
-	ErrorCheck(m_pTextFactory->CreateTextFormat(
+	if (!ErrorCheck(m_pTextFactory->CreateTextFormat(
 		L"Tenika",
 		m_pTextFont.Get(),
 		DWRITE_FONT_WEIGHT_REGULAR,
@@ -38,12 +54,16 @@ bool RandomEventUI::CreateText() {
 		14.0f,
 		L"en-us",
 		&m_pTextFormat
-	), L"TextFormat");
+	), L"TextFormat")) {
+		OutputDebugString(L"Failed to create DirectWrite Tenika text format at line 44.\n");
+	}
 
 	//Hover text
-	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pHoverFont, false), L"GetSystemFont");
+	if (!ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pHoverFont, true), L"GetSystemFont")) {
+		OutputDebugString(L"Failed to retrieve system font collection at line 49.\n");
+	}
 
-	ErrorCheck(m_pTextFactory->CreateTextFormat(
+	if(!ErrorCheck(m_pTextFactory->CreateTextFormat(
 		L"NEOTERIQUE",
 		m_pHoverFont.Get(),
 		DWRITE_FONT_WEIGHT_REGULAR,
@@ -52,13 +72,15 @@ bool RandomEventUI::CreateText() {
 		20.0f,
 		L"en-us",
 		&m_pHoverTextFormat
-	), L"TextFormat");
+	), L"TextFormat")) {
+		OutputDebugString(L"Failed to create NEOTERIQUE text format at line 62.\n");
+	}
 
 	ErrorCheck(m_pHoverTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), L"TextAlignment");
 
 
 	//Icon text
-	ErrorCheck(m_pTextFactory->CreateTextFormat(
+	if (!ErrorCheck(m_pTextFactory->CreateTextFormat(
 		L"Tenika",
 		m_pTextFont.Get(),
 		DWRITE_FONT_WEIGHT_REGULAR,
@@ -67,7 +89,9 @@ bool RandomEventUI::CreateText() {
 		8.0f,
 		L"en-us",
 		&m_pIconTextFormat
-	), L"TextFormat");
+	), L"TextFormat")) {
+		OutputDebugString(L"Failed to create DirectWrite Tenika text format at line 69.\n");
+	}
 
 	return true;
 }
@@ -82,7 +106,7 @@ bool RandomEventUI::CreateDetails() {
 //Update functions
 bool RandomEventUI::UpdateDetails() {
 	bool updated = false;
-	if (ErrorCheck(m_pLeftHover->Open(&m_pSink), L"OpenGeometry")) {
+	if (ErrorCheck(m_pLeftHover->Open(&m_pSink), L"OpenGeometry line 95")) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -102,9 +126,10 @@ bool RandomEventUI::UpdateDetails() {
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
 		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
+		//m_pSink.Get()->Release();
 	}
 
-	if (ErrorCheck(m_pRightHover->Open(&m_pSink), L"OpenGeometry") && updated) {
+	if (ErrorCheck(m_pRightHover->Open(&m_pSink), L"OpenGeometry line 117") && updated) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -124,9 +149,10 @@ bool RandomEventUI::UpdateDetails() {
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
 		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
+		//m_pSink.Get()->Release();
 	}
 
-	if (ErrorCheck(m_pBottomHover->Open(&m_pSink), L"OpenGeometry") && updated) {
+	if (ErrorCheck(m_pBottomHover->Open(&m_pSink), L"OpenGeometry 139") && updated) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
@@ -142,6 +168,7 @@ bool RandomEventUI::UpdateDetails() {
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
 		updated = ErrorCheck(m_pSink->Close(), L"CloseGeometry");
+		//m_pSink.Get()->Release();
 	}
 	return updated;
 }
@@ -176,11 +203,13 @@ bool RandomEventUI::UpdateModules() {
 //Render functions
 void RandomEventUI::Render(int mouseX, int mouseY) {
 	//What should always be rendered
+
 	this->UpdateBrush(D2D1::ColorF::Aqua, 0.05f);
 	m_pRenderTarget2D->FillRectangle(m_pHoverBox, m_pBrush.Get());
 
 	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
 
+	//error with rendering event text
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pText.c_str(),
 		(UINT32)m_pText.length(),
