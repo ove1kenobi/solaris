@@ -1,19 +1,32 @@
 #include "pch.h"
 #include "Render2D.h"
 
+bool Render2D::AddFonts() {
+	//Load in fonts which the UI will use
+	if (AddFontResource(this->GetFontFilePath(L"AwareBold-qZo3x.ttf").c_str()) == 0) {
+		return false;
+	}
+	if (AddFontResource(this->GetFontFilePath(L"Tenika400Regular-Rpyql.ttf").c_str()) == 0) {
+		return false;
+	}
+	if (AddFontResource(this->GetFontFilePath(L"Neoterique-Y08L.ttf").c_str()) == 0) {
+		return false;
+	}
+	if (AddFontResource(this->GetFontFilePath(L"NeoteriqueItalic-rAVK.ttf").c_str()) == 0) {
+		return false;
+	}
+	return true;
+}
+
 Render2D::Render2D() noexcept {
 	//Make render2D able to UI handle events (for now, only keyboard ones)
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);
 
-	//Load in fonts which the UI will use
-	AddFontResource(this->GetFontFilePath(L"AwareBold-qZo3x.ttf").c_str());
-	AddFontResource(this->GetFontFilePath(L"Tenika400Regular-Rpyql.ttf").c_str());
-	AddFontResource(this->GetFontFilePath(L"Neoterique-Y08L.ttf").c_str());
-	AddFontResource(this->GetFontFilePath(L"NeoteriqueItalic-rAVK.ttf").c_str());
-
-	//Set start UI and load them all into an vector
-	m_CurrentUI = TypesUI::PlanetInteraction;
-	m_Modules.push_back(new PlanetInteractionUI());
+	if (AddFonts()) {
+		//Set start UI and load them all into an vector
+		m_CurrentUI = TypesUI::PlanetInteraction;
+		m_Modules.push_back(new PlanetInteractionUI());
+	}
 
 	m_Render = false;
 }

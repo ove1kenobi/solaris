@@ -17,6 +17,7 @@ private:
 
 	bool m_Render;
 	std::wstring GetFontFilePath(std::wstring fontFile);
+	bool AddFonts();
 public:
 	Render2D() noexcept;
 	virtual ~Render2D();
