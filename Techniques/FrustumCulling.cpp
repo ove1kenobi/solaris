@@ -9,6 +9,7 @@ const bool FrustumCulling::Initialize(PlayerCamera& playerCamera) noexcept
 
 void FrustumCulling::UpdateFrustum(PlayerCamera& playerCamera) noexcept
 {
+	//Not necessary:
 	m_BoundingFrustum.Transform(m_BoundingFrustum, playerCamera.getVMatrix());
 }
 
