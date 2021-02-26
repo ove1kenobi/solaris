@@ -13,10 +13,10 @@ ShadowMapping::ShadowMapping() noexcept
       m_CameraDirections{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
       m_CameraUpVectors{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
       m_SunPosition{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
-      m_TextureWidth{ 8192.0f },
-      m_TextureHeight{ 8192.0f },
+      m_TextureWidth{ 4096.0f },
+      m_TextureHeight{ 4096.0f },
       m_ClearColor{ 1.0f, 0.0f, 0.0f, 1.0f },
-      m_ShadowBias{ 7.0f }
+      m_ShadowBias{ 20.0f }
 {
     DirectX::XMStoreFloat4x4(&m_OrthographicProjection, DirectX::XMMatrixIdentity());
 }
@@ -246,7 +246,7 @@ void ShadowMapping::UpdateBias(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>
 {
 #if defined(DEBUG) | defined(_DEBUG)
     ImGui::Begin("Shadow");
-    ImGui::DragFloat("Bias", &m_ShadowBias, 0.001f, 0.0f, 10.0f);
+    ImGui::DragFloat("Bias", &m_ShadowBias, 0.001f, 0.0f, 40.0f);
     ImGui::End();
 #endif
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource = {};
