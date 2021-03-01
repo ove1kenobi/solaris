@@ -53,14 +53,11 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	texCol *= 0.25f;
 
 	//No multisampling
-	
 	float4 wPos = wPosTexture.Load(psIn.outPositionPS.xy, 0);
 	
-
 	//No multisampling
 	float4 waterSphere = waterSphereTexture.Load(psIn.outPositionPS.xy, 0);
 	
-
 	//If it does not hit water or a planet / ship / asteroid.
 	if (wPos.x == 0.5f && waterSphere.x == 0.5f) {
 		return texCol;
