@@ -145,8 +145,9 @@ void Scene::Update() noexcept {
 	for (auto r : this->m_gameObjects) {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
-
+	//Cull the objects, update the RenderData-struct for use in forward renderer:
 	m_FrustumCulling.CullObjects(m_gameObjects, m_perspectiveCamera, m_RenderData);
+	m_RenderData.totalNrOfPlanets = m_numPlanets;
 
 	m_Picking.DisplayPickedObject();
 }
