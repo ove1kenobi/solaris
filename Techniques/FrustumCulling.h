@@ -1,6 +1,6 @@
 #pragma once
 #include "../PlayerCamera.h"
-#include "../Planet.h"
+#include "../GameObject.h"
 
 struct RenderData
 {
