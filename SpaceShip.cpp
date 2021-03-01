@@ -17,6 +17,7 @@ SpaceShip::SpaceShip()
 	m_yaw = (float)M_PI;
 	m_pitchTilt = 0.0f;
 	m_rollTilt = 0.0f;
+	m_topSpeed = 3000.0f;
 }
 
 bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
@@ -25,7 +26,8 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 	ImGui::Begin("Spaceship");
 	ImGui::Text("Center  : (%f, %f, %f)", m_center.x, m_center.y, m_center.z);
 	ImGui::Text("Velocity: (%f, %f, %f)", m_velocity.x, m_velocity.y, m_velocity.z);
-	ImGui::DragFloat("Mass", &m_mass, 500.0f);
+	ImGui::Text("Speed	: %f", length(m_velocity));
+	//ImGui::DragFloat("Mass", &m_mass, 500.0f);
 	ImGui::End();
 #endif
 
@@ -65,19 +67,6 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 	return true;
 }
 
-void SpaceShip::Move(float step)
-{
-	DirectX::XMFLOAT3 pos;
-
-	pos.x = step * m_forwardVector.x;
-	pos.y = step * m_forwardVector.y;
-	pos.z = step * m_forwardVector.z;
-
-	m_center.x += pos.x;
-	m_center.y += pos.y;
-	m_center.z += pos.z;
-}
-
 void SpaceShip::AddRotation(float yaw, float pitch)
 {
 	float alpha = 0.1f;
@@ -97,19 +86,19 @@ void SpaceShip::SetTilt(float pitchLerp, float rollLerp)
 	m_rollTilt = rollLerp * (float)M_PI_4;
 }
 
-void SpaceShip::SetForwardVector(DirectX::XMFLOAT3 cameraPos)
+void SpaceShip::SetForwardVector(DirectX::XMFLOAT3 forwardVector)
 {
-	// Create a vector from the camera to the ship 
-	m_forwardVector.x = m_center.x - cameraPos.x;
-	m_forwardVector.y = m_center.y - cameraPos.y;
-	m_forwardVector.z = m_center.z - cameraPos.z;
-	
-	float length = sqrtf(powf(m_forwardVector.x, 2) + powf(m_forwardVector.y, 2) + powf(m_forwardVector.z, 2));
+	m_forwardVector = forwardVector;
+}
 
-	// Normalize the vector
-	m_forwardVector.x /= length;
-	m_forwardVector.y /= length;
-	m_forwardVector.z /= length;
+float SpaceShip::GetTopSpeed()
+{
+	return m_topSpeed;
+}
+
+DirectX::XMFLOAT3 SpaceShip::GetVelocity()
+{
+	return m_velocity;
 }
 
 const bool SpaceShip::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
@@ -142,7 +131,8 @@ void SpaceShip::CalculateGravity(GameObject* other)
 	DirectX::XMFLOAT3 ab = other->GetCenter() - m_center;
 
 	// r = |ab| -> (distance between a and b)
-	double r = sqrtf(ab.x * ab.x + ab.y * ab.y + ab.z * ab.z);
+	double r = length(ab);
+	if (r == 0.0f) r = 0.001f;
 
 	// Newton't general theory of gravity
 	float f = static_cast<float>(6.674e-11 * static_cast<double>(this->m_mass) * other->GetMass() / (r * r));
@@ -154,9 +144,7 @@ void SpaceShip::CalculateGravity(GameObject* other)
 	ab.z = static_cast<float>(ab.z * inverse_r);
 
 	// Force working on GameObject a
-	ab.x *= f;
-	ab.y *= f;
-	ab.z *= f;
+	ab = ab * f;
 	m_forces.push_back(ab);
 }
 
@@ -177,7 +165,17 @@ void SpaceShip::UpdatePhysics()
 
 	m_forces.clear();
 
-	m_velocity = m_velocity + sumForces;
+	if (m_mass != 0.0f) {
+		// Divide the force by the objects mass to get the acceleration F = m*a -> a = F/m
+		m_velocity = m_velocity + sumForces / m_mass;
+	}
+
+	float speed = length(m_velocity);
+	// Limit how fast an object can travel
+	if (speed > m_topSpeed) {
+		m_velocity = normalize(m_velocity);
+		m_velocity = m_topSpeed * m_velocity;
+	}
 
 	m_center.x += static_cast<float>(m_velocity.x * m_timer.DeltaTime());
 	m_center.y += static_cast<float>(m_velocity.y * m_timer.DeltaTime());
