@@ -1,18 +1,17 @@
 #pragma once
 #include "IEvent.h"
 #include "../Resources/BindIDs.h"
-//class GameObject;
 class PointLight;
 class Scene;
 
 class SendRenderObjectsEvent : public IEvent
 {
 private:
-	struct CulledData* m_CulledData;
+	struct RenderData* m_RenderData;
 public:
-	SendRenderObjectsEvent(CulledData* culledData) noexcept
+	SendRenderObjectsEvent(RenderData* renderData) noexcept
 	{
-		m_CulledData = culledData;
+		m_RenderData = renderData;
 	};
 	virtual ~SendRenderObjectsEvent() noexcept = default;
 
@@ -24,9 +23,9 @@ public:
 	{
 		return "SendRenderObjectsEvent";
 	}
-	CulledData* GetCulledData() const noexcept
+	RenderData* GetRenderData() const noexcept
 	{
-		return m_CulledData;
+		return m_RenderData;
 	}
 };
 

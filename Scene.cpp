@@ -9,7 +9,7 @@ void initPlanet(Planet* planet, Orbit* orbit, std::vector<GameObject*>& gameObje
 }
 
 Scene::Scene() noexcept
-	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }, m_CulledData{ }
+	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }, m_RenderData{ }
 {
 
 }
@@ -44,7 +44,7 @@ const std::string Scene::GetDebugName() const noexcept
 
 //Send gameObjects for rendering after being asked.
 void Scene::sendObjects() {
-	SendRenderObjectsEvent event(&m_CulledData);
+	SendRenderObjectsEvent event(&m_RenderData);
 	EventBuss::Get().Delegate(event);
 }
 
@@ -146,7 +146,7 @@ void Scene::Update() noexcept {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
 
-	m_FrustumCulling.CullObjects(m_gameObjects, m_perspectiveCamera, m_CulledData);
+	m_FrustumCulling.CullObjects(m_gameObjects, m_perspectiveCamera, m_RenderData);
 
 	m_Picking.DisplayPickedObject();
 }

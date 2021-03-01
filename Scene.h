@@ -20,7 +20,7 @@ private:
 	std::vector<GameObject*> m_gameObjects;
 	MousePicking m_Picking;
 	FrustumCulling m_FrustumCulling;
-	CulledData m_CulledData;
+	RenderData m_RenderData;
 public:
 	Scene() noexcept;
 	virtual ~Scene();

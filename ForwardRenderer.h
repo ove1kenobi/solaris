@@ -12,7 +12,7 @@ class ForwardRenderer : public EventPublisher, public IEventListener
 {
 private:
 	FLOAT m_Background[4];
-	CulledData* m_pCulledData;
+	RenderData* m_pRenderData;
 	PointLight* m_pSunLight;
 	PlayerCamera* m_pCamera;
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;

@@ -3,7 +3,7 @@
 
 ForwardRenderer::ForwardRenderer() noexcept
 	: m_Background{ 0.0f, 0.0f, 0.0f, 1.0f },
-	  m_pCulledData{ nullptr },
+	  m_pRenderData{ nullptr },
 	  m_pSunLight{ nullptr },
 	  m_pCamera{ nullptr },
 	  m_pDevice{ nullptr },
@@ -41,9 +41,9 @@ void ForwardRenderer::BeginFrame()
 
 	//Planets:
 	size_t i = 0;
-	for (i; i < m_pCulledData->nrOfPlanetsInView; ++i) {
-		(m_pCulledData->culledObjects)[i]->bindUniques(m_pDeviceContext);
-		m_pDeviceContext->DrawIndexed((m_pCulledData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
+	for (i; i < m_pRenderData->nrOfPlanetsInView; ++i) {
+		(m_pRenderData->culledObjects)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((m_pRenderData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
 
 	//Bind orbit:
@@ -51,26 +51,26 @@ void ForwardRenderer::BeginFrame()
 	EventBuss::Get().Delegate(bindEventOrbit);
 
 	//Orbits:
-	for (i; i < m_pCulledData->totalNrOfOrbits + m_pCulledData->nrOfPlanetsInView; ++i) {
-		(m_pCulledData->culledObjects)[i]->bindUniques(m_pDeviceContext);
-		m_pDeviceContext->DrawIndexed((m_pCulledData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
+	for (i; i < m_pRenderData->totalNrOfOrbits + m_pRenderData->nrOfPlanetsInView; ++i) {
+		(m_pRenderData->culledObjects)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((m_pRenderData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
-	if (m_pCulledData->sunCulled == false)
+	if (m_pRenderData->sunCulled == false)
 	{
 		//Bind Sun:
 		BindIDEvent bindEventSun(BindID::ID_SUN);
 		EventBuss::Get().Delegate(bindEventSun);
 		//Sun:
-		(m_pCulledData->culledObjects)[i]->bindUniques(m_pDeviceContext);
-		m_pDeviceContext->DrawIndexed((m_pCulledData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
+		(m_pRenderData->culledObjects)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((m_pRenderData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
 		i++;
 	}
 
 	//Bind minimalistic:
 	EventBuss::Get().Delegate(bindEventMinimal);
 	//Player:
-	(m_pCulledData->culledObjects)[i]->bindUniques(m_pDeviceContext);
-	m_pDeviceContext->DrawIndexed((m_pCulledData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
+	(m_pRenderData->culledObjects)[i]->bindUniques(m_pDeviceContext);
+	m_pDeviceContext->DrawIndexed((m_pRenderData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
 
 	//Skybox time:
 	m_Skybox.PreparePass(m_pDeviceContext);
@@ -126,7 +126,7 @@ void ForwardRenderer::OnEvent(IEvent& event) noexcept
 	case EventType::SendRenderObjectsEvent:
 	{
 		SendRenderObjectsEvent& derivedEvent = static_cast<SendRenderObjectsEvent&>(event);
-		m_pCulledData = derivedEvent.GetCulledData();
+		m_pRenderData = derivedEvent.GetRenderData();
 		break;
 	}
 	case EventType::DelegateDXEvent:
