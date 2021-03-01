@@ -61,6 +61,7 @@
     <ClCompile Include="UI\PlanetInteractionUI.cpp" />
     <ClCompile Include="UI\RandomEventUI.cpp" />
     <ClCompile Include="UI\HeadsUpDisplayUI.cpp" />
+    <ClCompile Include="UI\HeadsUpDisplayBar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -126,6 +127,7 @@
     <ClInclude Include="UI\RandomEventUI.h" />
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
     <ClInclude Include="EventSystem\UIEvents.h" />
+    <ClInclude Include="UI\HeadsUpDisplayBar.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

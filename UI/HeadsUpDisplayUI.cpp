@@ -8,21 +8,16 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pCrosshairLength = 2.5f;
 	m_pCrosshairSize = 2.5f;
 
-	m_pDistanceText = L"5000m";
+	m_pPlanetText = L"TATOOINE";
+	m_pDistanceText = L"100000m";
+	m_pPlanetNameTextBox = D2D1::RectF();
 	m_pDistanceTextBox = D2D1::RectF();
 
 	m_pRightDisplayScreen = D2D1::RectF();
 	m_pLeftDisplayScreen = D2D1::RectF();
 
-	m_pFullHealthBar = D2D1::RectF();
-	m_pCurrentHealthBar = D2D1::RectF();
-	m_pFullCO2Bar = D2D1::RectF();
-	m_pCurrentCO2Bar = D2D1::RectF();
-	m_pFullFuelBar = D2D1::RectF();
-	m_pCurrentFuelBar = D2D1::RectF();
-
 	m_pCapacityTextBox = D2D1::RectF();
-	m_pCapacityText = L"500 / 1225kg";
+	m_pCapacityText = L"500 / 1225";
 
 	m_pWarningTextBox = D2D1::RectF();
 	m_pWarningText = L"!";
@@ -63,9 +58,7 @@ bool HeadsUpDisplayUI::Initialize() {
 }
 
 bool HeadsUpDisplayUI::CreateDisplayScreens() {
-	//Create general text modules
-	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pHUDFont, false), "GetSystemFont");
-
+	//Create general text
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
 		L"Tenika",
 		NULL,
@@ -84,9 +77,8 @@ bool HeadsUpDisplayUI::CreateDisplayScreens() {
 }
 
 //Creation functions
-
 bool HeadsUpDisplayUI::CreateBars() {
-	UpdateBars();
+	m_pHealthBar.Initialize();
 	return true;
 }
 
@@ -106,20 +98,31 @@ bool HeadsUpDisplayUI::CreateMiniMap() {
 }
 
 bool HeadsUpDisplayUI::CreatePlanetDistanceModule() {
-	//Create the text modules
-	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pDistanceFont, false), "GetSystemFont");
-
+	//Planet distance
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
 		L"Tenika",
 		NULL,
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		30.0f,
+		24.0f,
 		L"en-us",
 		&m_pDistanceFormat
 	), "TextFormat");
 	ErrorCheck(m_pDistanceFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
+
+	//Planet name
+	ErrorCheck(m_pTextFactory->CreateTextFormat(
+		L"Aware",
+		NULL,
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		36.0f,
+		L"en-us",
+		&m_pPlanetNameFormat
+	), "TextFormat");
+	ErrorCheck(m_pPlanetNameFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
 	return true;
 }
 
@@ -153,60 +156,16 @@ bool HeadsUpDisplayUI::UpdateDisplayScreens() {
 }
 
 bool HeadsUpDisplayUI::UpdateBars() {
-	//Health bar
-	m_pFullHealthBar = D2D1::RectF(
-		m_pRightDisplayScreen.left + 50.0f,
-		m_pRightDisplayScreen.bottom - 50.0f,
-		m_pRightDisplayScreen.right - 50.0f,
-		m_pRightDisplayScreen.bottom - 25.0f
-	);
-
-	m_pCurrentHealthBar = D2D1::RectF(
-		m_pFullHealthBar.left + 100.0f,
-		m_pFullHealthBar.top,
-		m_pFullHealthBar.right,
-		m_pFullHealthBar.bottom
-	);
-
-	//CO2 bar
-	m_pFullCO2Bar = D2D1::RectF(
-		m_pFullHealthBar.left,
-		m_pFullHealthBar.top - 50.0f,
-		m_pFullHealthBar.right,
-		m_pFullHealthBar.top - 25.0f
-	);
-
-	m_pCurrentCO2Bar = D2D1::RectF(
-		m_pFullCO2Bar.left + 150.0f,
-		m_pFullCO2Bar.top,
-		m_pFullCO2Bar.right,
-		m_pFullCO2Bar.bottom
-	);
-
-	//Fuel bar
-	m_pFullFuelBar = D2D1::RectF(
-		m_pFullCO2Bar.left,
-		m_pFullCO2Bar.top - 50.0f,
-		m_pFullCO2Bar.right,
-		m_pFullCO2Bar.top - 25.0f
-	);
-
-	m_pCurrentFuelBar = D2D1::RectF(
-		m_pFullFuelBar.left + 75.0f,
-		m_pFullFuelBar.top,
-		m_pFullFuelBar.right,
-		m_pFullFuelBar.bottom
-	);
+	m_pHealthBar.SetFullBar(
+		m_pRightDisplayScreen.left + 25.0f, 
+		m_pRightDisplayScreen.bottom - 30.0f,
+		m_pRightDisplayScreen.right - 25.0f,
+		m_pRightDisplayScreen.bottom - 10.0f,
+		5.0f);
 	return true;
 }
 
 bool HeadsUpDisplayUI::UpdateCapacity() {
-	m_pCapacityTextBox = D2D1::RectF(
-		m_pFullFuelBar.left,
-		m_pFullFuelBar.top - 50.0f,
-		m_pFullFuelBar.right,
-		m_pFullFuelBar.top - 25.0f
-	);
 	return true;
 }
 
@@ -250,11 +209,18 @@ bool HeadsUpDisplayUI::UpdateMiniMap() {
 }
 
 bool HeadsUpDisplayUI::UpdatePlanetDistanceModule() {
-	m_pDistanceTextBox = D2D1::RectF(
-		(m_pWindowWidth / 2.0f) - 75.0f,
+	m_pPlanetNameTextBox = D2D1::RectF(
+		(m_pWindowWidth / 2.0f) - 150.0f,
 		0.0f,
-		(m_pWindowWidth / 2.0f) + 75.0f,
-		60.0f
+		(m_pWindowWidth / 2.0f) + 150.0f,
+		40.0f
+	);
+
+	m_pDistanceTextBox = D2D1::RectF(
+		(m_pWindowWidth / 2.0f) - 100.0f,
+		m_pPlanetNameTextBox.bottom,
+		(m_pWindowWidth / 2.0f) + 100.0f,
+		m_pPlanetNameTextBox.bottom + 30.0f
 	);
 
 	return true;
@@ -308,19 +274,15 @@ void HeadsUpDisplayUI::RenderLeftDisplayScreen() {
 }
 
 void HeadsUpDisplayUI::RenderBars() {
+	m_pHealthBar.Render();
 	this->UpdateBrush(D2D1::ColorF::OrangeRed, 1.0f);
-	m_pRenderTarget2D->FillRectangle(m_pCurrentHealthBar, m_pBrush.Get());
+	//m_pRenderTarget2D->FillRectangle(m_pCurrentHealthBar, m_pBrush.Get());
 
 	this->UpdateBrush(D2D1::ColorF::Aqua, 1.0f);
-	m_pRenderTarget2D->FillRectangle(m_pCurrentCO2Bar, m_pBrush.Get());
+	//m_pRenderTarget2D->FillRectangle(m_pCurrentCO2Bar, m_pBrush.Get());
 
 	this->UpdateBrush(D2D1::ColorF::Orange, 1.0f);
-	m_pRenderTarget2D->FillRectangle(m_pCurrentFuelBar, m_pBrush.Get());
-
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
-	m_pRenderTarget2D->DrawRectangle(m_pFullHealthBar, m_pBrush.Get(), 5.0f);
-	m_pRenderTarget2D->DrawRectangle(m_pFullCO2Bar, m_pBrush.Get(), 5.0f);
-	m_pRenderTarget2D->DrawRectangle(m_pFullFuelBar, m_pBrush.Get(), 5.0f);
+	//m_pRenderTarget2D->FillRectangle(m_pCurrentFuelBar, m_pBrush.Get());
 }
 
 void HeadsUpDisplayUI::RenderCapacity() {
@@ -350,12 +312,16 @@ void HeadsUpDisplayUI::RenderMiniMap() {
 }
 
 void HeadsUpDisplayUI::RenderPlanetDistanceModule() {
-	//Render display
-	this->UpdateBrush(D2D1::ColorF::Teal, 0.5f);
-	m_pRenderTarget2D->FillRectangle(m_pDistanceTextBox, m_pBrush.Get());
-
-	//Render the text on top of the display
+	//Render the text
 	UpdateBrush(D2D1::ColorF::White, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pPlanetText.c_str(),
+		(UINT32)m_pPlanetText.length(),
+		m_pPlanetNameFormat.Get(),
+		m_pPlanetNameTextBox,
+		m_pBrush.Get()
+	);
+
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pDistanceText.c_str(),
 		(UINT32)m_pDistanceText.length(),
@@ -399,7 +365,7 @@ void HeadsUpDisplayUI::RenderCrosshair() {
 
 void HeadsUpDisplayUI::Render() {
 	this->UpdateBrush(D2D1::ColorF::SteelBlue, 0.5f);
-	RenderHelpGrid(50);
+	RenderHelpGrid(10);
 
    RenderCrosshair();
    RenderPlanetDistanceModule();
@@ -412,10 +378,11 @@ void HeadsUpDisplayUI::Render() {
 }
 
 //Event functions
-void HeadsUpDisplayUI::SetPlanetDistance(float distanceToPlanet, std::wstring planetName) {
-	m_pDistanceText = planetName;
-	m_pDistanceText.append(L": ");
-	m_pDistanceText.append(std::to_wstring(distanceToPlanet));
+void HeadsUpDisplayUI::SetPlanetDistance(unsigned int distanceToPlanet, std::wstring planetName) {
+	std::transform(planetName.begin(), planetName.end(), planetName.begin(), ::toupper);
+	m_pPlanetText = planetName;
+	m_pDistanceText = std::to_wstring(distanceToPlanet);
+	m_pDistanceText.append(L"m");
 }
 
 void HeadsUpDisplayUI::SetHealth() {
@@ -449,14 +416,17 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 	{
 		m_pMouseX = static_cast<DelegateMouseCoordsEvent*>(&event)->GetXCoord();
 		m_pMouseY = static_cast<DelegateMouseCoordsEvent*>(&event)->GetYCoord();
+		SetPlanetDistance(m_pMouseX, L"Tatooine");
 		break;
 	}
 	case EventType::DelegatePlanetDistanceEvent:
 	{
+		m_pDistanceText = static_cast<DelegatePlanetDistanceEvent*>(&event)->GetPlanetName();
+		/*
 		this->SetPlanetDistance(
 			static_cast<DelegatePlanetDistanceEvent*>(&event)->GetDistanceToObject(),
 			static_cast<DelegatePlanetDistanceEvent*>(&event)->GetPlanetName()
-		);
+		);*/
 		break;
 	}
 	default:

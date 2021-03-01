@@ -1,13 +1,14 @@
 #pragma once
 #include "ModuleUI.h"
+#include "HeadsUpDisplayBar.h"
 
 class HeadsUpDisplayUI : public ModuleUI {
 private:
 	//General
-	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pHUDFont;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pHUDFormat;
 	D2D1_RECT_F m_pRightDisplayScreen;
 	D2D1_RECT_F m_pLeftDisplayScreen;
+	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pScreenGradientBrush;
 
 	//Crosshair
 	float m_pCrosshairSize;
@@ -15,25 +16,22 @@ private:
 	float m_pCrosshairDistance;
 
 	//Distance to planet module
-	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pDistanceFont;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pDistanceFormat;
 	D2D1_RECT_F m_pDistanceTextBox;
 	std::wstring m_pDistanceText;
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pPlanetNameFormat;
+	D2D1_RECT_F m_pPlanetNameTextBox;
+	std::wstring m_pPlanetText;
 
 	//Healthbar - convert later to bar class
-	D2D1_RECT_F m_pFullHealthBar;
-	D2D1_RECT_F m_pCurrentHealthBar;
-	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pRedGradientBrush;
+	HeadsUpDisplayBar m_pHealthBar;
+	D2D1_RECT_F m_pHealthIcon;
 
 	//CO2Bar - convert later to bar class
-	D2D1_RECT_F m_pFullCO2Bar;
-	D2D1_RECT_F m_pCurrentCO2Bar;
-	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pBlueGradientBrush;
+	D2D1_RECT_F m_pO2Icon;
 
 	//FuelBar - convert later to bar class
-	D2D1_RECT_F m_pFullFuelBar;
-	D2D1_RECT_F m_pCurrentFuelBar;
-	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pYellowGradientBrush;
+	D2D1_RECT_F m_pFuelIcon;
 
 	//Weight capacity
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pCapacityFormat;
@@ -52,7 +50,7 @@ private:
 	std::vector<D2D1_RECT_F> m_pIconPicture;
 	std::vector<std::wstring> m_pIconText;
 
-	//Current mouse coords (will be removed once event handler is in place)
+	//Current mouse coords (will be removed once UI event handler is in place)
 	unsigned int m_pMouseX;
 	unsigned int m_pMouseY;
 
@@ -89,7 +87,7 @@ private:
 	void RenderCrosshair();
 
 	//For updating things based on information from the event handler
-	void SetPlanetDistance(float distanceToPlanet, std::wstring planetName);
+	void SetPlanetDistance(unsigned int distanceToPlanet, std::wstring planetName);
 	void SetHealth();
 	void SetCO2();
 	void SetFuel();
