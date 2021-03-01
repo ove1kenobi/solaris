@@ -46,7 +46,8 @@ void FrustumCulling::CullObjects(std::vector<GameObject*>& gameObjects, PlayerCa
 					culledData.sunCulled = false;
 				}
 			}
-		}// The object is either an orbits or the ship, and they are to be rendered always:
+		}// The object is either an orbits or the ship, and they are to be rendered always
+		 // Therefore, include by default:
 		else
 		{
 			if (gameObjects[i]->GetTag() == "Orbit")

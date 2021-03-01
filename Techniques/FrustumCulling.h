@@ -1,6 +1,5 @@
 #pragma once
 #include "../PlayerCamera.h"
-#include "../GameObject.h"
 #include "../Planet.h"
 
 struct CulledData
