@@ -265,3 +265,22 @@ public:
 		return "ResetDefaultBlendStateEvent";
 	}
 };
+};
+
+class BindBackBufferEvent : public IEvent
+{
+private:
+
+public:
+	BindBackBufferEvent() noexcept = default;
+	virtual ~BindBackBufferEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::BindBackBufferEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "BindBackBufferEvent";
+	}
+};

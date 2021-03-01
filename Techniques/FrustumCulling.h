@@ -2,11 +2,14 @@
 #include "../PlayerCamera.h"
 #include "../GameObject.h"
 
+class WaterSphere;
+
 struct RenderData
 {
 	std::vector<GameObject*>* allObjects;
 	std::vector<GameObject*> culledObjects;
 	std::vector<GameObject*> culledPlanetsDepthSorted;
+	std::vector<WaterSphere*>* waterSpheres;
 	size_t nrOfPlanetsInView;
 	size_t totalNrOfPlanets;
 	size_t totalNrOfObjects;

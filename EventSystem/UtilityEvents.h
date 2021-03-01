@@ -1,23 +1,27 @@
 #pragma once
 #include "IEvent.h"
 class PlayerCamera;
+class Planet;
+class Sun;
 class DelegateDXEvent : public IEvent
 {
 private:
-	Microsoft::WRL::ComPtr<ID3D11Device>			m_ppDevice;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext>		m_ppDeviceContext;
-	Microsoft::WRL::ComPtr<IDXGISwapChain>			m_pSwapChain;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>  m_ppBackBuffer;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>  m_ppDepthStencilView;
-	Microsoft::WRL::ComPtr<ID2D1Factory>			m_pFactory2D;
-	Microsoft::WRL::ComPtr<ID2D1RenderTarget>		m_pSurfaceRenderTarget;
-	Microsoft::WRL::ComPtr<IDWriteFactory>			m_pTextFactory;
+	Microsoft::WRL::ComPtr<ID3D11Device>				m_ppDevice;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext>			m_ppDeviceContext;
+	Microsoft::WRL::ComPtr<IDXGISwapChain>				m_pSwapChain;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>		m_ppBackBuffer;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>		m_ppDepthStencilView;
+	Microsoft::WRL::ComPtr<ID2D1Factory>				m_pFactory2D;
+	Microsoft::WRL::ComPtr<ID2D1RenderTarget>			m_pSurfaceRenderTarget;
+	Microsoft::WRL::ComPtr<IDWriteFactory>				m_pTextFactory;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	m_ppDepthShaderResourceView;
 public:
 	DelegateDXEvent(Microsoft::WRL::ComPtr<ID3D11Device>& pdevice,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pdeviceContext,
 		Microsoft::WRL::ComPtr<IDXGISwapChain>&	pswapChain,
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& pbackBuffer,
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& pdepthStencilView,
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& pdepthShaderResourceView,
 		Microsoft::WRL::ComPtr<ID2D1Factory>& pfactory,
 		Microsoft::WRL::ComPtr<ID2D1RenderTarget>& pSurfaceRenderTarget,
 		Microsoft::WRL::ComPtr<IDWriteFactory>&	pTextFactory) noexcept
@@ -27,6 +31,7 @@ public:
 		m_pSwapChain = pswapChain;
 		m_ppBackBuffer = pbackBuffer;
 		m_ppDepthStencilView = pdepthStencilView;
+		m_ppDepthShaderResourceView = pdepthShaderResourceView; 
 		m_pFactory2D = pfactory;
 		m_pSurfaceRenderTarget = pSurfaceRenderTarget;
 		m_pTextFactory = pTextFactory;
@@ -74,7 +79,10 @@ public:
 	{
 		return m_pTextFactory;
 	}
-
+	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetShaderResourceView() const
+	{
+		return m_ppDepthShaderResourceView;
+	}
 };
 
 class RequestCameraEvent : public IEvent
@@ -116,5 +124,95 @@ public:
 	[[nodiscard]] PlayerCamera* GetCamera() const noexcept
 	{
 		return m_Camera;
+	}
+};
+
+class SendDSVEvent : public IEvent
+{
+private:
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
+public:
+	SendDSVEvent(Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& depthStencilView) noexcept
+	{
+		m_pDepthStencilView = depthStencilView;
+	}
+	virtual ~SendDSVEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::SendDSVEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "SendDSVEvent";
+	}
+	[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11DepthStencilView> GetDepthStencilView() const noexcept
+	{
+		return m_pDepthStencilView;
+	}
+};
+
+class RequestDSVEvent : public IEvent
+{
+private:
+public:
+	RequestDSVEvent() noexcept = default;
+	virtual ~RequestDSVEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::RequestDSVEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "RequestDSVEvent";
+	}
+};
+
+class RequestSunEvent : public IEvent
+{
+private:
+public:
+	RequestSunEvent() noexcept = default;
+	virtual ~RequestSunEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::RequestSunEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "RequestSunEvent";
+	}
+};
+
+class DelegateSunEvent : public IEvent
+{
+private:
+	DirectX::XMFLOAT3* m_Center;
+	float* m_Radius;
+public:
+	DelegateSunEvent(DirectX::XMFLOAT3* center, float* radius) noexcept
+	{
+		m_Center = center;
+		m_Radius = radius;
+	}
+	virtual ~DelegateSunEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::DelegateSunEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "DelegateSunEvent";
+	}
+	[[nodiscard]] DirectX::XMFLOAT3* GetCenter() const noexcept
+	{
+		return m_Center;
+	}
+	[[nodiscard]] float* GetRadius() const noexcept
+	{
+		return m_Radius;
 	}
 };

@@ -1,7 +1,7 @@
 #pragma once
 #include "IBindable.h"
 
-enum class TechFlag {SKYBOX = 0, SHADOW};
+enum class TechFlag {SKYBOX = 0, SHADOW, POSTPROCESSING};
 enum class BindFlag {S_None = 0, S_PS, S_DS};
 class SamplerState : public IBindable
 {

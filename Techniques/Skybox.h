@@ -15,7 +15,7 @@ class Skybox : public IEventListener, public EventPublisher
 {
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pCameraCBuffer;
-	Camera* m_pCamera;
+	PlayerCamera* m_pCamera;
 private:
 	void AssignCamera(IEvent& event) noexcept;
 	void OnEvent(IEvent& event) noexcept override;

@@ -10,5 +10,4 @@ struct PS_IN
 float4 ps_main(in PS_IN psIn) : SV_TARGET
 {
     return textureCube.Sample(linearSampler, psIn.inPositionWS);
-
 }

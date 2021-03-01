@@ -21,6 +21,7 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>			m_pSwapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>	m_pBackBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>	m_pDepthStencilView;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDepthShaderResourceView; //THE DEPTH STENCIL AS A SHADER RESOURCE VIEW.
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>	m_pRasterizerStateFill;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>	m_pRasterizerStateWireFrame;
 	Microsoft::WRL::ComPtr<ID2D1Factory>			m_pFactory2D;
