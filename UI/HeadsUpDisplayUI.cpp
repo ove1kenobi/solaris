@@ -2,7 +2,6 @@
 #include "HeadsUpDisplayUI.h"
 
 HeadsUpDisplayUI::HeadsUpDisplayUI() {
-	//only for showing that things can dynamically update
 	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent);
 
 	m_pCrosshairDistance = 12.0f;
@@ -42,13 +41,10 @@ bool HeadsUpDisplayUI::Initialize() {
 	if (!CreateTools()) {
 		return false;
 	}
+	if (!CreateDisplayScreens()) {
+		return false;
+	}
 	if (!CreatePlanetDistanceModule()) {
-		return false;
-	}
-	if (!CreateRightDisplayScreen()) {
-		return false;
-	}
-	if (!CreateLeftDisplayScreen()) {
 		return false;
 	}
 	if (!CreateBars()) {
@@ -66,16 +62,28 @@ bool HeadsUpDisplayUI::Initialize() {
 	return true;
 }
 
-//Creation functions
-bool HeadsUpDisplayUI::CreateRightDisplayScreen() {
-	UpdateRightDisplayScreen();
+bool HeadsUpDisplayUI::CreateDisplayScreens() {
+	//Create general text modules
+	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pHUDFont, false), "GetSystemFont");
+
+	ErrorCheck(m_pTextFactory->CreateTextFormat(
+		L"Tenika",
+		NULL,
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		30.0f,
+		L"en-us",
+		&m_pHUDFormat
+	), "TextFormat");
+	ErrorCheck(m_pHUDFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
+
+	//Create screens
+	UpdateDisplayScreens();
 	return true;
 }
 
-bool HeadsUpDisplayUI::CreateLeftDisplayScreen() {
-	UpdateLeftDisplayScreen();
-	return true;
-}
+//Creation functions
 
 bool HeadsUpDisplayUI::CreateBars() {
 	UpdateBars();
@@ -125,17 +133,16 @@ bool HeadsUpDisplayUI::CreateTools() {
 }
 
 //Update functions
-bool HeadsUpDisplayUI::UpdateRightDisplayScreen() {
+bool HeadsUpDisplayUI::UpdateDisplayScreens() {
+	//Right display screen
 	m_pRightDisplayScreen = D2D1::RectF(
 		m_pWindowWidth - 400.0f,
 		m_pWindowHeight - 200.0f,
 		m_pWindowWidth,
 		m_pWindowHeight
 	);
-	return true;
-}
 
-bool HeadsUpDisplayUI::UpdateLeftDisplayScreen() {
+	//Left display screen
 	m_pLeftDisplayScreen = D2D1::RectF(
 		0.0f,
 		m_pWindowHeight - 200.0f,
@@ -262,16 +269,13 @@ bool HeadsUpDisplayUI::UpdateTools() {
 }
 
 bool HeadsUpDisplayUI::UpdateModules() {
+	if (!UpdateDisplayScreens()) {
+		return false;
+	}
 	if (!UpdateCrosshair()) {
 		return false;
 	}
 	if (!UpdatePlanetDistanceModule()) {
-		return false;
-	}
-	if (!UpdateRightDisplayScreen()) {
-		return false;
-	}
-	if (!UpdateLeftDisplayScreen()) {
 		return false;
 	}
 	if (!UpdateBars()) {
@@ -410,8 +414,8 @@ void HeadsUpDisplayUI::Render() {
 //Event functions
 void HeadsUpDisplayUI::SetPlanetDistance(float distanceToPlanet, std::wstring planetName) {
 	m_pDistanceText = planetName;
-	//m_pDistanceText.append(L": ");
-	//m_pDistanceText.append(std::to_wstring(distanceToPlanet));
+	m_pDistanceText.append(L": ");
+	m_pDistanceText.append(std::to_wstring(distanceToPlanet));
 }
 
 void HeadsUpDisplayUI::SetHealth() {

@@ -5,6 +5,9 @@ class HeadsUpDisplayUI : public ModuleUI {
 private:
 	//General
 	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pHUDFont;
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pHUDFormat;
+	D2D1_RECT_F m_pRightDisplayScreen;
+	D2D1_RECT_F m_pLeftDisplayScreen;
 
 	//Crosshair
 	float m_pCrosshairSize;
@@ -16,12 +19,6 @@ private:
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pDistanceFormat;
 	D2D1_RECT_F m_pDistanceTextBox;
 	std::wstring m_pDistanceText;
-
-	//Right display
-	D2D1_RECT_F m_pRightDisplayScreen;
-
-	//Left display
-	D2D1_RECT_F m_pLeftDisplayScreen;
 
 	//Healthbar - convert later to bar class
 	D2D1_RECT_F m_pFullHealthBar;
@@ -60,8 +57,7 @@ private:
 	unsigned int m_pMouseY;
 
 	//Create modules
-	bool CreateRightDisplayScreen();
-	bool CreateLeftDisplayScreen();
+	bool CreateDisplayScreens();
 	bool CreateBars();
 	bool CreateCapacity();
 	bool CreateWarningModule();
@@ -71,8 +67,7 @@ private:
 	bool CreateTools();
 
 	//Update if screen size changes
-	bool UpdateRightDisplayScreen();
-	bool UpdateLeftDisplayScreen();
+	bool UpdateDisplayScreens();
 	bool UpdateBars();
 	bool UpdateCapacity();
 	bool UpdateWarningModule();
