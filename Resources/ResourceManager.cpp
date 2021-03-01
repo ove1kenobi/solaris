@@ -2,7 +2,7 @@
 #include "ResourceManager.h"
 
 ResourceManager::ResourceManager() noexcept
-	: m_pDevice{ nullptr }, m_pDeviceContext{ nullptr }, m_ClientWindowWidth{ 1920u }, m_ClientWindowHeight{ 1080u }
+	: m_pDevice{ nullptr }, m_pDeviceContext{ nullptr }, m_ClientWindowWidth{ 1880u }, m_ClientWindowHeight{ 1040u }
 {
 	EventBuss::Get().AddListener(this, EventType::UnbindPipelineEvent, EventType::BindIDEvent, EventType::DelegateDXEvent);
 	EventBuss::Get().AddListener(this, EventType::DelegateResolutionEvent);
