@@ -17,8 +17,8 @@ private:
 	RenderWindow& operator=(const RenderWindow&) = delete;
 	static void CloseWindow(const HWND& hwnd) noexcept;
 public:
-	static const UINT DEFAULT_WIN_WIDTH = 1880u;
-	static const UINT DEFAULT_WIN_HEIGHT = 1040u;
+	static const UINT DEFAULT_WIN_WIDTH = 1400u;
+	static const UINT DEFAULT_WIN_HEIGHT = 1000u;
 public:
 	RenderWindow();
 	virtual ~RenderWindow() = default;

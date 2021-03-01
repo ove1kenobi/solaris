@@ -9,7 +9,7 @@ void initPlanet(Planet* planet, Orbit* orbit, std::vector<GameObject*>& gameObje
 }
 
 Scene::Scene() noexcept
-	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }
+	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }, m_RenderData{ }
 {
 
 }
@@ -44,7 +44,7 @@ const std::string Scene::GetDebugName() const noexcept
 
 //Send gameObjects for rendering after being asked.
 void Scene::sendObjects() {
-	SendRenderObjectsEvent event(&this->m_gameObjects, m_numPlanets);
+	SendRenderObjectsEvent event(&m_RenderData);
 	EventBuss::Get().Delegate(event);
 }
 
@@ -73,7 +73,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 		return false;
 	}
 
-
 	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
 	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
@@ -88,24 +87,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	std::uniform_real_distribution<float> distributionXZRot(static_cast<float>(-M_PI_2), static_cast<float>(M_PI_2));
 	//negative rotation direction if 0.
 	std::uniform_int_distribution<int> distributionRotDir(0, 1);
-
-	//Planet in the middle for testing.
-	/*
-	Planet* planetmiddle = new Planet();
-	if (!planetmiddle->init(
-		0,
-		0,
-		0,
-		50,
-		M_PI_2,
-		0
-	))
-	{
-		//Throw
-		return false;
-	}
-	this->m_gameObjects.push_back(planetmiddle);
-	*/
 
 	ModelFactory::Get().PreparePlanetDisplacement();
 	std::vector<std::thread> threads;
@@ -143,6 +124,8 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 
 	if (!m_Picking.Initialize())
 		return false;
+	if (!m_FrustumCulling.Initialize(m_perspectiveCamera))
+		return false;
 
 	return true;
 }
@@ -162,5 +145,9 @@ void Scene::Update() noexcept {
 	for (auto r : this->m_gameObjects) {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
+	//Cull the objects, update the RenderData-struct for use in forward renderer:
+	m_FrustumCulling.CullObjects(m_gameObjects, m_perspectiveCamera, m_RenderData);
+	m_RenderData.totalNrOfPlanets = m_numPlanets;
+
 	m_Picking.DisplayPickedObject();
 }

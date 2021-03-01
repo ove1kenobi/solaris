@@ -7,6 +7,7 @@
 #include "Layer.h"
 #include "EventSystem/RenderEvents.h"
 #include "Techniques/MousePicking.h"
+#include "Techniques/FrustumCulling.h"
 class Scene : public EventPublisher, public Layer
 {
 private:
@@ -18,6 +19,8 @@ private:
 	Player m_player;
 	std::vector<GameObject*> m_gameObjects;
 	MousePicking m_Picking;
+	FrustumCulling m_FrustumCulling;
+	RenderData m_RenderData;
 public:
 	Scene() noexcept;
 	virtual ~Scene();

@@ -1,6 +1,14 @@
 #include "pch.h"
 #include "Planet.h"
 
+Planet::Planet() noexcept
+	:m_Tag{ "Planet"},
+	 m_TestForCulling{ true },
+	 m_DistanceToCamera{ 0.0f }
+{
+
+}
+
 bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo, Orbit* orbit) {
 	//The cosmic body
 	this->init(x, y, z, r, xRot, zRot, rotDir, tetherTo, orbit);
@@ -13,4 +21,14 @@ bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zR
 const bool Planet::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
 {
 	return m_model->GetBoundingSphere()->Intersects(origin, direction, distance);
+}
+
+const std::string& Planet::GetTag() const noexcept
+{
+	return m_Tag;
+}
+
+const bool& Planet::ShallBeTestedForCulling() const noexcept
+{
+	return m_TestForCulling;
 }

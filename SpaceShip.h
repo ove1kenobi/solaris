@@ -1,11 +1,15 @@
 #pragma once
 #include "GameObject.h"
+#include "ourMath.h"
 
 class SpaceShip : public GameObject
 {
 private:
 	float m_pitchTilt, m_rollTilt;
+	float m_topSpeed;
 
+	std::string m_Tag;
+	bool m_TestForCulling;
 	// Physics
 	std::vector<DirectX::XMFLOAT3> m_forces;
 public:
@@ -13,11 +17,12 @@ public:
 	virtual ~SpaceShip() = default;
 
 	void UpdatePhysics();
-	void Move(float step);
 	void AddRotation(float yaw, float pitch);
 	void SetTilt(float pitchLerp, float rollLerp);
-	void SetForwardVector(DirectX::XMFLOAT3 cameraPos);
+	void SetForwardVector(DirectX::XMFLOAT3 forwardVector);
 
+	float GetTopSpeed();
+	DirectX::XMFLOAT3 GetVelocity();
 	DirectX::XMFLOAT3 getCenter();
 	virtual bool update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
 	virtual void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
@@ -25,4 +30,6 @@ public:
 	void BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) override;
 	void CalculateGravity(GameObject* other);
 	void AddForce(DirectX::XMFLOAT3 f);
+	[[nodiscard]] const std::string& GetTag() const noexcept override;
+	[[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept override;
 };

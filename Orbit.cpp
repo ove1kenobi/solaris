@@ -2,6 +2,8 @@
 #include "Orbit.h"
 
 Orbit::Orbit() noexcept
+	:	m_Tag{ "Orbit"},
+		m_TestForCulling{ false }
 {
 
 }
@@ -73,4 +75,14 @@ void Orbit::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>&
 const bool Orbit::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
 {
 	return false;
+}
+
+const std::string& Orbit::GetTag() const noexcept
+{
+	return m_Tag;
+}
+
+const bool& Orbit::ShallBeTestedForCulling() const noexcept
+{
+	return m_TestForCulling;
 }

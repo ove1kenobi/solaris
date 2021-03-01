@@ -3,7 +3,7 @@
 #include "../EventSystem/IEventListener.h"
 #include "../EventSystem/EventPublisher.h"
 #include "../EventSystem/RenderEvents.h"
-#include "../GameObject.h"
+#include "FrustumCulling.h"
 struct MatrixBufferShadow
 {
 	DirectX::XMMATRIX worldMatrix;
@@ -41,12 +41,13 @@ private:
 	float m_TextureHeight;
 	const FLOAT m_ClearColor[4];
 	float m_ShadowBias;
+	FrustumCulling m_ShadowFrustumCulling;
 public:
 	ShadowMapping() noexcept;
 	virtual ~ShadowMapping() noexcept = default;
 	[[nodiscard]] const bool Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice);
 	void PreparePasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const DirectX::XMFLOAT3& lightPosition) noexcept;
-	void DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const std::vector<GameObject*>* gameObjects, const size_t& numPlanets) noexcept;
+	void DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const RenderData* pRenderData) noexcept;
 	void CleanUp(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
 	void BindSRV(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
 	void UpdateBias(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;

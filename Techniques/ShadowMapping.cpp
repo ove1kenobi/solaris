@@ -64,7 +64,8 @@ const bool ShadowMapping::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>&
        }
     //Currently taking in the same far plane value as the player camera has (100000):
     DirectX::XMStoreFloat4x4(&m_OrthographicProjection, DirectX::XMMatrixPerspectiveLH(1.0f, 1.0f, 0.5f, 100000.0f));
-
+    //We create the "shadow bounding frustum":
+    m_ShadowFrustumCulling.CreateShadowFrustum(DirectX::XMLoadFloat4x4(&m_OrthographicProjection));
     //The different directions:
     //+X
     m_CameraDirections[0]   = { 1.0f, 0.0f, 0.0f };
@@ -183,7 +184,7 @@ void ShadowMapping::PreparePasses(const Microsoft::WRL::ComPtr<ID3D11DeviceConte
     EventBuss::Get().Delegate(shadowBlendEvent);
 }
 
-void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const std::vector<GameObject*>* gameObjects, const size_t& numPlanets) noexcept
+void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, const RenderData* pRenderData) noexcept
 {
     /*
     * We need to write depth data in 6 passes, choosing new:
@@ -194,36 +195,7 @@ void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& 
     */
     DirectX::XMMATRIX worldMatrix = {};
     ID3D11DepthStencilView* nullDSV = nullptr;
-    for (unsigned int i{ 0u }; i < 2; ++i)
-    {
-        pDeviceContext->ClearRenderTargetView(m_pRenderTargetViews[i].Get(), m_ClearColor);
-        pDeviceContext->OMSetRenderTargets(1u, m_pRenderTargetViews[i].GetAddressOf(), nullDSV);
-        const DirectX::XMVECTOR focusPosition = DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&m_SunPosition), DirectX::XMLoadFloat3(&m_CameraDirections[i]));
-        DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(DirectX::XMLoadFloat3(&m_SunPosition), 
-                                                                 focusPosition,
-                                                                 DirectX::XMLoadFloat3(&m_CameraUpVectors[i]));
-        for (int j{ 0 }; j < numPlanets/*(*gameObjects).size()*/; ++j)
-        {
-            (*gameObjects)[j]->BindShadowUniques(pDeviceContext);
-            (*gameObjects)[j]->getWMatrix(worldMatrix);
-
-			D3D11_MAPPED_SUBRESOURCE mappedSubresource = {};
-			HR_X(pDeviceContext->Map(m_pMatrixCBuffer.Get(),
-				                     0,
-				                     D3D11_MAP_WRITE_DISCARD,
-				                     0,
-				                     &mappedSubresource),
-				                     "Map");
-            MatrixBufferShadow* data = (MatrixBufferShadow*)mappedSubresource.pData;
-            data->worldMatrix = DirectX::XMMatrixTranspose(worldMatrix);
-            data->worldViewProjectionMatrix = DirectX::XMMatrixTranspose(worldMatrix * viewMatrix * DirectX::XMLoadFloat4x4(&m_OrthographicProjection));
-			pDeviceContext->Unmap(m_pMatrixCBuffer.Get(), 0);
-            pDeviceContext->VSSetConstantBuffers(0u, 1u, m_pMatrixCBuffer.GetAddressOf());
-            pDeviceContext->DrawIndexed((*gameObjects)[j]->getIndexBufferSize(), 0u, 0);
-        }
-
-    }
-    for (unsigned int i{ 4 }; i < NUM_PASSES; ++i)
+    for (unsigned int i{ 0u }; i < NUM_PASSES; ++i)
     {
         pDeviceContext->ClearRenderTargetView(m_pRenderTargetViews[i].Get(), m_ClearColor);
         pDeviceContext->OMSetRenderTargets(1u, m_pRenderTargetViews[i].GetAddressOf(), nullDSV);
@@ -231,24 +203,27 @@ void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& 
         DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(DirectX::XMLoadFloat3(&m_SunPosition),
             focusPosition,
             DirectX::XMLoadFloat3(&m_CameraUpVectors[i]));
-        for (int j{ 0 }; j < numPlanets/*(*gameObjects).size()*/; ++j)
+        //Do shadow frustum culling based on current view matrix:
+        std::vector<GameObject*> culledObjects = m_ShadowFrustumCulling.CullShadowObjects(pRenderData->allObjects, viewMatrix, pRenderData->totalNrOfPlanets);
+
+        for (size_t j{ 0 }; j < culledObjects.size(); ++j)
         {
-            (*gameObjects)[j]->BindShadowUniques(pDeviceContext);
-            (*gameObjects)[j]->getWMatrix(worldMatrix);
+            culledObjects[j]->BindShadowUniques(pDeviceContext);
+            culledObjects[j]->getWMatrix(worldMatrix);
 
             D3D11_MAPPED_SUBRESOURCE mappedSubresource = {};
             HR_X(pDeviceContext->Map(m_pMatrixCBuffer.Get(),
-                0,
-                D3D11_MAP_WRITE_DISCARD,
-                0,
-                &mappedSubresource),
-                "Map");
+                                     0,
+                                     D3D11_MAP_WRITE_DISCARD,
+                                     0,
+                                     &mappedSubresource),
+                                     "Map");
             MatrixBufferShadow* data = (MatrixBufferShadow*)mappedSubresource.pData;
             data->worldMatrix = DirectX::XMMatrixTranspose(worldMatrix);
             data->worldViewProjectionMatrix = DirectX::XMMatrixTranspose(worldMatrix * viewMatrix * DirectX::XMLoadFloat4x4(&m_OrthographicProjection));
             pDeviceContext->Unmap(m_pMatrixCBuffer.Get(), 0);
             pDeviceContext->VSSetConstantBuffers(0u, 1u, m_pMatrixCBuffer.GetAddressOf());
-            pDeviceContext->DrawIndexed((*gameObjects)[j]->getIndexBufferSize(), 0u, 0);
+            pDeviceContext->DrawIndexed(culledObjects[j]->getIndexBufferSize(), 0u, 0);
         }
     }
 }

@@ -15,6 +15,8 @@ void Sun::OnEvent(IEvent& event) noexcept
 }
 
 Sun::Sun() noexcept
+	: m_Tag{ "Sun" },
+	  m_TestForCulling{ true }
 {
 	EventBuss::Get().AddListener(this, EventType::RequestSunLightEvent);
 }
@@ -28,6 +30,7 @@ const bool Sun::Initialize() noexcept
 	//The light
 	//Uses RGB-values as taken from the net from a paper discussing correct sun-RGB-values. Intensity is 1, center is same as sun. 
 	m_PointLight.Initialize(DirectX::XMFLOAT3(1.0f, 0.95f, 0.93f), 1.0f, m_center);
+	m_HasBoundingVolume = true;
 	return true;
 }
 
@@ -39,4 +42,14 @@ const bool Sun::IntersectRayObject(const DirectX::FXMVECTOR& origin, const Direc
 const PointLight& Sun::GetPointLight() const
 {
 	return m_PointLight;
+}
+
+const std::string& Sun::GetTag() const noexcept
+{
+	return m_Tag;
+}
+
+const bool& Sun::ShallBeTestedForCulling() const noexcept
+{
+	return m_TestForCulling;
 }

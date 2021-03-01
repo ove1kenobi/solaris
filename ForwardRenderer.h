@@ -5,17 +5,16 @@
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/RenderEvents.h"
 #include "EventSystem\UtilityEvents.h"
-#include "GameObject.h"
+#include "Scene.h"
 #include "Techniques/ShadowMapping.h"
 #include "PointLight.h"
 class ForwardRenderer : public EventPublisher, public IEventListener 
 {
 private:
 	FLOAT m_Background[4];
-	std::vector<GameObject*>* m_pGameObjects;
+	RenderData* m_pRenderData;
 	PointLight* m_pSunLight;
 	PlayerCamera* m_pCamera;
-	size_t m_numPlanets;
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pBackBuffer;
@@ -38,5 +37,5 @@ public:
 	ForwardRenderer() noexcept;
 	virtual ~ForwardRenderer() noexcept = default;
 	[[nodiscard]] const bool Initialize() noexcept;
-	ID3D11RenderTargetView* RenderFrame();
+	void RenderFrame();
 };
