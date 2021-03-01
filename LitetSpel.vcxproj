@@ -212,6 +212,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
+    <ClInclude Include="EventSystem\UIEvents.h" />
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
     <ClInclude Include="UI\RandomEventUI.h" />
     <ClInclude Include="UI\Button.h" />

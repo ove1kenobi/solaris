@@ -125,6 +125,7 @@
     <ClInclude Include="UI\PlanetInteractionUI.h" />
     <ClInclude Include="UI\RandomEventUI.h" />
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
+    <ClInclude Include="EventSystem\UIEvents.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

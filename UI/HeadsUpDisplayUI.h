@@ -92,6 +92,12 @@ private:
 	void RenderMiniMap();
 	void RenderPlanetDistanceModule();
 	void RenderCrosshair();
+
+	//For updating things based on information from the event handler
+	void SetPlanetDistance(float distanceToPlanet, std::wstring planetName);
+	void SetHealth();
+	void SetCO2();
+	void SetFuel();
 public:
 	//Creation and destruction functions
 	HeadsUpDisplayUI();
@@ -101,11 +107,6 @@ public:
 	//Used by Render2D to render whole module
 	void Render();
 
-	//For updating things based on information from the event handler
-	void SetPlanetDistance();
-	void SetHealth();
-	void SetCO2();
-	void SetFuel();
 	void OnEvent(IEvent& event) noexcept;
 };
 

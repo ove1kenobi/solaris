@@ -403,13 +403,15 @@ void HeadsUpDisplayUI::Render() {
    RenderLeftDisplayScreen();
    RenderBars();
    RenderCapacity();
-   RenderWarningModule();
-   RenderMiniMap();
+   //RenderWarningModule();
+   //RenderMiniMap();
 }
 
 //Event functions
-void HeadsUpDisplayUI::SetPlanetDistance() {
-
+void HeadsUpDisplayUI::SetPlanetDistance(float distanceToPlanet, std::wstring planetName) {
+	m_pDistanceText = planetName;
+	//m_pDistanceText.append(L": ");
+	//m_pDistanceText.append(std::to_wstring(distanceToPlanet));
 }
 
 void HeadsUpDisplayUI::SetHealth() {
@@ -443,6 +445,14 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 	{
 		m_pMouseX = static_cast<DelegateMouseCoordsEvent*>(&event)->GetXCoord();
 		m_pMouseY = static_cast<DelegateMouseCoordsEvent*>(&event)->GetYCoord();
+		break;
+	}
+	case EventType::DelegatePlanetDistanceEvent:
+	{
+		this->SetPlanetDistance(
+			static_cast<DelegatePlanetDistanceEvent*>(&event)->GetDistanceToObject(),
+			static_cast<DelegatePlanetDistanceEvent*>(&event)->GetPlanetName()
+		);
 		break;
 	}
 	default:
