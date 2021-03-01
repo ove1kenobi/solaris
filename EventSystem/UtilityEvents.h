@@ -127,48 +127,6 @@ public:
 	}
 };
 
-class RequestPlanetsEvent : public IEvent
-{
-private:
-public:
-	RequestPlanetsEvent() noexcept = default;
-	virtual ~RequestPlanetsEvent() noexcept = default;
-
-	[[nodiscard]] const EventType GetEventType() const noexcept override
-	{
-		return EventType::RequestPlanetsEvent;
-	}
-	[[nodiscard]] const std::string GetDebugName() const noexcept override
-	{
-		return "RequestPlanetsEvent";
-	}
-};
-
-class DelegatePlanetsEvent : public IEvent
-{
-private:
-	std::vector<Planet*>* m_Planets;
-public:
-	DelegatePlanetsEvent(std::vector<Planet*>* planets) noexcept
-	{
-		m_Planets = planets;
-	}
-	virtual ~DelegatePlanetsEvent() noexcept = default;
-
-	[[nodiscard]] const EventType GetEventType() const noexcept override
-	{
-		return EventType::DelegatePlanetsEvent;
-	}
-	[[nodiscard]] const std::string GetDebugName() const noexcept override
-	{
-		return "DelegatePlanetsEvent";
-	}
-	[[nodiscard]] std::vector<Planet*>* GetPlanets() const noexcept
-	{
-		return m_Planets;
-	}
-};
-
 class SendDSVEvent : public IEvent
 {
 private:

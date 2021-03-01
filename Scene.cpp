@@ -11,7 +11,7 @@ void initPlanet(Planet* planet, Orbit* orbit, WaterSphere* waterSphere, std::vec
 }
 
 Scene::Scene() noexcept
-	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }
+	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }, m_RenderData{ }
 {
 
 }
@@ -37,12 +37,6 @@ void Scene::OnEvent(IEvent& event) noexcept {
 			m_Picking.DoIntersectionTests(derivedEvent.GetXCoord(), derivedEvent.GetYCoord(), m_gameObjects);
 			break;
 		}
-		case EventType::RequestPlanetsEvent:
-		{
-			DelegatePlanetsEvent event(&this->m_planets);
-			EventBuss::Get().Delegate(event);
-			break;
-		}
 		default:
 			break;
 	}
@@ -55,13 +49,13 @@ const std::string Scene::GetDebugName() const noexcept
 
 //Send gameObjects for rendering after being asked.
 void Scene::sendObjects() {
-	SendRenderObjectsEvent event(&this->m_gameObjects, m_numPlanets, &this->m_waterSpheres);
+	SendRenderObjectsEvent event(&m_RenderData);
 	EventBuss::Get().Delegate(event);
 }
 
 bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext) {
 	m_pDeviceContext = pDeviceContext;
-	EventBuss::Get().AddListener(this, EventType::AskForRenderObjectsEvent, EventType::DelegateMouseCoordsEvent, EventType::RequestPlanetsEvent);
+	EventBuss::Get().AddListener(this, EventType::AskForRenderObjectsEvent, EventType::DelegateMouseCoordsEvent);
 
 	//Orthographic camera. Over the sun. Last parameter is how high above the sun.
 	if (!this->m_orthoCamera.init(screenWidth, screenHeight, 1000)) {
@@ -83,7 +77,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	if (!sun->Initialize()) {
 		return false;
 	}
-
 
 	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
@@ -137,36 +130,14 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 		threads[i].join();
 	}
 
-	//std::vector<std::thread> threadsWater;
-	//this->m_waterSpheres.resize(this->m_numPlanets);
-	//for (size_t i = 0; i < this->m_numPlanets; i++) {
-		//DirectX::XMFLOAT3 center = m_gameObjects[i]->GetCenter();
-		//Planet* planet = new Planet();
-		//threadsWater.push_back(std::thread(
-			//initWaterSphere,
-			//planet,
-			//std::ref(this->m_waterSpheres),
-			//i,
-			//center.x,
-			//center.y,
-			//center.z,
-			//(static_cast<Planet*>(m_gameObjects[i]))->GetRadius(),
-			//m_gameObjects[i]->GetPitch(),
-			//m_gameObjects[i]->GetRoll(),
-			//(static_cast<Planet*>(m_gameObjects[i]))->GetRotDir(),
-			//sun
-		//));
-	//}
-	//for (int i = 0; i < this->m_numPlanets; i++) {
-		//threadsWater[i].join();
-	//}
-
 	// Push sun to stack
 	this->m_gameObjects.push_back(sun);
 	//Add the ship to the gameObject vector.
 	this->m_gameObjects.push_back(this->m_player.getShip());
 
 	if (!m_Picking.Initialize())
+		return false;
+	if (!m_FrustumCulling.Initialize(m_perspectiveCamera))
 		return false;
 
 	return true;
@@ -187,6 +158,10 @@ void Scene::Update() noexcept {
 	for (auto r : this->m_gameObjects) {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
+	//Cull the objects, update the RenderData-struct for use in forward renderer:
+	m_FrustumCulling.CullObjects(m_gameObjects, m_perspectiveCamera, m_RenderData);
+	m_RenderData.totalNrOfPlanets = m_numPlanets;
+	m_RenderData.waterSpheres = &m_waterSpheres;
 
 	m_Picking.DisplayPickedObject();
 }

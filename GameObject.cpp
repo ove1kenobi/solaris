@@ -17,7 +17,8 @@ GameObject::GameObject() noexcept
 		m_pitch{ 0.0f },
 		m_roll{ 0.0f },
 		m_yaw{ 0.0f },
-		m_model{ nullptr }
+		m_model{ nullptr },
+	    m_HasBoundingVolume{ false }
 {
 
 }
@@ -59,10 +60,17 @@ float GameObject::GetMass()
 	return m_mass;
 }
 
-float GameObject::GetPitch() {
-	return m_pitch;
+Model* GameObject::GetModel() const noexcept
+{
+	return m_model;
 }
 
-float GameObject::GetRoll() {
-	return m_roll;
+const float& GameObject::GetDistanceToCamera() const noexcept
+{
+	return m_DistanceToCamera;
+}
+
+void GameObject::SetDistanceToCamera(const float& distance) noexcept
+{
+	m_DistanceToCamera = distance;
 }

@@ -10,8 +10,7 @@ WaterPostProcessing::WaterPostProcessing() noexcept
 	m_pSunCenter{ nullptr },
 	m_pSunRadius{ nullptr } 
 {
-	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent, EventType::DelegatePlanetsEvent, EventType::DelegateSunLightEvent);
-	EventBuss::Get().AddListener(this, EventType::DelegateSunEvent);
+	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent, EventType::DelegateSunLightEvent, EventType::DelegateSunEvent);
 }
 
 WaterPostProcessing::~WaterPostProcessing() {
@@ -21,12 +20,6 @@ void WaterPostProcessing::AssignCamera(IEvent& event) noexcept
 {
 	DelegateCameraEvent& derivedEvent = static_cast<DelegateCameraEvent&>(event);
 	m_pCamera = derivedEvent.GetCamera();
-}
-
-void WaterPostProcessing::AssignPlanets(IEvent& event) noexcept
-{
-	DelegatePlanetsEvent& derivedEvent = static_cast<DelegatePlanetsEvent&>(event);
-	m_pPlanets = *derivedEvent.GetPlanets();
 }
 
 void WaterPostProcessing::AssignSunLight(IEvent& event) noexcept
@@ -48,10 +41,6 @@ void WaterPostProcessing::OnEvent(IEvent& event) noexcept
 	{
 	case EventType::DelegateCameraEvent:
 		AssignCamera(event);
-		break;
-
-	case EventType::DelegatePlanetsEvent:
-		AssignPlanets(event);
 		break;
 	case EventType::DelegateSunLightEvent:
 	{
@@ -121,10 +110,6 @@ const bool WaterPostProcessing::Initialize(const Microsoft::WRL::ComPtr<ID3D11De
 	RequestCameraEvent requestCameraEvent;
 	EventBuss::Get().Delegate(requestCameraEvent);
 
-	//Get the planets for their radius' and centerpoints.
-	RequestPlanetsEvent requestPlanetsEvent;
-	EventBuss::Get().Delegate(requestPlanetsEvent);
-
 	//Get the sunlight
 	RequestSunLightEvent sunLightEvent;
 	EventBuss::Get().Delegate(sunLightEvent);
@@ -135,7 +120,7 @@ const bool WaterPostProcessing::Initialize(const Microsoft::WRL::ComPtr<ID3D11De
 	return true;
 }
 
-void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept
+void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, std::vector<GameObject*> planets) noexcept
 {
 	//Unbind pipeline:
 	UnbindPipelineEvent ubEvent;
@@ -159,14 +144,14 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 
 	PlanetData* data = (PlanetData*)mappedSubresource.pData;
 
-	for (size_t i = 0; i < m_pPlanets.size(); i++) {
-		DirectX::XMFLOAT3 center = m_pPlanets[i]->GetCenter();
-		DirectX::XMFLOAT4 centerRadius = { center.x, center.y, center.z, m_pPlanets[i]->GetRadius() };
+	for (size_t i = 0; i < planets.size(); i++) {
+		DirectX::XMFLOAT3 center = planets[i]->GetCenter();
+		DirectX::XMFLOAT4 centerRadius = { center.x, center.y, center.z, static_cast<Planet*>(planets[i])->GetRadius() };
 		data->center[i] = DirectX::XMLoadFloat4(&centerRadius);
 	}
 	//Fill the rest with zero's
 	DirectX::XMFLOAT4 nullXMF4 = { 0.0f, 0.0f, 0.0f, 0.0f };
-	for (size_t i = m_pPlanets.size(); i < 50; i++) {
+	for (size_t i = planets.size(); i < 50; i++) {
 		data->center[i] = DirectX::XMLoadFloat4(&nullXMF4);
 	}
 

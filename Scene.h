@@ -7,6 +7,7 @@
 #include "Layer.h"
 #include "EventSystem/RenderEvents.h"
 #include "Techniques/MousePicking.h"
+#include "Techniques/FrustumCulling.h"
 class Scene : public EventPublisher, public Layer
 {
 private:
@@ -20,6 +21,8 @@ private:
 	std::vector<Planet*> m_planets; //USED FOR SENDING DATA TO THE SHADER
 	std::vector<WaterSphere*> m_waterSpheres;
 	MousePicking m_Picking;
+	FrustumCulling m_FrustumCulling;
+	RenderData m_RenderData;
 public:
 	Scene() noexcept;
 	virtual ~Scene();

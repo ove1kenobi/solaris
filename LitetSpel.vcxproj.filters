@@ -59,6 +59,7 @@
     <ClCompile Include="Techniques\MousePicking.cpp" />
     <ClCompile Include="Render2D.cpp" />
     <ClCompile Include="Orbit.cpp" />
+    <ClCompile Include="Techniques\FrustumCulling.cpp" />
     <ClCompile Include="Resources\Texture.cpp" />
     <ClCompile Include="Techniques\WaterPostProcessing.cpp" />
     <ClCompile Include="Resources\GBuffer.cpp" />
@@ -136,6 +137,7 @@
     <ClInclude Include="UI\PlanetInteractionUI.h" />
     <ClInclude Include="UI\RandomEventUI.h" />
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
+    <ClInclude Include="Techniques\FrustumCulling.h" />
     <ClInclude Include="WaterSphere.h" />
   </ItemGroup>
   <ItemGroup>

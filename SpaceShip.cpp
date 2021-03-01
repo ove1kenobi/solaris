@@ -2,6 +2,8 @@
 #include "SpaceShip.h"
 
 SpaceShip::SpaceShip()
+	: m_Tag{ "SpaceShip"},
+	  m_TestForCulling{ false }
 {
 	this->m_model = ModelFactory::Get().GetModel(std::string("models/SciFi_Fighter_AK5.obj"));
 	this->m_wMatrix = {
@@ -45,9 +47,7 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 
 	//Update the matrixBuffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-	DirectX::XMMATRIX WMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&this->m_wMatrix));
-	VMatrix = DirectX::XMMatrixTranspose(VMatrix);
-	PMatrix = DirectX::XMMatrixTranspose(PMatrix);
+	DirectX::XMMATRIX WMatrix = DirectX::XMLoadFloat4x4(&this->m_wMatrix);
 
 	deviceContext->Map(this->m_model->getMatrixBuffer().Get(),
 			           0,
@@ -57,9 +57,8 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 
 	ModelFactory::MatrixBuffer* data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
 
-	data->WMatrix = WMatrix;
-	data->VMatrix = VMatrix;
-	data->PMatrix = PMatrix;
+	data->WMatrix = DirectX::XMMatrixTranspose(WMatrix);
+	data->WVPMatrix = DirectX::XMMatrixTranspose(WMatrix * VMatrix * PMatrix);
 
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
 	return true;
@@ -178,4 +177,14 @@ void SpaceShip::UpdatePhysics()
 	m_center.x += static_cast<float>(m_velocity.x * m_timer.DeltaTime());
 	m_center.y += static_cast<float>(m_velocity.y * m_timer.DeltaTime());
 	m_center.z += static_cast<float>(m_velocity.z * m_timer.DeltaTime());
+}
+
+const std::string& SpaceShip::GetTag() const noexcept
+{
+	return m_Tag;
+}
+
+const bool& SpaceShip::ShallBeTestedForCulling() const noexcept
+{
+	return m_TestForCulling;
 }

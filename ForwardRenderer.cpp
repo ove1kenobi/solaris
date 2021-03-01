@@ -2,14 +2,12 @@
 #include "ForwardRenderer.h"
 
 ForwardRenderer::ForwardRenderer() noexcept
-	: m_Background{ 0.0f, 1.0f, 0.0f, 1.0f },
-	  m_pGameObjects{ nullptr },
-	  m_pWaterSpheres{ nullptr },
+	: m_Background{ 0.0f, 0.0f, 0.0f, 1.0f },
+	  m_pRenderData{ nullptr },
 	  m_pDevice{ nullptr },
 	  m_pDeviceContext{ nullptr },
 	  m_pBackBuffer{ nullptr },
-	  m_pDepthStencilView{ nullptr },
-	  m_numPlanets{ 0 }
+	  m_pDepthStencilView{ nullptr }
 {
 	EventBuss::Get().AddListener(this, EventType::SendRenderObjectsEvent, EventType::DelegateDXEvent, EventType::DelegateSunLightEvent);
 }
@@ -32,9 +30,10 @@ void ForwardRenderer::BeginFrame()
 	EventBuss::Get().Delegate(event);
 
 	//Planets:
-	for (size_t i = 0; i < m_numPlanets; ++i) {
-		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
-		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
+	size_t i = 0;
+	for (i; i < m_pRenderData->nrOfPlanetsInView; ++i) {
+		(m_pRenderData->culledObjects)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((m_pRenderData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
 
 	//Bind orbit:
@@ -42,18 +41,19 @@ void ForwardRenderer::BeginFrame()
 	EventBuss::Get().Delegate(bindEventOrbit);
 
 	//Orbits:
-	for (size_t i = m_numPlanets; i < m_numPlanets * 2; ++i) {
-		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
-		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
+	for (i; i < m_pRenderData->totalNrOfOrbits + m_pRenderData->nrOfPlanetsInView; ++i) {
+		(m_pRenderData->culledObjects)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((m_pRenderData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
-
-	//Bind Sun:
-	BindIDEvent bindEventSun(BindID::ID_SUN);
-	EventBuss::Get().Delegate(bindEventSun);
-	//Sun:
-	for (size_t i = m_numPlanets * 2; i < (*m_pGameObjects).size() - 1; ++i) {
-		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
-		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
+	if (m_pRenderData->sunCulled == false)
+	{
+		//Bind Sun:
+		BindIDEvent bindEventSun(BindID::ID_SUN);
+		EventBuss::Get().Delegate(bindEventSun);
+		//Sun:
+		(m_pRenderData->culledObjects)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((m_pRenderData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
+		i++;
 	}
 
 	//REDO. Need to somehow bind the ship without using minimal as that will be removed.
@@ -61,10 +61,8 @@ void ForwardRenderer::BeginFrame()
 	EventBuss::Get().Delegate(bindEventMin);
 	
 	//Player:
-	for (size_t i = (*m_pGameObjects).size() - 1; i < (*m_pGameObjects).size(); ++i) {
-		(*m_pGameObjects)[i]->bindUniques(m_pDeviceContext);
-		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
-	}
+	(m_pRenderData->culledObjects)[i]->bindUniques(m_pDeviceContext);
+	m_pDeviceContext->DrawIndexed((m_pRenderData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
 
 	//Skybox time:
 	m_Skybox.PreparePass(m_pDeviceContext);
@@ -75,9 +73,9 @@ void ForwardRenderer::BeginFrame()
 	BindIDEvent bindEventWaterSpheres(BindID::ID_WaterSphere);
 	EventBuss::Get().Delegate(bindEventWaterSpheres);
 
-	for (size_t i = 0; i < m_numPlanets; i++) {
-		(*m_pWaterSpheres)[i]->bindUniques(m_pDeviceContext);
-		m_pDeviceContext->DrawIndexed((*m_pWaterSpheres)[i]->getIndexBufferSize(), 0u, 0u);
+	for (size_t i = 0; i < m_pRenderData->totalNrOfPlanets; i++) {
+		(*m_pRenderData->waterSpheres)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((*m_pRenderData->waterSpheres)[i]->getIndexBufferSize(), 0u, 0u);
 	}
 
 	//size is number of textures in the gbuffer.
@@ -85,7 +83,7 @@ void ForwardRenderer::BeginFrame()
 	ID3D11DepthStencilView* nullDSV = { nullptr };
 	m_pDeviceContext->OMSetRenderTargets(ARRAYSIZE(nullRTV), nullRTV, nullDSV);
 
-	m_WaterPP.PreparePass(m_pDeviceContext);
+	m_WaterPP.PreparePass(m_pDeviceContext, m_pRenderData->culledPlanetsDepthSorted);
 	
 	m_WaterPP.DoPass(m_pDeviceContext);
 
@@ -137,9 +135,7 @@ void ForwardRenderer::OnEvent(IEvent& event) noexcept
 	case EventType::SendRenderObjectsEvent:
 	{
 		SendRenderObjectsEvent& derivedEvent = static_cast<SendRenderObjectsEvent&>(event);
-		m_pGameObjects = derivedEvent.getGameObjectVector();
-		m_numPlanets = derivedEvent.GetNumPlanets();
-		m_pWaterSpheres = derivedEvent.getWaterSpheresVector();
+		m_pRenderData = derivedEvent.GetRenderData();
 		break;
 	}
 	case EventType::DelegateDXEvent:

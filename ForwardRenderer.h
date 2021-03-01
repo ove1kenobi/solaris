@@ -5,15 +5,14 @@
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/RenderEvents.h"
 #include "EventSystem\UtilityEvents.h"
-#include "GameObject.h"
+#include "Scene.h"
 #include "Techniques\WaterPostProcessing.h"
+
 class ForwardRenderer : public EventPublisher, public IEventListener 
 {
 private:
 	FLOAT m_Background[4];
-	std::vector<GameObject*>* m_pGameObjects;
-	std::vector<WaterSphere*>* m_pWaterSpheres;
-	size_t m_numPlanets;
+	RenderData* m_pRenderData;
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pBackBuffer;

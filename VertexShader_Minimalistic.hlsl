@@ -1,7 +1,6 @@
 cbuffer MatrixBuffer : register(b0) {
     matrix WMatrix;
-    matrix VMatrix;
-    matrix PMatrix;
+    matrix WVPMatrix;
 }
 
 struct VS_IN
@@ -25,10 +24,8 @@ VS_OUT vs_main(in VS_IN vsIn)
     VS_OUT vsOut = (VS_OUT)0;
     vsOut.outLengthToCenter = length(vsIn.inPositionLS); 
     
-    vsOut.outPositionCS = mul(float4(vsIn.inPositionLS, 1.0f), WMatrix);
-    vsOut.outPositionWS = vsOut.outPositionCS.xyz;
-    vsOut.outPositionCS = mul(vsOut.outPositionCS, VMatrix);
-    vsOut.outPositionCS = mul(vsOut.outPositionCS, PMatrix);
+    vsOut.outPositionCS = mul(float4(vsIn.inPositionLS, 1.0f), WVPMatrix);
+    vsOut.outPositionWS = mul(float4(vsIn.inPositionLS, 1.0f), WMatrix).xyz;
     
     vsOut.outColor = vsIn.inColor;
     

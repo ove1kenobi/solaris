@@ -1,23 +1,17 @@
 #pragma once
 #include "IEvent.h"
 #include "../Resources/BindIDs.h"
-class GameObject;
 class PointLight;
-class Planet;
-class WaterSphere;
+class Scene;
 
 class SendRenderObjectsEvent : public IEvent
 {
 private:
-	std::vector<GameObject*>* m_gameObjects;
-	size_t m_numPlanets;
-	std::vector<WaterSphere*>* m_WaterSpheres;
+	struct RenderData* m_RenderData;
 public:
-	SendRenderObjectsEvent(std::vector<GameObject*> *gameObjects, const size_t& numPlanets, std::vector<WaterSphere*>* waterSpheres) noexcept
+	SendRenderObjectsEvent(RenderData* renderData) noexcept
 	{
-		m_gameObjects = gameObjects;
-		m_numPlanets = numPlanets;
-		m_WaterSpheres = waterSpheres;
+		m_RenderData = renderData;
 	};
 	virtual ~SendRenderObjectsEvent() noexcept = default;
 
@@ -29,15 +23,9 @@ public:
 	{
 		return "SendRenderObjectsEvent";
 	}
-	std::vector<GameObject*> *getGameObjectVector() {
-		return this->m_gameObjects;
-	}
-	const size_t& GetNumPlanets()
+	RenderData* GetRenderData() const noexcept
 	{
-		return m_numPlanets;
-	}
-	std::vector<WaterSphere*>* getWaterSpheresVector() {
-		return this->m_WaterSpheres;
+		return m_RenderData;
 	}
 };
 

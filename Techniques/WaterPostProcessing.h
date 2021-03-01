@@ -37,7 +37,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pLightCBuffer;
 
 	PlayerCamera* m_pCamera;
-	std::vector<Planet*> m_pPlanets;
 	PointLight* m_pSunLight;
 	DirectX::XMFLOAT3* m_pSunCenter;
 	float* m_pSunRadius;
@@ -54,7 +53,7 @@ public:
 	WaterPostProcessing() noexcept;
 	virtual ~WaterPostProcessing();
 	[[nodiscard]] const bool Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, UINT screenWidth, UINT screenHeight) noexcept;
-	void PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
+	void PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, std::vector<GameObject*> planets) noexcept;
 	void DoPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
 	void CleanUp() noexcept;
 };

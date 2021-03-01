@@ -1,7 +1,11 @@
 #include "pch.h"
 #include "WaterSphere.h"
 
-WaterSphere::WaterSphere() noexcept : m_radius{ 0 } {
+WaterSphere::WaterSphere() noexcept :
+	m_radius{ 0 },
+	tag{ "WaterSphere" },
+	testForCulling{ false }
+{
 
 }
 
@@ -39,7 +43,7 @@ bool WaterSphere::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, c
 
 	//Update the matrixBuffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-	DirectX::XMMATRIX WMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&this->m_wMatrix));
+	DirectX::XMMATRIX WMatrix = DirectX::XMLoadFloat4x4(&this->m_wMatrix);
 	//Already transposed in Cosmicbody
 	deviceContext->Map(this->m_model->getMatrixBuffer().Get(),
 		0,
@@ -47,9 +51,8 @@ bool WaterSphere::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, c
 		0,
 		&mappedSubresource);
 	ModelFactory::MatrixBuffer* data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
-	data->WMatrix = WMatrix;
-	data->VMatrix = VMatrix;
-	data->PMatrix = PMatrix;
+	data->WMatrix = DirectX::XMMatrixTranspose(WMatrix);
+	data->WVPMatrix = DirectX::XMMatrixTranspose(WMatrix * VMatrix * PMatrix);
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
 
 	//Bounding sphere:
@@ -70,4 +73,12 @@ void WaterSphere::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>&
 	ID3D11Buffer* nullBuffer[6] = { nullptr };
 	deviceContext->VSSetConstantBuffers(0u, 6u, nullBuffer);
 	deviceContext->VSSetConstantBuffers(0u, 1u, this->m_model->getMatrixBuffer().GetAddressOf());
+}
+
+[[nodiscard]] const std::string& WaterSphere::GetTag() const noexcept {
+	return tag;
+}
+
+[[nodiscard]] const bool& WaterSphere::ShallBeTestedForCulling() const noexcept {
+	return testForCulling;
 }

@@ -52,18 +52,14 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	}
 	texCol *= 0.25f;
 
-	//Get the world position of the pixel we are looking at.
-	float4 wPos = 0.0f;
-	for (int m = 0; m < 4; m++) {
-		wPos += wPosTexture.Load(psIn.outPositionPS.xy, m);
-	}
-	wPos *= 0.25f;
+	//No multisampling
+	
+	float4 wPos = wPosTexture.Load(psIn.outPositionPS.xy, 0);
+	
 
-	float4 waterSphere = 0.0f;
-	for (int o = 0; o < 4; o++) {
-		waterSphere += waterSphereTexture.Load(psIn.outPositionPS.xy, o);
-	}
-	waterSphere *= 0.25f;
+	//No multisampling
+	float4 waterSphere = waterSphereTexture.Load(psIn.outPositionPS.xy, 0);
+	
 
 	//If it does not hit water or a planet / ship / asteroid.
 	if (wPos.x == 0.5f && waterSphere.x == 0.5f) {
@@ -110,11 +106,8 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	}
 
 	// Get the normal in the point we are looking at.
-	float4 normalTemp = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	for (int n = 0; n < 4; n++) {
-		normalTemp += normalTexture.Load(psIn.outPositionPS.xy, n);
-	}
-	normalTemp *= 0.25f; //Check w to see if we hit skybox (is 0.5 if we hit skybox)
+	float4 normalTemp = normalTexture.Load(psIn.outPositionPS.xy, 0);
+	 //Check w to see if we hit skybox (is 0.5 if we hit skybox)
 	float3 normal = normalize(normalTemp.xyz);
 
 	//Skybox & sun

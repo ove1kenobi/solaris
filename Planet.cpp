@@ -1,7 +1,11 @@
 #include "pch.h"
 #include "Planet.h"
 
-Planet::Planet() noexcept : m_planetType{ 0 }
+Planet::Planet() noexcept
+	:m_Tag{ "Planet"},
+	 m_TestForCulling{ true },
+	 m_DistanceToCamera{ 0.0f },
+	 m_planetType{ 0 }
 {
 
 }
@@ -29,4 +33,14 @@ bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zR
 const bool Planet::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
 {
 	return m_model->GetBoundingSphere()->Intersects(origin, direction, distance);
+}
+
+const std::string& Planet::GetTag() const noexcept
+{
+	return m_Tag;
+}
+
+const bool& Planet::ShallBeTestedForCulling() const noexcept
+{
+	return m_TestForCulling;
 }
