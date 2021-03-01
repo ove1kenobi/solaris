@@ -4,7 +4,7 @@
 
 struct RenderData
 {
-	std::vector<GameObject*> allObjects;
+	std::vector<GameObject*>* allObjects;
 	std::vector<GameObject*> culledObjects;
 	std::vector<GameObject*> culledPlanetsDepthSorted;
 	size_t nrOfPlanetsInView;

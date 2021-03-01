@@ -19,7 +19,7 @@ void FrustumCulling::CullObjects(std::vector<GameObject*>& gameObjects, PlayerCa
 	  We use this information in the frustum culling!*/
 	renderData = {};
 	renderData.sunCulled = true;
-	renderData.allObjects = gameObjects;
+	renderData.allObjects = &gameObjects;
 	for (unsigned int i{ 0u }; i < gameObjects.size(); ++i)
 	{
 		//The objects is either a planet or the sun:
