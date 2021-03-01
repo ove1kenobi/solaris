@@ -49,8 +49,7 @@ public:
 
 	struct MatrixBuffer {
 		DirectX::XMMATRIX WMatrix;
-		DirectX::XMMATRIX VMatrix;
-		DirectX::XMMATRIX PMatrix;
+		DirectX::XMMATRIX WVPMatrix;
 	};
 
 	struct PlanetConstants {
