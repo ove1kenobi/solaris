@@ -23,5 +23,6 @@ enum class EventType {
 	DelegateSunLightEvent, 
 	RequestSunLightEvent,
 	PlaySoundEvent,
-	SetMusicEvent
+	SetMusicEvent,
+	StopLoopingSoundEvent
 };

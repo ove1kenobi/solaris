@@ -148,8 +148,13 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             }
             if (wParam == 'E')
             {
-                PlaySoundEvent psEvent;
+                PlaySoundEvent psEvent(SoundID::Thrusters, true);
                 EventBuss::Get().Delegate(psEvent);
+            }
+            if (wParam == 'R')
+            {
+                StopLoopingSoundEvent slsEvent(SoundID::Thrusters);
+                EventBuss::Get().Delegate(slsEvent);
             }
             #endif
             if (wParam == VK_ESCAPE)

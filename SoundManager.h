@@ -11,6 +11,7 @@ class SoundManager : public IEventListener
 private:
 	sf::Music m_music;
 	std::vector<sf::SoundBuffer> m_sounds;
+	std::vector<sf::Sound> m_loopingSounds;
 	std::queue<sf::Sound> m_playingSounds;
 
 	//sf::Sound test1, test2;
