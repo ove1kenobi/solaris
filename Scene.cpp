@@ -1,18 +1,13 @@
 #include "pch.h"
 #include "Scene.h"
 
-void initPlanet(Planet* planet, Orbit* orbit, std::vector<GameObject*>& gameObjects, std::vector<Planet*>& planets, size_t id, size_t num, float x, float y, float z, float r, float xRot, float zRot, int rotDir, UINT type, GameObject* tetherTo) {
-	planet->Initialize(x, y, z, r, xRot, zRot, rotDir, type, tetherTo, orbit);
+void initPlanet(Planet* planet, Orbit* orbit, WaterSphere* waterSphere, std::vector<GameObject*>& gameObjects, std::vector<Planet*>& planets, std::vector<WaterSphere*>& waterSpheres, size_t id, size_t num, float x, float y, float z, float r, float xRot, float zRot, int rotDir, UINT type, GameObject* tetherTo) {
+	planet->Initialize(x, y, z, r, xRot, zRot, rotDir, type, tetherTo, orbit, waterSphere);
 
 	gameObjects[id] = planet;
 	gameObjects[id + num] = orbit;
 	planets[id] = planet;
-}
-
-void initWaterSphere(Planet* planet, Orbit* orbit, std::vector<Planet*>& waterSpheres, size_t id, float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo) {
-	planet->Initialize(x, y, z, r, xRot, zRot, rotDir, tetherTo, orbit);
-
-	waterSpheres[id] = planet;
+	waterSpheres[id] = waterSphere;
 }
 
 Scene::Scene() noexcept
@@ -60,7 +55,7 @@ const std::string Scene::GetDebugName() const noexcept
 
 //Send gameObjects for rendering after being asked.
 void Scene::sendObjects() {
-	SendRenderObjectsEvent event(&this->m_gameObjects, m_numPlanets);
+	SendRenderObjectsEvent event(&this->m_gameObjects, m_numPlanets, &this->m_waterSpheres);
 	EventBuss::Get().Delegate(event);
 }
 
@@ -111,16 +106,20 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 
 	this->m_gameObjects.resize(this->m_numPlanets * 2);
 	this->m_planets.resize(this->m_numPlanets);
+	this->m_waterSpheres.resize(this->m_numPlanets);
 	//Create all the planets using the distributions.
 	for(size_t i = 0; i < this->m_numPlanets; ++i){
 		Planet* planet = new Planet();
 		Orbit* orbit = new Orbit();
+		WaterSphere* waterSphere = new WaterSphere();
 		threads.push_back(std::thread(
 			initPlanet,
 			planet,
 			orbit,
+			waterSphere,
 			std::ref(this->m_gameObjects),
 			std::ref(this->m_planets),
+			std::ref(this->m_waterSpheres),
 			i,
 			m_numPlanets,
 			static_cast<float>(distributionX(generator)),
@@ -137,33 +136,30 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	for (int i = 0; i < this->m_numPlanets; i++) {
 		threads[i].join();
 	}
-	//threads = {};
 
-	std::vector<std::thread> threadsWater;
-	this->m_waterSpheres.resize(this->m_numPlanets);
-	for (size_t i = 0; i < this->m_numPlanets; i++) {
-		DirectX::XMFLOAT3 center = m_gameObjects[i]->GetCenter();
-		Planet* planet = new Planet();
-		threadsWater.push_back(std::thread(
-			initWaterSphere,
-			planet,
-			static_cast<Orbit*>(static_cast<Planet*>(m_gameObjects[i])->GetOrbit()),
-			std::ref(this->m_waterSpheres),
-			i,
-			center.x,
-			center.y,
-			center.z,
-			static_cast<Planet*>(m_gameObjects[i])->GetRadius(),
-			m_gameObjects[i]->GetPitch(),
-			m_gameObjects[i]->GetRoll(),
-			static_cast<Planet*>(m_gameObjects[i])->GetRotDir(),
-			sun
-		));
-	}
-	for (int i = 0; i < this->m_numPlanets; i++) {
-		threadsWater[i].join();
-	}
-	//threads = {};
+	//std::vector<std::thread> threadsWater;
+	//this->m_waterSpheres.resize(this->m_numPlanets);
+	//for (size_t i = 0; i < this->m_numPlanets; i++) {
+		//DirectX::XMFLOAT3 center = m_gameObjects[i]->GetCenter();
+		//Planet* planet = new Planet();
+		//threadsWater.push_back(std::thread(
+			//initWaterSphere,
+			//planet,
+			//std::ref(this->m_waterSpheres),
+			//i,
+			//center.x,
+			//center.y,
+			//center.z,
+			//(static_cast<Planet*>(m_gameObjects[i]))->GetRadius(),
+			//m_gameObjects[i]->GetPitch(),
+			//m_gameObjects[i]->GetRoll(),
+			//(static_cast<Planet*>(m_gameObjects[i]))->GetRotDir(),
+			//sun
+		//));
+	//}
+	//for (int i = 0; i < this->m_numPlanets; i++) {
+		//threadsWater[i].join();
+	//}
 
 	// Push sun to stack
 	this->m_gameObjects.push_back(sun);
@@ -189,9 +185,6 @@ void Scene::Update() noexcept {
 	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
 
 	for (auto r : this->m_gameObjects) {
-		r->update(vMatrix, pMatrix, m_pDeviceContext);
-	}
-	for (auto r : this->m_waterSpheres) {
 		r->update(vMatrix, pMatrix, m_pDeviceContext);
 	}
 

@@ -1,9 +1,10 @@
 #include "GPUmath.hlsli"
 Texture2DMS<float4> colorTexture		: register(t0);
-Texture2DMS<float4> waterBoolTexture	: register(t1);
+Texture2DMS<float4> waterBoolTexture	: register(t1); //FÖRSVINNER
 Texture2DMS<float4> lengthCenterTexture : register(t2);
 Texture2DMS<float4> wPosTexture			: register(t3);
 Texture2DMS<float4> normalTexture		: register(t4);
+Texture2DMS<float4> waterSphereTexture	: register(t5);
 
 cbuffer PlanetData : register(b0)
 {
@@ -51,7 +52,25 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	for (int i = 0; i < 4; i++) {
 		texCol += colorTexture.Load(psIn.outPositionPS.xy, i);
 	}
-	texCol /= 4;
+	texCol *= 0.25f;
+
+	//Get the world position of the pixel we are looking at.
+	float4 wPos = 0.0f;
+	for (int m = 0; m < 4; m++) {
+		wPos += wPosTexture.Load(psIn.outPositionPS.xy, m);
+	}
+	wPos *= 0.25f;
+
+	float4 waterSphere = 0.0f;
+	for (int o = 0; o < 4; o++) {
+		waterSphere += waterSphereTexture.Load(psIn.outPositionPS.xy, o);
+	}
+	waterSphere *= 0.25f;
+
+	//If it does not hit water or a planet / ship / asteroid.
+	if (wPos.x == 0.5f && waterSphere.x == 0.5f) {
+		return texCol;
+	}
 
 	//Check if there is supposed to be water on the point we are looking at.
 	//(Might be that we are looking through water on the "side", so this info is not sufficient.
@@ -59,21 +78,14 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	for (int j = 0; j < 4; j++) {
 		waterBool += waterBoolTexture.Load(psIn.outPositionPS.xy, j);
 	}
-	waterBool /= 4;
+	waterBool *= 0.25f;
 	
 	//Get the distance to the planets center in this pixel.
 	float4 distFromCenter = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	for (int l = 0; l < 4; l++) {
 		distFromCenter += lengthCenterTexture.Load(psIn.outPositionPS.xy, l);
 	}
-	distFromCenter /= 4;
-
-	//Get the world position of the pixel we are looking at.
-	float4 wPos = 0.0f;
-	for (int m = 0; m < 4; m++) {
-		wPos += wPosTexture.Load(psIn.outPositionPS.xy, m);
-	}
-	wPos /= 4;
+	distFromCenter *= 0.25f;
 
 	//Calculate the depth to the point we are looking at.
 	float depth = length(wPos.xyz - cameraPos.xyz);
@@ -110,9 +122,8 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	}
 
 	//Skybox & sun
-	//Hårdkodad solradie & position
 	tempPlanet = raySphereIntersect(sun.xyz, sun.w, cameraPos, normalize(float3(DirectionWorldSpace.xyz)));
-	if ((closestPlanet.y == -1.0f && waterBool.x == 0.5f) || (tempPlanet.x != -1.0f && depth > tempPlanet.x && tempPlanet.x < closestPlanet.x)) {
+	if ((closestPlanet.y == -1.0f && distFromCenter.y == 0.5f) || (tempPlanet.x != -1.0f && depth > tempPlanet.x && tempPlanet.x < closestPlanet.x)) {
 		return texCol;
 	}
 
@@ -121,7 +132,7 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	for (int n = 0; n < 4; n++) {
 		normalTemp += normalTexture.Load(psIn.outPositionPS.xy, n);
 	}
-	normalTemp /= 4;
+	normalTemp * 0.25f;
 	float3 normal = normalize(normalTemp.xyz);
 
 	//If it hit a planet.
@@ -129,7 +140,7 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	//And if there is supposed to be water in that pixel or we are looking through water.
 	//Calculate water
 	[flatten]
-	if (closestPlanet.y != -1.0f && depth < 12000.0f && (waterBool.x != 0.0f || depth - closestPlanet.x > 0.0f)) {
+	if (closestPlanet.y != -1.0f && depth < 12000.0f && (depth - closestPlanet.x + 0.001f > 0.0f)) {
 		/*LIGHTING ON BOTTOM OF THE OCEAN*/
 		//Does not use specular.
 		/*Note, attenuation is not relevant FOR THE SUN, and is as such not included in the calculations*/

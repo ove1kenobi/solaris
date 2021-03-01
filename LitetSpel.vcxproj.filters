@@ -11,6 +11,8 @@
     <FxCompile Include="PixelShader_Sun.hlsl" />
     <FxCompile Include="PixelShader_PostProcessing.hlsl" />
     <FxCompile Include="VertexShader_PostProcessing.hlsl" />
+    <FxCompile Include="VertexShader_WaterSphere.hlsl" />
+    <FxCompile Include="PixelShader_WaterSphere.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bloom.cpp" />
@@ -66,6 +68,7 @@
     <ClCompile Include="UI\PlanetInteractionUI.cpp" />
     <ClCompile Include="UI\RandomEventUI.cpp" />
     <ClCompile Include="UI\HeadsUpDisplayUI.cpp" />
+    <ClCompile Include="WaterSphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -127,12 +130,13 @@
     <ClInclude Include="Resources\Texture.h" />
     <ClInclude Include="Techniques\WaterPostProcessing.h" />
     <ClInclude Include="Resources\GBuffer.h" />
-     <ClInclude Include="UI\TypesUI.h" />
+    <ClInclude Include="UI\TypesUI.h" />
     <ClInclude Include="UI\Button.h" />
     <ClInclude Include="UI\ModuleUI.h" />
     <ClInclude Include="UI\PlanetInteractionUI.h" />
     <ClInclude Include="UI\RandomEventUI.h" />
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
+    <ClInclude Include="WaterSphere.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

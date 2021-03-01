@@ -4,6 +4,7 @@
 ForwardRenderer::ForwardRenderer() noexcept
 	: m_Background{ 0.0f, 1.0f, 0.0f, 1.0f },
 	  m_pGameObjects{ nullptr },
+	  m_pWaterSpheres{ nullptr },
 	  m_pDevice{ nullptr },
 	  m_pDeviceContext{ nullptr },
 	  m_pBackBuffer{ nullptr },
@@ -65,14 +66,22 @@ void ForwardRenderer::BeginFrame()
 		m_pDeviceContext->DrawIndexed((*m_pGameObjects)[i]->getIndexBufferSize(), 0u, 0u);
 	}
 
-
 	//Skybox time:
 	m_Skybox.PreparePass(m_pDeviceContext);
 	m_Skybox.DoPass(m_pDeviceContext);
 	m_Skybox.CleanUp();
 
+	//Bind waterSpheres:
+	BindIDEvent bindEventWaterSpheres(BindID::ID_WaterSphere);
+	EventBuss::Get().Delegate(bindEventWaterSpheres);
+
+	for (size_t i = 0; i < m_numPlanets; i++) {
+		(*m_pWaterSpheres)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((*m_pWaterSpheres)[i]->getIndexBufferSize(), 0u, 0u);
+	}
+
 	//size is number of textures in the gbuffer.
-	ID3D11RenderTargetView* nullRTV[4] = { nullptr };
+	ID3D11RenderTargetView* nullRTV[6] = { nullptr };
 	ID3D11DepthStencilView* nullDSV = { nullptr };
 	m_pDeviceContext->OMSetRenderTargets(ARRAYSIZE(nullRTV), nullRTV, nullDSV);
 
@@ -130,6 +139,7 @@ void ForwardRenderer::OnEvent(IEvent& event) noexcept
 		SendRenderObjectsEvent& derivedEvent = static_cast<SendRenderObjectsEvent&>(event);
 		m_pGameObjects = derivedEvent.getGameObjectVector();
 		m_numPlanets = derivedEvent.GetNumPlanets();
+		m_pWaterSpheres = derivedEvent.getWaterSpheresVector();
 		break;
 	}
 	case EventType::DelegateDXEvent:

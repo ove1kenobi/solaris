@@ -6,9 +6,9 @@ Planet::Planet() noexcept : m_planetType{ 0 }
 
 }
 
-bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zRot, int rotDir, UINT type, GameObject* tetherTo, Orbit* orbit) {
+bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zRot, int rotDir, UINT type, GameObject* tetherTo, Orbit* orbit, WaterSphere* waterSphere) {
 	//The cosmic body
-	this->init(x, y, z, r, xRot, zRot, rotDir, tetherTo, orbit);
+	this->init(x, y, z, r, xRot, zRot, rotDir, tetherTo, orbit, waterSphere);
 	
 	DirectX::XMFLOAT3 yAxis = { m_yAxis.x, m_yAxis.y, m_yAxis.z };
 
@@ -23,17 +23,6 @@ bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zR
 
 	//Generate the Planet.
 	this->m_model = ModelFactory::Get().GeneratePlanet(x, y, z, r, m_planetType, yAxis);
-	return true;
-}
-
-//Overloaded funciton for water sphere.
-bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo, Orbit* orbit) {
-	this->init(x, y, z, r, xRot, zRot, rotDir, tetherTo, orbit);
-
-	DirectX::XMFLOAT3 yAxis = { m_yAxis.x, m_yAxis.y, m_yAxis.z };
-
-	//Generate the Planet.
-	this->m_model = ModelFactory::Get().GenerateWaterSphere(x, y, z, r, yAxis);
 	return true;
 }
 

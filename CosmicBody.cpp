@@ -4,7 +4,7 @@
 CosmicBody::CosmicBody() noexcept
 	: m_radius{ 0.0f }, m_yAxis{ 0.0f, 1.0f, 0.0f, 0.0f }, m_rotationDir{ 0 },
 	m_tetheredTo{ nullptr }, m_major_semi_axis{ 0 }, m_minor_semi_axis{ 0 }, m_orbital_speed{ 0 },
-	m_orbit{ nullptr }
+	m_orbit{ nullptr }, m_waterSphere{ nullptr }
 {
 	
 }
@@ -13,7 +13,11 @@ CosmicBody::~CosmicBody()
 {
 }
 
-bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo, Orbit* orbit) {
+bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo, Orbit* orbit, WaterSphere* waterSphere) {
+	m_waterSphere = waterSphere;
+	if(m_waterSphere)
+		m_waterSphere->Initialize(x, y, z, r);
+
 	//Set initial values. All randomized.
 	this->m_radius = r;
 	this->m_mass = r * 1000000000;
@@ -24,11 +28,14 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	this->m_roll = zRot;
 	this->m_rotationDir = rotDir;
 	this->m_tetheredTo = tetherTo;
-	if(tetherTo && orbit)
+	if(tetherTo)
 	{
 		this->m_major_semi_axis = length(m_center - tetherTo->GetCenter());
 		this->m_minor_semi_axis = this->m_major_semi_axis * 0.8f;
 		this->m_orbital_speed = 6.2831853f * m_major_semi_axis / m_mass * 100000.0f;
+	}
+	if (orbit)
+	{
 		m_orbit = orbit;
 		m_orbit->init(m_major_semi_axis, m_minor_semi_axis);
 	}
@@ -112,6 +119,9 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	//Bounding sphere:
 	m_model->GetBoundingSphere()->Center = m_center;
 
+	//Update the water sphere.
+	if(m_waterSphere)
+		m_waterSphere->updateSphere(VMatrix, PMatrix, deviceContext, m_center.x, m_center.y, m_center.z);
 	return true;
 }
 

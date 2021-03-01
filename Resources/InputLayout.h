@@ -4,6 +4,7 @@
 #define LAYOUT_MINIMAL 2
 #define LAYOUT_SINGLEPOINT 3
 #define LAYOUT_POSTPROCESSING 4
+#define LAYOUT_WATERSPHERES 5
 class IBindable;
 #include "VertexShader.h"
 class InputLayout : public IBindable

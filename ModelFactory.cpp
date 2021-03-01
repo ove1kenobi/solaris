@@ -216,13 +216,13 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r, UINT typ
 	return model;
 }
 
-Model* ModelFactory::GenerateWaterSphere(float x, float y, float z, float r, DirectX::XMFLOAT3 yAxis) {
+Model* ModelFactory::GenerateWaterSphere(float x, float y, float z, float r) {
 	//Create the sphere vertices and indices. The vertices are just raw float values.
 	DirectX::XMFLOAT3 center = { x, y, z };
 	Model* model = new Model();
 	std::vector<float> vertexPositionValues;
 	std::vector<UINT> indices;
-	createSphere(r + (r / 10), 2, vertexPositionValues, indices);
+	createSphere(r + r / 5, 2, vertexPositionValues, indices);
 
 	//Convert the data to vertex_col.
 	std::vector<Vertex_Position> vertices;
@@ -240,7 +240,35 @@ Model* ModelFactory::GenerateWaterSphere(float x, float y, float z, float r, Dir
 
 	createBuffers(sizeof(Vertex_Position), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
 
-	model->SetBoundingVolume(new DirectX::BoundingSphere(center, r + (r / 5.0f)));
+	/*
+	const std::lock_guard<std::mutex> lock(this->m_mutex);
+	//Create radiusbuffer for first shader
+	D3D11_BUFFER_DESC radiusBufferDesc = {};
+	radiusBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	radiusBufferDesc.ByteWidth = sizeof(RadiusBuffer);
+	radiusBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	radiusBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	radiusBufferDesc.MiscFlags = 0;
+	radiusBufferDesc.StructureByteStride = 0;
+	HR_X(this->m_device->CreateBuffer(&radiusBufferDesc,
+		nullptr,
+		&model->getRadiusBuffer()),
+		"CreateBuffer");
+
+	//Update the radiusbuffer.
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+
+	m_deviceContext->Map(model->getRadiusBuffer().Get(),
+		0,
+		D3D11_MAP_WRITE_DISCARD,
+		0,
+		&mappedSubresource);
+	ModelFactory::RadiusBuffer* data = (ModelFactory::RadiusBuffer*)mappedSubresource.pData;
+	data->radius = r;
+	m_deviceContext->Unmap(model->getRadiusBuffer().Get(), 0);
+	*/
+
+	model->SetBoundingVolume(new DirectX::BoundingSphere(center, r + (r / 10) + (r / 5.0f)));
 
 	return model;
 }

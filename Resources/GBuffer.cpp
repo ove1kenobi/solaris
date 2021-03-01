@@ -5,7 +5,7 @@ GBuffer::GBuffer() noexcept
     : 
     m_pDepthStencilView{ nullptr },
     m_isRenderTarget{ false },
-    m_background{ 0.5f, 0.5f, 0.5f, 1.0f },
+    m_background{ 0.5f, 0.5f, 0.5f, 0.5f },
     m_RTVArray{ nullptr }
 {
 
@@ -77,6 +77,11 @@ const bool GBuffer::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, 
     if (!normalTexture->Create(pDevice, 4, width, height))
         return false;
     m_Textures.push_back(normalTexture);
+
+    Texture* waterSphereTexture = new Texture();
+    if (!waterSphereTexture->Create(pDevice, 5, width, height))
+        return false;
+    m_Textures.push_back(waterSphereTexture);
 
     for (int i = 0; i < ARRAYSIZE(m_RTVArray); i++) {
         m_RTVArray[i] = m_Textures[i]->getRTV();

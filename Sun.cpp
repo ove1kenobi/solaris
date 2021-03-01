@@ -28,7 +28,7 @@ Sun::Sun() noexcept
 const bool Sun::Initialize() noexcept
 {
 	//The cosmic body
-	this->init(0.0f, 0.0f, 0.0f, 900.0f, 0.0f, 0.0f, 1, nullptr, nullptr);
+	this->init(0.0f, 0.0f, 0.0f, 900.0f, 0.0f, 0.0f, 1, nullptr, nullptr, nullptr);
 	//Generate the Sun.
 	this->m_model = ModelFactory::Get().GenerateSun(this->m_center.x, this->m_center.y, this->m_center.z, this->m_radius);
 	//The light

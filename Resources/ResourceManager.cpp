@@ -29,6 +29,8 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	if (!m_VertexShaderPostProcessing.Create(m_pDevice, L"VertexShader_PostProcessing.hlsl"))
 		return false;
+	if (!m_VertexShaderWaterSpheres.Create(m_pDevice, L"VertexShader_WaterSphere.hlsl"))
+		return false;
 	//Pixel Shaders:
 	if (!m_PixelShaderMinimal.Create(m_pDevice, L"PixelShader_Minimalistic.hlsl"))
 		return false;
@@ -39,6 +41,8 @@ const bool ResourceManager::CreateAllBindables()
 	if (!m_PixelShaderSun.Create(m_pDevice, L"PixelShader_Sun.hlsl"))
 		return false;
 	if (!m_PixelShaderPostProcessing.Create(m_pDevice, L"PixelShader_PostProcessing.hlsl"))
+		return false;
+	if (!m_PixelShaderWaterSpheres.Create(m_pDevice, L"PixelShader_WaterSphere.hlsl"))
 		return false;
 	//Geometry Shaders:
 
@@ -55,6 +59,8 @@ const bool ResourceManager::CreateAllBindables()
 	if (!m_InputLayoutSinglePoint.Create(m_pDevice, m_VertexShaderSkybox, LAYOUT_SINGLEPOINT))
 		return false;
 	if (!m_InputLayoutPostProcessing.Create(m_pDevice, m_VertexShaderPostProcessing, LAYOUT_POSTPROCESSING))
+		return false;
+	if (!m_InputLayoutWaterSpheres.Create(m_pDevice, m_VertexShaderWaterSpheres, LAYOUT_WATERSPHERES))
 		return false;
 	//Primitive topologies:
 	if (!m_TopologyTriList.Create(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST))
@@ -103,42 +109,45 @@ const bool ResourceManager::CreateAllBindables()
 
 	//Water Post processing:
 	m_BindablesWater.insert(m_BindablesWater.end(), { &m_VertexShaderPostProcessing, &m_PixelShaderPostProcessing, &m_InputLayoutPostProcessing, &m_TopologyTriList, &m_GBuffer, &m_VertexBufferQuad, &m_IndexBufferQuad });
+	
+	//Water spheres
+	m_BindablesWaterSpheres.insert(m_BindablesWaterSpheres.end(), { &m_VertexShaderWaterSpheres, &m_PixelShaderWaterSpheres, &m_InputLayoutWaterSpheres, &m_TopologyTriList });
 	return true;
 }
 
 void ResourceManager::UnbindPipeline()
 {
-	ID3D11ShaderResourceView*	nullSRV[5] = { nullptr };
-	ID3D11SamplerState*			nullSampler[5] = { nullptr };
-	ID3D11Buffer*				nullBuffer[5] = { nullptr };
+	ID3D11ShaderResourceView*	nullSRV[6] = { nullptr };
+	ID3D11SamplerState*			nullSampler[6] = { nullptr };
+	ID3D11Buffer*				nullBuffer[6] = { nullptr };
 
 	m_pDeviceContext->VSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->VSSetShaderResources(0u, 5u, nullSRV);
-	m_pDeviceContext->VSSetSamplers(0u, 5u, nullSampler);
-	m_pDeviceContext->VSSetConstantBuffers(0u, 5u, nullBuffer);
+	m_pDeviceContext->VSSetShaderResources(0u, 6u, nullSRV);
+	m_pDeviceContext->VSSetSamplers(0u, 6u, nullSampler);
+	m_pDeviceContext->VSSetConstantBuffers(0u, 6u, nullBuffer);
 
 	m_pDeviceContext->PSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->PSSetShaderResources(0u, 5u, nullSRV);
-	m_pDeviceContext->PSSetSamplers(0u, 5u, nullSampler);
-	m_pDeviceContext->PSSetConstantBuffers(0u, 5u, nullBuffer);
+	m_pDeviceContext->PSSetShaderResources(0u, 6u, nullSRV);
+	m_pDeviceContext->PSSetSamplers(0u, 6u, nullSampler);
+	m_pDeviceContext->PSSetConstantBuffers(0u, 6u, nullBuffer);
 
 	m_pDeviceContext->DSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->DSSetShaderResources(0u, 5u, nullSRV);
-	m_pDeviceContext->DSSetSamplers(0u, 5u, nullSampler);
-	m_pDeviceContext->DSSetConstantBuffers(0u, 5u, nullBuffer);
+	m_pDeviceContext->DSSetShaderResources(0u, 6u, nullSRV);
+	m_pDeviceContext->DSSetSamplers(0u, 6u, nullSampler);
+	m_pDeviceContext->DSSetConstantBuffers(0u, 6u, nullBuffer);
 
 	m_pDeviceContext->HSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->HSSetShaderResources(0u, 5u, nullSRV);
-	m_pDeviceContext->HSSetSamplers(0u, 5u, nullSampler);
-	m_pDeviceContext->HSSetConstantBuffers(0u, 5u, nullBuffer);
+	m_pDeviceContext->HSSetShaderResources(0u, 6u, nullSRV);
+	m_pDeviceContext->HSSetSamplers(0u, 6u, nullSampler);
+	m_pDeviceContext->HSSetConstantBuffers(0u, 6u, nullBuffer);
 
 	m_pDeviceContext->GSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->GSSetShaderResources(0u, 5u, nullSRV);
-	m_pDeviceContext->GSSetSamplers(0u, 5u, nullSampler);
-	m_pDeviceContext->GSSetConstantBuffers(0u, 5u, nullBuffer);
+	m_pDeviceContext->GSSetShaderResources(0u, 6u, nullSRV);
+	m_pDeviceContext->GSSetSamplers(0u, 6u, nullSampler);
+	m_pDeviceContext->GSSetConstantBuffers(0u, 6u, nullBuffer);
 
 	m_pDeviceContext->CSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->CSSetShaderResources(0u, 5u, nullSRV);
+	m_pDeviceContext->CSSetShaderResources(0u, 6u, nullSRV);
 	m_pDeviceContext->CSSetConstantBuffers(0u, 0u, nullBuffer);
 }
 
@@ -219,6 +228,17 @@ void ResourceManager::BindToPipeline(IEvent& event)
 		}
 		break;
 	}
+	case BindID::ID_WaterSphere:
+	{
+		for (auto bindables : m_BindablesWaterSpheres)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		break;
+	}
 	case BindID::ID_Water:
 	{
 		for (auto bindables : m_BindablesWater)
@@ -228,6 +248,7 @@ void ResourceManager::BindToPipeline(IEvent& event)
 				bindables->Bind(m_pDeviceContext);
 			}
 		}
+		break;
 	}
 	}
 }

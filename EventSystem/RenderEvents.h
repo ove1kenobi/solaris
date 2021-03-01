@@ -3,17 +3,21 @@
 #include "../Resources/BindIDs.h"
 class GameObject;
 class PointLight;
+class Planet;
+class WaterSphere;
 
 class SendRenderObjectsEvent : public IEvent
 {
 private:
 	std::vector<GameObject*>* m_gameObjects;
 	size_t m_numPlanets;
+	std::vector<WaterSphere*>* m_WaterSpheres;
 public:
-	SendRenderObjectsEvent(std::vector<GameObject*> *gameObjects, const size_t& numPlanets) noexcept
+	SendRenderObjectsEvent(std::vector<GameObject*> *gameObjects, const size_t& numPlanets, std::vector<WaterSphere*>* waterSpheres) noexcept
 	{
 		m_gameObjects = gameObjects;
 		m_numPlanets = numPlanets;
+		m_WaterSpheres = waterSpheres;
 	};
 	virtual ~SendRenderObjectsEvent() noexcept = default;
 
@@ -31,6 +35,9 @@ public:
 	const size_t& GetNumPlanets()
 	{
 		return m_numPlanets;
+	}
+	std::vector<WaterSphere*>* getWaterSpheresVector() {
+		return this->m_WaterSpheres;
 	}
 };
 
