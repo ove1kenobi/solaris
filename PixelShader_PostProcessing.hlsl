@@ -52,7 +52,6 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	}
 	texCol *= 0.25f;
 
-	return texCol;
 	//Get the world position of the pixel we are looking at.
 	float4 wPos = 0.0f;
 	for (int m = 0; m < 4; m++) {
