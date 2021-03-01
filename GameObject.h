@@ -4,6 +4,8 @@
 
 class GameObject
 {
+private:
+	float m_DistanceToCamera;
 protected:
 	DirectX::XMFLOAT3 m_velocity;
 	DirectX::XMFLOAT3 m_center;
@@ -16,6 +18,7 @@ protected:
 	float m_roll;
 	float m_yaw;
 	Time m_timer;
+	bool m_HasBoundingVolume;
 
 	//Where the buffers are stored
 	Model* m_model;
@@ -35,4 +38,9 @@ public:
 	//Returns the translation of the object in the world.
 	DirectX::XMFLOAT3 getTransVector();
 	float GetMass();
+	[[nodiscard]] Model* GetModel() const noexcept;
+	virtual [[nodiscard]] const std::string& GetTag() const noexcept = 0;
+	virtual [[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept = 0;
+	[[nodiscard]] const float& GetDistanceToCamera() const noexcept;
+	void SetDistanceToCamera(const float& distance) noexcept;
 };

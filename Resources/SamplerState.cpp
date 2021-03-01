@@ -57,5 +57,20 @@ const bool SamplerState::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDev
 		HR(pDevice->CreateSamplerState(&samplerDescriptor, &m_pSamplerState), "CreateSamplerState");
 		return true;
 	}
+	else if (techFlag == TechFlag::POSTPROCESSING)
+	{
+		m_Slot = slot;
+		m_BindFlag = bindFlag;
+		D3D11_SAMPLER_DESC samplerDescriptor = {};
+		samplerDescriptor.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		samplerDescriptor.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDescriptor.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDescriptor.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDescriptor.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		samplerDescriptor.MinLOD = 0.0f;
+		samplerDescriptor.MaxLOD = D3D11_FLOAT32_MAX;
+		HR(pDevice->CreateSamplerState(&samplerDescriptor, &m_pSamplerState), "CreateSamplerState");
+		return true;
+	}
 	return false;
 }

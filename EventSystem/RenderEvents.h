@@ -1,19 +1,17 @@
 #pragma once
 #include "IEvent.h"
 #include "../Resources/BindIDs.h"
-class GameObject;
 class PointLight;
+class Scene;
 
 class SendRenderObjectsEvent : public IEvent
 {
 private:
-	std::vector<GameObject*>* m_gameObjects;
-	size_t m_numPlanets;
+	struct RenderData* m_RenderData;
 public:
-	SendRenderObjectsEvent(std::vector<GameObject*> *gameObjects, const size_t& numPlanets) noexcept
+	SendRenderObjectsEvent(RenderData* renderData) noexcept
 	{
-		m_gameObjects = gameObjects;
-		m_numPlanets = numPlanets;
+		m_RenderData = renderData;
 	};
 	virtual ~SendRenderObjectsEvent() noexcept = default;
 
@@ -25,12 +23,9 @@ public:
 	{
 		return "SendRenderObjectsEvent";
 	}
-	std::vector<GameObject*> *getGameObjectVector() {
-		return this->m_gameObjects;
-	}
-	const size_t& GetNumPlanets()
+	RenderData* GetRenderData() const noexcept
 	{
-		return m_numPlanets;
+		return m_RenderData;
 	}
 };
 
@@ -170,5 +165,23 @@ public:
 	[[nodiscard]] PointLight* GetSunLight() const noexcept
 	{
 		return m_pSunLight;
+	}
+};
+
+class BindBackBufferEvent : public IEvent
+{
+private:
+
+public:
+	BindBackBufferEvent() noexcept = default;
+	virtual ~BindBackBufferEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::BindBackBufferEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "BindBackBufferEvent";
 	}
 };
