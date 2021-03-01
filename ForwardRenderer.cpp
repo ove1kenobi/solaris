@@ -81,7 +81,7 @@ void ForwardRenderer::BeginFrame()
 	}
 
 	//size is number of textures in the gbuffer.
-	ID3D11RenderTargetView* nullRTV[6] = { nullptr };
+	ID3D11RenderTargetView* nullRTV[4] = { nullptr };
 	ID3D11DepthStencilView* nullDSV = { nullptr };
 	m_pDeviceContext->OMSetRenderTargets(ARRAYSIZE(nullRTV), nullRTV, nullDSV);
 

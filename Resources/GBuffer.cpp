@@ -58,28 +58,18 @@ const bool GBuffer::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, 
         return false;
     m_Textures.push_back(colorTexture);
 
-    Texture* waterBoolTexture = new Texture();
-    if (!waterBoolTexture->Create(pDevice, 1, width, height))
-        return false;
-    m_Textures.push_back(waterBoolTexture);
-
-    Texture* lengthCenterTexture = new Texture();
-    if (!lengthCenterTexture->Create(pDevice, 2, width, height))
-        return false;
-    m_Textures.push_back(lengthCenterTexture);
-
     Texture* wPosTexture = new Texture();
-    if (!wPosTexture->Create(pDevice, 3, width, height))
+    if (!wPosTexture->Create(pDevice, 1, width, height))
         return false;
     m_Textures.push_back(wPosTexture);
 
     Texture* normalTexture = new Texture();
-    if (!normalTexture->Create(pDevice, 4, width, height))
+    if (!normalTexture->Create(pDevice, 2, width, height))
         return false;
     m_Textures.push_back(normalTexture);
 
     Texture* waterSphereTexture = new Texture();
-    if (!waterSphereTexture->Create(pDevice, 5, width, height))
+    if (!waterSphereTexture->Create(pDevice, 3, width, height))
         return false;
     m_Textures.push_back(waterSphereTexture);
 

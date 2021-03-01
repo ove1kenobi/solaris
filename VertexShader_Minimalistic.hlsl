@@ -4,10 +4,6 @@ cbuffer MatrixBuffer : register(b0) {
     matrix PMatrix;
 }
 
-cbuffer RadiusBuffer : register(b1) {
-    float radius;
-};
-
 struct VS_IN
 {
     float3 inPositionLS : POSITION;
@@ -20,7 +16,6 @@ struct VS_OUT
     float4 outPositionCS    : SV_Position;
     float3 outPositionWS    : POSITION;
     float outLengthToCenter : LENGTHCENTER;
-    float outRadius         : RADIUS;
     float4 outColor         : COLOR;
     float3 outNormalWS      : NORMAL;
 };
@@ -36,8 +31,6 @@ VS_OUT vs_main(in VS_IN vsIn)
     vsOut.outPositionCS = mul(vsOut.outPositionCS, PMatrix);
     
     vsOut.outColor = vsIn.inColor;
-
-    vsOut.outRadius = radius;
     
     vsOut.outNormalWS = normalize(mul(float4(vsIn.inNormalLS, 0.0f), WMatrix).xyz);
     

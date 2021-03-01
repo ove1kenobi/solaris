@@ -9,7 +9,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_matrixBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_radiusBuffer;
 	UINT m_vertexBufferSize;
 	UINT m_indexBufferSize;
 	DirectX::BoundingBox* m_boundingBox;
@@ -23,7 +22,6 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11Buffer>& getVertexBuffer();
 	Microsoft::WRL::ComPtr<ID3D11Buffer>& getIndexBuffer();
 	Microsoft::WRL::ComPtr<ID3D11Buffer>& getMatrixBuffer();
-	Microsoft::WRL::ComPtr<ID3D11Buffer>& getRadiusBuffer();
 
 	void setIndexBufferSize(UINT size);
 	void setVertexBufferSize(UINT size);

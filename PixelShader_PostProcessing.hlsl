@@ -1,10 +1,8 @@
 #include "GPUmath.hlsli"
 Texture2DMS<float4> colorTexture		: register(t0);
-Texture2DMS<float4> waterBoolTexture	: register(t1); //FÖRSVINNER
-Texture2DMS<float4> lengthCenterTexture : register(t2);
-Texture2DMS<float4> wPosTexture			: register(t3);
-Texture2DMS<float4> normalTexture		: register(t4);
-Texture2DMS<float4> waterSphereTexture	: register(t5);
+Texture2DMS<float4> wPosTexture			: register(t1); //LengthToCenter in w.
+Texture2DMS<float4> normalTexture		: register(t2);	//Check this w to see if skybox is hit. (w = 0.5 if skybox is hit.)
+Texture2DMS<float4> waterSphereTexture	: register(t3);
 
 cbuffer PlanetData : register(b0)
 {
@@ -54,6 +52,7 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	}
 	texCol *= 0.25f;
 
+	return texCol;
 	//Get the world position of the pixel we are looking at.
 	float4 wPos = 0.0f;
 	for (int m = 0; m < 4; m++) {
@@ -71,21 +70,11 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	if (wPos.x == 0.5f && waterSphere.x == 0.5f) {
 		return texCol;
 	}
-
-	//Check if there is supposed to be water on the point we are looking at.
-	//(Might be that we are looking through water on the "side", so this info is not sufficient.
-	float4 waterBool = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	for (int j = 0; j < 4; j++) {
-		waterBool += waterBoolTexture.Load(psIn.outPositionPS.xy, j);
-	}
-	waterBool *= 0.25f;
 	
 	//Get the distance to the planets center in this pixel.
-	float4 distFromCenter = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	for (int l = 0; l < 4; l++) {
-		distFromCenter += lengthCenterTexture.Load(psIn.outPositionPS.xy, l);
-	}
-	distFromCenter *= 0.25f;
+	float distFromCenter = wPos.w;
+
+	wPos.w = 1.0f; //wPos is a point.
 
 	//Calculate the depth to the point we are looking at.
 	float depth = length(wPos.xyz - cameraPos.xyz);
@@ -121,19 +110,19 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 		//After this for-loop we have the distance to the closest planet.
 	}
 
-	//Skybox & sun
-	tempPlanet = raySphereIntersect(sun.xyz, sun.w, cameraPos, normalize(float3(DirectionWorldSpace.xyz)));
-	if ((closestPlanet.y == -1.0f && distFromCenter.y == 0.5f) || (tempPlanet.x != -1.0f && depth > tempPlanet.x && tempPlanet.x < closestPlanet.x)) {
-		return texCol;
-	}
-
-	//Get the normal in the point we are looking at.
-	float4 normalTemp = 0.0f;
+	// Get the normal in the point we are looking at.
+	float4 normalTemp = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	for (int n = 0; n < 4; n++) {
 		normalTemp += normalTexture.Load(psIn.outPositionPS.xy, n);
 	}
-	normalTemp * 0.25f;
+	normalTemp *= 0.25f; //Check w to see if we hit skybox (is 0.5 if we hit skybox)
 	float3 normal = normalize(normalTemp.xyz);
+
+	//Skybox & sun
+	tempPlanet = raySphereIntersect(sun.xyz, sun.w, cameraPos, normalize(float3(DirectionWorldSpace.xyz)));
+	if ((closestPlanet.y == -1.0f && normalTemp.w == 0.5f) || (tempPlanet.x != -1.0f && depth > tempPlanet.x && tempPlanet.x < closestPlanet.x)) {
+		return texCol;
+	}
 
 	//If it hit a planet.
 	//And the player is less than 12000 units away from the point.

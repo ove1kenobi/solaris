@@ -3,7 +3,6 @@ struct PS_IN
     float4 inPositionSS     : SV_Position;
     float3 inPositionWS     : POSITION;
     float inLengthToCenter  : LENGTHCENTER;
-    float inRadius          : RADIUS;
     float4 inColor	        : COLOR;
     float3 inNormalWS       : NORMAL;
 };

@@ -45,10 +45,6 @@ Microsoft::WRL::ComPtr<ID3D11Buffer>& Model::getMatrixBuffer() {
 	return this->m_matrixBuffer;
 }
 
-Microsoft::WRL::ComPtr<ID3D11Buffer>& Model::getRadiusBuffer() {
-	return this->m_radiusBuffer;
-}
-
 void Model::setIndexBufferSize(UINT size) {
 	this->m_indexBufferSize = size;
 }

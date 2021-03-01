@@ -134,7 +134,6 @@ void CosmicBody::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& 
 									  &this->m_model->getOffset());
 	deviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->VSSetConstantBuffers(0u, 1u, this->m_model->getMatrixBuffer().GetAddressOf());
-	deviceContext->VSSetConstantBuffers(1u, 1u, this->m_model->getRadiusBuffer().GetAddressOf());
 }
 
 GameObject* CosmicBody::GetOrbit()

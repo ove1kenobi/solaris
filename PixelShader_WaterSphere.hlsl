@@ -5,7 +5,7 @@ struct PS_IN
 
 struct PS_OUT
 {
-    float4 waterSphere  : SV_target5;
+    float4 waterSphere  : SV_target3;
 };
 
 PS_OUT ps_main(in PS_IN psIn)
