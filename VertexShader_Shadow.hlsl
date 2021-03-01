@@ -18,7 +18,7 @@ struct VS_OUT
 VS_OUT vs_main( in VS_IN vsIn)
 {
     VS_OUT vsOut = (VS_OUT)0;
-    vsOut.outPositionWS = mul(float4(vsIn.inPositionLS, 1.0f), worldMatrix);
+    vsOut.outPositionWS = mul(float4(vsIn.inPositionLS, 1.0f), worldMatrix).xyz;
     vsOut.outPositionCS = mul(float4(vsIn.inPositionLS, 1.0f), worldViewProjectionMatrix);
     return vsOut;
 }
