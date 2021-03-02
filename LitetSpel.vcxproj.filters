@@ -15,9 +15,9 @@
     <FxCompile Include="VertexShader_PostProcessing.hlsl" />
     <FxCompile Include="VertexShader_WaterSphere.hlsl" />
     <FxCompile Include="PixelShader_WaterSphere.hlsl" />
+    <FxCompile Include="PixelShader_BloomLuma.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Bloom.cpp" />
     <ClCompile Include="DXCore.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
@@ -73,9 +73,9 @@
     <ClCompile Include="UI\RandomEventUI.cpp" />
     <ClCompile Include="UI\HeadsUpDisplayUI.cpp" />
     <ClCompile Include="WaterSphere.cpp" />
+    <ClCompile Include="Techniques\Bloom.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bloom.h" />
     <ClInclude Include="DXCore.h" />
     <ClInclude Include="DXDebug.h" />
     <ClInclude Include="Engine.h" />
@@ -143,6 +143,7 @@
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
     <ClInclude Include="Techniques\FrustumCulling.h" />
     <ClInclude Include="WaterSphere.h" />
+    <ClInclude Include="Techniques\Bloom.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

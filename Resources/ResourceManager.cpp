@@ -48,6 +48,8 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	if (!m_PixelShaderShadow.Create(m_pDevice, L"PixelShader_Shadow.hlsl"))
 		return false;
+	if (!m_PixelShaderBloomLuma.Create(m_pDevice, L"PixelShader_BLoomLuma.hlsl"))
+		return false;
 	//Geometry Shaders:
 
 	//Hull Shaders:
@@ -120,6 +122,9 @@ const bool ResourceManager::CreateAllBindables()
 	m_BindablesWaterSpheres.insert(m_BindablesWaterSpheres.end(), { &m_VertexShaderWaterSpheres, &m_PixelShaderWaterSpheres, &m_InputLayoutWaterSpheres, &m_TopologyTriList });
 	//Shadow mapping:
 	m_BindablesShadow.insert(m_BindablesShadow.end(), { &m_VertexShaderShadow, &m_PixelShaderShadow, &m_InputLayoutPositionOnly, &m_TopologyTriList });
+	//Bloom Luma:
+	m_BindablesBloomLuna.insert(m_BindablesBloomLuna.end(), { &m_VertexShaderPostProcessing, &m_PixelShaderBloomLuma, &m_InputLayoutPostProcessing,
+															  &m_TopologyTriList, &m_VertexBufferQuad, &m_IndexBufferQuad, &m_SamplerPostProcessing });
 	return true;
 }
 
@@ -245,8 +250,6 @@ void ResourceManager::BindToPipeline(IEvent& event)
 				bindables->Bind(m_pDeviceContext);
 			}
 		}
-		//ID3D11PixelShader* nullPS = nullptr;
-		//m_pDeviceContext->PSSetShader(nullPS, nullptr, 0u);
 		break;
 	}
 	case BindID::ID_WaterSphere:
@@ -263,6 +266,17 @@ void ResourceManager::BindToPipeline(IEvent& event)
 	case BindID::ID_Water:
 	{
 		for (auto bindables : m_BindablesWater)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		break;
+	}
+	case BindID::ID_BloomLuma:
+	{
+		for (auto bindables : m_BindablesBloomLuna)
 		{
 			if (!bindables->IsBound())
 			{

@@ -129,6 +129,8 @@ const bool ForwardRenderer::Initialize(UINT screenWidth, UINT screenHeight) noex
 		return false;
 	if (!m_ShadowMapping.Initialize(m_pDevice))
 		return false;
+	if (!m_Bloom.Initialize(m_pDevice))
+		return false;
 
 	return true;
 }

@@ -1,5 +1,4 @@
 #pragma once
-#include "Bloom.h"
 #include "Techniques\Skybox.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
@@ -8,6 +7,7 @@
 #include "Scene.h"
 #include "Techniques/ShadowMapping.h"
 #include "Techniques\WaterPostProcessing.h"
+#include "Techniques\Bloom.h"
 
 class ForwardRenderer : public EventPublisher, public IEventListener 
 {
@@ -22,6 +22,7 @@ private:
 	Skybox m_Skybox;
 	WaterPostProcessing m_WaterPP;
 	ShadowMapping m_ShadowMapping;
+	Bloom m_Bloom;
 	DirectX::XMFLOAT3 m_LightPosition;
 private:
 	void BeginFrame();
