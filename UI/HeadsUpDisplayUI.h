@@ -28,9 +28,11 @@ private:
 	D2D1_RECT_F m_pHealthIcon;
 
 	//CO2Bar - convert later to bar class
-	D2D1_RECT_F m_pO2Icon;
+	HeadsUpDisplayBar m_pOxygenBar;
+	D2D1_RECT_F m_pOxygenIcon;
 
 	//FuelBar - convert later to bar class
+	HeadsUpDisplayBar m_pFuelBar;
 	D2D1_RECT_F m_pFuelIcon;
 
 	//Weight capacity
