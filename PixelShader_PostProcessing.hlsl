@@ -17,12 +17,14 @@ cbuffer CameraData : register(b1)
 	float4 cameraPos;
 	matrix inverseVMatrix;
 	float4x4 PMatrix;
+	float element00; //1 divided by element00.
+	float element11; //1 divided by element11.
 };
 
 cbuffer ScreenData : register(b2)
 {
-	float screenWidth;
-	float screenHeight;
+	float screenWidth; //1 divided by screenWidth
+	float screenHeight; //1 divided by screenWidth
 }
 
 cbuffer lightConstantBuffer : register(b3)
@@ -98,8 +100,8 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	float depth = length(wPos.xyz - cameraPos.xyz);
 
 	float4 pixelViewSpace;
-	pixelViewSpace.x = (((2.0f * psIn.outPositionPS.x) / screenWidth) - 1.0f) / PMatrix[0][0];
-	pixelViewSpace.y = (((-2.0f * psIn.outPositionPS.y) / screenHeight) + 1.0f) / PMatrix[1][1];
+	pixelViewSpace.x = (((2.0f * psIn.outPositionPS.x) * screenWidth) - 1.0f) * element00;// PMatrix[0][0];
+	pixelViewSpace.y = (((-2.0f * psIn.outPositionPS.y) * screenHeight) + 1.0f) * element11;// PMatrix[1][1];
 	pixelViewSpace.z = 1.0f;
 	pixelViewSpace.w = 0.0f;
 
@@ -182,9 +184,9 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 			oceanViewDepth = closestPlanet.y;
 		}
 
-		float opticalDepth = 1 - exp(-oceanViewDepth * 0.05f);
-		float alpha = (1 - exp(-oceanViewDepth * 1.0f)) * clamp((((-depth) / 3000) + 4), 0, 1); // CHECK FOR MULTIPLICATION
-		float4 oceanCol = lerp(float4(0.2f, 0.2f, 0.5f, 1.0f), float4(0.05f, 0.05f, 0.4f, 1.0f), opticalDepth);
+		float opticalDepth = 1 - exp(-oceanViewDepth * 0.05f); //Should depend on radius
+		float alpha = (1 - exp(-oceanViewDepth * 1.0f)) * clamp((((-depth) * 0.0003333f) + 4), 0, 1);
+		float4 oceanCol = lerp(float4(0.2f, 0.2f, 0.5f, 1.0f), float4(0.05f, 0.05f, 0.4f, 1.0f), opticalDepth); //Send in water color.
 
 		texCol = oceanCol;
 

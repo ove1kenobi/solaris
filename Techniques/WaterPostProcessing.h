@@ -19,6 +19,9 @@ struct CameraData
 	DirectX::XMVECTOR cameraPos;
 	DirectX::XMMATRIX inverseVMatrix;
 	DirectX::XMMATRIX PMatrix;
+	float element00;
+	float element11;
+	DirectX::XMFLOAT2 padding;
 };
 
 struct ScreenData

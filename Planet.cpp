@@ -18,9 +18,9 @@ bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zR
 
 	float distanceFromSun = std::sqrt(x * x + y * y + z * z);
 	//Planet types can be found in planet.h
-	if (distanceFromSun < 10000.0f)
+	if (distanceFromSun < 5000.0f)
 		m_planetType = 0;
-	else if (distanceFromSun > 40000.0f)
+	else if (distanceFromSun > 10000.0f)
 		m_planetType = 1;
 	else
 		m_planetType = type;

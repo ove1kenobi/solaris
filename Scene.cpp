@@ -81,11 +81,12 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
 	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
-	std::uniform_int_distribution<int> distributionPlanets(20, 30);
+	std::uniform_int_distribution<int> distributionPlanets(10, 15);
 	this->m_numPlanets = distributionPlanets(generator);
 	std::uniform_int_distribution<int> distributionRadius(5, 50);
 	//World space coordinates
-	std::uniform_int_distribution<int> distributionX(3000, 10000);
+	//X IS USED AS AN ADDITATIVE COMPONENT
+	std::uniform_int_distribution<int> distributionX(600, 1000);
 	std::uniform_int_distribution<int> distributionY(0, 0);
 	std::uniform_int_distribution<int> distributionZ(0, 0);
 	//Needs to be radians
@@ -97,6 +98,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	ModelFactory::Get().PreparePlanetDisplacement();
 	std::vector<std::thread> threads;
 
+	float xCoord = 2500.0f;
 	this->m_gameObjects.resize(this->m_numPlanets * 2);
 	this->m_planets.resize(this->m_numPlanets);
 	this->m_waterSpheres.resize(this->m_numPlanets);
@@ -105,6 +107,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 		Planet* planet = new Planet();
 		Orbit* orbit = new Orbit();
 		WaterSphere* waterSphere = new WaterSphere();
+		xCoord += static_cast<float>(distributionX(generator));
 		threads.push_back(std::thread(
 			initPlanet,
 			planet,
@@ -115,7 +118,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 			std::ref(this->m_waterSpheres),
 			i,
 			m_numPlanets,
-			static_cast<float>(distributionX(generator)),
+			xCoord,
 			static_cast<float>(distributionY(generator)),
 			static_cast<float>(distributionZ(generator)),
 			static_cast<float>(distributionRadius(generator)),
