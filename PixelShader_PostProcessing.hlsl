@@ -3,6 +3,8 @@ Texture2DMS<float4> colorTexture		: register(t0);
 Texture2DMS<float4> wPosTexture			: register(t1); //LengthToCenter in w.
 Texture2DMS<float4> normalTexture		: register(t2);	//Check this w to see if skybox is hit. (w = 0.5 if skybox is hit.)
 Texture2DMS<float4> waterSphereTexture	: register(t3);
+TextureCube shadowMap					: register(t4);
+SamplerState pointSampler				: register(s0);
 
 cbuffer PlanetData : register(b0)
 {
@@ -38,13 +40,37 @@ cbuffer lightConstantBuffer : register(b3)
 	float specularIntensity;
 }
 
+cbuffer shadowData : register(b4)
+{
+    float shadowBias;
+    float3 shadowPadding;
+}
+
 struct PS_IN
 {
 	float4 outPositionPS : SV_Position;
 };
 
-float4 ps_main(in PS_IN psIn) : SV_TARGET
+static const float farPlane = 100000.0f;
+
+float CalculateShadowFactor(in float3 positionWS)
 {
+    /*Create the vector from the surface to the light*/
+    float3 surfaceToLight = positionWS - lightPositionWS;
+    /*This vector can act as the direction to sample from the cubemap (no need to normalize! =) )*/
+    float closestTexelDepth = shadowMap.Sample(pointSampler, surfaceToLight).r;
+    /*The value sampled is in the range 0-1, expand to full range*/
+	closestTexelDepth *= farPlane;
+    /*Get the current depth of the surface as seen from the light being used now in PS*/
+    float currentSurfaceDepth = length(surfaceToLight);
+    /*Is the current depth as seen from the light (minus bias) greater than the depth saved in the texture?
+      If so, this specific surface is in shadow, else it's not!*/
+    float shadow = currentSurfaceDepth - shadowBias > closestTexelDepth ? 1.0f : 0.0f;
+    return shadow;
+}
+
+float4 ps_main(in PS_IN psIn) : SV_TARGET
+{	
 	//Calculate texture color from what is seen.
 	float4 texCol = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	for (int i = 0; i < 4; i++) {
@@ -112,6 +138,9 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	if ((closestPlanet.y == -1.0f && normalTemp.w == 0.5f) || (tempPlanet.x != -1.0f && depth > tempPlanet.x && tempPlanet.x < closestPlanet.x)) {
 		return texCol;
 	}
+	
+	//Shadows:
+    float shadow = CalculateShadowFactor(wPos.xyz);
 
 	//If it hit a planet.
 	//And the player is less than 12000 units away from the point.
@@ -141,7 +170,7 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 		float3 finalDiffuseColor = diffuseColor * diffuseLightIntensity * diffuseScalar;
 
 		//We now return the final TOTAL color, taking into consideration the model color, ambient color, diffuse color and specular color contributions: 
-		texCol = float4(saturate(finalAmbientColor + finalDiffuseColor) * texCol.xyz, 1.0f);
+        texCol = float4(saturate(finalAmbientColor + ((1 - shadow) * finalDiffuseColor)) * texCol.xyz, 1.0f);
 
 		float4 groundCol = texCol;
 
@@ -154,7 +183,7 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 		}
 
 		float opticalDepth = 1 - exp(-oceanViewDepth * 0.05f);
-		float alpha = (1 - exp(-oceanViewDepth * 1.0f)) * clamp((((-depth) / 3000) + 4), 0, 1);
+		float alpha = (1 - exp(-oceanViewDepth * 1.0f)) * clamp((((-depth) / 3000) + 4), 0, 1); // CHECK FOR MULTIPLICATION
 		float4 oceanCol = lerp(float4(0.2f, 0.2f, 0.5f, 1.0f), float4(0.05f, 0.05f, 0.4f, 1.0f), opticalDepth);
 
 		texCol = oceanCol;
@@ -200,12 +229,12 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 		float3 finalSpecularColor = (diffuseColor * diffuseLightIntensity) * specularIntensity * specularScalar;
 
 		//We now return the final TOTAL color, taking into consideration the model color, ambient color, diffuse color and specular color contributions: 
-		texCol = float4(saturate(finalAmbientColor + finalDiffuseColor) * texCol.xyz, 1.0f);
+        texCol = float4(saturate(finalAmbientColor + ((1 - shadow) * finalDiffuseColor)) * texCol.xyz, 1.0f);
 
 		texCol = lerp(groundCol, texCol, alpha);
 
-		texCol.xyz = texCol.xyz + (finalSpecularColor / 2);
-	}
+        texCol.xyz = texCol.xyz + ((1 - shadow) * (finalSpecularColor * 0.5f));
+    }
 	else {
 		/*LIGHTING FOR NORMAL GROUND*/
 		/*Note, attenuation is not relevant FOR THE SUN, and is as such not included in the calculations*/
@@ -245,7 +274,7 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 		float3 finalSpecularColor = (diffuseColor * diffuseLightIntensity) * specularIntensity * specularScalar;
 
 		//We now return the final TOTAL color, taking into consideration the model color, ambient color, diffuse color and specular color contributions: 
-		texCol = float4(saturate(finalAmbientColor + finalDiffuseColor + finalSpecularColor) * texCol.xyz, 1.0f);
-	}
+        texCol = float4(saturate(finalAmbientColor + ((1 - shadow) * (finalDiffuseColor + finalSpecularColor))) * texCol.xyz, 1.0f);
+    }
 	return texCol;
 }

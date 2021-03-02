@@ -265,7 +265,6 @@ public:
 		return "ResetDefaultBlendStateEvent";
 	}
 };
-};
 
 class BindBackBufferEvent : public IEvent
 {

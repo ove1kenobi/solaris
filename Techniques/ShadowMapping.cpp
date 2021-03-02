@@ -13,8 +13,8 @@ ShadowMapping::ShadowMapping() noexcept
       m_CameraDirections{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
       m_CameraUpVectors{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
       m_SunPosition{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
-      m_TextureWidth{ 5120.0f },
-      m_TextureHeight{ 5120.0f },
+      m_TextureWidth{ 6144.0f },
+      m_TextureHeight{ 6144.0f },
       m_ClearColor{ 1.0f, 0.0f, 0.0f, 1.0f },
       m_ShadowBias{ 20.0f }
 {
@@ -241,7 +241,7 @@ void ShadowMapping::CleanUp(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& p
 
 void ShadowMapping::BindSRV(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept
 {
-    pDeviceContext->PSSetShaderResources(0u, 1u, m_pShaderResourceView.GetAddressOf());
+    pDeviceContext->PSSetShaderResources(4u, 1u, m_pShaderResourceView.GetAddressOf());
 }
 
 void ShadowMapping::UpdateBias(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept
@@ -261,5 +261,5 @@ void ShadowMapping::UpdateBias(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>
     ShadowData* data = (ShadowData*)mappedSubresource.pData;
     data->bias = m_ShadowBias;
 	pDeviceContext->Unmap(m_pShadowDataBuffer.Get(), 0);
-	pDeviceContext->PSSetConstantBuffers(2u, 1u, m_pShadowDataBuffer.GetAddressOf());
+	pDeviceContext->PSSetConstantBuffers(4u, 1u, m_pShadowDataBuffer.GetAddressOf());
 }

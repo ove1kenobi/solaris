@@ -7,7 +7,8 @@ ForwardRenderer::ForwardRenderer() noexcept
 	  m_pDevice{ nullptr },
 	  m_pDeviceContext{ nullptr },
 	  m_pBackBuffer{ nullptr },
-	  m_pDepthStencilView{ nullptr }
+	  m_pDepthStencilView{ nullptr },
+	  m_LightPosition{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)}
 {
 	EventBuss::Get().AddListener(this, EventType::SendRenderObjectsEvent, EventType::DelegateDXEvent, EventType::DelegateSunLightEvent);
 }
@@ -26,7 +27,6 @@ void ForwardRenderer::BeginFrame()
 
 	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 	m_pDeviceContext->ClearRenderTargetView(m_pBackBuffer.Get(), m_Background);
-	m_pDeviceContext->OMSetRenderTargets(1u, m_pBackBuffer.GetAddressOf(), m_pDepthStencilView.Get());
 
 	//Start by unbinding pipeline:
 	UnbindPipelineEvent ubEvent;
@@ -35,14 +35,6 @@ void ForwardRenderer::BeginFrame()
 	//Bind RenderQuad:
 	BindIDEvent bindEvent(BindID::ID_RenderQuad);
 	EventBuss::Get().Delegate(bindEvent);
-
-	//Request-event for game objects 
-	AskForRenderObjectsEvent event;
-	EventBuss::Get().Delegate(event);
-
-	//Bind shadow resource:
-	m_ShadowMapping.BindSRV(m_pDeviceContext);
-	m_ShadowMapping.UpdateBias(m_pDeviceContext);
 
 	//Planets:
 	size_t i = 0;
@@ -99,9 +91,10 @@ void ForwardRenderer::BeginFrame()
 	m_pDeviceContext->OMSetRenderTargets(ARRAYSIZE(nullRTV), nullRTV, nullDSV);
 
 	m_WaterPP.PreparePass(m_pDeviceContext, m_pRenderData->culledPlanetsDepthSorted);
-	
+	//Bind shadow resource:
+	m_ShadowMapping.BindSRV(m_pDeviceContext);
+	m_ShadowMapping.UpdateBias(m_pDeviceContext);
 	m_WaterPP.DoPass(m_pDeviceContext);
-
 	m_WaterPP.CleanUp();
 }
 

@@ -102,7 +102,7 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	//Arrange:
 	//Minimal:
-	m_BindablesMinimalistic.insert(m_BindablesMinimalistic.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList, &m_SamplerShadow });
+	m_BindablesMinimalistic.insert(m_BindablesMinimalistic.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList });
 	//Skybox:
 	m_BindablesSkybox.insert(m_BindablesSkybox.end(), { &m_VertexShaderSkybox, &m_PixelShaderSkybox, &m_InputLayoutPositionOnly,
 														&m_TopologyTriList, &m_CubeTextureSkybox, &m_SamplerSkybox,
@@ -114,8 +114,8 @@ const bool ResourceManager::CreateAllBindables()
 	m_BindablesRenderQuad.insert(m_BindablesRenderQuad.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList, &m_GBuffer });
 
 	//Water Post processing:
-	m_BindablesWater.insert(m_BindablesWater.end(), { &m_VertexShaderPostProcessing, &m_PixelShaderPostProcessing, &m_InputLayoutPostProcessing, &m_TopologyTriList, &m_GBuffer, &m_VertexBufferQuad, &m_IndexBufferQuad });
-	
+	m_BindablesWater.insert(m_BindablesWater.end(), { &m_VertexShaderPostProcessing, &m_PixelShaderPostProcessing, &m_InputLayoutPostProcessing, 
+							&m_TopologyTriList, &m_GBuffer, &m_VertexBufferQuad, &m_IndexBufferQuad, &m_SamplerShadow });
 	//Water spheres
 	m_BindablesWaterSpheres.insert(m_BindablesWaterSpheres.end(), { &m_VertexShaderWaterSpheres, &m_PixelShaderWaterSpheres, &m_InputLayoutWaterSpheres, &m_TopologyTriList });
 	//Shadow mapping:

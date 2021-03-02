@@ -149,7 +149,6 @@ void CosmicBody::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceCont
 									  &this->m_model->getOffset());
 	pDeviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 }
-}
 
 float CosmicBody::GetRadius() {
 	return m_radius;

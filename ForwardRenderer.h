@@ -22,6 +22,7 @@ private:
 	Skybox m_Skybox;
 	WaterPostProcessing m_WaterPP;
 	ShadowMapping m_ShadowMapping;
+	DirectX::XMFLOAT3 m_LightPosition;
 private:
 	void BeginFrame();
 	void EndFrame();
