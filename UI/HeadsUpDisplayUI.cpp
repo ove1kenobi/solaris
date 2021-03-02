@@ -79,6 +79,8 @@ bool HeadsUpDisplayUI::CreateDisplayScreens() {
 //Creation functions
 bool HeadsUpDisplayUI::CreateBars() {
 	m_pHealthBar.Initialize();
+	m_pOxygenBar.Initialize();
+	m_pFuelBar.Initialize();
 	return true;
 }
 
@@ -158,9 +160,23 @@ bool HeadsUpDisplayUI::UpdateDisplayScreens() {
 bool HeadsUpDisplayUI::UpdateBars() {
 	m_pHealthBar.SetFullBar(
 		m_pRightDisplayScreen.left + 25.0f, 
-		m_pRightDisplayScreen.bottom - 30.0f,
-		m_pRightDisplayScreen.right - 25.0f,
-		m_pRightDisplayScreen.bottom - 10.0f,
+		m_pRightDisplayScreen.bottom - 60.0f,
+		m_pRightDisplayScreen.right - 55.0f,
+		m_pRightDisplayScreen.bottom - 40.0f,
+		5.0f);
+
+	m_pOxygenBar.SetFullBar(
+		m_pRightDisplayScreen.left + 25.0f,
+		m_pRightDisplayScreen.bottom - 95.0f,
+		m_pRightDisplayScreen.right - 55.0f,
+		m_pRightDisplayScreen.bottom - 75.0f,
+		5.0f);
+
+	m_pFuelBar.SetFullBar(
+		m_pRightDisplayScreen.left + 25.0f,
+		m_pRightDisplayScreen.bottom - 130.0f,
+		m_pRightDisplayScreen.right - 55.0f,
+		m_pRightDisplayScreen.bottom - 110.0f,
 		5.0f);
 	return true;
 }
@@ -274,15 +290,14 @@ void HeadsUpDisplayUI::RenderLeftDisplayScreen() {
 }
 
 void HeadsUpDisplayUI::RenderBars() {
+	//this->UpdateBrush(D2D1::ColorF::OrangeRed, 1.0f);
 	m_pHealthBar.Render();
-	this->UpdateBrush(D2D1::ColorF::OrangeRed, 1.0f);
-	//m_pRenderTarget2D->FillRectangle(m_pCurrentHealthBar, m_pBrush.Get());
 
-	this->UpdateBrush(D2D1::ColorF::Aqua, 1.0f);
-	//m_pRenderTarget2D->FillRectangle(m_pCurrentCO2Bar, m_pBrush.Get());
+	//this->UpdateBrush(D2D1::ColorF::Aqua, 1.0f);
+	m_pOxygenBar.Render();
 
-	this->UpdateBrush(D2D1::ColorF::Orange, 1.0f);
-	//m_pRenderTarget2D->FillRectangle(m_pCurrentFuelBar, m_pBrush.Get());
+	//this->UpdateBrush(D2D1::ColorF::Orange, 1.0f);
+	m_pFuelBar.Render();
 }
 
 void HeadsUpDisplayUI::RenderCapacity() {
