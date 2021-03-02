@@ -56,10 +56,22 @@ public:
 		DirectX::XMMATRIX WVPMatrix;
 	};
 
+	//------------------------------
+	//Compute shader
+
 	struct PlanetConstants {
 		DirectX::XMFLOAT3 center;
 		float radius;
 	};
+
+	struct RandomizedConstants {
+		float continentWeight;
+		float mountainWeight;
+		float maskWeight;
+		float padding;
+	};
+
+	//-----------------------------
 
 	struct RadiusBuffer {
 		float radius;

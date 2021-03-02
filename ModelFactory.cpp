@@ -270,6 +270,9 @@ void ModelFactory::createSphere(float r, UINT setDivisions, std::vector<float> &
 	unsigned int divisions = 0;
 	if (setDivisions == 0) {
 		divisions = static_cast<int>(std::ceil(r));
+		if (divisions < 10) {
+			divisions = 10;
+		}
 	}
 	else {
 		divisions = setDivisions;
@@ -420,6 +423,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	Microsoft::WRL::ComPtr<ID3D11Buffer> destDataGPUBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> copyToBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> planetConstantsBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> randomizedConstantsBuffer;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srcDataGPUBufferView;
 	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> destDataGPUBufferView;
 
@@ -492,9 +496,10 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	HR_X(m_device->CreateUnorderedAccessView(destDataGPUBuffer.Get(),
 		&descViewUAV, &destDataGPUBufferView), "CreateUnorderedAccessView");
 
-	//Constant buffer
+	//Constant buffers
 	//------------------------------------------------------------------------------------
 
+	//Planet constants
 	D3D11_BUFFER_DESC planetConstantBufferDesc = {};
 	planetConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	planetConstantBufferDesc.ByteWidth = sizeof(PlanetConstants);
@@ -504,10 +509,10 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	planetConstantBufferDesc.StructureByteStride = 0;
 	HR_X(this->m_device->CreateBuffer(&planetConstantBufferDesc,
 		nullptr,
-		&planetConstantsBuffer),
+		planetConstantsBuffer.GetAddressOf()),
 		"CreateBuffer");
 
-	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource = {};
 	PlanetConstants* constantBufferData;
 
 	m_deviceContext->Map(
@@ -525,10 +530,48 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 
 	m_deviceContext->Unmap(planetConstantsBuffer.Get(), 0);
 
+	//Randomized constants
+	D3D11_BUFFER_DESC randomizedConstantBufferDesc = {};
+	randomizedConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	randomizedConstantBufferDesc.ByteWidth = sizeof(RandomizedConstants);
+	randomizedConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	randomizedConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	randomizedConstantBufferDesc.MiscFlags = 0;
+	randomizedConstantBufferDesc.StructureByteStride = 0;
+	HR_X(this->m_device->CreateBuffer(&randomizedConstantBufferDesc,
+		nullptr,
+		randomizedConstantsBuffer.GetAddressOf()),
+		"CreateBuffer");
+
+	D3D11_MAPPED_SUBRESOURCE mappedSubresourceRandomized = {};
+
+	m_deviceContext->Map(
+		randomizedConstantsBuffer.Get(),
+		0,
+		D3D11_MAP_WRITE_DISCARD,
+		0,
+		&mappedSubresourceRandomized
+	);
+
+	RandomizedConstants* constantBufferDataRandomized = (RandomizedConstants*)mappedSubresourceRandomized.pData;
+
+	//Reference "ComputeShader_Planet.hlsl" to see how these affect the planets.
+	using t_clock = std::chrono::high_resolution_clock;
+	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
+	std::uniform_real_distribution<float> distributionContinent(-0.015f, 0.01f);
+	std::uniform_real_distribution<float> distributionMountain(-0.14f, 0.1f);
+	std::uniform_real_distribution<float> distributionMask(250.0f, 500.0f);
+	constantBufferDataRandomized->continentWeight = distributionContinent(generator);
+	constantBufferDataRandomized->mountainWeight = distributionMountain(generator);
+	constantBufferDataRandomized->maskWeight = distributionMask(generator);
+
+	m_deviceContext->Unmap(randomizedConstantsBuffer.Get(), 0);
+
 	//Set everything
 	//------------------------------------------------------------------------------------
 
 	m_deviceContext->CSSetConstantBuffers(0, 1, planetConstantsBuffer.GetAddressOf());
+	m_deviceContext->CSSetConstantBuffers(1, 1, randomizedConstantsBuffer.GetAddressOf());
 	m_deviceContext->CSSetShaderResources(0, 1, srcDataGPUBufferView.GetAddressOf());
 	m_deviceContext->CSSetUnorderedAccessViews(0, 1, destDataGPUBufferView.GetAddressOf(), NULL);
 	m_deviceContext->Dispatch((static_cast<UINT>(size) / 400) + 1, 1u, 1u);

@@ -149,7 +149,10 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	//And if there is supposed to be water in that pixel or we are looking through water.
 	//Calculate water
 	[flatten]
-	if (closestPlanet.y != -1.0f && depth < 12000.0f && (depth - closestPlanet.x + 0.001f > 0.0f)) {
+	if (((distFromCenter < radian + (radian * 0.03f) && depth < 12000.0f) ||
+		(closestPlanet.y != -1.0f && depth < 12000.0f && (depth - closestPlanet.x + 0.001f > 0.0f))) &&
+		distFromCenter != -1.0f
+	) {
 		/*LIGHTING ON BOTTOM OF THE OCEAN*/
 		//Does not use specular.
 		/*Note, attenuation is not relevant FOR THE SUN, and is as such not included in the calculations*/
@@ -177,11 +180,11 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 		float4 groundCol = texCol;
 
 		//How much water we are looking through.
-		float oceanViewDepth = min(closestPlanet.y, depth - closestPlanet.x);
+		float oceanViewDepth = min(closestPlanet.y, depth - closestPlanet.x) * radian;
 		
 		//Removes artefacts around the ocean "line".
 		if (oceanViewDepth < 0.0f) {
-			oceanViewDepth = closestPlanet.y;
+			oceanViewDepth = closestPlanet.y * radian;
 		}
 
 		float opticalDepth = 1 - exp(-oceanViewDepth * 0.05f); //Should depend on radius

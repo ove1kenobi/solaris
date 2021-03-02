@@ -1,7 +1,13 @@
 #include "SNoise.hlsli"
-cbuffer PlanetConstants {
+cbuffer PlanetConstants : register(b0) {
 	float3 center;
 	float radius;
+};
+
+cbuffer RandomizedConstants : register(b1) {
+	float continentWeight;
+	float mountainWeight;
+	float maskWeight;
 };
 
 struct WorldPosition {
@@ -18,17 +24,15 @@ RWStructuredBuffer<WorldPosition> BufferOut : register(u0);
 void cs_main( uint3 DTid : SV_DispatchThreadID )
 {
 	float oceanDepthMultiplier = 50.f; //Multiplies the change in height.
-	float oceanFloorDepth = 0.3f; //Deepest ocean. Percent reduction of radius (0.3 = 70% of radius).
-	float oceanFloorSmoothing = 1.0f; //Smoothes everything out "from below". Higher value = less ocean.
-	float mountainBlend = 10.f;
+	float oceanFloorDepth = 0.3f; //Deepest ocean. Percent reduction of radius (0.3 = 70% of radius.
+	float oceanFloorSmoothing = 0.5f; //Smoothes everything out "from below". Higher value = less ocean.
+	float mountainBlend = maskWeight / radius; // Determines how much the mountains are reduced.
 
 	//simple noise
 	int numLayers = 4; //Number of iterations, to get more smooth noise.
 	float persistence = 0.3f; //The higher the more "spottier" the water becomes, less consistent water
 	float lacunarity = 4.0f; //The higher the more jagged the bottom becomes.
-
-	//Should depend on radius.
-	float scale = 1.0f; //Determines how "big of a part" of the noise "texture" the points get sampled from
+	float scale = 20.0f / radius; //Determines how "big of a part" of the noise "texture" the points get sampled from
 	float multiplier = 2.0f; //Makes the effect more drastic.
 	float verticalShift = 0.0f; //Shifts the height by a static amount. 
 	
@@ -58,9 +62,10 @@ void cs_main( uint3 DTid : SV_DispatchThreadID )
 	numLayers = 5; //Number of iterations, to get more smooth noise.
 	persistence = 0.5f; //More of a drastic difference between different points.
 	lacunarity = 2.0f; //More jagged mountaintops
-
-	//Should depend on radius
-	scale = 1.0f; //Determines how "big of a part" of the noise "texture" the points get sampled from
+	scale = 30.0f / radius; //Determines how "big of a part" of the noise "texture" the points get sampled from
+	if (radius < 25.0f) {
+		scale = 10.0f / radius;
+	}
 	multiplier = 1.0f; //Makes the effect more drastic. 
 	float power = 2.0f; //Exponentially reduces the effect.
 	float gain = 1.0f; //Icreases the amount of mountains on the surface.
@@ -81,7 +86,7 @@ void cs_main( uint3 DTid : SV_DispatchThreadID )
 	float mask = Blend(0, mountainBlend, simpleNoise(pos, params));
 	
 	//Changing ridgeNoise multiplier to 0.01f or 0.05f creates more earth-like planets
-	float finalHeight = 1 + ridgeNoise * 0.1f + continentShape * 0.01f;
+	float finalHeight = 1 + ridgeNoise * (0.15f + mountainWeight) + continentShape * (0.015f + continentWeight) * mask;
 	
 	dir *= finalHeight;
 	BufferOut[DTid.x].x = dir.x;
