@@ -9,6 +9,11 @@
     <FxCompile Include="VertexShader_Orbit.hlsl" />
     <FxCompile Include="PixelShader_Orbit.hlsl" />
     <FxCompile Include="PixelShader_Sun.hlsl" />
+    <FxCompile Include="ParticleSystem\CS_SpaceDust_Inject.hlsl" />
+    <FxCompile Include="ParticleSystem\CS_SpaceDust_Update.hlsl" />
+    <FxCompile Include="ParticleSystem\VertexShader_Particles.hlsl" />
+    <FxCompile Include="ParticleSystem\GS_SpaceDust.hlsl" />
+    <FxCompile Include="ParticleSystem\PixelShader_Particles.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bloom.cpp" />
