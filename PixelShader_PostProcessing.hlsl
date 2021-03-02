@@ -118,7 +118,7 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 		}
 		//Check intersections and put distance to near in tempPlanet.x, and the amount of water we are looking though in tempPlanet.y.
 		//radius is +5 to add some water on more than just the water colored triangles.
-		tempPlanet = raySphereIntersect(center[k].xyz, center[k].w + 5, cameraPos, normalize(float3(DirectionWorldSpace.xyz)));
+        tempPlanet = raySphereIntersect(center[k].xyz, center[k].w + (center[k].w * 0.03f), cameraPos, normalize(float3(DirectionWorldSpace.xyz)));
 		//If we hit the planet and the planet is closer than the closest planet so far.
 		if (tempPlanet.x != -1 && tempPlanet.x < closestPlanet.x) {
 			closestPlanet = tempPlanet;

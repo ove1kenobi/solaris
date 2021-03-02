@@ -16,7 +16,7 @@ ShadowMapping::ShadowMapping() noexcept
       m_TextureWidth{ 6144.0f },
       m_TextureHeight{ 6144.0f },
       m_ClearColor{ 1.0f, 0.0f, 0.0f, 1.0f },
-      m_ShadowBias{ 20.0f }
+      m_ShadowBias{ 50.0f }
 {
     DirectX::XMStoreFloat4x4(&m_OrthographicProjection, DirectX::XMMatrixIdentity());
 }

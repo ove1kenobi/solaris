@@ -32,7 +32,7 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	{
 		this->m_major_semi_axis = length(m_center - tetherTo->GetCenter());
 		this->m_minor_semi_axis = this->m_major_semi_axis * 0.8f;
-		this->m_orbital_speed = 6.2831853f * m_major_semi_axis / m_mass * 100000.0f;
+		this->m_orbital_speed = (6.2831853f * m_major_semi_axis) / m_mass * 30000.0f;
 	}
 	if (orbit)
 	{
@@ -99,7 +99,7 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	DirectX::XMMATRIX result = scaleMatrix * rotMatrix  * transMatrix;
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, result);
 	//Angle change depends on planets radius (smaller planet = faster spin)
-	angle += 0.001f * static_cast<float>(this->m_timer.DeltaTime()) * (1000 / this->m_radius);
+	angle += 0.001f * static_cast<float>(this->m_timer.DeltaTime()) * (250 / this->m_radius);
 
 	//Update the matrixBuffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
