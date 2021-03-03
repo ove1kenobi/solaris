@@ -7,6 +7,11 @@ const bool FrustumCulling::Initialize(PlayerCamera& playerCamera) noexcept
 	return true;
 }
 
+void FrustumCulling::CreateShadowFrustum(DirectX::XMMATRIX shadowProjectionMatrix) noexcept
+{
+	m_ShadowBoundingFrustum = DirectX::BoundingFrustum(shadowProjectionMatrix);
+}
+
 void FrustumCulling::CullObjects(std::vector<GameObject*>& gameObjects, PlayerCamera& playerCamera, struct RenderData& renderData) noexcept
 {
 	/*Gameobjects in the vector comes in the order of:
@@ -76,4 +81,19 @@ void FrustumCulling::CullObjects(std::vector<GameObject*>& gameObjects, PlayerCa
 				return lhs->GetDistanceToCamera() < rhs->GetDistanceToCamera();
 			});
 	}
+}
+
+std::vector<GameObject*> FrustumCulling::CullShadowObjects(std::vector<GameObject*>* gameObjects, const DirectX::XMMATRIX& viewMatrix, const size_t& nrOfPlanets) noexcept
+{
+	std::vector<GameObject*> culledPlanets;
+	for (unsigned int i{ 0u }; i < nrOfPlanets; ++i)
+	{
+		DirectX::BoundingSphere boundingSphere = *(*gameObjects)[i]->GetModel()->GetBoundingSphere();
+		boundingSphere.Transform(boundingSphere, viewMatrix);
+		if (m_ShadowBoundingFrustum.Contains(boundingSphere) > DirectX::DISJOINT)
+		{
+			culledPlanets.push_back((*gameObjects)[i]);
+		}
+	}
+	return culledPlanets;
 }

@@ -4,10 +4,10 @@ struct particle
 	float size;
 };
 
-AppendStructuredBuffer<Particle> NewSimState : register(u0);
-ConsumeStructuredBuffer<Particle> CurrentSimState : register(u1);
+AppendStructuredBuffer<particle> NewSimState : register(u0);
+ConsumeStructuredBuffer<particle> CurrentSimState : register(u1);
 
-static const EventHorizon = 10.0f;
+static const float EventHorizon = 10.0f;
 
 cbuffer ParticleParameters
 {
@@ -32,10 +32,10 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	if (ThreadID < NumParticles.x)
 	{
 		// Get the current particle
-		Particle p = CurrentSimState.Consume();
+		particle p = CurrentSimState.Consume();
 
 		// Calculate new position
-		p.position = p.postition + deltaTimeVelocity.xyz;
+		p.position = p.position + deltaTimeVelocity.xyz;
 
 		// Append particle if inside event horizon
 		if (length(p.position) < EventHorizon)

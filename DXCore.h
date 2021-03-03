@@ -3,6 +3,7 @@
 #include "EventSystem\IEventListener.h"
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem\UtilityEvents.h"
+#include "EventSystem\RenderEvents.h"
 #include "ImGui\imgui_impl_dx11.h"
 
 #pragma comment(lib, "user32")
@@ -20,6 +21,7 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>			m_pSwapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>	m_pBackBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>	m_pDepthStencilView;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDepthShaderResourceView; //THE DEPTH STENCIL AS A SHADER RESOURCE VIEW.
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>	m_pRasterizerStateFill;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>	m_pRasterizerStateWireFrame;
 	Microsoft::WRL::ComPtr<ID2D1Factory>			m_pFactory2D;
@@ -30,7 +32,10 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_pRasterizerStateNoCullWF;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_pDepthStencilStateDefault;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_pDepthStencilStateSkybox;
+	Microsoft::WRL::ComPtr<ID3D11BlendState>		m_pBlendStateDefault;
+	Microsoft::WRL::ComPtr<ID3D11BlendState>		m_pBlendStateShadow;
 	D3D11_VIEWPORT	m_DefaultViewport;
+	D3D11_VIEWPORT m_ShadowMapViewPort;
 	unsigned int	m_MSAAQuality;
 	bool			m_WireFrameEnabled;
 	bool			m_SkyboxEnabled;
@@ -43,6 +48,8 @@ public:
 	DXCore() noexcept;
 	virtual ~DXCore() noexcept = default;
 	const bool Initialize(const unsigned int& clientWindowWidth, const unsigned int& clientWindowHeight, const HWND& windowHandle);
+	void CreateShadowMapViewport(IEvent& event) noexcept;
+	void ResetDefaultViewport() const noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice() const noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetDeviceContext() const noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<IDXGISwapChain>& GetSwapChain() const noexcept;

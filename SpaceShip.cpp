@@ -119,6 +119,16 @@ void SpaceShip::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& d
 	deviceContext->VSSetConstantBuffers(0, 1, this->m_model->getMatrixBuffer().GetAddressOf());
 }
 
+void SpaceShip::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
+{
+	pDeviceContext->IASetVertexBuffers(0u,
+									  1u,
+									  this->m_model->getVertexBuffer().GetAddressOf(),
+									  &this->m_model->getStride(),
+									  &this->m_model->getOffset());
+	pDeviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+}
+
 void SpaceShip::CalculateGravity(GameObject* other)
 {
 	if (this == other) return;

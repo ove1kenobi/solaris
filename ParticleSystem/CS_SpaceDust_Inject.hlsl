@@ -4,7 +4,7 @@ struct particle
 	float size;
 };
 
-AppendStructuredBuffer<Particle> NewSimState : register(u0);
+AppendStructuredBuffer<particle> NewSimState : register(u0);
 
 cbuffer ParticleParameters
 {
@@ -30,7 +30,7 @@ static const float3 direction[8] =
 
 void main( uint3 GroupThreadID : SV_GroupThreadID)
 {
-	Particle p;
+	particle p;
 
 	// Initialize positions to a sphere with EmitterRadius
 	p.position = reflect(direction[GroupThreadID.x], RandomVector.xyz);

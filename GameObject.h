@@ -30,11 +30,13 @@ public:
 	virtual bool update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
 	virtual void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
 	virtual [[nodiscard]] const bool IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept = 0;
+	virtual void BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) = 0;
 
 	void getWMatrix(DirectX::XMMATRIX& wMatrix);
 	UINT getVertexBufferSize();
 	UINT getIndexBufferSize();
 	[[nodiscard]] const DirectX::XMFLOAT3& GetCenter() const noexcept;
+	void SetCenter(const DirectX::XMFLOAT3& center) noexcept;
 	//Returns the translation of the object in the world.
 	DirectX::XMFLOAT3 getTransVector();
 	float GetMass();

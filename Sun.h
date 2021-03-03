@@ -3,6 +3,7 @@
 #include "PointLight.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
+#include "EventSystem\UtilityEvents.h"
 
 //Sun is of the type CosmicBody, as it needs the same properties
 class Sun : public CosmicBody, public IEventListener, public EventPublisher 
