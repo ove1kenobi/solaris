@@ -10,15 +10,15 @@
 
 struct PlanetData
 {
-	DirectX::XMVECTOR center[50];
-	DirectX::XMVECTOR sun;
+	DirectX::XMFLOAT4 center[50];
+	DirectX::XMFLOAT4 sun;
 };
 
 struct CameraData
 {
-	DirectX::XMVECTOR cameraPos;
-	DirectX::XMMATRIX inverseVMatrix;
-	DirectX::XMMATRIX PMatrix;
+	DirectX::XMFLOAT4 cameraPos;
+	DirectX::XMFLOAT4X4 inverseVMatrix;
+	DirectX::XMFLOAT4X4 PMatrix;
 };
 
 struct ScreenData

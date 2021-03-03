@@ -3,7 +3,9 @@
 
 const bool FrustumCulling::Initialize(PlayerCamera& playerCamera) noexcept
 {
-	m_BoundingFrustum = DirectX::BoundingFrustum(playerCamera.getPMatrix());
+	DirectX::XMFLOAT4X4 PMatrix = playerCamera.getPMatrix();
+	DirectX::XMMATRIX pMatrix = DirectX::XMLoadFloat4x4(&PMatrix);
+	m_BoundingFrustum = DirectX::BoundingFrustum(pMatrix);
 	return true;
 }
 
@@ -25,13 +27,15 @@ void FrustumCulling::CullObjects(std::vector<GameObject*>& gameObjects, PlayerCa
 	renderData = {};
 	renderData.sunCulled = true;
 	renderData.allObjects = &gameObjects;
+	DirectX::XMFLOAT4X4 VMatrix = playerCamera.getVMatrix();
+	DirectX::XMMATRIX vMatrix = DirectX::XMLoadFloat4x4(&VMatrix);
 	for (unsigned int i{ 0u }; i < gameObjects.size(); ++i)
 	{
 		//The objects is either a planet or the sun:
 		if (gameObjects[i]->ShallBeTestedForCulling())
 		{
 			DirectX::BoundingSphere boundingSphere = *gameObjects[i]->GetModel()->GetBoundingSphere();
-			boundingSphere.Transform(boundingSphere, playerCamera.getVMatrix());
+			boundingSphere.Transform(boundingSphere, vMatrix);
 			if (m_BoundingFrustum.Contains(boundingSphere) > DirectX::DISJOINT)
 			{
 				renderData.culledObjects.push_back(gameObjects[i]);

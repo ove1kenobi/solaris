@@ -43,8 +43,7 @@ void MousePicking::OnEvent(IEvent& event) noexcept
 //Note, this function should always in the future take the CULLED objects, and not all objects.
 void MousePicking::DoIntersectionTests(const unsigned int& x, const unsigned int& y, const std::vector<GameObject*>& gameObjects) noexcept
 {
-	DirectX::XMFLOAT4X4 pMatrix = {};
-	DirectX::XMStoreFloat4x4(&pMatrix, m_pCamera->getPMatrix());
+	DirectX::XMFLOAT4X4 pMatrix = m_pCamera->getPMatrix();
 
 	//rayViewSpaceDirection is obviously a direction, so w = 0.0f.
 	DirectX::XMFLOAT4 rayViewSpaceDirection = {};
@@ -53,8 +52,8 @@ void MousePicking::DoIntersectionTests(const unsigned int& x, const unsigned int
 	rayViewSpaceDirection.z = 1.0f;
 	rayViewSpaceDirection.w = 0.0f;
 
-	//DirectX::XMMATRIX viewMatrix = DirectX::XMLoadFloat4x4(&vMatrix);
-	DirectX::XMMATRIX viewMatrix = m_pCamera->getVMatrix();
+	DirectX::XMFLOAT4X4 vMatrix = m_pCamera->getVMatrix();
+	DirectX::XMMATRIX viewMatrix = DirectX::XMLoadFloat4x4(&vMatrix);
 	DirectX::XMVECTOR determinant = DirectX::XMMatrixDeterminant(viewMatrix);
 
 	//We check if the determinant is above 0, because ONLY then does an inverse exist. 

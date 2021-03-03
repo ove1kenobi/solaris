@@ -38,6 +38,7 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 	m_yaw = distRot(gen);
 	m_deltaYaw = distScale(gen);
 	//m_model = ModelFactory::Get().GetModel(asteroids[distAst(gen)]);
+	// Stand-in for asteroids during testing - comment 'Preload models' in Engine::Initialize()
 	m_model = ModelFactory::Get().GetModel("models/cubemetal.obj");
 	m_scale = distScale(gen) * 30.0f;
 	m_mass = m_model->GetBoundingSphere()->Radius * 50000.0f * m_scale;
@@ -45,7 +46,7 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 	return true;
 }
 
-GameObject* Asteroid::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
+GameObject* Asteroid::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
 	float distance = length(m_center - m_ship->GetCenter());
 	if (distance > 20000) return this;
@@ -58,16 +59,18 @@ GameObject* Asteroid::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatri
 	DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(m_scale, m_scale, m_scale);
 	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationRollPitchYaw(m_roll, m_pitch, m_yaw);
 	DirectX::XMMATRIX trans = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);
-	DirectX::XMMATRIX final = scale * rot * trans;
-	DirectX::XMStoreFloat4x4(&m_wMatrix, final);
+	DirectX::XMMATRIX result = scale * rot * trans;
+	DirectX::XMStoreFloat4x4(&m_wMatrix, result);
 
 	//Update the matrixBuffer.
 
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
 
-	DirectX::XMMATRIX WMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&m_wMatrix));
-	VMatrix = DirectX::XMMatrixTranspose(VMatrix);
-	PMatrix = DirectX::XMMatrixTranspose(PMatrix);
+	DirectX::XMFLOAT4X4 wvpMatrix;
+	DirectX::XMMATRIX vMatrix = DirectX::XMLoadFloat4x4(&VMatrix);
+	DirectX::XMMATRIX pMatrix = DirectX::XMLoadFloat4x4(&PMatrix);
+
+	DirectX::XMStoreFloat4x4(&wvpMatrix, DirectX::XMMatrixTranspose(result * vMatrix * pMatrix));
 
 	deviceContext->Map(
 		m_AmatrixBuffer.Get(),
@@ -77,10 +80,8 @@ GameObject* Asteroid::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatri
 		&mappedSubresource
 	);
 
-	ModelFactory::MatrixBuffer* data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
-
-	data->WMatrix = DirectX::XMMatrixTranspose(WMatrix);
-	data->WVPMatrix = DirectX::XMMatrixTranspose(WMatrix * VMatrix * PMatrix);
+	memcpy(mappedSubresource.pData, &m_wMatrix, sizeof(DirectX::XMFLOAT4X4));
+	memcpy(((char*)mappedSubresource.pData)+ sizeof(DirectX::XMFLOAT4X4), &wvpMatrix, sizeof(DirectX::XMFLOAT4X4));
 
 	deviceContext->Unmap(m_AmatrixBuffer.Get(), 0);
 	return nullptr;

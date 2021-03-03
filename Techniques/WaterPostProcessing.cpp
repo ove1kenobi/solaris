@@ -146,17 +146,14 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 
 	for (size_t i = 0; i < planets.size(); i++) {
 		DirectX::XMFLOAT3 center = planets[i]->GetCenter();
-		DirectX::XMFLOAT4 centerRadius = { center.x, center.y, center.z, static_cast<Planet*>(planets[i])->GetRadius() };
-		data->center[i] = DirectX::XMLoadFloat4(&centerRadius);
+		data->center[i] = { center.x, center.y, center.z, static_cast<Planet*>(planets[i])->GetRadius() };
 	}
 	//Fill the rest with zero's
-	DirectX::XMFLOAT4 nullXMF4 = { 0.0f, 0.0f, 0.0f, 0.0f };
 	for (size_t i = planets.size(); i < 50; i++) {
-		data->center[i] = DirectX::XMLoadFloat4(&nullXMF4);
+		data->center[i] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	}
 
-	DirectX::XMFLOAT4 sunData = { m_pSunCenter->x, m_pSunCenter->y, m_pSunCenter->z, *m_pSunRadius };
-	data->sun = DirectX::XMLoadFloat4(&sunData);
+	data->sun = { m_pSunCenter->x, m_pSunCenter->y, m_pSunCenter->z, *m_pSunRadius };
 
 	pDeviceContext->Unmap(m_pPlanetCBuffer.Get(), 0);
 
@@ -168,13 +165,22 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 		0,
 		&mappedSubresourceCamera), "Map");
 
+	DirectX::XMFLOAT4X4 VMatrix = m_pCamera->getVMatrix();
+	DirectX::XMFLOAT4X4 PMatrix = m_pCamera->getPMatrix();
+
+	DirectX::XMMATRIX vMatrix = DirectX::XMLoadFloat4x4(&VMatrix);
+	DirectX::XMMATRIX pMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&PMatrix));
+	vMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, vMatrix));
+
+	DirectX::XMStoreFloat4x4(&VMatrix, vMatrix);
+	DirectX::XMStoreFloat4x4(&PMatrix, pMatrix);
+
 	CameraData* dataCamera = (CameraData*)mappedSubresourceCamera.pData;
 
-	DirectX::XMFLOAT3 cameraPos3 = m_pCamera->getPos();
-	DirectX::XMFLOAT4 cameraPos = { cameraPos3.x, cameraPos3.y, cameraPos3.z, 1.0f };
-	dataCamera->cameraPos = DirectX::XMLoadFloat4(&cameraPos);
-	dataCamera->inverseVMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, m_pCamera->getVMatrix()));
-	dataCamera->PMatrix = m_pCamera->getPMatrix();
+	DirectX::XMFLOAT3 cameraPos = m_pCamera->getPos();
+	dataCamera->cameraPos = { cameraPos.x, cameraPos.y, cameraPos.z, 1.0f };
+	dataCamera->inverseVMatrix = VMatrix;
+	dataCamera->PMatrix = PMatrix;
 
 	pDeviceContext->Unmap(m_pCameraCBuffer.Get(), 0);
 

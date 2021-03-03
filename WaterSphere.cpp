@@ -28,7 +28,7 @@ bool WaterSphere::Initialize(float x, float y, float z, float r) {
 	return true;
 }
 
-void WaterSphere::updateSphere(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext, float x, float y, float z) {
+void WaterSphere::updateSphere(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext, float x, float y, float z) {
 
 	m_center.x = x;
 	m_center.y = y;
@@ -37,22 +37,29 @@ void WaterSphere::updateSphere(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMat
 	update(VMatrix, PMatrix, deviceContext);
 }
 
-GameObject* WaterSphere::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
+GameObject* WaterSphere::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) {
 	DirectX::XMMATRIX result = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, result);
 
 	//Update the matrixBuffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-	DirectX::XMMATRIX WMatrix = DirectX::XMLoadFloat4x4(&this->m_wMatrix);
+
+	DirectX::XMFLOAT4X4 wvpMatrix;
+	DirectX::XMMATRIX vMatrix = DirectX::XMLoadFloat4x4(&VMatrix);
+	DirectX::XMMATRIX pMatrix = DirectX::XMLoadFloat4x4(&PMatrix);
+
+	DirectX::XMStoreFloat4x4(&wvpMatrix, DirectX::XMMatrixTranspose(result * vMatrix * pMatrix));
+
 	//Already transposed in Cosmicbody
 	deviceContext->Map(this->m_model->getMatrixBuffer().Get(),
 		0,
 		D3D11_MAP_WRITE_DISCARD,
 		0,
 		&mappedSubresource);
-	ModelFactory::MatrixBuffer* data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
-	data->WMatrix = DirectX::XMMatrixTranspose(WMatrix);
-	data->WVPMatrix = DirectX::XMMatrixTranspose(WMatrix * VMatrix * PMatrix);
+
+	memcpy(mappedSubresource.pData, &m_wMatrix, sizeof(DirectX::XMFLOAT4X4));
+	memcpy(((char*)mappedSubresource.pData) + sizeof(DirectX::XMFLOAT4X4), &wvpMatrix, sizeof(DirectX::XMFLOAT4X4));
+
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
 
 	//Bounding sphere:

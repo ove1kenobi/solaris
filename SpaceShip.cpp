@@ -21,7 +21,7 @@ SpaceShip::SpaceShip()
 	m_velocity = { 1.0f, 1.0f, 1.0f };
 }
 
-GameObject* SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
+GameObject* SpaceShip::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	ImGui::Begin("Spaceship");
@@ -48,7 +48,12 @@ GameObject* SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatr
 
 	//Update the matrixBuffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-	DirectX::XMMATRIX WMatrix = DirectX::XMLoadFloat4x4(&this->m_wMatrix);
+
+	DirectX::XMFLOAT4X4 wvpMatrix;
+	DirectX::XMMATRIX vMatrix = DirectX::XMLoadFloat4x4(&VMatrix);
+	DirectX::XMMATRIX pMatrix = DirectX::XMLoadFloat4x4(&PMatrix);
+
+	DirectX::XMStoreFloat4x4(&wvpMatrix, DirectX::XMMatrixTranspose(final * vMatrix * pMatrix));
 
 	deviceContext->Map(this->m_model->getMatrixBuffer().Get(),
 			           0,
@@ -56,10 +61,8 @@ GameObject* SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatr
 		               0,
 		               &mappedSubresource);
 
-	ModelFactory::MatrixBuffer* data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
-
-	data->WMatrix = DirectX::XMMatrixTranspose(WMatrix);
-	data->WVPMatrix = DirectX::XMMatrixTranspose(WMatrix * VMatrix * PMatrix);
+	memcpy(mappedSubresource.pData, &m_wMatrix, sizeof(DirectX::XMFLOAT4X4));
+	memcpy(((char*)mappedSubresource.pData) + sizeof(DirectX::XMFLOAT4X4), &wvpMatrix, sizeof(DirectX::XMFLOAT4X4));
 
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
 	return nullptr;

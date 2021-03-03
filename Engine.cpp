@@ -18,7 +18,7 @@ const bool Engine::Initialize()
 	ImGui_ImplWin32_Init(m_Window.GetHandle());
 	ModelFactory::Get().setDeviceAndContext(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext());
 	
-	// Preload models
+	/* Preload models */
 	//std::vector<std::string> models;
 	//models.insert(models.end(), {
 	//	"models/Asteroid_1_LOW_MODEL_.obj",

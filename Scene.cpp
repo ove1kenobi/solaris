@@ -134,9 +134,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	this->m_gameObjects.push_back(sun);
 	//Add the ship to the gameObject vector.
 	this->m_gameObjects.push_back(this->m_player.getShip());
-	Asteroid* ast = new Asteroid();
-	ast->init({ 1000.0f, 1000.0f, 1000.0f }, { 0.0f, 0.0f, 0.0f }, m_player.getShip());
-	this->m_gameObjects.push_back(ast);
 
 	// Finished creating persistent objects
 	// The rest of m_gameObjects contain eventual transient objects
@@ -183,7 +180,7 @@ void Scene::Update() noexcept {
 		GameObject* ship = m_player.getShip();
 		DirectX::XMFLOAT3 velocity = norm(ship->GetVelocity());
 		// Start pos in front of spaceship, and randomise it slightly
-		DirectX::XMFLOAT3 pos = ship->GetCenter() + velocity * 3000.0f;
+		DirectX::XMFLOAT3 pos = ship->GetCenter() + velocity * 4000.0f;
 		pos = pos + DirectX::XMFLOAT3(dist(gen), dist(gen), dist(gen));
 		// Give asteroid a random velocity in the general direction of spaceship
 		velocity = velocity * DirectX::XMFLOAT3(-adj(gen), -adj(gen), -adj(gen));
@@ -209,8 +206,8 @@ void Scene::Update() noexcept {
 		}
 	}
 
-	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
-	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
+	DirectX::XMFLOAT4X4 vMatrix = m_perspectiveCamera.getVMatrix();
+	DirectX::XMFLOAT4X4 pMatrix = m_perspectiveCamera.getPMatrix();
 
 	GameObject* del = nullptr;
 	std::vector<GameObject*> remove;
