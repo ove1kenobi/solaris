@@ -2,6 +2,8 @@
 #include "Orbit.h"
 
 Orbit::Orbit() noexcept
+	:	m_Tag{ "Orbit"},
+		m_TestForCulling{ false }
 {
 
 }
@@ -34,9 +36,7 @@ GameObject* Orbit::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, 
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
 	ModelFactory::MatrixBuffer* data;
 
-	DirectX::XMMATRIX WMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&m_wMatrix));
-	VMatrix = DirectX::XMMatrixTranspose(VMatrix);
-	PMatrix = DirectX::XMMatrixTranspose(PMatrix);
+	DirectX::XMMATRIX WMatrix = DirectX::XMLoadFloat4x4(&m_wMatrix);
 
 	deviceContext->Map(
 		this->m_model->getMatrixBuffer().Get(),
@@ -48,9 +48,8 @@ GameObject* Orbit::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, 
 
 	data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
 
-	data->WMatrix = WMatrix;
-	data->VMatrix = VMatrix;
-	data->PMatrix = PMatrix;
+	data->WMatrix = DirectX::XMMatrixTranspose(WMatrix);
+	data->WVPMatrix = DirectX::XMMatrixTranspose(WMatrix * VMatrix * PMatrix);
 
 	deviceContext->Unmap(m_model->getMatrixBuffer().Get(), 0);
 	return nullptr;
@@ -67,7 +66,22 @@ void Orbit::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& devic
 	deviceContext->VSSetConstantBuffers(0, 1, m_model->getMatrixBuffer().GetAddressOf());
 }
 
+void Orbit::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
+{
+	//Do nothing as of now...
+}
+
 const bool Orbit::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
 {
 	return false;
+}
+
+const std::string& Orbit::GetTag() const noexcept
+{
+	return m_Tag;
+}
+
+const bool& Orbit::ShallBeTestedForCulling() const noexcept
+{
+	return m_TestForCulling;
 }

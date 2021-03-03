@@ -2,7 +2,7 @@
 #include "Asteroid.h"
 
 Asteroid::Asteroid() noexcept
-	: m_scale { 1.0f }
+	: m_scale { 1.0f }, m_Tag{"Asteroid"}, m_TestForCulling{true}
 {
 
 }
@@ -37,9 +37,10 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 	m_deltaRoll = distScale(gen);
 	m_yaw = distRot(gen);
 	m_deltaYaw = distScale(gen);
-	m_model = ModelFactory::Get().GetModel(asteroids[distAst(gen)]);
+	//m_model = ModelFactory::Get().GetModel(asteroids[distAst(gen)]);
+	m_model = ModelFactory::Get().GetModel("models/cubemetal.obj");
 	m_scale = distScale(gen) * 30.0f;
-	m_mass = length(m_model->GetBoundingBox()->Extents) * 50000.0f * m_scale;
+	m_mass = m_model->GetBoundingSphere()->Radius * 50000.0f * m_scale;
 	ModelFactory::Get().CreateMatrixBuffer(m_AmatrixBuffer);
 	return true;
 }
@@ -63,7 +64,6 @@ GameObject* Asteroid::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatri
 	//Update the matrixBuffer.
 
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-	ModelFactory::MatrixBuffer* data;
 
 	DirectX::XMMATRIX WMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&m_wMatrix));
 	VMatrix = DirectX::XMMatrixTranspose(VMatrix);
@@ -77,11 +77,10 @@ GameObject* Asteroid::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatri
 		&mappedSubresource
 	);
 
-	data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
+	ModelFactory::MatrixBuffer* data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
 
-	data->WMatrix = WMatrix;
-	data->VMatrix = VMatrix;
-	data->PMatrix = PMatrix;
+	data->WMatrix = DirectX::XMMatrixTranspose(WMatrix);
+	data->WVPMatrix = DirectX::XMMatrixTranspose(WMatrix * VMatrix * PMatrix);
 
 	deviceContext->Unmap(m_AmatrixBuffer.Get(), 0);
 	return nullptr;
@@ -104,7 +103,26 @@ void Asteroid::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& de
 
 const bool Asteroid::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
 {
-	DirectX::BoundingBox b = *(m_model->GetBoundingBox());
+	DirectX::BoundingSphere b = *(m_model->GetBoundingSphere());
 	b.Center = m_center;
 	return b.Intersects(origin, direction, distance);
+}
+
+const std::string& Asteroid::GetTag() const noexcept
+{
+	return m_Tag;
+}
+const bool& Asteroid::ShallBeTestedForCulling() const noexcept
+{
+	return m_TestForCulling;
+}
+
+void Asteroid::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
+{
+	pDeviceContext->IASetVertexBuffers(0u,
+		1u,
+		this->m_model->getVertexBuffer().GetAddressOf(),
+		&this->m_model->getStride(),
+		&this->m_model->getOffset());
+	pDeviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 }

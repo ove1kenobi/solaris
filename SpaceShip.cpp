@@ -2,6 +2,8 @@
 #include "SpaceShip.h"
 
 SpaceShip::SpaceShip()
+	: m_Tag{ "SpaceShip"},
+	  m_TestForCulling{ false }
 {
 	this->m_model = ModelFactory::Get().GetModel(std::string("models/SciFi_Fighter_AK5.obj"));
 	//this->m_model = ModelFactory::Get().GetModel(std::string("models/cubemetal.obj"));
@@ -46,9 +48,7 @@ GameObject* SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatr
 
 	//Update the matrixBuffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-	DirectX::XMMATRIX WMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&this->m_wMatrix));
-	VMatrix = DirectX::XMMatrixTranspose(VMatrix);
-	PMatrix = DirectX::XMMatrixTranspose(PMatrix);
+	DirectX::XMMATRIX WMatrix = DirectX::XMLoadFloat4x4(&this->m_wMatrix);
 
 	deviceContext->Map(this->m_model->getMatrixBuffer().Get(),
 			           0,
@@ -58,9 +58,8 @@ GameObject* SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatr
 
 	ModelFactory::MatrixBuffer* data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
 
-	data->WMatrix = WMatrix;
-	data->VMatrix = VMatrix;
-	data->PMatrix = PMatrix;
+	data->WMatrix = DirectX::XMMatrixTranspose(WMatrix);
+	data->WVPMatrix = DirectX::XMMatrixTranspose(WMatrix * VMatrix * PMatrix);
 
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
 	return nullptr;
@@ -123,4 +122,25 @@ void SpaceShip::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& d
 	
 	deviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, this->m_model->getMatrixBuffer().GetAddressOf());
+}
+
+void SpaceShip::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
+{
+	pDeviceContext->IASetVertexBuffers(0u,
+									  1u,
+									  this->m_model->getVertexBuffer().GetAddressOf(),
+									  &this->m_model->getStride(),
+									  &this->m_model->getOffset());
+	pDeviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+}
+
+
+const std::string& SpaceShip::GetTag() const noexcept
+{
+	return m_Tag;
+}
+
+const bool& SpaceShip::ShallBeTestedForCulling() const noexcept
+{
+	return m_TestForCulling;
 }

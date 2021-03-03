@@ -18,6 +18,7 @@ GameObject::GameObject() noexcept
 		m_roll{ 0.0f },
 		m_yaw{ 0.0f },
 		m_model{ nullptr },
+	    m_HasBoundingVolume{ false },
 		m_sumForces{ 0.0f, 0.0f, 0.0f },
 		m_topSpeed{ 3000.0f }
 {
@@ -55,6 +56,11 @@ const DirectX::XMFLOAT3& GameObject::GetSumForces() const noexcept
 const DirectX::XMFLOAT3& GameObject::GetVelocity() const noexcept
 {
 	return m_velocity;
+}
+
+void GameObject::SetCenter(const DirectX::XMFLOAT3& center) noexcept
+{
+	m_center = center;
 }
 
 DirectX::XMFLOAT3 GameObject::getTransVector() {
@@ -125,4 +131,19 @@ void GameObject::UpdatePhysics()
 		m_center.z += static_cast<float>(m_velocity.z * m_timer.DeltaTime());
 	}
 	m_sumForces = { 0.0f, 0.0f , 0.0f };
+}
+
+Model* GameObject::GetModel() const noexcept
+{
+	return m_model;
+}
+
+const float& GameObject::GetDistanceToCamera() const noexcept
+{
+	return m_DistanceToCamera;
+}
+
+void GameObject::SetDistanceToCamera(const float& distance) noexcept
+{
+	m_DistanceToCamera = distance;
 }

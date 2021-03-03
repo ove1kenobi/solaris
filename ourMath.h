@@ -9,6 +9,9 @@ float dot(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b);
 //Cross product for XMFLOAT3's
 DirectX::XMFLOAT3 cross(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b);
 
+//Linear interpolation,
+float lerp(float a, float b, float t);
+
 //Spherical linear interpolation.
 DirectX::XMFLOAT3 slerp(DirectX::XMFLOAT3 p0, DirectX::XMFLOAT3 p1, float t);
 

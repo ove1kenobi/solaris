@@ -5,36 +5,32 @@
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/RenderEvents.h"
 #include "EventSystem\UtilityEvents.h"
-#include "GameObject.h"
-#include "PointLight.h"
+#include "Scene.h"
+#include "Techniques/ShadowMapping.h"
+#include "Techniques\WaterPostProcessing.h"
 
 class ForwardRenderer : public EventPublisher, public IEventListener 
 {
 private:
 	FLOAT m_Background[4];
-	std::vector<GameObject*>* m_pGameObjects;
-	PointLight* m_pSunLight;
-	PlayerCamera* m_pCamera;
-	size_t m_numPlanets;
+	RenderData* m_pRenderData;
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pBackBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pLightCBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pCameraCBuffer;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDepthShaderResourceView; 
 	Skybox m_Skybox;
+	WaterPostProcessing m_WaterPP;
+	ShadowMapping m_ShadowMapping;
+	DirectX::XMFLOAT3 m_LightPosition;
 private:
 	void BeginFrame();
 	void EndFrame();
 	void UpdateDXHandlers(IEvent& event) noexcept;
 	void OnEvent(IEvent& event) noexcept;
-	[[nodiscard]] const bool InitializeSunLight();
-	[[nodiscard]] const bool InitializeCameraBuffer();
-	void BindLightData();
-	void BindCameraData();
 public:
 	ForwardRenderer() noexcept;
 	virtual ~ForwardRenderer() noexcept = default;
-	[[nodiscard]] const bool Initialize() noexcept;
+	[[nodiscard]] const bool Initialize(UINT screenWidth, UINT screenHeight) noexcept;
 	void RenderFrame();
 };

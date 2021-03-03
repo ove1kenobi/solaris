@@ -9,6 +9,7 @@
 #include "SamplerState.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "GBuffer.h"
 #include "..\vertex.h"
 #include "../EventSystem/RenderEvents.h"
 #include "../EventSystem/UtilityEvents.h"
@@ -24,33 +25,51 @@ private:
 	VertexShader m_VertexShaderSkybox;
 	VertexShader m_VertexShaderOrbit;
 	VertexShader m_VertexShaderSun;
+	VertexShader m_VertexShaderPostProcessing;
+	VertexShader m_VertexShaderWaterSpheres;
+	VertexShader m_VertexShaderShadow;
 	VertexShader m_VertexShaderTextured;
 	PixelShader m_PixelShaderMinimal;
 	PixelShader m_PixelShaderSkybox;
 	PixelShader m_PixelShaderOrbit;
 	PixelShader m_PixelShaderSun;
+	PixelShader m_PixelShaderPostProcessing;
+	PixelShader m_PixelShaderWaterSpheres;
+	PixelShader m_PixelShaderShadow;
 	PixelShader m_PixelShaderTextured;
 	ComputeShader m_ComputeShaderPlanet;
 	InputLayout m_InputLayoutCosmicBody;
 	InputLayout m_InputLayoutPlayerModel;
 	InputLayout m_InputLayoutMinimal;
-	InputLayout m_InputLayoutSinglePoint;
+	InputLayout m_InputLayoutPostProcessing;
+	InputLayout m_InputLayoutWaterSpheres;
+	InputLayout m_InputLayoutPositionOnly;
 	PrimitiveTopology m_TopologyTriList;
 	PrimitiveTopology m_TopologyPatchList;
 	PrimitiveTopology m_TopologyLineStrip;
 	CubeTexture m_CubeTextureSkybox;
 	SamplerState m_SamplerSkybox;
+	SamplerState m_SamplerShadow;
+	SamplerState m_SamplerPostProcessing;
 	VertexBuffer m_VertexBufferCube;
 	IndexBuffer m_IndexBufferCube;
+	VertexBuffer m_VertexBufferQuad;
+	IndexBuffer m_IndexBufferQuad;
+	GBuffer m_GBuffer;
 	std::vector<IBindable*> m_BindablesMinimalistic;
-	std::vector<IBindable*> m_BindablesCosmic;
+	std::vector<IBindable*> m_BindablesRenderQuad;
+	std::vector<IBindable*> m_BindablesWater;
 	std::vector<IBindable*> m_BindablesPlayer;
 	std::vector<IBindable*> m_BindablesSkybox;
 	std::vector<IBindable*> m_BindablesOrbit;
 	std::vector<IBindable*> m_BindablesSun;
+	std::vector<IBindable*> m_BindablesShadow;
+	std::vector<IBindable*> m_BindablesWaterSpheres;
 	std::vector<IBindable*> m_BindablesTextured;
 	std::vector<DirectX::XMFLOAT3> m_CubeVertices;
 	std::vector<unsigned int> m_CubeIndices;
+	std::vector<Vertex_PosTex> m_QuadVertices;
+	std::vector<unsigned int> m_QuadIndices;
 	unsigned int m_ClientWindowWidth;
 	unsigned int m_ClientWindowHeight;
 private:
@@ -61,6 +80,7 @@ private:
 	void UpdateResolution(IEvent& event) noexcept;
 	void OnEvent(IEvent& event) noexcept override;
 	void CreateCubeData() noexcept;
+	void CreateQuadData() noexcept;
 public:
 	ResourceManager() noexcept;
 	virtual ~ResourceManager() noexcept = default;

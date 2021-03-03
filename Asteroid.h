@@ -8,6 +8,8 @@ private:
 	float m_deltaRoll;
 	float m_deltaYaw;
 	float m_deltaPitch;
+	std::string m_Tag;
+	bool m_TestForCulling;
 	GameObject* m_ship;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_AmatrixBuffer;
 public:
@@ -18,4 +20,7 @@ public:
 	GameObject* update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
 	void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
 	[[nodiscard]] const bool IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept override;
+	virtual [[nodiscard]] const std::string& GetTag() const noexcept;
+	virtual [[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept;
+	virtual void BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext);
 };
