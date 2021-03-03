@@ -22,8 +22,6 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pWarningTextBox = D2D1::RectF();
 	m_pWarningText = L"!";
 
-	m_pMiniMap = D2D1::RectF();
-
 	m_pMouseX = 10;
 	m_pMouseY = 10;
 }
@@ -45,18 +43,13 @@ bool HeadsUpDisplayUI::Initialize() {
 	if (!CreateBars()) {
 		return false;
 	}
-	if (!CreateCapacity()) {
-		return false;
-	}
 	if (!CreateWarningModule()) {
-		return false;
-	}
-	if (!CreateMiniMap()) {
 		return false;
 	}
 	return true;
 }
 
+//Creation functions
 bool HeadsUpDisplayUI::CreateDisplayScreens() {
 	//Create general text
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
@@ -65,18 +58,13 @@ bool HeadsUpDisplayUI::CreateDisplayScreens() {
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		30.0f,
+		20.0f,
 		L"en-us",
 		&m_pHUDFormat
 	), "TextFormat");
-	ErrorCheck(m_pHUDFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
-
-	//Create screens
-	UpdateDisplayScreens();
 	return true;
 }
 
-//Creation functions
 bool HeadsUpDisplayUI::CreateBars() {
 	m_pHealthBar.Initialize();
 	m_pOxygenBar.Initialize();
@@ -84,18 +72,8 @@ bool HeadsUpDisplayUI::CreateBars() {
 	return true;
 }
 
-bool HeadsUpDisplayUI::CreateCapacity() {
-	UpdateCapacity();
-	return true;
-}
-
 bool HeadsUpDisplayUI::CreateWarningModule() {
 	ErrorCheck(m_pFactory2D->CreatePathGeometry(&m_pWarningTriangle), "PathGeometry");
-	return true;
-}
-
-bool HeadsUpDisplayUI::CreateMiniMap() {
-	UpdateMiniMap();
 	return true;
 }
 
@@ -128,13 +106,8 @@ bool HeadsUpDisplayUI::CreatePlanetDistanceModule() {
 	return true;
 }
 
-bool HeadsUpDisplayUI::CreateCrosshair() {
-	return true;
-}
-
 bool HeadsUpDisplayUI::CreateTools() {
-	this->CreateBrush();
-	return true;
+	return this->CreateBrush();
 }
 
 //Update functions
@@ -158,6 +131,10 @@ bool HeadsUpDisplayUI::UpdateDisplayScreens() {
 }
 
 bool HeadsUpDisplayUI::UpdateBars() {
+	m_pHealthBar.SetTools(D2D1::ColorF(1.0f, 0.0f, 0.0f, 1.0f),
+		D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.5f),
+		D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.5f));
+
 	m_pHealthBar.SetFullBar(
 		m_pRightDisplayScreen.left + 25.0f, 
 		m_pRightDisplayScreen.bottom - 60.0f,
@@ -165,12 +142,20 @@ bool HeadsUpDisplayUI::UpdateBars() {
 		m_pRightDisplayScreen.bottom - 40.0f,
 		5.0f);
 
+	m_pOxygenBar.SetTools(D2D1::ColorF(0.0f, 0.0f, 1.0f, 1.0f),
+		D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.5f),
+		D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.5f));
+
 	m_pOxygenBar.SetFullBar(
 		m_pRightDisplayScreen.left + 25.0f,
 		m_pRightDisplayScreen.bottom - 95.0f,
 		m_pRightDisplayScreen.right - 55.0f,
 		m_pRightDisplayScreen.bottom - 75.0f,
 		5.0f);
+
+	m_pFuelBar.SetTools(D2D1::ColorF(0.0f, 1.0f, 0.0f, 1.0f),
+		D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.5f),
+		D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.5f));
 
 	m_pFuelBar.SetFullBar(
 		m_pRightDisplayScreen.left + 25.0f,
@@ -182,6 +167,12 @@ bool HeadsUpDisplayUI::UpdateBars() {
 }
 
 bool HeadsUpDisplayUI::UpdateCapacity() {
+	m_pCapacityTextBox = D2D1::RectF(
+		m_pRightDisplayScreen.left + ((m_pRightDisplayScreen.right - m_pRightDisplayScreen.left)/2.0f),
+		m_pRightDisplayScreen.bottom - 165.0f,
+		m_pRightDisplayScreen.right - 55.0f,
+		m_pRightDisplayScreen.bottom - 145.0f
+	);
 	return true;
 }
 
@@ -189,22 +180,22 @@ bool HeadsUpDisplayUI::UpdateWarningModule() {
 	bool updated = false;
 
 	m_pWarningTextBox = D2D1::RectF(
-		(m_pWindowWidth / 2.0f) - 50.0f,
-		(m_pWindowHeight / 2.0f),
-		(m_pWindowWidth / 2.0f) + 50.0f,
-		(m_pWindowHeight / 2.0f) + 50.0f
+		m_pCapacityTextBox.left - 50.0f,
+		m_pCapacityTextBox.bottom,
+		m_pCapacityTextBox.left - 20.0f,
+		m_pCapacityTextBox.bottom - 22.0f
 	);
 
 	if (ErrorCheck(m_pWarningTriangle->Open(&m_pSink), "OpenGeometry")) {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
-			D2D1::Point2F((m_pWindowWidth / 2.0f), (m_pWindowHeight / 2.0f) - 50.0f),
+			D2D1::Point2F(m_pCapacityTextBox.left - 50.0f, m_pCapacityTextBox.bottom),
 			D2D1_FIGURE_BEGIN_FILLED
 		);
 		D2D1_POINT_2F points[] = {
-			D2D1::Point2F((m_pWindowWidth / 2.0f) - 50.0f, (m_pWindowHeight / 2.0f) + 50.0f),
-			D2D1::Point2F((m_pWindowWidth / 2.0f) + 50.0f, (m_pWindowHeight / 2.0f) + 50.0f)
+			D2D1::Point2F(m_pCapacityTextBox.left - 20.0f, m_pCapacityTextBox.bottom),
+			D2D1::Point2F(m_pCapacityTextBox.left - 35.0f, m_pCapacityTextBox.bottom - 26.0f)
 		};
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
@@ -212,16 +203,6 @@ bool HeadsUpDisplayUI::UpdateWarningModule() {
 		updated = ErrorCheck(m_pSink->Close(), "CloseGeometry");
 	}
 	return updated;
-}
-
-bool HeadsUpDisplayUI::UpdateMiniMap() {
-	m_pMiniMap = D2D1::RectF(
-		m_pLeftDisplayScreen.left + 25.0f,
-		m_pLeftDisplayScreen.bottom - 225.0f,
-		m_pLeftDisplayScreen.left + 225.0f,
-		m_pLeftDisplayScreen.bottom - 25.0f
-	);
-	return true;
 }
 
 bool HeadsUpDisplayUI::UpdatePlanetDistanceModule() {
@@ -242,19 +223,12 @@ bool HeadsUpDisplayUI::UpdatePlanetDistanceModule() {
 	return true;
 }
 
-bool HeadsUpDisplayUI::UpdateCrosshair() {
-	return true;
-}
-
 bool HeadsUpDisplayUI::UpdateTools() {
 	return true;
 }
 
 bool HeadsUpDisplayUI::UpdateModules() {
 	if (!UpdateDisplayScreens()) {
-		return false;
-	}
-	if (!UpdateCrosshair()) {
 		return false;
 	}
 	if (!UpdatePlanetDistanceModule()) {
@@ -269,9 +243,6 @@ bool HeadsUpDisplayUI::UpdateModules() {
 	if (!UpdateWarningModule()) {
 		return false;
 	}
-	if (!UpdateMiniMap()) {
-		return false;
-	}
 	if (!UpdateTools()) {
 		return false;
 	}
@@ -279,51 +250,43 @@ bool HeadsUpDisplayUI::UpdateModules() {
 }
 
 //Render functions
-void HeadsUpDisplayUI::RenderRightDisplayScreen() {
-	this->UpdateBrush(D2D1::ColorF::Teal, 0.5f);
-	m_pRenderTarget2D->FillRectangle(m_pRightDisplayScreen, m_pBrush.Get());
-}
-
-void HeadsUpDisplayUI::RenderLeftDisplayScreen() {
-	this->UpdateBrush(D2D1::ColorF::Teal, 0.5f);
-	m_pRenderTarget2D->FillRectangle(m_pLeftDisplayScreen, m_pBrush.Get());
-}
-
 void HeadsUpDisplayUI::RenderBars() {
-	//this->UpdateBrush(D2D1::ColorF::OrangeRed, 1.0f);
 	m_pHealthBar.Render();
-
-	//this->UpdateBrush(D2D1::ColorF::Aqua, 1.0f);
 	m_pOxygenBar.Render();
-
-	//this->UpdateBrush(D2D1::ColorF::Orange, 1.0f);
 	m_pFuelBar.Render();
 }
 
 void HeadsUpDisplayUI::RenderCapacity() {
 	this->UpdateBrush(D2D1::ColorF::DarkBlue, 0.5f);
 	m_pRenderTarget2D->FillRectangle(m_pCapacityTextBox, m_pBrush.Get());
+
+	ErrorCheck(m_pHUDFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING), "TextAlignment");
+
+	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pCapacityText.c_str(),
+		(UINT32)m_pCapacityText.length(),
+		m_pHUDFormat.Get(),
+		m_pCapacityTextBox,
+		m_pBrush.Get()
+	);
 }
 
 void HeadsUpDisplayUI::RenderWarningModule() {
 	this->UpdateBrush(D2D1::ColorF::OrangeRed, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pWarningTriangle.Get(), m_pBrush.Get());
 	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
-	m_pRenderTarget2D->DrawGeometry(m_pWarningTriangle.Get(), m_pBrush.Get());
+	m_pRenderTarget2D->DrawGeometry(m_pWarningTriangle.Get(), m_pBrush.Get(), 2.0f);
 
-	//TODO: NEED TO CHANGE FORMAT
+	ErrorCheck(m_pHUDFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
+
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pWarningText.c_str(),
 		(UINT32)m_pWarningText.length(),
-		m_pDistanceFormat.Get(),
+		m_pHUDFormat.Get(),
 		m_pWarningTextBox,
 		m_pBrush.Get()
 	);
-}
-
-void HeadsUpDisplayUI::RenderMiniMap() {
-	this->UpdateBrush(D2D1::ColorF::DarkBlue, 1.0f);
-	m_pRenderTarget2D->FillRectangle(m_pMiniMap, m_pBrush.Get());
 }
 
 void HeadsUpDisplayUI::RenderPlanetDistanceModule() {
@@ -379,17 +342,17 @@ void HeadsUpDisplayUI::RenderCrosshair() {
 }
 
 void HeadsUpDisplayUI::Render() {
-	this->UpdateBrush(D2D1::ColorF::SteelBlue, 0.5f);
-	RenderHelpGrid(10);
+	//For helping with layout
+	//this->UpdateBrush(D2D1::ColorF::SteelBlue, 0.5f);
+	//RenderHelpGrid(10);
 
    RenderCrosshair();
    RenderPlanetDistanceModule();
-   RenderRightDisplayScreen();
-   RenderLeftDisplayScreen();
    RenderBars();
    RenderCapacity();
+
+   //Will work more on warning module later
    //RenderWarningModule();
-   //RenderMiniMap();
 }
 
 //Event functions
@@ -398,18 +361,6 @@ void HeadsUpDisplayUI::SetPlanetDistance(unsigned int distanceToPlanet, std::wst
 	m_pPlanetText = planetName;
 	m_pDistanceText = std::to_wstring(distanceToPlanet);
 	m_pDistanceText.append(L"m");
-}
-
-void HeadsUpDisplayUI::SetHealth() {
-
-}
-
-void HeadsUpDisplayUI::SetCO2() {
-
-}
-
-void HeadsUpDisplayUI::SetFuel() {
-
 }
 
 void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
@@ -432,16 +383,14 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 		m_pMouseX = static_cast<DelegateMouseCoordsEvent*>(&event)->GetXCoord();
 		m_pMouseY = static_cast<DelegateMouseCoordsEvent*>(&event)->GetYCoord();
 		SetPlanetDistance(m_pMouseX, L"Tatooine");
+		m_pHealthBar.SetCurrentBar(static_cast<float>(m_pMouseX / m_pWindowWidth));
+		m_pOxygenBar.SetCurrentBar(static_cast<float>(m_pMouseY / m_pWindowHeight));
+		m_pFuelBar.SetCurrentBar(static_cast<float>(m_pMouseX / m_pWindowWidth));
 		break;
 	}
 	case EventType::DelegatePlanetDistanceEvent:
 	{
 		m_pDistanceText = static_cast<DelegatePlanetDistanceEvent*>(&event)->GetPlanetName();
-		/*
-		this->SetPlanetDistance(
-			static_cast<DelegatePlanetDistanceEvent*>(&event)->GetDistanceToObject(),
-			static_cast<DelegatePlanetDistanceEvent*>(&event)->GetPlanetName()
-		);*/
 		break;
 	}
 	default:

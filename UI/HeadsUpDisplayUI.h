@@ -8,7 +8,6 @@ private:
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pHUDFormat;
 	D2D1_RECT_F m_pRightDisplayScreen;
 	D2D1_RECT_F m_pLeftDisplayScreen;
-	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pScreenGradientBrush;
 
 	//Crosshair
 	float m_pCrosshairSize;
@@ -23,15 +22,15 @@ private:
 	D2D1_RECT_F m_pPlanetNameTextBox;
 	std::wstring m_pPlanetText;
 
-	//Healthbar - convert later to bar class
+	//Healthbar
 	HeadsUpDisplayBar m_pHealthBar;
 	D2D1_RECT_F m_pHealthIcon;
 
-	//CO2Bar - convert later to bar class
+	//CO2Bar
 	HeadsUpDisplayBar m_pOxygenBar;
 	D2D1_RECT_F m_pOxygenIcon;
 
-	//FuelBar - convert later to bar class
+	//FuelBar
 	HeadsUpDisplayBar m_pFuelBar;
 	D2D1_RECT_F m_pFuelIcon;
 
@@ -40,13 +39,10 @@ private:
 	D2D1_RECT_F m_pCapacityTextBox;
 	std::wstring m_pCapacityText;
 
-	//Warning module (Will need one for each bar)
+	//Warning module
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pWarningTriangle;
 	D2D1_RECT_F m_pWarningTextBox;
 	std::wstring m_pWarningText;
-
-	//MiniMap
-	D2D1_RECT_F m_pMiniMap;
 
 	//Resources
 	std::vector<D2D1_RECT_F> m_pIconPicture;
@@ -59,40 +55,29 @@ private:
 	//Create modules
 	bool CreateDisplayScreens();
 	bool CreateBars();
-	bool CreateCapacity();
 	bool CreateWarningModule();
-	bool CreateMiniMap();
 	bool CreatePlanetDistanceModule();
-	bool CreateCrosshair();
 	bool CreateTools();
 
-	//Update if screen size changes
+	//Update modules if screen size changes
 	bool UpdateDisplayScreens();
 	bool UpdateBars();
 	bool UpdateCapacity();
 	bool UpdateWarningModule();
-	bool UpdateMiniMap();
 	bool UpdatePlanetDistanceModule();
-	bool UpdateCrosshair();
 	bool UpdateTools();
 
 	bool UpdateModules();
 
 	//Render modules
-	void RenderRightDisplayScreen();
-	void RenderLeftDisplayScreen();
 	void RenderBars();
 	void RenderCapacity();
 	void RenderWarningModule();
-	void RenderMiniMap();
 	void RenderPlanetDistanceModule();
 	void RenderCrosshair();
 
 	//For updating things based on information from the event handler
 	void SetPlanetDistance(unsigned int distanceToPlanet, std::wstring planetName);
-	void SetHealth();
-	void SetCO2();
-	void SetFuel();
 public:
 	//Creation and destruction functions
 	HeadsUpDisplayUI();
