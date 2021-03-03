@@ -259,9 +259,6 @@ void HeadsUpDisplayUI::RenderBars() {
 }
 
 void HeadsUpDisplayUI::RenderCapacity() {
-	this->UpdateBrush(D2D1::ColorF::DarkBlue, 0.5f);
-	m_pRenderTarget2D->FillRectangle(m_pCapacityTextBox, m_pBrush.Get());
-
 	ErrorCheck(m_pHUDFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING), "TextAlignment");
 
 	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);

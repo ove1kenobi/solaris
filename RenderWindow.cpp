@@ -39,7 +39,7 @@ RenderWindow::RenderWindow()
     m_winHandle = CreateWindowEx(0,                                              // Optional window style
                                  className,
                                  windowTitle,
-                                 WS_POPUP | WS_VISIBLE, //WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,       // Window style
+                                 WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,       // Window style    //WS_POPUP | WS_VISIBLE if we want fullscreen
                                  0, 0, winRect.right - winRect.left, winRect.bottom - winRect.top,
                                  nullptr,                                        // Parent window
                                  nullptr,                                        // Menu
