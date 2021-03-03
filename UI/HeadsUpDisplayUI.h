@@ -1,6 +1,7 @@
 #pragma once
 #include "ModuleUI.h"
 #include "HeadsUpDisplayBar.h"
+#include "..\EventSystem\UIEvents.h"
 
 class HeadsUpDisplayUI : public ModuleUI {
 private:
@@ -15,6 +16,7 @@ private:
 	float m_pCrosshairDistance;
 
 	//Distance to planet module
+	bool m_pRenderDistance;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pDistanceFormat;
 	D2D1_RECT_F m_pDistanceTextBox;
 	std::wstring m_pDistanceText;
@@ -77,7 +79,7 @@ private:
 	void RenderCrosshair();
 
 	//For updating things based on information from the event handler
-	void SetPlanetDistance(unsigned int distanceToPlanet, std::wstring planetName);
+	void SetPlanetDistance(float distanceToPlanet, std::wstring planetName);
 public:
 	//Creation and destruction functions
 	HeadsUpDisplayUI();

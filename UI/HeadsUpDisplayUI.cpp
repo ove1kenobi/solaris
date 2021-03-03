@@ -2,7 +2,7 @@
 #include "HeadsUpDisplayUI.h"
 
 HeadsUpDisplayUI::HeadsUpDisplayUI() {
-	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent);
+	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent, EventType::DelegatePlanetDistanceEvent);
 
 	m_pCrosshairDistance = 12.0f;
 	m_pCrosshairLength = 2.5f;
@@ -21,6 +21,8 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 
 	m_pWarningTextBox = D2D1::RectF();
 	m_pWarningText = L"!";
+
+	m_pRenderDistance = false;
 
 	m_pMouseX = 10;
 	m_pMouseY = 10;
@@ -207,9 +209,9 @@ bool HeadsUpDisplayUI::UpdateWarningModule() {
 
 bool HeadsUpDisplayUI::UpdatePlanetDistanceModule() {
 	m_pPlanetNameTextBox = D2D1::RectF(
-		(m_pWindowWidth / 2.0f) - 150.0f,
+		(m_pWindowWidth / 2.0f) - 200.0f,
 		0.0f,
-		(m_pWindowWidth / 2.0f) + 150.0f,
+		(m_pWindowWidth / 2.0f) + 200.0f,
 		40.0f
 	);
 
@@ -346,8 +348,10 @@ void HeadsUpDisplayUI::Render() {
 	//this->UpdateBrush(D2D1::ColorF::SteelBlue, 0.5f);
 	//RenderHelpGrid(10);
 
-   RenderCrosshair();
-   RenderPlanetDistanceModule();
+	RenderCrosshair();
+	if (m_pRenderDistance) {
+		RenderPlanetDistanceModule();
+	}
    RenderBars();
    RenderCapacity();
 
@@ -356,10 +360,10 @@ void HeadsUpDisplayUI::Render() {
 }
 
 //Event functions
-void HeadsUpDisplayUI::SetPlanetDistance(unsigned int distanceToPlanet, std::wstring planetName) {
+void HeadsUpDisplayUI::SetPlanetDistance(float distanceToPlanet, std::wstring planetName) {
 	std::transform(planetName.begin(), planetName.end(), planetName.begin(), ::toupper);
 	m_pPlanetText = planetName;
-	m_pDistanceText = std::to_wstring(distanceToPlanet);
+	m_pDistanceText = std::to_wstring(static_cast<unsigned int>(distanceToPlanet));
 	m_pDistanceText.append(L"m");
 }
 
@@ -382,7 +386,7 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 	{
 		m_pMouseX = static_cast<DelegateMouseCoordsEvent*>(&event)->GetXCoord();
 		m_pMouseY = static_cast<DelegateMouseCoordsEvent*>(&event)->GetYCoord();
-		SetPlanetDistance(m_pMouseX, L"Tatooine");
+		//SetPlanetDistance(m_pMouseX, L"Tatooine");
 		m_pHealthBar.SetCurrentBar(static_cast<float>(m_pMouseX / m_pWindowWidth));
 		m_pOxygenBar.SetCurrentBar(static_cast<float>(m_pMouseY / m_pWindowHeight));
 		m_pFuelBar.SetCurrentBar(static_cast<float>(m_pMouseX / m_pWindowWidth));
@@ -390,7 +394,18 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 	}
 	case EventType::DelegatePlanetDistanceEvent:
 	{
-		m_pDistanceText = static_cast<DelegatePlanetDistanceEvent*>(&event)->GetPlanetName();
+		float distance = static_cast<DelegatePlanetDistanceEvent*>(&event)->GetDistanceToObject();
+		if (distance != 0.0f) {
+			m_pRenderDistance = true;
+			SetPlanetDistance(
+				static_cast<DelegatePlanetDistanceEvent*>(&event)->GetDistanceToObject(),
+				static_cast<DelegatePlanetDistanceEvent*>(&event)->GetPlanetName()
+			);
+		}
+		else {
+			m_pRenderDistance = false;
+		}
+
 		break;
 	}
 	default:
