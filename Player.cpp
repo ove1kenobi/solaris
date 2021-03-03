@@ -49,6 +49,8 @@ Player::Player()
 	m_topSpeed = 0.0f;
 	m_desiredSpeed = 0.0f;
 	m_thrusterForce = 10000000.0f;
+
+	m_health = 100;
 }
 
 Player::~Player()
@@ -193,4 +195,12 @@ void Player::OnEvent(IEvent& event) noexcept
 			break;
 		}
 	}
+}
+
+int Player::GetHealth() noexcept {
+	return m_health;
+}
+
+void Player::UpdateHealth(int value) {
+	m_health += value;
 }

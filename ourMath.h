@@ -26,3 +26,5 @@ DirectX::XMFLOAT3 operator/(const float b, const DirectX::XMFLOAT3& a);
 
 // Returns the lenght of a XMFLOAT3 vector
 float length(const DirectX::XMFLOAT3& a);
+
+float distance(const DirectX::XMFLOAT3 a, const DirectX::XMFLOAT3 b);
