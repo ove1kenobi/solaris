@@ -148,11 +148,14 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 		DirectX::XMFLOAT3 center = planets[i]->GetCenter();
 		DirectX::XMFLOAT4 centerRadius = { center.x, center.y, center.z, static_cast<Planet*>(planets[i])->GetRadius() };
 		data->center[i] = DirectX::XMLoadFloat4(&centerRadius);
+		DirectX::XMFLOAT4 waterColor = static_cast<Planet*>(planets[i])->GetWaterColor();
+		data->waterColor[i] = DirectX::XMLoadFloat4(&waterColor);
 	}
 	//Fill the rest with zero's
 	DirectX::XMFLOAT4 nullXMF4 = { 0.0f, 0.0f, 0.0f, 0.0f };
 	for (size_t i = planets.size(); i < 50; i++) {
 		data->center[i] = DirectX::XMLoadFloat4(&nullXMF4);
+		data->waterColor[i] = DirectX::XMLoadFloat4(&nullXMF4);
 	}
 
 	DirectX::XMFLOAT4 sunData = { m_pSunCenter->x, m_pSunCenter->y, m_pSunCenter->z, *m_pSunRadius };

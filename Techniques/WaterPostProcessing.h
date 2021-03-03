@@ -11,6 +11,7 @@
 struct PlanetData
 {
 	DirectX::XMVECTOR center[50];
+	DirectX::XMVECTOR waterColor[50];
 	DirectX::XMVECTOR sun;
 };
 
