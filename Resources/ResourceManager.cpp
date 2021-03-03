@@ -2,7 +2,7 @@
 #include "ResourceManager.h"
 
 ResourceManager::ResourceManager() noexcept
-	: m_pDevice{ nullptr }, m_pDeviceContext{ nullptr }, m_ClientWindowWidth{ 0u }, m_ClientWindowHeight{ 0u }
+	: m_pDevice{ nullptr }, m_pDeviceContext{ nullptr }, m_ClientWindowWidth{ 1880u }, m_ClientWindowHeight{ 1040u }
 {
 	EventBuss::Get().AddListener(this, EventType::UnbindPipelineEvent, EventType::BindIDEvent, EventType::DelegateDXEvent);
 	EventBuss::Get().AddListener(this, EventType::DelegateResolutionEvent);
@@ -11,6 +11,7 @@ ResourceManager::ResourceManager() noexcept
 const bool ResourceManager::Initialize() noexcept
 {
 	CreateCubeData();
+	CreateQuadData();
 	if (!CreateAllBindables())
 		return false;
 
@@ -26,6 +27,12 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	if (!m_VertexShaderOrbit.Create(m_pDevice, L"VertexShader_Orbit.hlsl"))
 		return false;
+	if (!m_VertexShaderPostProcessing.Create(m_pDevice, L"VertexShader_PostProcessing.hlsl"))
+		return false;
+	if (!m_VertexShaderWaterSpheres.Create(m_pDevice, L"VertexShader_WaterSphere.hlsl"))
+		return false;
+	if (!m_VertexShaderShadow.Create(m_pDevice, L"VertexShader_Shadow.hlsl"))
+		return false;
 	//Pixel Shaders:
 	if (!m_PixelShaderMinimal.Create(m_pDevice, L"PixelShader_Minimalistic.hlsl"))
 		return false;
@@ -34,6 +41,12 @@ const bool ResourceManager::CreateAllBindables()
 	if (!m_PixelShaderOrbit.Create(m_pDevice, L"PixelShader_Orbit.hlsl"))
 		return false;
 	if (!m_PixelShaderSun.Create(m_pDevice, L"PixelShader_Sun.hlsl"))
+		return false;
+	if (!m_PixelShaderPostProcessing.Create(m_pDevice, L"PixelShader_PostProcessing.hlsl"))
+		return false;
+	if (!m_PixelShaderWaterSpheres.Create(m_pDevice, L"PixelShader_WaterSphere.hlsl"))
+		return false;
+	if (!m_PixelShaderShadow.Create(m_pDevice, L"PixelShader_Shadow.hlsl"))
 		return false;
 	//Geometry Shaders:
 
@@ -47,7 +60,11 @@ const bool ResourceManager::CreateAllBindables()
 	//InputLayouts:
 	if (!m_InputLayoutMinimal.Create(m_pDevice, m_VertexShaderMinimal, LAYOUT_MINIMAL))
 		return false;
-	if (!m_InputLayoutSinglePoint.Create(m_pDevice, m_VertexShaderSkybox, LAYOUT_SINGLEPOINT))
+	if (!m_InputLayoutPositionOnly.Create(m_pDevice, m_VertexShaderSkybox, LAYOUT_POSITION))
+		return false;
+	if (!m_InputLayoutPostProcessing.Create(m_pDevice, m_VertexShaderPostProcessing, LAYOUT_POSTPROCESSING))
+		return false;
+	if (!m_InputLayoutWaterSpheres.Create(m_pDevice, m_VertexShaderWaterSpheres, LAYOUT_WATERSPHERES))
 		return false;
 	//Primitive topologies:
 	if (!m_TopologyTriList.Create(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST))
@@ -59,61 +76,86 @@ const bool ResourceManager::CreateAllBindables()
 	//Samplers:
 	if (!m_SamplerSkybox.Create(m_pDevice, BindFlag::S_PS, TechFlag::SKYBOX, 0u))
 		return false;
+	if (!m_SamplerPostProcessing.Create(m_pDevice, BindFlag::S_PS, TechFlag::POSTPROCESSING, 0u))
+		return false;
+	if (!m_SamplerShadow.Create(m_pDevice, BindFlag::S_PS, TechFlag::SHADOW, 0u))
+		return false;
 	//Textures:
+	if (!m_GBuffer.Create(m_pDevice, m_ClientWindowWidth, m_ClientWindowHeight))
+		return false;
 	if (!m_CubeTextureSkybox.Create(m_pDevice, L"skymap.dds", 0u))
 		return false;
 	//Vertex Buffers:
+		//Skybox
 	if (!m_VertexBufferCube.Create(m_pDevice, D3D11_USAGE::D3D11_USAGE_IMMUTABLE, 0u, 
 								   static_cast<UINT>(m_CubeVertices.size() * 12), sizeof(Vertex_Position), m_CubeVertices.data(), 0u))
 		return false;
 	if (!m_IndexBufferCube.Create(m_pDevice, D3D11_USAGE::D3D11_USAGE_IMMUTABLE, 0u,
 								  static_cast<UINT>(m_CubeIndices.size() * sizeof(unsigned int)), sizeof(unsigned int), m_CubeIndices.data()))
 		return false;
+		//Quad
+	if (!m_VertexBufferQuad.Create(m_pDevice, D3D11_USAGE::D3D11_USAGE_IMMUTABLE, 0u,
+								  static_cast<UINT>(m_QuadVertices.size() * 20), sizeof(Vertex_PosTex), m_QuadVertices.data(), 0u))
+		return false;
+	if (!m_IndexBufferQuad.Create(m_pDevice, D3D11_USAGE::D3D11_USAGE_IMMUTABLE, 0u,
+								  static_cast<UINT>(m_QuadIndices.size() * sizeof(unsigned int)), sizeof(unsigned int), m_QuadIndices.data()))
+		return false;
 	//Arrange:
 	//Minimal:
 	m_BindablesMinimalistic.insert(m_BindablesMinimalistic.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList });
 	//Skybox:
-	m_BindablesSkybox.insert(m_BindablesSkybox.end(), { &m_VertexShaderSkybox, &m_PixelShaderSkybox, &m_InputLayoutSinglePoint, 
+	m_BindablesSkybox.insert(m_BindablesSkybox.end(), { &m_VertexShaderSkybox, &m_PixelShaderSkybox, &m_InputLayoutPositionOnly,
 														&m_TopologyTriList, &m_CubeTextureSkybox, &m_SamplerSkybox,
 														&m_VertexBufferCube, &m_IndexBufferCube});
-	m_BindablesOrbit.insert(m_BindablesOrbit.end(), { &m_VertexShaderOrbit, &m_PixelShaderOrbit, &m_InputLayoutSinglePoint, &m_TopologyLineStrip });
+	m_BindablesOrbit.insert(m_BindablesOrbit.end(), { &m_VertexShaderOrbit, &m_PixelShaderOrbit, &m_InputLayoutPositionOnly, &m_TopologyLineStrip });
 	m_BindablesSun.insert(m_BindablesSun.end(), { &m_VertexShaderMinimal, &m_PixelShaderSun, &m_InputLayoutMinimal, &m_TopologyTriList });
+
+	//RenderQuad First Pass:
+	m_BindablesRenderQuad.insert(m_BindablesRenderQuad.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList, &m_GBuffer });
+
+	//Water Post processing:
+	m_BindablesWater.insert(m_BindablesWater.end(), { &m_VertexShaderPostProcessing, &m_PixelShaderPostProcessing, &m_InputLayoutPostProcessing, 
+							&m_TopologyTriList, &m_GBuffer, &m_VertexBufferQuad, &m_IndexBufferQuad, &m_SamplerShadow });
+	//Water spheres
+	m_BindablesWaterSpheres.insert(m_BindablesWaterSpheres.end(), { &m_VertexShaderWaterSpheres, &m_PixelShaderWaterSpheres, &m_InputLayoutWaterSpheres, &m_TopologyTriList });
+	//Shadow mapping:
+	m_BindablesShadow.insert(m_BindablesShadow.end(), { &m_VertexShaderShadow, &m_PixelShaderShadow, &m_InputLayoutPositionOnly, &m_TopologyTriList });
 	return true;
 }
 
 void ResourceManager::UnbindPipeline()
 {
-	ID3D11ShaderResourceView*	nullSRV[3] = { nullptr };
-	ID3D11SamplerState*			nullSampler[3] = { nullptr };
-	ID3D11Buffer*				nullBuffer[3] = { nullptr };
+	ID3D11ShaderResourceView*	nullSRV[6] = { nullptr };
+	ID3D11SamplerState*			nullSampler[6] = { nullptr };
+	ID3D11Buffer*				nullBuffer[6] = { nullptr };
 
 	m_pDeviceContext->VSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->VSSetShaderResources(0u, 3u, nullSRV);
-	m_pDeviceContext->VSSetSamplers(0u, 3u, nullSampler);
-	m_pDeviceContext->VSSetConstantBuffers(0u, 3u, nullBuffer);
+	m_pDeviceContext->VSSetShaderResources(0u, 6u, nullSRV);
+	m_pDeviceContext->VSSetSamplers(0u, 6u, nullSampler);
+	m_pDeviceContext->VSSetConstantBuffers(0u, 6u, nullBuffer);
 
 	m_pDeviceContext->PSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->PSSetShaderResources(0u, 3u, nullSRV);
-	m_pDeviceContext->PSSetSamplers(0u, 3u, nullSampler);
-	m_pDeviceContext->PSSetConstantBuffers(0u, 3u, nullBuffer);
+	m_pDeviceContext->PSSetShaderResources(0u, 6u, nullSRV);
+	m_pDeviceContext->PSSetSamplers(0u, 6u, nullSampler);
+	m_pDeviceContext->PSSetConstantBuffers(0u, 6u, nullBuffer);
 
 	m_pDeviceContext->DSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->DSSetShaderResources(0u, 3u, nullSRV);
-	m_pDeviceContext->DSSetSamplers(0u, 3u, nullSampler);
-	m_pDeviceContext->DSSetConstantBuffers(0u, 3u, nullBuffer);
+	m_pDeviceContext->DSSetShaderResources(0u, 6u, nullSRV);
+	m_pDeviceContext->DSSetSamplers(0u, 6u, nullSampler);
+	m_pDeviceContext->DSSetConstantBuffers(0u, 6u, nullBuffer);
 
 	m_pDeviceContext->HSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->HSSetShaderResources(0u, 3u, nullSRV);
-	m_pDeviceContext->HSSetSamplers(0u, 3u, nullSampler);
-	m_pDeviceContext->HSSetConstantBuffers(0u, 3u, nullBuffer);
+	m_pDeviceContext->HSSetShaderResources(0u, 6u, nullSRV);
+	m_pDeviceContext->HSSetSamplers(0u, 6u, nullSampler);
+	m_pDeviceContext->HSSetConstantBuffers(0u, 6u, nullBuffer);
 
 	m_pDeviceContext->GSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->GSSetShaderResources(0u, 3u, nullSRV);
-	m_pDeviceContext->GSSetSamplers(0u, 3u, nullSampler);
-	m_pDeviceContext->GSSetConstantBuffers(0u, 3u, nullBuffer);
+	m_pDeviceContext->GSSetShaderResources(0u, 6u, nullSRV);
+	m_pDeviceContext->GSSetSamplers(0u, 6u, nullSampler);
+	m_pDeviceContext->GSSetConstantBuffers(0u, 6u, nullBuffer);
 
 	m_pDeviceContext->CSSetShader(nullptr, nullptr, 0u);
-	m_pDeviceContext->CSSetShaderResources(0u, 3u, nullSRV);
+	m_pDeviceContext->CSSetShaderResources(0u, 6u, nullSRV);
 	m_pDeviceContext->CSSetConstantBuffers(0u, 0u, nullBuffer);
 }
 
@@ -133,9 +175,9 @@ void ResourceManager::BindToPipeline(IEvent& event)
 		}
 		break;
 	}
-	case BindID::ID_Cosmic :
+	case BindID::ID_RenderQuad :
 	{
-		for (auto bindables : m_BindablesCosmic)
+		for (auto bindables : m_BindablesRenderQuad)
 		{
 			if (!bindables->IsBound())
 			{
@@ -186,6 +228,41 @@ void ResourceManager::BindToPipeline(IEvent& event)
 	case BindID::ID_SUN:
 	{
 		for (auto bindables : m_BindablesSun)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		break;
+	}
+	case BindID::ID_Shadow:
+	{
+		for (auto bindables : m_BindablesShadow)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		//ID3D11PixelShader* nullPS = nullptr;
+		//m_pDeviceContext->PSSetShader(nullPS, nullptr, 0u);
+		break;
+	}
+	case BindID::ID_WaterSphere:
+	{
+		for (auto bindables : m_BindablesWaterSpheres)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		break;
+	}
+	case BindID::ID_Water:
+	{
+		for (auto bindables : m_BindablesWater)
 		{
 			if (!bindables->IsBound())
 			{
@@ -252,4 +329,18 @@ void ResourceManager::CreateCubeData() noexcept
 												4,5,7, 4,7,6,
 												0,4,2, 2,4,6,
 												0,1,4, 1,5,4 });
+}
+
+void ResourceManager::CreateQuadData() noexcept
+{
+	m_QuadVertices.insert(m_QuadVertices.end(), {	{	DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f),	// Bottom left
+														DirectX::XMFLOAT2(0.0f, 0.0f)},
+													{	DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f),	// Top right
+														DirectX::XMFLOAT2(1.0f, 1.0f)},
+													{	DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f),	// Top left
+														DirectX::XMFLOAT2(0.0f, 1.0f)},
+													{	DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f),	// Bottom right
+														DirectX::XMFLOAT2(1.0f, 0.0f)}
+												});
+	m_QuadIndices.insert(m_QuadIndices.end(), { 0, 2, 3,  3, 2, 1 });
 }

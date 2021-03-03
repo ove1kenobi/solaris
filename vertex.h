@@ -20,3 +20,9 @@ struct Vertex_Position
 {
 	DirectX::XMFLOAT3 position;
 };
+
+struct Vertex_PosTex
+{
+	DirectX::XMFLOAT3 position;
+	DirectX::XMFLOAT2 texcoord;
+};

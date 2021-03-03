@@ -1,19 +1,17 @@
 #pragma once
 #include "IEvent.h"
 #include "../Resources/BindIDs.h"
-class GameObject;
 class PointLight;
+class Scene;
 
 class SendRenderObjectsEvent : public IEvent
 {
 private:
-	std::vector<GameObject*>* m_gameObjects;
-	size_t m_numPlanets;
+	struct RenderData* m_RenderData;
 public:
-	SendRenderObjectsEvent(std::vector<GameObject*> *gameObjects, const size_t& numPlanets) noexcept
+	SendRenderObjectsEvent(RenderData* renderData) noexcept
 	{
-		m_gameObjects = gameObjects;
-		m_numPlanets = numPlanets;
+		m_RenderData = renderData;
 	};
 	virtual ~SendRenderObjectsEvent() noexcept = default;
 
@@ -25,12 +23,9 @@ public:
 	{
 		return "SendRenderObjectsEvent";
 	}
-	std::vector<GameObject*> *getGameObjectVector() {
-		return this->m_gameObjects;
-	}
-	const size_t& GetNumPlanets()
+	RenderData* GetRenderData() const noexcept
 	{
-		return m_numPlanets;
+		return m_RenderData;
 	}
 };
 
@@ -170,5 +165,121 @@ public:
 	[[nodiscard]] PointLight* GetSunLight() const noexcept
 	{
 		return m_pSunLight;
+	}
+};
+
+class ResetDefaultViewportEvent : public IEvent
+{
+private:
+public:
+	ResetDefaultViewportEvent() noexcept = default;
+	virtual ~ResetDefaultViewportEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::ResetDefaultViewportEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "ResetDefaultViewportEvent";
+	}
+};
+
+class CreateShadowMapViewportEvent : public IEvent
+{
+private:
+	float m_Width;
+	float m_Height;
+public:
+	CreateShadowMapViewportEvent(const float& width, const float& height) noexcept
+		: m_Width{ width }, m_Height{ height }
+	{
+	}
+	virtual ~CreateShadowMapViewportEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::CreateShadowMapViewportEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "CreateShadowMapViewportEvent";
+	}
+	[[nodiscard]] const float& GetWidth() const noexcept
+	{
+		return m_Width;
+	}
+	[[nodiscard]] const float& GetHeight() const noexcept
+	{
+		return m_Height;
+	}
+};
+
+class SetShadowMapViewportEvent : public IEvent
+{
+private:
+public:
+	SetShadowMapViewportEvent() noexcept = default;
+	virtual ~SetShadowMapViewportEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::SetShadowMapViewportEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "SetShadowMapViewportEvent";
+	}
+};
+
+class SetShadowBlendStateEvent : public IEvent
+{
+private:
+public:
+	SetShadowBlendStateEvent() noexcept = default;
+	virtual ~SetShadowBlendStateEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::SetShadowBlendStateEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "SetShadowBlendStateEvent";
+	}
+};
+
+class ResetDefaultBlendStateEvent : public IEvent
+{
+private:
+public:
+	ResetDefaultBlendStateEvent() noexcept = default;
+	virtual ~ResetDefaultBlendStateEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::ResetDefaultBlendStateEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "ResetDefaultBlendStateEvent";
+	}
+};
+
+class BindBackBufferEvent : public IEvent
+{
+private:
+
+public:
+	BindBackBufferEvent() noexcept = default;
+	virtual ~BindBackBufferEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::BindBackBufferEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "BindBackBufferEvent";
 	}
 };

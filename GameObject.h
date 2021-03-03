@@ -4,6 +4,8 @@
 
 class GameObject
 {
+private:
+	float m_DistanceToCamera;
 protected:
 	DirectX::XMFLOAT3 m_velocity;
 	DirectX::XMFLOAT3 m_center;
@@ -16,6 +18,7 @@ protected:
 	float m_roll;
 	float m_yaw;
 	Time m_timer;
+	bool m_HasBoundingVolume;
 
 	//Where the buffers are stored
 	Model* m_model;
@@ -27,12 +30,19 @@ public:
 	virtual bool update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
 	virtual void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) = 0;
 	virtual [[nodiscard]] const bool IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept = 0;
+	virtual void BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) = 0;
 
 	void getWMatrix(DirectX::XMMATRIX& wMatrix);
 	UINT getVertexBufferSize();
 	UINT getIndexBufferSize();
 	[[nodiscard]] const DirectX::XMFLOAT3& GetCenter() const noexcept;
+	void SetCenter(const DirectX::XMFLOAT3& center) noexcept;
 	//Returns the translation of the object in the world.
 	DirectX::XMFLOAT3 getTransVector();
 	float GetMass();
+	[[nodiscard]] Model* GetModel() const noexcept;
+	virtual [[nodiscard]] const std::string& GetTag() const noexcept = 0;
+	virtual [[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept = 0;
+	[[nodiscard]] const float& GetDistanceToCamera() const noexcept;
+	void SetDistanceToCamera(const float& distance) noexcept;
 };

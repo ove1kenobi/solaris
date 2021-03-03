@@ -30,8 +30,8 @@ const bool Engine::Initialize()
 	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
 		return false;
 
-	//Forward Renderer
-	if (!m_ForwardRenderer.Initialize())
+	//Forward Renderer:
+	if (!m_ForwardRenderer.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
 		return false;
 
 	// Sound Manager

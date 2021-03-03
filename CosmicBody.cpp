@@ -4,7 +4,7 @@
 CosmicBody::CosmicBody() noexcept
 	: m_radius{ 0.0f }, m_yAxis{ 0.0f, 1.0f, 0.0f, 0.0f }, m_rotationDir{ 0 },
 	m_tetheredTo{ nullptr }, m_major_semi_axis{ 0 }, m_minor_semi_axis{ 0 }, m_orbital_speed{ 0 },
-	m_orbit{ nullptr }
+	m_orbit{ nullptr }, m_waterSphere{ nullptr }
 {
 	
 }
@@ -13,7 +13,11 @@ CosmicBody::~CosmicBody()
 {
 }
 
-bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo, Orbit* orbit) {
+bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo, Orbit* orbit, WaterSphere* waterSphere) {
+	m_waterSphere = waterSphere;
+	if(m_waterSphere)
+		m_waterSphere->Initialize(x, y, z, r);
+
 	//Set initial values. All randomized.
 	this->m_radius = r;
 	this->m_mass = r * 1000000000;
@@ -24,11 +28,14 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	this->m_roll = zRot;
 	this->m_rotationDir = rotDir;
 	this->m_tetheredTo = tetherTo;
-	if(tetherTo && orbit)
+	if(tetherTo)
 	{
 		this->m_major_semi_axis = length(m_center - tetherTo->GetCenter());
 		this->m_minor_semi_axis = this->m_major_semi_axis * 0.8f;
-		this->m_orbital_speed = 6.2831853f * m_major_semi_axis / m_mass * 100000.0f;
+		this->m_orbital_speed = (6.2831853f * m_major_semi_axis) / m_mass * 30000.0f;
+	}
+	if (orbit)
+	{
 		m_orbit = orbit;
 		m_orbit->init(m_major_semi_axis, m_minor_semi_axis);
 	}
@@ -52,6 +59,8 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, final);
 	
+	m_HasBoundingVolume = true;
+
 	return true;
 }
 
@@ -68,8 +77,8 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 
 	//Construct rotation matrices
 	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixIdentity();
-	DirectX::XMMATRIX rotX = DirectX::XMMatrixRotationX(this->m_pitch);
-	DirectX::XMMATRIX rotZ = DirectX::XMMatrixRotationZ(this->m_roll);
+	//DirectX::XMMATRIX rotX = DirectX::XMMatrixRotationX(this->m_pitch);
+	//DirectX::XMMATRIX rotZ = DirectX::XMMatrixRotationZ(this->m_roll);
 	//Angle change is positive or negative depending on a randomized value PER PLANET.
 	DirectX::XMMATRIX rotMatrix = DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat4(&this->m_yAxis), angle * this->m_rotationDir);
 	
@@ -87,16 +96,14 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	transMatrix = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);	// dynamic center coordinates
 
 	//Update the wMatrix and the angle.
-	DirectX::XMMATRIX result = scaleMatrix * rotX * rotZ * rotMatrix  * transMatrix;
+	DirectX::XMMATRIX result = scaleMatrix * rotMatrix  * transMatrix;
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, result);
 	//Angle change depends on planets radius (smaller planet = faster spin)
-	angle += 0.001f * static_cast<float>(this->m_timer.DeltaTime()) * (1000 / this->m_radius);
+	angle += 0.001f * static_cast<float>(this->m_timer.DeltaTime()) * (250 / this->m_radius);
 
 	//Update the matrixBuffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-	DirectX::XMMATRIX WMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&this->m_wMatrix));
-	VMatrix = DirectX::XMMatrixTranspose(VMatrix);
-	PMatrix = DirectX::XMMatrixTranspose(PMatrix);
+	DirectX::XMMATRIX WMatrix = DirectX::XMLoadFloat4x4(&this->m_wMatrix);
 
 	deviceContext->Map(this->m_model->getMatrixBuffer().Get(),
 					   0,
@@ -104,14 +111,16 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 					   0,
 					   &mappedSubresource);
 	ModelFactory::MatrixBuffer* data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
-	data->WMatrix = WMatrix;
-	data->VMatrix = VMatrix;
-	data->PMatrix = PMatrix;
+	data->WMatrix = DirectX::XMMatrixTranspose(WMatrix);
+	data->WVPMatrix = DirectX::XMMatrixTranspose(WMatrix * VMatrix * PMatrix);
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
 	
 	//Bounding sphere:
 	m_model->GetBoundingSphere()->Center = m_center;
 
+	//Update the water sphere.
+	if(m_waterSphere)
+		m_waterSphere->updateSphere(VMatrix, PMatrix, deviceContext, m_center.x, m_center.y, m_center.z);
 	return true;
 }
 
@@ -123,10 +132,28 @@ void CosmicBody::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& 
 									  &this->m_model->getStride(),
 									  &this->m_model->getOffset());
 	deviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
-	deviceContext->VSSetConstantBuffers(0, 1, this->m_model->getMatrixBuffer().GetAddressOf());
+	deviceContext->VSSetConstantBuffers(0u, 1u, this->m_model->getMatrixBuffer().GetAddressOf());
 }
 
 GameObject* CosmicBody::GetOrbit()
 {
 	return static_cast<GameObject*>(m_orbit);
+}
+
+void CosmicBody::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
+{
+	pDeviceContext->IASetVertexBuffers(0u,
+									  1u,
+									  this->m_model->getVertexBuffer().GetAddressOf(),
+									  &this->m_model->getStride(),
+									  &this->m_model->getOffset());
+	pDeviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+}
+
+float CosmicBody::GetRadius() {
+	return m_radius;
+}
+
+int CosmicBody::GetRotDir() {
+	return m_rotationDir;
 }

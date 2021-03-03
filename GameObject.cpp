@@ -17,7 +17,8 @@ GameObject::GameObject() noexcept
 		m_pitch{ 0.0f },
 		m_roll{ 0.0f },
 		m_yaw{ 0.0f },
-		m_model{ nullptr }
+		m_model{ nullptr },
+	    m_HasBoundingVolume{ false }
 {
 
 }
@@ -45,6 +46,11 @@ const DirectX::XMFLOAT3& GameObject::GetCenter() const noexcept
 	return m_center;
 }
 
+void GameObject::SetCenter(const DirectX::XMFLOAT3& center) noexcept
+{
+	m_center = center;
+}
+
 DirectX::XMFLOAT3 GameObject::getTransVector() {
 	DirectX::XMFLOAT3 transVector = {};
 	transVector.x = this->m_wMatrix._41;
@@ -57,4 +63,19 @@ DirectX::XMFLOAT3 GameObject::getTransVector() {
 float GameObject::GetMass()
 {
 	return m_mass;
+}
+
+Model* GameObject::GetModel() const noexcept
+{
+	return m_model;
+}
+
+const float& GameObject::GetDistanceToCamera() const noexcept
+{
+	return m_DistanceToCamera;
+}
+
+void GameObject::SetDistanceToCamera(const float& distance) noexcept
+{
+	m_DistanceToCamera = distance;
 }

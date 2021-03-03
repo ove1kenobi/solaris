@@ -27,6 +27,10 @@ DirectX::XMFLOAT3 cross(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
 	return result;
 }
 
+float lerp(float a, float b, float t) {
+	return a + (t * b - t * a);
+}
+
 //Here be dragons. Look on wikipedia how this works xD
 DirectX::XMFLOAT3 slerp(DirectX::XMFLOAT3 p0, DirectX::XMFLOAT3 p1, float t) {
 	float ohm = std::acos( dot(normalize(p0), normalize(p1)) );

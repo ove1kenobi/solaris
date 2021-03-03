@@ -6,9 +6,15 @@
     <FxCompile Include="VertexShader_Skybox.hlsl" />
     <FxCompile Include="PixelShader_Skybox.hlsl" />
     <FxCompile Include="ComputeShader_Planet.hlsl" />
+    <FxCompile Include="VertexShader_Shadow.hlsl" />
+    <FxCompile Include="PixelShader_Shadow.hlsl" />
     <FxCompile Include="VertexShader_Orbit.hlsl" />
     <FxCompile Include="PixelShader_Orbit.hlsl" />
     <FxCompile Include="PixelShader_Sun.hlsl" />
+    <FxCompile Include="PixelShader_PostProcessing.hlsl" />
+    <FxCompile Include="VertexShader_PostProcessing.hlsl" />
+    <FxCompile Include="VertexShader_WaterSphere.hlsl" />
+    <FxCompile Include="PixelShader_WaterSphere.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bloom.cpp" />
@@ -42,7 +48,6 @@
     <ClCompile Include="Resources\PrimitiveTopology.cpp" />
     <ClCompile Include="Resources\ResourceManager.cpp" />
     <ClCompile Include="Resources\VertexShader.cpp" />
-    <ClCompile Include="pch.cpp" />
     <ClCompile Include="DXDebug.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="LayerStack.cpp" />
@@ -55,9 +60,20 @@
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="Techniques\MousePicking.cpp" />
     <ClCompile Include="Render2D.cpp" />
-    <ClCompile Include="PlanetInteractionUI.cpp" />
-    <ClCompile Include="ModuleUI.cpp" />
+    <ClCompile Include="Techniques\ShadowMapping.cpp" />
     <ClCompile Include="Orbit.cpp" />
+    <ClCompile Include="Techniques\FrustumCulling.cpp" />
+    <ClCompile Include="Resources\Texture.cpp" />
+    <ClCompile Include="Techniques\WaterPostProcessing.cpp" />
+    <ClCompile Include="Resources\GBuffer.cpp" />
+    <ClCompile Include="UI\Button.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="UI\ModuleUI.cpp" />
+    <ClCompile Include="UI\PlanetInteractionUI.cpp" />
+    <ClCompile Include="UI\RandomEventUI.cpp" />
+    <ClCompile Include="UI\HeadsUpDisplayUI.cpp" />
+    <ClCompile Include="UI\HeadsUpDisplayBar.cpp" />
+    <ClCompile Include="WaterSphere.cpp" />
     <ClCompile Include="SoundManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -116,13 +132,32 @@
     <ClInclude Include="Planet.h" />
     <ClInclude Include="Techniques\MousePicking.h" />
     <ClInclude Include="Render2D.h" />
-    <ClInclude Include="PlanetInteractionUI.h" />
-    <ClInclude Include="ModuleUI.h" />
+    <ClInclude Include="Techniques\ShadowMapping.h" />
     <ClInclude Include="Orbit.h" />
+    <ClInclude Include="Resources\Texture.h" />
+    <ClInclude Include="Techniques\WaterPostProcessing.h" />
+    <ClInclude Include="Resources\GBuffer.h" />
+    <ClInclude Include="UI\TypesUI.h" />
+    <ClInclude Include="UI\Button.h" />
+    <ClInclude Include="UI\ModuleUI.h" />
+    <ClInclude Include="UI\PlanetInteractionUI.h" />
+    <ClInclude Include="UI\RandomEventUI.h" />
+    <ClInclude Include="UI\HeadsUpDisplayUI.h" />
+    <ClInclude Include="EventSystem\UIEvents.h" />
+    <ClInclude Include="UI\HeadsUpDisplayBar.h" />
+    <ClInclude Include="Techniques\FrustumCulling.h" />
+    <ClInclude Include="WaterSphere.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="EventSystem\SoundEvents.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />
+    <None Include="GPUmath.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="UI\Fonts\NeoteriqueItalic-rAVK.ttf" />
+    <Font Include="UI\Fonts\Neoterique-Y08L.ttf" />
+    <Font Include="UI\Fonts\Tenika400Regular-Rpyql.ttf" />
+    <Font Include="UI\Fonts\AwareBold-qZo3x.ttf" />
   </ItemGroup>
 </Project>

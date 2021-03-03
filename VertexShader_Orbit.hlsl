@@ -1,7 +1,6 @@
 cbuffer MatrixBuffer {
     matrix WMatrix;
-    matrix VMatrix;
-    matrix PMatrix;
+    matrix WVPMatrix;
 }
 
 struct VS_IN
@@ -17,9 +16,7 @@ struct VS_OUT
 VS_OUT vs_main(in VS_IN vsIn)
 {
     VS_OUT vsOut = (VS_OUT)0;
-    vsOut.outPositionPS = mul(float4(vsIn.inPositionLS, 1.0f), WMatrix);
-    vsOut.outPositionPS = mul(vsOut.outPositionPS, VMatrix);
-    vsOut.outPositionPS = mul(vsOut.outPositionPS, PMatrix);
+    vsOut.outPositionPS = mul(float4(vsIn.inPositionLS, 1.0f), WVPMatrix);
 
     return vsOut;
 }
