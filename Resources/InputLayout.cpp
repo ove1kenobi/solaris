@@ -19,9 +19,9 @@ void InputLayout::Unbind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDev
 
 const bool InputLayout::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, const VertexShader& vertexShader, unsigned int type)
 {
-	/*The input element descriptor will be continously expanded.
+	/*The input element descriptor will be continuously expanded.
 	  The descriptor should probably be created outside of this function. */
-	if (type != LAYOUT_COSMIC && type != LAYOUT_PLAYER && type != LAYOUT_MINIMAL && type != LAYOUT_POSTPROCESSING && type != LAYOUT_SINGLEPOINT && type != LAYOUT_WATERSPHERES)
+	if (type != LAYOUT_COSMIC && type != LAYOUT_PLAYER && type != LAYOUT_MINIMAL && type != LAYOUT_POSTPROCESSING && type != LAYOUT_POSITION && type != LAYOUT_WATERSPHERES)
 	{
 		return false;
 	}
@@ -74,7 +74,7 @@ const bool InputLayout::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevi
 									  &m_pInputLayout),
 									  "CreateInputLayout");
 	}
-	else if (type == LAYOUT_SINGLEPOINT)
+	else if (type == LAYOUT_POSITION)
 	{
 		D3D11_INPUT_ELEMENT_DESC ieDesc[] =
 		{

@@ -64,6 +64,11 @@ void Orbit::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& devic
 	deviceContext->VSSetConstantBuffers(0, 1, m_model->getMatrixBuffer().GetAddressOf());
 }
 
+void Orbit::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
+{
+	//Do nothing as of now...
+}
+
 const bool Orbit::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
 {
 	return false;

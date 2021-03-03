@@ -6,6 +6,7 @@
 #include "EventSystem/RenderEvents.h"
 #include "EventSystem\UtilityEvents.h"
 #include "Scene.h"
+#include "Techniques/ShadowMapping.h"
 #include "Techniques\WaterPostProcessing.h"
 
 class ForwardRenderer : public EventPublisher, public IEventListener 
@@ -20,6 +21,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDepthShaderResourceView; 
 	Skybox m_Skybox;
 	WaterPostProcessing m_WaterPP;
+	ShadowMapping m_ShadowMapping;
+	DirectX::XMFLOAT3 m_LightPosition;
 private:
 	void BeginFrame();
 	void EndFrame();

@@ -75,6 +75,11 @@ void WaterSphere::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>&
 	deviceContext->VSSetConstantBuffers(0u, 1u, this->m_model->getMatrixBuffer().GetAddressOf());
 }
 
+void WaterSphere::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
+{
+	//We simply return here...
+}
+
 [[nodiscard]] const std::string& WaterSphere::GetTag() const noexcept {
 	return tag;
 }

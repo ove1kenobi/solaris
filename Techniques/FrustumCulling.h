@@ -21,9 +21,12 @@ class FrustumCulling
 {
 private:
 	DirectX::BoundingFrustum m_BoundingFrustum;
+	DirectX::BoundingFrustum m_ShadowBoundingFrustum;
 public:
 	FrustumCulling() noexcept = default;
 	virtual ~FrustumCulling() noexcept = default;
 	[[nodiscard]] const bool Initialize(PlayerCamera& playerCamera) noexcept;
+	void CreateShadowFrustum(DirectX::XMMATRIX shadowProjectionMatrix) noexcept;
 	void CullObjects(std::vector<GameObject*>& gameObjects, PlayerCamera& playerCamera, struct RenderData& renderData) noexcept;
+	[[nodiscard]] std::vector<GameObject*> CullShadowObjects(std::vector<GameObject*>* gameObjects, const DirectX::XMMATRIX& viewMatrix, const size_t& nrOfPlanets) noexcept;
 };
