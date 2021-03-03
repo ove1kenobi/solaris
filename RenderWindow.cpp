@@ -146,16 +146,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 ToggleImGuiEvent imEvent;
                 EventBuss::Get().Delegate(imEvent);
             }
-            if (wParam == 'E')
-            {
-                PlaySoundEvent psEvent(SoundID::Thrusters, true);
-                EventBuss::Get().Delegate(psEvent);
-            }
-            if (wParam == 'R')
-            {
-                StopLoopingSoundEvent slsEvent(SoundID::Thrusters);
-                EventBuss::Get().Delegate(slsEvent);
-            }
             #endif
             if (wParam == VK_ESCAPE)
             {

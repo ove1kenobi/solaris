@@ -158,12 +158,18 @@ void Player::OnEvent(IEvent& event) noexcept
 
 			if (state == KeyState::KeyPress) {
 				if (virKey == 'W') {
+					PlaySoundEvent thrusterSound(SoundID::Thrusters, true, 1.2f);
+					EventBuss::Get().Delegate(thrusterSound);
 					m_moveForwards = true;
 				}
 				if (virKey == 'S') {
+					PlaySoundEvent thrusterSound(SoundID::Thrusters, true);
+					EventBuss::Get().Delegate(thrusterSound);
 					m_moveBackwards = true;
 				}
 				if (virKey == VK_SPACE) {
+					PlaySoundEvent thrusterSound(SoundID::Thrusters, true);
+					EventBuss::Get().Delegate(thrusterSound);
 					m_stopMovement = true;
 				}
 				if (virKey == 'Q') {
@@ -174,12 +180,18 @@ void Player::OnEvent(IEvent& event) noexcept
 
 			if (state == KeyState::KeyRelease) {
 				if (virKey == 'W') {
+					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
+					EventBuss::Get().Delegate(thrusterSound);
 					m_moveForwards = false;
 				}
 				if (virKey == 'S') {
+					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
+					EventBuss::Get().Delegate(thrusterSound);
 					m_moveBackwards = false;
 				}
 				if (virKey == VK_SPACE) {
+					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
+					EventBuss::Get().Delegate(thrusterSound);
 					m_stopMovement = false;
 				}
 			}

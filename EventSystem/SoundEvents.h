@@ -2,13 +2,12 @@
 #include "IEvent.h"
 
 enum class SoundID {
-	Shield = 0,
-	Thrusters
+	Thrusters = 0,
 };
 
 enum class MusicID {
-	Silence = 0,
-	SpaceAmbience
+	Silence = -1,
+	SpaceAmbience = 0
 };
 
 class PlaySoundEvent : public IEvent
@@ -16,11 +15,13 @@ class PlaySoundEvent : public IEvent
 private:
 	SoundID m_soundID;
 	bool m_loopSound;
+	float m_pitch;
 public:
-	PlaySoundEvent(SoundID soundID, bool loopSound)
+	PlaySoundEvent(SoundID soundID, bool loopSound, float pitch = 1.0f)
 	{
 		m_soundID = soundID;
 		m_loopSound = loopSound;
+		m_pitch = pitch;
 	}
 	virtual ~PlaySoundEvent() noexcept = default;
 
@@ -39,6 +40,10 @@ public:
 	[[nodiscard]] const bool GetLoopSound() const noexcept
 	{
 		return m_loopSound;
+	}
+	[[nodiscard]] const float GetPitch() const noexcept
+	{
+		return m_pitch;
 	}
 };
 

@@ -6,6 +6,7 @@
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventBuss.h"
 #include "EventSystem/InputEvents.h"
+#include "EventSystem/SoundEvents.h"
 
 class Player : public IEventListener
 {
