@@ -147,10 +147,13 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 	for (size_t i = 0; i < planets.size(); i++) {
 		DirectX::XMFLOAT3 center = planets[i]->GetCenter();
 		data->center[i] = { center.x, center.y, center.z, static_cast<Planet*>(planets[i])->GetRadius() };
+		DirectX::XMFLOAT4 waterColor = static_cast<Planet*>(planets[i])->GetWaterColor();
+		data->waterColor[i] = DirectX::XMLoadFloat4(&waterColor);
 	}
 	//Fill the rest with zero's
 	for (size_t i = planets.size(); i < 50; i++) {
 		data->center[i] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		data->waterColor[i] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	}
 
 	data->sun = { m_pSunCenter->x, m_pSunCenter->y, m_pSunCenter->z, *m_pSunRadius };
@@ -181,6 +184,8 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 	dataCamera->cameraPos = { cameraPos.x, cameraPos.y, cameraPos.z, 1.0f };
 	dataCamera->inverseVMatrix = VMatrix;
 	dataCamera->PMatrix = PMatrix;
+	dataCamera->element00 = 1.0f / PMatrix._11;
+	dataCamera->element11 = 1.0f / PMatrix._22;
 
 	pDeviceContext->Unmap(m_pCameraCBuffer.Get(), 0);
 
@@ -194,8 +199,8 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 
 	ScreenData* dataScreen = (ScreenData*)mappedSubresourceScreen.pData;
 
-	dataScreen->screenWidth = (float)m_screenWidth;
-	dataScreen->screenHeight = (float)m_screenHeight;
+	dataScreen->screenWidth = 1.0f / (float)m_screenWidth;
+	dataScreen->screenHeight = 1.0f / (float)m_screenHeight;
 
 	pDeviceContext->Unmap(m_pScreenCBuffer.Get(), 0);
 

@@ -74,6 +74,7 @@
     <ClCompile Include="UI\PlanetInteractionUI.cpp" />
     <ClCompile Include="UI\RandomEventUI.cpp" />
     <ClCompile Include="UI\HeadsUpDisplayUI.cpp" />
+    <ClCompile Include="UI\HeadsUpDisplayBar.cpp" />
     <ClCompile Include="WaterSphere.cpp" />
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="ModelTexture.cpp" />
@@ -145,6 +146,8 @@
     <ClInclude Include="UI\PlanetInteractionUI.h" />
     <ClInclude Include="UI\RandomEventUI.h" />
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
+    <ClInclude Include="EventSystem\UIEvents.h" />
+    <ClInclude Include="UI\HeadsUpDisplayBar.h" />
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="ModelTexture.h" />
     <ClInclude Include="Techniques\FrustumCulling.h" />

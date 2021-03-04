@@ -21,9 +21,15 @@ private:
 	std::vector<GameObject*> m_gameObjects;
 	std::vector<Planet*> m_planets; //USED FOR SENDING DATA TO THE SHADER
 	std::vector<WaterSphere*> m_waterSpheres;
+	std::vector<Planet*> m_radioactivePlanets;
+	Sun* m_sun;
 	MousePicking m_Picking;
 	FrustumCulling m_FrustumCulling;
 	RenderData m_RenderData;
+
+	Time m_time;
+	long double m_damageTimer;
+
 	size_t m_persistentObjEnd;
 public:
 	Scene() noexcept;

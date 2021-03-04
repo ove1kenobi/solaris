@@ -9,6 +9,7 @@ SamplerState pointSampler				: register(s0);
 cbuffer PlanetData : register(b0)
 {
 	float4 center[50]; //Radius is in w.
+	float4 waterColor[50];
 	float4 sun; //Radius is in w.
 };
 
@@ -17,12 +18,14 @@ cbuffer CameraData : register(b1)
 	float4 cameraPos;
 	float4x4 inverseVMatrix;
 	float4x4 PMatrix;
+	float element00; //1 divided by element00.
+	float element11; //1 divided by element11.
 };
 
 cbuffer ScreenData : register(b2)
 {
-	float screenWidth;
-	float screenHeight;
+	float screenWidth; //1 divided by screenWidth
+	float screenHeight; //1 divided by screenWidth
 }
 
 cbuffer lightConstantBuffer : register(b3)
@@ -98,8 +101,8 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	float depth = length(wPos.xyz - cameraPos.xyz);
 
 	float4 pixelViewSpace;
-	pixelViewSpace.x = (((2.0f * psIn.outPositionPS.x) / screenWidth) - 1.0f) / PMatrix[0][0];
-	pixelViewSpace.y = (((-2.0f * psIn.outPositionPS.y) / screenHeight) + 1.0f) / PMatrix[1][1];
+	pixelViewSpace.x = (((2.0f * psIn.outPositionPS.x) * screenWidth) - 1.0f) * element00;// PMatrix[0][0];
+	pixelViewSpace.y = (((-2.0f * psIn.outPositionPS.y) * screenHeight) + 1.0f) * element11;// PMatrix[1][1];
 	pixelViewSpace.z = 1.0f;
 	pixelViewSpace.w = 0.0f;
 
@@ -110,6 +113,7 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	float2 tempPlanet;
 	float radian;
 	float3 centerPlanet;
+	float4 waterCol;
 	//Go through all the planets.
 	for (int k = 0; k < 50; k++) {
 		//Breaks the loop when there are no more planets in the array.
@@ -124,6 +128,8 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 			closestPlanet = tempPlanet;
 			radian = center[k].w;
 			centerPlanet = center[k].xyz;
+			waterCol = waterColor[k];
+			break;
 		}
 		//After this for-loop we have the distance to the closest planet.
 	}
@@ -147,7 +153,10 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	//And if there is supposed to be water in that pixel or we are looking through water.
 	//Calculate water
 	[flatten]
-	if ((closestPlanet.y != -1.0f && depth < 12000.0f && (depth - closestPlanet.x + 0.001f > 0.0f)) && normalTemp.w != -1.0f) {
+	if ((distFromCenter < radian + (radian * 0.03f) ||
+		(closestPlanet.y != -1.0f && (depth - closestPlanet.x + 0.001f > 0.0f))) &&
+		normalTemp.w != -1.0f
+	) {
 		/*LIGHTING ON BOTTOM OF THE OCEAN*/
 		//Does not use specular.
 		/*Note, attenuation is not relevant FOR THE SUN, and is as such not included in the calculations*/
@@ -175,21 +184,23 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 		float4 groundCol = texCol;
 
 		//How much water we are looking through.
-		float oceanViewDepth = min(closestPlanet.y, depth - closestPlanet.x);
+		float oceanViewDepth = min(closestPlanet.y, depth - closestPlanet.x) * 25.0f / radian;
 		
 		//Removes artefacts around the ocean "line".
 		if (oceanViewDepth < 0.0f) {
-			oceanViewDepth = closestPlanet.y;
+			oceanViewDepth = closestPlanet.y * 25.0f / radian;
 		}
 
 		float opticalDepth = 1 - exp(-oceanViewDepth * 0.05f);
-		float alpha = (1 - exp(-oceanViewDepth * 1.0f)) * clamp((((-depth) / 3000) + 4), 0, 1); // CHECK FOR MULTIPLICATION
-		float4 oceanCol = lerp(float4(0.2f, 0.2f, 0.5f, 1.0f), float4(0.05f, 0.05f, 0.4f, 1.0f), opticalDepth);
+		float alpha = (1 - exp(-oceanViewDepth * 0.8f));
+		float4 oceanCol = lerp(waterCol, float4(clamp(waterCol.x - 0.3f, 0, 1), clamp(waterCol.y - 0.3f, 0, 1), clamp(waterCol.z - 0.3f, 0, 1), 1.0f), opticalDepth); //Send in water color.
 
 		texCol = oceanCol;
 
+		//wPos.xyz = normalize(float3(DirectionWorldSpace.xyz)) * closestPlanet.x;
 		normal = normalize(wPos.xyz - centerPlanet.xyz);
-		
+	
+
 		/*LIGHTING FOR WATER*/
 		/*Note, attenuation is not relevant FOR THE SUN, and is as such not included in the calculations*/
 		/*AMBIENT*/

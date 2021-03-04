@@ -29,6 +29,6 @@ float length(const DirectX::XMFLOAT3& a);
 
 DirectX::XMFLOAT3 operator*(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b);
 
-float length(const DirectX::XMFLOAT3& a);
-
 DirectX::XMFLOAT3 norm(const DirectX::XMFLOAT3& a);
+
+float distance(const DirectX::XMFLOAT3 a, const DirectX::XMFLOAT3 b);

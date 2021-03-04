@@ -97,3 +97,9 @@ DirectX::XMFLOAT3 norm(const DirectX::XMFLOAT3& a)
 {
 	return a * (1.0f / length(a));
 }
+
+float distance(const DirectX::XMFLOAT3 a, const DirectX::XMFLOAT3 b)
+{
+	DirectX::XMFLOAT3 result = { a.x - b.x, a.y - b.y, a.z - b.z };
+	return length(result);
+}

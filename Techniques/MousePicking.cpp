@@ -101,13 +101,12 @@ void MousePicking::DisplayPickedObject() noexcept
 	//(Emil F)
 	if (m_pPickedObject != nullptr)
 	{
-		ImGui::Begin("Picked GameObject");
-		ImGui::Text("Distance to Object: %.0f", m_DistanceToObject);
-		ImGui::End();
+		DelegatePlanetDistanceEvent pde(m_DistanceToObject, L"Planet name");
+		EventBuss::Get().Delegate(pde);
 	}
 	else
 	{
-		ImGui::Begin("Picked GameObject");
-		ImGui::End();
+		DelegatePlanetDistanceEvent pde(0.0f, L"");
+		EventBuss::Get().Delegate(pde);
 	}
 }

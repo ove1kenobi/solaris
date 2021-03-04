@@ -26,6 +26,9 @@ private:
 	// Updates the rotation for the camera and the ship
 	void UpdateRotation();
 	DirectX::XMFLOAT3 Stabilize();
+
+	int m_currentHealth;
+	int m_maxHealth;
 public:
 	Player();
 	~Player();
@@ -35,5 +38,10 @@ public:
 	SpaceShip* getShip();
 
 	void OnEvent(IEvent& event) noexcept;
+
+	int GetHealth() noexcept;
+	void UpdateHealth(int value);
+	int GetMaxHealth() noexcept;
+	void UpdateMaxHealth(int value);
 };
 
