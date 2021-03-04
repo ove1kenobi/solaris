@@ -34,6 +34,14 @@ DirectX::XMFLOAT3 Player::Stabilize()
 
 Player::Player()
 {
+	m_fuelCapacity = 500;
+	m_oxygenCapacity = 500;
+	m_storageCapacity = 1000;
+	for (unsigned int i = 0; i < numberOfResources; i++) {
+		m_resources[i] = 0;
+	}
+	m_storageUsage = 0;
+
 	m_moveForwards = false;
 	m_moveBackwards = false;
 	m_stopMovement = false;
@@ -63,6 +71,28 @@ bool Player::Initialize(PlayerCamera* camera)
 	m_camera = camera;
 	m_ship = new SpaceShip();
 	m_topSpeed = m_ship->GetTopSpeed();
+	/*
+	std::cout << "Test 1: " << std::endl;
+	AddResource(100, Resource::Fuel);
+	AddResource(450, Resource::Fuel);
+	AddResource(100, Resource::Fuel);
+	AddResource(-200, Resource::Fuel);
+
+	std::cout << "Test 2: " << std::endl;
+	AddResource(-600, Resource::Oxygen);
+	AddResource(-100, Resource::Oxygen);
+	AddResource(1, Resource::Oxygen);
+	AddResource(0, Resource::Oxygen);
+
+	std::cout << "Test 3: " << std::endl;
+	AddResource(400, Resource::Titanium);
+	AddResource(300, Resource::Khionerite);
+	AddResource(1000, Resource::Nanotech);
+	AddResource(100, Resource::Nanotech);
+	AddResource(-500, Resource::Plasma);
+	AddResource(-200, Resource::Titanium);
+	AddResource(-1000, Resource::Nanotech);*/
+
 
 	return true;
 }
@@ -137,6 +167,56 @@ bool Player::update()
 
 SpaceShip* Player::getShip() {
 	return this->m_ship;
+}
+
+void Player::AddResource(int amount, Resource resource)
+{
+	int index = static_cast<int>(resource);
+
+	switch (resource)
+	{
+		case Resource::Fuel:
+		{
+			m_resources[index] += amount;
+			if (m_resources[index] > m_fuelCapacity) {
+				m_resources[index] = m_fuelCapacity;
+			}
+			break;
+		}
+		case Resource::Oxygen:
+		{
+			m_resources[index] += amount;
+			if (m_resources[index] > m_oxygenCapacity) {
+				m_resources[index] = m_oxygenCapacity;
+			}
+			break;
+		}
+		default:
+		{
+			int newUsage = m_storageUsage + amount;
+			if (newUsage > m_storageCapacity) {
+				m_resources[index] += m_storageCapacity - m_storageUsage;
+				m_storageUsage = m_storageCapacity;
+			}
+			else {
+				m_resources[index] += amount;
+				m_storageUsage += amount;
+			}
+			break;
+		}
+	}
+
+	if (m_resources[index] < 0) {
+		m_resources[index] = 0;
+	}
+	if (m_storageUsage < 0) {
+		m_storageUsage = 0;
+	}
+
+	//for (unsigned int i = 0; i < numberOfResources; i++) {
+	//	std::cout << m_resources[i] << std::endl;
+	//}
+	//std::cout << std::endl << m_storageUsage << std::endl << std::endl << std::endl;
 }
 
 void Player::OnEvent(IEvent& event) noexcept

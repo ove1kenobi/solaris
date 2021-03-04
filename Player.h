@@ -7,6 +7,9 @@
 #include "EventSystem/EventBuss.h"
 #include "EventSystem/InputEvents.h"
 #include "EventSystem/SoundEvents.h"
+#include "Resources.h"
+
+//#include <iostream>
 
 class Player : public IEventListener
 {
@@ -16,6 +19,14 @@ private:
 	// Reference to the camera that is connected to the player/ship.
 	PlayerCamera* m_camera;
 	Time m_time;
+
+	// Resources
+	int m_fuelCapacity;
+	int m_oxygenCapacity;
+	int m_storageCapacity;
+	int m_storageUsage;
+	int m_resources[numberOfResources];
+
 
 	float m_thrusterForce, m_desiredSpeed, m_topSpeed;
 
@@ -34,6 +45,7 @@ public:
 	bool Initialize(PlayerCamera* camera);
 	bool update();
 	SpaceShip* getShip();
+	void AddResource(int amount, Resource resource);
 
 	void OnEvent(IEvent& event) noexcept;
 };

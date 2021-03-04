@@ -237,6 +237,7 @@
     <ClCompile Include="WaterSphere.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Resources.h" />
     <ClInclude Include="UI\HeadsUpDisplayBar.h" />
     <ClInclude Include="Bloom.h" />
     <ClInclude Include="EventSystem\UIEvents.h" />

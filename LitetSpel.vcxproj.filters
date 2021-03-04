@@ -149,6 +149,7 @@
     <ClInclude Include="WaterSphere.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="EventSystem\SoundEvents.h" />
+    <ClInclude Include="Resources.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

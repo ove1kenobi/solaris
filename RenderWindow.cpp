@@ -62,6 +62,10 @@ RenderWindow::RenderWindow()
     //if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE) {
         // handle error
     //}
+
+    //AllocConsole();
+    //freopen("CONOUT$", "w", stdout);
+    //std::cout << "Debug console is open" << std::endl;
 }
 
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
