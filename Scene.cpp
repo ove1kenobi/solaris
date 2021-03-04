@@ -193,16 +193,16 @@ void Scene::RemoveGameObject(GameObject* obj)
 
 
 void Scene::Update() noexcept {
-	//Generator and distributions used for generating planet values.
-	using t_clock = std::chrono::high_resolution_clock;
-	std::default_random_engine gen(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
-	std::uniform_real_distribution<float> dist(200.0f, 900.0f);
-	std::uniform_real_distribution<float> adj(0.1f, 10.0f);
-
 	//Update the player and all the game objects.
 	size_t num = m_gameObjects.size() - m_persistentObjEnd;
 	if (m_player.update() &&  num < 30)
 	{
+		//Generator and distributions used for generating planet values.
+		using t_clock = std::chrono::high_resolution_clock;
+		std::default_random_engine gen(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
+		std::uniform_real_distribution<float> dist(200.0f, 900.0f);
+		std::uniform_real_distribution<float> adj(0.1f, 10.0f);
+
 		// Add an asteroid to the gameObject vector.
 		GameObject* ship = m_player.getShip();
 		DirectX::XMFLOAT3 velocity = norm(ship->GetVelocity());

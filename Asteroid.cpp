@@ -2,7 +2,7 @@
 #include "Asteroid.h"
 
 Asteroid::Asteroid() noexcept
-	: m_Tag{"Asteroid"}, m_TestForCulling{true}
+	: m_Tag{"Asteroid"}, m_TestForCulling{true}, m_deltaPitch{ 0.0f }, m_deltaRoll{ 0.0f }, m_deltaYaw{ 0.0f }, m_ship{ nullptr }
 {
 
 }
@@ -50,7 +50,7 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 GameObject* Asteroid::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
 	float distance = length(m_center - m_ship->GetCenter());
-	if (distance > 20000) return this;
+	if (distance > 10000) return this;
 	m_pitch += static_cast<float>(m_deltaPitch * m_timer.DeltaTime());
 	m_roll += static_cast<float>(m_deltaRoll * m_timer.DeltaTime());
 	m_yaw += static_cast<float>(m_deltaYaw * m_timer.DeltaTime());
