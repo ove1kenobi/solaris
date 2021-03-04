@@ -53,7 +53,7 @@ void MousePicking::DoIntersectionTests(const unsigned int& x, const unsigned int
 	rayViewSpaceDirection.z = 1.0f;
 	rayViewSpaceDirection.w = 0.0f;
 
-	//DirectX::XMMATRIX viewMatrix = DirectX::XMLoadFloat4x4(&vMatrix);
+
 	DirectX::XMMATRIX viewMatrix = m_pCamera->getVMatrix();
 	DirectX::XMVECTOR determinant = DirectX::XMMatrixDeterminant(viewMatrix);
 

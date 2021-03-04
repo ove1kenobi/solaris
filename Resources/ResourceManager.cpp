@@ -59,6 +59,10 @@ const bool ResourceManager::CreateAllBindables()
 	//Compute Shaders:
 	if (!m_ComputeShaderPlanet.Create(m_pDevice, L"ComputeShader_Planet.hlsl"))
 		return false;
+	if (!m_ComputeShaderGBlurHorizontal.Create(m_pDevice, L"ComputeShader_GBlurHorizontal.hlsl"))
+		return false;
+	if (!m_ComputeShaderGBlurVertical.Create(m_pDevice, L"ComputeShader_GBlurVertical.hlsl"))
+		return false;
 	//InputLayouts:
 	if (!m_InputLayoutMinimal.Create(m_pDevice, m_VertexShaderMinimal, LAYOUT_MINIMAL))
 		return false;
@@ -124,7 +128,11 @@ const bool ResourceManager::CreateAllBindables()
 	m_BindablesShadow.insert(m_BindablesShadow.end(), { &m_VertexShaderShadow, &m_PixelShaderShadow, &m_InputLayoutPositionOnly, &m_TopologyTriList });
 	//Bloom Luma:
 	m_BindablesBloomLuna.insert(m_BindablesBloomLuna.end(), { &m_VertexShaderPostProcessing, &m_PixelShaderBloomLuma, &m_InputLayoutPostProcessing,
-															  &m_TopologyTriList, &m_VertexBufferQuad, &m_IndexBufferQuad, &m_SamplerPostProcessing });
+															  &m_TopologyTriList, &m_VertexBufferQuad, &m_IndexBufferQuad });
+	//Horizontal Gaussian Blur:
+	m_BindablesGBlurHorizontal.insert(m_BindablesGBlurHorizontal.end(), { &m_ComputeShaderGBlurHorizontal});
+	//Vertical Gaussian Blur:
+	m_BindablesGBlurVertical.insert(m_BindablesGBlurVertical.end(), { &m_ComputeShaderGBlurVertical });
 	return true;
 }
 
@@ -277,6 +285,28 @@ void ResourceManager::BindToPipeline(IEvent& event)
 	case BindID::ID_BloomLuma:
 	{
 		for (auto bindables : m_BindablesBloomLuna)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		break;
+	}
+	case BindID::ID_GaussianBlurHorizontal:
+	{
+		for (auto bindables : m_BindablesGBlurHorizontal)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		break;
+	}
+	case BindID::ID_GaussianBlurVertical:
+	{
+		for (auto bindables : m_BindablesGBlurVertical)
 		{
 			if (!bindables->IsBound())
 			{

@@ -44,6 +44,10 @@ const bool Bloom::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice
 										 &shaderResourceViewDesc, 
 										 &m_pShaderResourceViewBright), 
 										 "CreateShaderResourceView");
+
+	if (!m_GaussianBlur.Initialize(pDevice, 1880, 1040))
+		return false;
+
 	return true;
 }
 
@@ -55,6 +59,9 @@ void Bloom::PrepareLumaExtractionPass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 
 	BindIDEvent bindEvent(BindID::ID_BloomLuma);
 	EventBuss::Get().Delegate(bindEvent);
+
+	ToggleDepthStencilStateEvent dsEvent;
+	EventBuss::Get().Delegate(dsEvent);
 }
 
 void Bloom::DoLumaExtractionPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
@@ -70,5 +77,18 @@ void Bloom::CleanUpLumaExtractionPass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 	ID3D11RenderTargetView* nullRTV[1] = { nullptr };
 	ID3D11DepthStencilView* nullDSV = nullptr;
 	pDeviceContext->OMSetRenderTargets(1u, nullRTV, nullDSV);
-	pDeviceContext->PSSetShaderResources(0u, 1u, m_pShaderResourceViewBright.GetAddressOf());
+	pDeviceContext->CSSetShaderResources(0u, 1u, m_pShaderResourceViewBright.GetAddressOf());
+
+	ToggleDepthStencilStateEvent dsEvent;
+	EventBuss::Get().Delegate(dsEvent);
+}
+
+void Bloom::DoBlurPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept
+{
+	m_GaussianBlur.PrepareHorizontalBlurPass(pDeviceContext);
+	m_GaussianBlur.DoHorizontalPass(pDeviceContext);
+	m_GaussianBlur.CleanUpHorizontalPass(pDeviceContext);
+	m_GaussianBlur.PrepareVerticalBlurPass(pDeviceContext);
+	m_GaussianBlur.DoVerticalBlurPass(pDeviceContext);
+	m_GaussianBlur.CleanUpVerticalBlurPass(pDeviceContext);
 }

@@ -35,6 +35,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pCameraCBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pScreenCBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pLightCBuffer;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pRenderTargetView;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShaderResourceView;
 
 	PlayerCamera* m_pCamera;
 	PointLight* m_pSunLight;
@@ -43,17 +45,17 @@ private:
 
 	UINT m_screenWidth;
 	UINT m_screenHeight;
+	FLOAT m_ClearColor[4];
 private:
 	void AssignCamera(IEvent& event) noexcept;
-	void AssignPlanets(IEvent& event) noexcept;
 	void AssignSunLight(IEvent& event) noexcept;
 	void AssignSun(IEvent& event) noexcept;
 	void OnEvent(IEvent& event) noexcept override;
 public:
 	WaterPostProcessing() noexcept;
-	virtual ~WaterPostProcessing();
+	virtual ~WaterPostProcessing() noexcept = default;
 	[[nodiscard]] const bool Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, UINT screenWidth, UINT screenHeight) noexcept;
 	void PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, std::vector<GameObject*> planets) noexcept;
 	void DoPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
-	void CleanUp() noexcept;
+	void CleanUp(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
 };

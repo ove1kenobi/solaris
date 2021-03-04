@@ -95,7 +95,20 @@ void ForwardRenderer::BeginFrame()
 	m_ShadowMapping.BindSRV(m_pDeviceContext);
 	m_ShadowMapping.UpdateBias(m_pDeviceContext);
 	m_WaterPP.DoPass(m_pDeviceContext);
-	m_WaterPP.CleanUp();
+	m_WaterPP.CleanUp(m_pDeviceContext);
+
+	//Bloom Luma Pass:
+	m_Bloom.PrepareLumaExtractionPass(m_pDeviceContext);
+	m_Bloom.DoLumaExtractionPass(m_pDeviceContext);
+	m_Bloom.CleanUpLumaExtractionPass(m_pDeviceContext);
+
+	//Bloom Blur Pass:
+	m_Bloom.DoBlurPass(m_pDeviceContext);
+
+	//Rebind back buffer:
+	BindBackBufferEvent bbEvent;
+	EventBuss::Get().Delegate(bbEvent);
+
 }
 
 //Cleans up for the next frame and applies post processing effects

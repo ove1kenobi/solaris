@@ -1,3 +1,3 @@
 #pragma once
-enum class BindID{ ID_Minimal = 0, ID_Cosmic, ID_Orbit, ID_SUN, ID_Player, ID_PlanetHeight, ID_Skybox, ID_RenderQuad, ID_Water, ID_WaterSphere, ID_Shadow, ID_BloomLuma
+enum class BindID{ ID_Minimal = 0, ID_Cosmic, ID_Orbit, ID_SUN, ID_Player, ID_PlanetHeight, ID_Skybox, ID_RenderQuad, ID_Water, ID_WaterSphere, ID_Shadow, ID_BloomLuma, ID_GaussianBlurHorizontal, ID_GaussianBlurVertical
 };
