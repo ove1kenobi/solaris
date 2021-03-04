@@ -129,7 +129,7 @@ Model* ModelFactory::GetModel(std::string filePath)
 	return model;
 }
 
-Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r, UINT type, DirectX::XMFLOAT3 yAxis) {
+Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r, UINT type, DirectX::XMFLOAT3 yAxis, DirectX::XMFLOAT4 water) {
 	//Create the sphere vertices and indices. The vertices are just raw float values.
 	Model* model = new Model();
 	std::vector<float> vertexPositionValues;
@@ -166,7 +166,7 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r, UINT typ
 
 		float vertexAngle = dot(normalize(distance), normalize(newVertex.normal));
 
-		setColorVertex(r, type, elevation, poleAngle, vertexAngle, newVertex.normal, &newVertex.color);
+		setColorVertex(r, type, elevation, poleAngle, vertexAngle, newVertex.normal, &newVertex.color, water);
 		
 
 		newVertex.bitangent.x = 1.0f;
@@ -270,6 +270,9 @@ void ModelFactory::createSphere(float r, UINT setDivisions, std::vector<float> &
 	unsigned int divisions = 0;
 	if (setDivisions == 0) {
 		divisions = static_cast<int>(std::ceil(r));
+		if (divisions < 10) {
+			divisions = 10;
+		}
 	}
 	else {
 		divisions = setDivisions;
@@ -420,6 +423,7 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	Microsoft::WRL::ComPtr<ID3D11Buffer> destDataGPUBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> copyToBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> planetConstantsBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> randomizedConstantsBuffer;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srcDataGPUBufferView;
 	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> destDataGPUBufferView;
 
@@ -492,9 +496,10 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	HR_X(m_device->CreateUnorderedAccessView(destDataGPUBuffer.Get(),
 		&descViewUAV, &destDataGPUBufferView), "CreateUnorderedAccessView");
 
-	//Constant buffer
+	//Constant buffers
 	//------------------------------------------------------------------------------------
 
+	//Planet constants
 	D3D11_BUFFER_DESC planetConstantBufferDesc = {};
 	planetConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	planetConstantBufferDesc.ByteWidth = sizeof(PlanetConstants);
@@ -504,10 +509,10 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 	planetConstantBufferDesc.StructureByteStride = 0;
 	HR_X(this->m_device->CreateBuffer(&planetConstantBufferDesc,
 		nullptr,
-		&planetConstantsBuffer),
+		planetConstantsBuffer.GetAddressOf()),
 		"CreateBuffer");
 
-	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource = {};
 	PlanetConstants* constantBufferData;
 
 	m_deviceContext->Map(
@@ -525,10 +530,48 @@ std::vector<float> ModelFactory::createHeightOffset(size_t size, void* data, Dir
 
 	m_deviceContext->Unmap(planetConstantsBuffer.Get(), 0);
 
+	//Randomized constants
+	D3D11_BUFFER_DESC randomizedConstantBufferDesc = {};
+	randomizedConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	randomizedConstantBufferDesc.ByteWidth = sizeof(RandomizedConstants);
+	randomizedConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	randomizedConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	randomizedConstantBufferDesc.MiscFlags = 0;
+	randomizedConstantBufferDesc.StructureByteStride = 0;
+	HR_X(this->m_device->CreateBuffer(&randomizedConstantBufferDesc,
+		nullptr,
+		randomizedConstantsBuffer.GetAddressOf()),
+		"CreateBuffer");
+
+	D3D11_MAPPED_SUBRESOURCE mappedSubresourceRandomized = {};
+
+	m_deviceContext->Map(
+		randomizedConstantsBuffer.Get(),
+		0,
+		D3D11_MAP_WRITE_DISCARD,
+		0,
+		&mappedSubresourceRandomized
+	);
+
+	RandomizedConstants* constantBufferDataRandomized = (RandomizedConstants*)mappedSubresourceRandomized.pData;
+
+	//Reference "ComputeShader_Planet.hlsl" to see how these affect the planets.
+	using t_clock = std::chrono::high_resolution_clock;
+	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
+	std::uniform_real_distribution<float> distributionContinent(-0.015f, 0.01f);
+	std::uniform_real_distribution<float> distributionMountain(-0.14f, 0.1f);
+	std::uniform_real_distribution<float> distributionMask(250.0f, 500.0f);
+	constantBufferDataRandomized->continentWeight = distributionContinent(generator);
+	constantBufferDataRandomized->mountainWeight = distributionMountain(generator);
+	constantBufferDataRandomized->maskWeight = distributionMask(generator);
+
+	m_deviceContext->Unmap(randomizedConstantsBuffer.Get(), 0);
+
 	//Set everything
 	//------------------------------------------------------------------------------------
 
 	m_deviceContext->CSSetConstantBuffers(0, 1, planetConstantsBuffer.GetAddressOf());
+	m_deviceContext->CSSetConstantBuffers(1, 1, randomizedConstantsBuffer.GetAddressOf());
 	m_deviceContext->CSSetShaderResources(0, 1, srcDataGPUBufferView.GetAddressOf());
 	m_deviceContext->CSSetUnorderedAccessViews(0, 1, destDataGPUBufferView.GetAddressOf(), NULL);
 	m_deviceContext->Dispatch((static_cast<UINT>(size) / 400) + 1, 1u, 1u);
@@ -673,7 +716,7 @@ Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
 	Model* model = new Model();
 	std::vector<float> vertexPositionValues;
 	std::vector<UINT> indices;
-	createSphere(r, 3, vertexPositionValues, indices);
+	createSphere(r, 10, vertexPositionValues, indices);
 
 	std::vector<DirectX::XMFLOAT3> normals = calcNormals(vertexPositionValues, indices);
 
@@ -732,7 +775,7 @@ Model* ModelFactory::GenerateOrbit(float major_semi_axis, float minor_semi_axis)
 	return model;
 }
 
-void ModelFactory::setColorVertex(float r, UINT type, float elevation, float poleAngle, float vertexAngle, DirectX::XMFLOAT3 normal, DirectX::XMFLOAT4* color) {
+void ModelFactory::setColorVertex(float r, UINT type, float elevation, float poleAngle, float vertexAngle, DirectX::XMFLOAT3 normal, DirectX::XMFLOAT4* color, DirectX::XMFLOAT4 water) {
 
 	//Describes how "wide" the north/south poles are.
 	float poleWide = 0.95f;
@@ -760,7 +803,7 @@ void ModelFactory::setColorVertex(float r, UINT type, float elevation, float pol
 		snowRGB = { std::pow(0.627f , poleAngle), std::pow(0.322f, poleAngle), std::pow(0.176f, poleAngle) }; //Snow that changes from white to grey-ish dpeending on pole angle.
 		mountainRGB = { 1.0f - ((1 - 0.627f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))),  1.0f - ((1 - 0.322f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))),  1.0f - ((1 - 0.176f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))) }; //Mountain grey, gets more white the higher elevation thre is.
 		landRGB = { 0.808f, 0.255f, 0.161f };
-		waterRGB = { static_cast<float>(std::pow(1.0f * (elevation / waterHigh), 5)), static_cast<float>(std::pow(0.6f * (elevation / waterHigh), 5)), static_cast<float>(std::pow(0.0f * (elevation / waterHigh), 5)) };
+		waterRGB = { static_cast<float>(std::pow(water.x * (elevation / waterHigh), 5)), static_cast<float>(std::pow(water.y * (elevation / waterHigh), 5)), static_cast<float>(std::pow(water.z * (elevation / waterHigh), 5)) };
 		dirtRGB = { 0.808f, 0.431f, 0.125f };
 		break;
 	}
@@ -770,7 +813,7 @@ void ModelFactory::setColorVertex(float r, UINT type, float elevation, float pol
 		snowRGB = { std::pow(0.9f, poleAngle), std::pow(0.9f, poleAngle), std::pow(0.9f, poleAngle) }; //Snow that changes from white to grey-ish dpeending on pole angle.
 		mountainRGB = { 1.0f - (0.3f * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))),  1.0f - (0.3f * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))),  1.0f - (0.1f * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))) }; //Mountain grey, gets more white the higher elevation thre is.
 		landRGB = { 0.635f, 0.824f, 0.874f };
-		waterRGB = { static_cast<float>(std::pow(0.863f * (elevation / waterHigh), 5)), static_cast<float>(std::pow(0.953f * (elevation / waterHigh), 5)), static_cast<float>(std::pow(1.0f * (elevation / waterHigh), 5)) };
+		waterRGB = { static_cast<float>(std::pow(water.x * (elevation / waterHigh), 5)), static_cast<float>(std::pow(water.y * (elevation / waterHigh), 5)), static_cast<float>(std::pow(water.z * (elevation / waterHigh), 5)) };
 		dirtRGB = { 0.729f , 0.949f , 0.937f };
 		break;
 	}
@@ -780,7 +823,7 @@ void ModelFactory::setColorVertex(float r, UINT type, float elevation, float pol
 		snowRGB = { std::pow(0.565f, poleAngle), std::pow(0.992f, poleAngle), std::pow(0.663f, poleAngle) }; //Snow that changes from white to grey-ish dpeending on pole angle.
 		mountainRGB = { 1.0f - ((1 - 0.018f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))),  1.0f - ((1 - 0.018f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))),  1.0f - ((1 - 0.031f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))) }; //Mountain grey, gets more white the higher elevation thre is.
 		landRGB = { 0.588f, 0.0f, 0.337f };
-		waterRGB = { static_cast<float>(std::pow(0.978f * (elevation / waterHigh), 5)), static_cast<float>(std::pow(0.39f * (elevation / waterHigh), 5)), static_cast<float>(std::pow(0.992f * (elevation / waterHigh), 5)) };
+		waterRGB = { static_cast<float>(std::pow(water.x * (elevation / waterHigh), 5)), static_cast<float>(std::pow(water.y * (elevation / waterHigh), 5)), static_cast<float>(std::pow(water.z * (elevation / waterHigh), 5)) };
 		dirtRGB = { 0.122f , 0.388f , 0.341f };
 		break;
 	}
@@ -790,7 +833,7 @@ void ModelFactory::setColorVertex(float r, UINT type, float elevation, float pol
 		snowRGB = { std::pow(0.9f, poleAngle), std::pow(0.9f, poleAngle), std::pow(0.9f, poleAngle) }; //Snow that changes from white to grey-ish dpeending on pole angle.
 		mountainRGB = { 1.0f - ((1 - 0.831f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))),  1.0f - ((1 - 0.686f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))),  1.0f - ((1 - 0.216f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))) }; //Mountain grey, gets more white the higher elevation thre is.
 		landRGB = { 0.753f, 0.753f, 0.753f };
-		waterRGB = { static_cast<float>(std::pow(1.0f * (elevation / waterHigh), 5)), static_cast<float>(std::pow(1.0f * (elevation / waterHigh), 5)), static_cast<float>(std::pow(1.0f * (elevation / waterHigh), 5)) };
+		waterRGB = { static_cast<float>(std::pow(water.x * (elevation / waterHigh), 5)), static_cast<float>(std::pow(water.y * (elevation / waterHigh), 5)), static_cast<float>(std::pow(water.z * (elevation / waterHigh), 5)) };
 		dirtRGB = { 160.0f / 255.0f , 82.0f / 255.0f , 45.0f / 255.0f };
 		break;
 	}
@@ -800,7 +843,7 @@ void ModelFactory::setColorVertex(float r, UINT type, float elevation, float pol
 		snowRGB = { std::pow(0.9f, poleAngle), std::pow(0.9f, poleAngle), std::pow(0.9f, poleAngle) }; //Snow that changes from white to grey-ish dpeending on pole angle.
 		mountainRGB = { 1.0f - ((1.0f - 0.3f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))),  1.0f - ((1.0f - 0.3f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))),  1.0f - ((1.0f - 0.3f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))) }; //Mountain grey, gets more white the higher elevation thre is.
 		landRGB = { 0.0f, 0.5f, 0.0f };
-		waterRGB = { static_cast<float>(std::pow(0.0f * (elevation / waterHigh), 5)), static_cast<float>(std::pow(0.0f * (elevation / waterHigh), 5)), static_cast<float>(std::pow(1.0f * (elevation / waterHigh), 5)) };
+		waterRGB = { static_cast<float>(std::pow(water.x * (elevation / waterHigh), 5)), static_cast<float>(std::pow(water.y * (elevation / waterHigh), 5)), static_cast<float>(std::pow(water.z * (elevation / waterHigh), 5)) };
 		dirtRGB = { 0.627f , 0.322f , 0.176f };
 		break;
 	}
@@ -810,7 +853,7 @@ void ModelFactory::setColorVertex(float r, UINT type, float elevation, float pol
 		snowRGB = { std::pow(0.5f, poleAngle), std::pow(0.5f, poleAngle), std::pow(0.5f, poleAngle) }; //Snow that changes from white to grey-ish dpeending on pole angle.
 		mountainRGB = { 1.0f - ((1.0f - 0.1f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))),  1.0f - ((1.0f - 0.1f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))),  1.0f - ((1.0f - 0.1f) * static_cast<float>(std::pow(((r + (r / 15)) / elevation), 10))) }; //Mountain grey, gets more white the higher elevation thre is.
 		landRGB = { 0.1f, 0.1f, 0.1f };
-		waterRGB = { static_cast<float>(std::pow(1.0f * (elevation / waterHigh), 5)), static_cast<float>(std::pow(1.0f * (elevation / waterHigh), 5)), static_cast<float>(std::pow(0.0f * (elevation / waterHigh), 5)) };
+		waterRGB = { static_cast<float>(std::pow(water.x * (elevation / waterHigh), 5)), static_cast<float>(std::pow(water.y * (elevation / waterHigh), 5)), static_cast<float>(std::pow(water.z * (elevation / waterHigh), 5)) };
 		dirtRGB = { 1.0f , 1.0f , 1.0f };
 		break;
 	}

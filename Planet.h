@@ -9,6 +9,7 @@ private:
 	bool m_TestForCulling;
 	float m_DistanceToCamera;
 	UINT m_planetType;
+	DirectX::XMFLOAT4 m_WaterColor;
 public:
 	Planet() noexcept;
 	virtual ~Planet() = default;
@@ -31,4 +32,5 @@ PLANET TYPES
 
 [[nodiscard]] const std::string& GetTag() const noexcept override;
 [[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept override;
+DirectX::XMFLOAT4 GetWaterColor() noexcept;
 };

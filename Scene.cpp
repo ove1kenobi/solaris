@@ -4,9 +4,9 @@
 void initPlanet(Planet* planet, Orbit* orbit, WaterSphere* waterSphere, std::vector<GameObject*>& gameObjects, std::vector<Planet*>& planets, std::vector<WaterSphere*>& waterSpheres, std::vector<Planet*>& radioactivePlanets, size_t id, size_t num, float x, float y, float z, float r, float xRot, float zRot, int rotDir, UINT type, GameObject* tetherTo) {
 	float distanceFromSun = std::sqrt(x * x + y * y + z * z);
 	//Planet types can be found in planet.h
-	if (distanceFromSun < 3000.0f)
+	if (distanceFromSun < 5000.0f)
 		type = 0;
-	else if (distanceFromSun > 8000.0f)
+	else if (distanceFromSun > 10000.0f)
 		type = 1;
 
 	planet->Initialize(x, y, z, r, xRot, zRot, rotDir, type, tetherTo, orbit, waterSphere);
@@ -92,11 +92,12 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
 	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
-	std::uniform_int_distribution<int> distributionPlanets(20, 30);
+	std::uniform_int_distribution<int> distributionPlanets(10, 15);
 	this->m_numPlanets = distributionPlanets(generator);
 	std::uniform_int_distribution<int> distributionRadius(5, 50);
 	//World space coordinates
-	std::uniform_int_distribution<int> distributionX(2000, 10000);
+	//X IS USED AS AN ADDITATIVE COMPONENT
+	std::uniform_int_distribution<int> distributionX(600, 1000);
 	std::uniform_int_distribution<int> distributionY(0, 0);
 	std::uniform_int_distribution<int> distributionZ(0, 0);
 	//Needs to be radians
@@ -108,6 +109,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	ModelFactory::Get().PreparePlanetDisplacement();
 	std::vector<std::thread> threads;
 
+	float xCoord = 2500.0f;
 	this->m_gameObjects.resize(this->m_numPlanets * 2);
 	this->m_planets.resize(this->m_numPlanets);
 	this->m_waterSpheres.resize(this->m_numPlanets);
@@ -117,6 +119,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 		Planet* planet = new Planet();
 		Orbit* orbit = new Orbit();
 		WaterSphere* waterSphere = new WaterSphere();
+		xCoord += static_cast<float>(distributionX(generator));
 		threads.push_back(std::thread(
 			initPlanet,
 			planet,
@@ -128,7 +131,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 			std::ref(this->m_radioactivePlanets),
 			i,
 			m_numPlanets,
-			static_cast<float>(distributionX(generator)),
+			xCoord,
 			static_cast<float>(distributionY(generator)),
 			static_cast<float>(distributionZ(generator)),
 			static_cast<float>(distributionRadius(generator)),

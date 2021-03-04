@@ -148,11 +148,14 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 		DirectX::XMFLOAT3 center = planets[i]->GetCenter();
 		DirectX::XMFLOAT4 centerRadius = { center.x, center.y, center.z, static_cast<Planet*>(planets[i])->GetRadius() };
 		data->center[i] = DirectX::XMLoadFloat4(&centerRadius);
+		DirectX::XMFLOAT4 waterColor = static_cast<Planet*>(planets[i])->GetWaterColor();
+		data->waterColor[i] = DirectX::XMLoadFloat4(&waterColor);
 	}
 	//Fill the rest with zero's
 	DirectX::XMFLOAT4 nullXMF4 = { 0.0f, 0.0f, 0.0f, 0.0f };
 	for (size_t i = planets.size(); i < 50; i++) {
 		data->center[i] = DirectX::XMLoadFloat4(&nullXMF4);
+		data->waterColor[i] = DirectX::XMLoadFloat4(&nullXMF4);
 	}
 
 	DirectX::XMFLOAT4 sunData = { m_pSunCenter->x, m_pSunCenter->y, m_pSunCenter->z, *m_pSunRadius };
@@ -174,7 +177,11 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 	DirectX::XMFLOAT4 cameraPos = { cameraPos3.x, cameraPos3.y, cameraPos3.z, 1.0f };
 	dataCamera->cameraPos = DirectX::XMLoadFloat4(&cameraPos);
 	dataCamera->inverseVMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, m_pCamera->getVMatrix()));
-	dataCamera->PMatrix = m_pCamera->getPMatrix();
+	dataCamera->PMatrix = DirectX::XMMatrixTranspose(m_pCamera->getPMatrix());
+	DirectX::XMFLOAT4X4 pMatrix;
+	DirectX::XMStoreFloat4x4(&pMatrix, DirectX::XMMatrixTranspose(m_pCamera->getPMatrix()));
+	dataCamera->element00 = 1.0f / pMatrix._11;
+	dataCamera->element11 = 1.0f / pMatrix._22;
 
 	pDeviceContext->Unmap(m_pCameraCBuffer.Get(), 0);
 
@@ -188,8 +195,8 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 
 	ScreenData* dataScreen = (ScreenData*)mappedSubresourceScreen.pData;
 
-	dataScreen->screenWidth = (float)m_screenWidth;
-	dataScreen->screenHeight = (float)m_screenHeight;
+	dataScreen->screenWidth = 1.0f / (float)m_screenWidth;
+	dataScreen->screenHeight = 1.0f / (float)m_screenHeight;
 
 	pDeviceContext->Unmap(m_pScreenCBuffer.Get(), 0);
 

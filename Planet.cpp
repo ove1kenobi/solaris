@@ -5,7 +5,8 @@ Planet::Planet() noexcept
 	:m_Tag{ "Planet"},
 	 m_TestForCulling{ true },
 	 m_DistanceToCamera{ 0.0f },
-	 m_planetType{ 0 }
+	 m_planetType{ 0 },
+	 m_WaterColor{ 0.0f, 0.0f, 1.0f, 1.0f }
 {
 
 }
@@ -18,8 +19,29 @@ bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zR
 
 	m_planetType = type;
 
+	switch (m_planetType) {
+	case 0:
+		m_WaterColor = { 1.0f, 0.6f, 0.0f, 1.0f };
+		break;
+	case 1:
+		m_WaterColor = { 0.863f, 0.953f, 1.0f, 1.0f };
+		break;
+	case 2:
+		m_WaterColor = { 0.978f, 0.39f, 0.992f, 1.0f };
+		break;
+	case 3:
+		m_WaterColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+		break;
+	case 4:
+		m_WaterColor = { 0.0f, 0.0f, 1.0f, 1.0f };
+		break;
+	case 5:
+		m_WaterColor = { 1.0f, 1.0f, 0.0f, 1.0f };
+		break;
+	}
+
 	//Generate the Planet.
-	this->m_model = ModelFactory::Get().GeneratePlanet(x, y, z, r, m_planetType, yAxis);
+	this->m_model = ModelFactory::Get().GeneratePlanet(x, y, z, r, m_planetType, yAxis, m_WaterColor);
 	return true;
 }
 
@@ -36,4 +58,9 @@ const std::string& Planet::GetTag() const noexcept
 const bool& Planet::ShallBeTestedForCulling() const noexcept
 {
 	return m_TestForCulling;
+}
+
+DirectX::XMFLOAT4 Planet::GetWaterColor() noexcept
+{
+	return m_WaterColor;
 }
