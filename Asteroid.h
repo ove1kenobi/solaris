@@ -4,7 +4,6 @@
 class Asteroid : public GameObject
 {
 private:
-	float m_scale;
 	float m_deltaRoll;
 	float m_deltaYaw;
 	float m_deltaPitch;

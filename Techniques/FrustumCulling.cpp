@@ -34,7 +34,7 @@ void FrustumCulling::CullObjects(std::vector<GameObject*>& gameObjects, PlayerCa
 		//The objects is either a planet or the sun:
 		if (gameObjects[i]->ShallBeTestedForCulling())
 		{
-			DirectX::BoundingSphere boundingSphere = *gameObjects[i]->GetModel()->GetBoundingSphere();
+			DirectX::BoundingSphere boundingSphere = gameObjects[i]->GetBoundingSphere();
 			boundingSphere.Transform(boundingSphere, vMatrix);
 			if (m_BoundingFrustum.Contains(boundingSphere) > DirectX::DISJOINT)
 			{

@@ -19,17 +19,17 @@ const bool Engine::Initialize()
 	ModelFactory::Get().setDeviceAndContext(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext());
 	
 	/* Preload models */
-	//std::vector<std::string> models;
-	//models.insert(models.end(), {
-	//	"models/Asteroid_1_LOW_MODEL_.obj",
-	//	"models/Asteroid_2_LOW_MODEL_.obj",
-	//	"models/Asteroid_3_LOW_MODEL_.obj",
-	//	"models/Asteroid_4_LOW_MODEL_.obj"
-	//	});
-	//for (auto m : models)
-	//{
-	//	ModelFactory::Get().GetModel(m);
-	//}
+	std::vector<std::string> models;
+	models.insert(models.end(), {
+		"models/Asteroid_1_LOW_MODEL_.obj",
+		"models/Asteroid_2_LOW_MODEL_.obj",
+		"models/Asteroid_3_LOW_MODEL_.obj",
+		"models/Asteroid_4_LOW_MODEL_.obj"
+		});
+	for (auto m : models)
+	{
+		ModelFactory::Get().GetModel(m);
+	}
 
 	//2D Renderer
 	if (!m_Render2D.Initialize())

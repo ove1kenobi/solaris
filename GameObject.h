@@ -14,11 +14,13 @@ protected:
 	DirectX::XMFLOAT3 m_upVector;
 	DirectX::XMFLOAT4X4 m_wMatrix;
 	float m_mass;
+	float m_scale;
 	float m_pitch;
 	float m_roll;
 	float m_yaw;
 	Time m_timer;
 	bool m_HasBoundingVolume;
+	DirectX::BoundingSphere m_boundingSphere;
 	DirectX::XMFLOAT3 m_sumForces;
 	float m_topSpeed;
 
@@ -48,6 +50,7 @@ public:
 	void AddForce(DirectX::XMFLOAT3 f);
 	void UpdatePhysics();
 	[[nodiscard]] Model* GetModel() const noexcept;
+	const DirectX::BoundingSphere& GetBoundingSphere() noexcept;
 	virtual [[nodiscard]] const std::string& GetTag() const noexcept = 0;
 	virtual [[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept = 0;
 	[[nodiscard]] const float& GetDistanceToCamera() const noexcept;

@@ -13,6 +13,7 @@ GameObject::GameObject() noexcept
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 		},
+		m_scale{1.0},
 		m_mass{ 0.0f },
 		m_pitch{ 0.0f },
 		m_roll{ 0.0f },
@@ -136,6 +137,12 @@ void GameObject::UpdatePhysics()
 Model* GameObject::GetModel() const noexcept
 {
 	return m_model;
+}
+
+const DirectX::BoundingSphere& GameObject::GetBoundingSphere() noexcept
+{
+	m_boundingSphere.Center = m_center;
+	return m_boundingSphere;
 }
 
 const float& GameObject::GetDistanceToCamera() const noexcept
