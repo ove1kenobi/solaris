@@ -198,7 +198,7 @@ void Scene::Update() noexcept {
 	DirectX::XMFLOAT3 sunCenter = m_sun->GetCenter();
 	DirectX::XMFLOAT3 playerCenter = m_player.getShip()->getCenter();
 	float sunDist = distance(sunCenter, playerCenter);
-	if ((sunDist < 3000.0f || sunDist > 8000.0f) && m_damageTimer > 1.0f ) {
+	if ((sunDist < 5000.0f || sunDist > 10000.0f) && m_damageTimer > 1.0f ) {
 		m_player.UpdateHealth(-5);
 		//Send event to UI so that we can tell the player that we are too far away / too close to the sun.
 		m_damageTimer = 0.0f;
