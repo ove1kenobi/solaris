@@ -14,6 +14,8 @@ struct RenderData
 	size_t totalNrOfPlanets;
 	size_t totalNrOfObjects;
 	size_t totalNrOfOrbits;
+	size_t nrOfAsteroidsInView;
+	size_t totalNrOfAsteroids;
 	bool sunCulled;
 };
 

@@ -28,6 +28,7 @@ private:
 	VertexShader m_VertexShaderPostProcessing;
 	VertexShader m_VertexShaderWaterSpheres;
 	VertexShader m_VertexShaderShadow;
+	VertexShader m_VertexShaderTextured;
 	PixelShader m_PixelShaderMinimal;
 	PixelShader m_PixelShaderSkybox;
 	PixelShader m_PixelShaderOrbit;
@@ -35,6 +36,7 @@ private:
 	PixelShader m_PixelShaderPostProcessing;
 	PixelShader m_PixelShaderWaterSpheres;
 	PixelShader m_PixelShaderShadow;
+	PixelShader m_PixelShaderTextured;
 	ComputeShader m_ComputeShaderPlanet;
 	InputLayout m_InputLayoutCosmicBody;
 	InputLayout m_InputLayoutPlayerModel;
@@ -63,6 +65,7 @@ private:
 	std::vector<IBindable*> m_BindablesSun;
 	std::vector<IBindable*> m_BindablesShadow;
 	std::vector<IBindable*> m_BindablesWaterSpheres;
+	std::vector<IBindable*> m_BindablesTextured;
 	std::vector<DirectX::XMFLOAT3> m_CubeVertices;
 	std::vector<unsigned int> m_CubeIndices;
 	std::vector<Vertex_PosTex> m_QuadVertices;

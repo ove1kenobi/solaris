@@ -6,21 +6,22 @@ SpaceShip::SpaceShip()
 	  m_TestForCulling{ false }
 {
 	this->m_model = ModelFactory::Get().GetModel(std::string("models/SciFi_Fighter_AK5.obj"));
+	//this->m_model = ModelFactory::Get().GetModel(std::string("models/cubemetal.obj"));
 	this->m_wMatrix = {
 		0.03f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.03f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.03f, 0.0f,
-		0.0f, 0.0f, 100.0f, 1.0f
+		0.0f, 0.0f, 0.0f, 1.0f
 	};
 	this->m_center = { 0.0f, 1000.0f, -10000.0f };
 	this->m_mass = 10000.0f;
 	m_yaw = (float)M_PI;
 	m_pitchTilt = 0.0f;
 	m_rollTilt = 0.0f;
-	m_topSpeed = 3000.0f;
+	m_velocity = { 1.0f, 1.0f, 1.0f };
 }
 
-bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
+GameObject* SpaceShip::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	ImGui::Begin("Spaceship");
@@ -43,11 +44,16 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 
 	DirectX::XMMATRIX trans = DirectX::XMMatrixTranslation(this->m_center.x, this->m_center.y, this->m_center.z);
 	DirectX::XMMATRIX final = scale * rot * trans;
-	DirectX::XMStoreFloat4x4(&this->m_wMatrix, final);
+	DirectX::XMStoreFloat4x4(&this->m_wMatrix, DirectX::XMMatrixTranspose(final));
 
 	//Update the matrixBuffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-	DirectX::XMMATRIX WMatrix = DirectX::XMLoadFloat4x4(&this->m_wMatrix);
+
+	DirectX::XMFLOAT4X4 wvpMatrix;
+	DirectX::XMMATRIX vMatrix = DirectX::XMLoadFloat4x4(&VMatrix);
+	DirectX::XMMATRIX pMatrix = DirectX::XMLoadFloat4x4(&PMatrix);
+
+	DirectX::XMStoreFloat4x4(&wvpMatrix, DirectX::XMMatrixTranspose(final * vMatrix * pMatrix));
 
 	deviceContext->Map(this->m_model->getMatrixBuffer().Get(),
 			           0,
@@ -55,13 +61,11 @@ bool SpaceShip::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, con
 		               0,
 		               &mappedSubresource);
 
-	ModelFactory::MatrixBuffer* data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
-
-	data->WMatrix = DirectX::XMMatrixTranspose(WMatrix);
-	data->WVPMatrix = DirectX::XMMatrixTranspose(WMatrix * VMatrix * PMatrix);
+	memcpy(mappedSubresource.pData, &m_wMatrix, sizeof(DirectX::XMFLOAT4X4));
+	memcpy(((char*)mappedSubresource.pData) + sizeof(DirectX::XMFLOAT4X4), &wvpMatrix, sizeof(DirectX::XMFLOAT4X4));
 
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
-	return true;
+	return nullptr;
 }
 
 void SpaceShip::AddRotation(float yaw, float pitch)
@@ -98,7 +102,7 @@ DirectX::XMFLOAT3 SpaceShip::GetVelocity()
 	return m_velocity;
 }
 
-const bool SpaceShip::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
+const bool SpaceShip::IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept
 {
 	return false;
 }
@@ -109,6 +113,10 @@ DirectX::XMFLOAT3 SpaceShip::getCenter() {
 
 void SpaceShip::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
+	for (auto tex : m_model->GetTextures())
+	{
+		if (tex) tex->Bind(deviceContext);
+	}
 	deviceContext->IASetVertexBuffers(0u,
 									  1u,
 									  this->m_model->getVertexBuffer().GetAddressOf(),
@@ -129,65 +137,6 @@ void SpaceShip::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceConte
 	pDeviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 }
 
-void SpaceShip::CalculateGravity(GameObject* other)
-{
-	if (this == other) return;
-	// Calculates the force of gravity between GameObjects a and b
-
-	// ab = vector from a to b
-	DirectX::XMFLOAT3 ab = other->GetCenter() - m_center;
-
-	// r = |ab| -> (distance between a and b)
-	double r = length(ab);
-	if (r == 0.0f) r = 0.001f;
-
-	// Newton't general theory of gravity
-	float f = static_cast<float>(6.674e-11 * static_cast<double>(this->m_mass) * other->GetMass() / (r * r));
-
-	// Normalize ab
-	double inverse_r = 1.0f / r;
-	ab.x = static_cast<float>(ab.x * inverse_r);
-	ab.y = static_cast<float>(ab.y * inverse_r);
-	ab.z = static_cast<float>(ab.z * inverse_r);
-
-	// Force working on GameObject a
-	ab = ab * f;
-	m_forces.push_back(ab);
-}
-
-void SpaceShip::AddForce(DirectX::XMFLOAT3 f)
-{
-	// Adds a force to the forces influencing the GameObject this frame
-	m_forces.push_back(f);
-}
-
-void SpaceShip::UpdatePhysics()
-{
-	// Sum forces working on GameObject and apply
-	DirectX::XMFLOAT3 sumForces = {};
-	for (size_t i = 0; i < m_forces.size(); ++i)
-	{
-		sumForces = sumForces + m_forces[i];
-	}
-
-	m_forces.clear();
-
-	if (m_mass != 0.0f) {
-		// Divide the force by the objects mass to get the acceleration F = m*a -> a = F/m
-		m_velocity = m_velocity + sumForces / m_mass;
-	}
-
-	float speed = length(m_velocity);
-	// Limit how fast an object can travel
-	if (speed > m_topSpeed) {
-		m_velocity = normalize(m_velocity);
-		m_velocity = m_topSpeed * m_velocity;
-	}
-
-	m_center.x += static_cast<float>(m_velocity.x * m_timer.DeltaTime());
-	m_center.y += static_cast<float>(m_velocity.y * m_timer.DeltaTime());
-	m_center.z += static_cast<float>(m_velocity.z * m_timer.DeltaTime());
-}
 
 const std::string& SpaceShip::GetTag() const noexcept
 {

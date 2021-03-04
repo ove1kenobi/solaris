@@ -18,23 +18,28 @@ bool Orbit::init(float major_semi_axis, float minor_semi_axis)
 	return true;
 }
 
-bool Orbit::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
+GameObject* Orbit::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
+	m_sumForces = { 0.0f, 0.0f, 0.0f };
+
 	//Updated the same way as a cosmicbody, with S * R * T. Rotation is around the ships up vector.
 	DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&m_upVector);
 	//100 times smaller. TODO: make variable?
 	DirectX::XMMATRIX scale = DirectX::XMMatrixIdentity();
 	DirectX::XMMATRIX rot = DirectX::XMMatrixIdentity();
 	DirectX::XMMATRIX trans = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);
-	DirectX::XMMATRIX final = scale * rot * trans;
-	DirectX::XMStoreFloat4x4(&m_wMatrix, final);
+	DirectX::XMMATRIX result = scale * rot * trans;
+	DirectX::XMStoreFloat4x4(&m_wMatrix, DirectX::XMMatrixTranspose(result));
 
 	//Update the matrixBuffer.
 
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-	ModelFactory::MatrixBuffer* data;
 
-	DirectX::XMMATRIX WMatrix = DirectX::XMLoadFloat4x4(&m_wMatrix);
+	DirectX::XMFLOAT4X4 wvpMatrix;
+	DirectX::XMMATRIX vMatrix = DirectX::XMLoadFloat4x4(&VMatrix);
+	DirectX::XMMATRIX pMatrix = DirectX::XMLoadFloat4x4(&PMatrix);
+
+	DirectX::XMStoreFloat4x4(&wvpMatrix, DirectX::XMMatrixTranspose(result * vMatrix * pMatrix));
 
 	deviceContext->Map(
 		this->m_model->getMatrixBuffer().Get(),
@@ -44,13 +49,11 @@ bool Orbit::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, const M
 		&mappedSubresource
 	);
 
-	data = (ModelFactory::MatrixBuffer*)mappedSubresource.pData;
-
-	data->WMatrix = DirectX::XMMatrixTranspose(WMatrix);
-	data->WVPMatrix = DirectX::XMMatrixTranspose(WMatrix * VMatrix * PMatrix);
+	memcpy(mappedSubresource.pData, &m_wMatrix, sizeof(DirectX::XMFLOAT4X4));
+	memcpy(((char*)mappedSubresource.pData) + sizeof(DirectX::XMFLOAT4X4), &wvpMatrix, sizeof(DirectX::XMFLOAT4X4));
 
 	deviceContext->Unmap(m_model->getMatrixBuffer().Get(), 0);
-	return true;
+	return nullptr;
 }
 
 void Orbit::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
@@ -69,7 +72,7 @@ void Orbit::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>&
 	//Do nothing as of now...
 }
 
-const bool Orbit::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
+const bool Orbit::IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept
 {
 	return false;
 }
