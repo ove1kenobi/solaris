@@ -105,10 +105,17 @@ void ForwardRenderer::BeginFrame()
 	//Bloom Blur Pass:
 	m_Bloom.DoBlurPass(m_pDeviceContext);
 
+	//Anew bind the normal color texture from the water pass:
+	m_WaterPP.BindSRV(m_pDeviceContext);
+
 	//Rebind back buffer:
 	BindBackBufferEvent bbEvent;
 	EventBuss::Get().Delegate(bbEvent);
 
+	//Prepare for the last Bloom phase:
+	m_Bloom.PrepareCombinePass(m_pDeviceContext);
+	m_Bloom.DoCombinePass(m_pDeviceContext);
+	m_Bloom.CleanUpCombinePass(m_pDeviceContext);
 }
 
 //Cleans up for the next frame and applies post processing effects

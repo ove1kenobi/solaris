@@ -8,7 +8,7 @@ Bloom::Bloom() noexcept
 {
 }
 
-const bool Bloom::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice) noexcept
+const bool Bloom::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice)
 {
 	D3D11_TEXTURE2D_DESC textureDescriptor = {};
 	textureDescriptor.Width = 1880;  //Change to dynamic (Emil F)
@@ -78,17 +78,32 @@ void Bloom::CleanUpLumaExtractionPass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 	ID3D11DepthStencilView* nullDSV = nullptr;
 	pDeviceContext->OMSetRenderTargets(1u, nullRTV, nullDSV);
 	pDeviceContext->CSSetShaderResources(0u, 1u, m_pShaderResourceViewBright.GetAddressOf());
-
-	ToggleDepthStencilStateEvent dsEvent;
-	EventBuss::Get().Delegate(dsEvent);
 }
 
 void Bloom::DoBlurPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept
 {
-	m_GaussianBlur.PrepareHorizontalBlurPass(pDeviceContext);
-	m_GaussianBlur.DoHorizontalPass(pDeviceContext);
-	m_GaussianBlur.CleanUpHorizontalPass(pDeviceContext);
-	m_GaussianBlur.PrepareVerticalBlurPass(pDeviceContext);
-	m_GaussianBlur.DoVerticalBlurPass(pDeviceContext);
-	m_GaussianBlur.CleanUpVerticalBlurPass(pDeviceContext);
+	m_GaussianBlur.PreparePass(pDeviceContext);
+	m_GaussianBlur.DoPass(pDeviceContext);
+	m_GaussianBlur.CleanUpPass(pDeviceContext);
+}
+
+void Bloom::PrepareCombinePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
+{
+	//Bind the correct setup of bindables (The blurred image is already bound in previous clean up phase):
+	BindIDEvent event(BindID::ID_BloomCombine);
+	EventBuss::Get().Delegate(event);
+}
+
+void Bloom::DoCombinePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
+{
+	//Post process pass: so we render a quad:
+	pDeviceContext->DrawIndexed(6u, 0u, 0u);
+}
+
+void Bloom::CleanUpCombinePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
+{
+
+
+	ToggleDepthStencilStateEvent dsEvent;
+	EventBuss::Get().Delegate(dsEvent);
 }

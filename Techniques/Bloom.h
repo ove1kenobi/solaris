@@ -10,9 +10,12 @@ private:
 public:
 	Bloom() noexcept;
 	virtual ~Bloom() noexcept = default;
-	[[nodiscard]] const bool Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice) noexcept;
+	[[nodiscard]] const bool Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice);
 	void PrepareLumaExtractionPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext);
 	void DoLumaExtractionPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext);
 	void CleanUpLumaExtractionPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext);
 	void DoBlurPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
+	void PrepareCombinePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext);
+	void DoCombinePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext);
+	void CleanUpCombinePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext);
 };

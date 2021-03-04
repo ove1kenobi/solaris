@@ -36,9 +36,9 @@ private:
 	PixelShader m_PixelShaderWaterSpheres;
 	PixelShader m_PixelShaderShadow;
 	PixelShader m_PixelShaderBloomLuma;
+	PixelShader m_PixelShaderBloomCombine;
 	ComputeShader m_ComputeShaderPlanet;
-	ComputeShader m_ComputeShaderGBlurHorizontal;
-	ComputeShader m_ComputeShaderGBlurVertical;
+	ComputeShader m_ComputeShaderGaussianBlur;
 	InputLayout m_InputLayoutCosmicBody;
 	InputLayout m_InputLayoutPlayerModel;
 	InputLayout m_InputLayoutMinimal;
@@ -67,8 +67,8 @@ private:
 	std::vector<IBindable*> m_BindablesShadow;
 	std::vector<IBindable*> m_BindablesWaterSpheres;
 	std::vector<IBindable*> m_BindablesBloomLuna;
-	std::vector<IBindable*> m_BindablesGBlurHorizontal;
-	std::vector<IBindable*> m_BindablesGBlurVertical;
+	std::vector<IBindable*> m_BindablesGaussianBlur;
+	std::vector<IBindable*> m_BindablesBloomCombine;
 	std::vector<DirectX::XMFLOAT3> m_CubeVertices;
 	std::vector<unsigned int> m_CubeIndices;
 	std::vector<Vertex_PosTex> m_QuadVertices;

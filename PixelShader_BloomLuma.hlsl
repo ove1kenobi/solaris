@@ -10,7 +10,7 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
     int3 location = int3(psIn.inPositionSS.x, psIn.inPositionSS.y, 0);
     float4 color = textureToSample.Load(location);
     float brightness = (color.r * 0.2126) + (color.g * 0.7152) + (color.b * 0.0722);
-    if (brightness > 0.7)
+    if (brightness > 0.6 && brightness < 0.7)
     {
         return color;
     }

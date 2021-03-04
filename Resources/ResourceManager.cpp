@@ -50,6 +50,8 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	if (!m_PixelShaderBloomLuma.Create(m_pDevice, L"PixelShader_BLoomLuma.hlsl"))
 		return false;
+	if (!m_PixelShaderBloomCombine.Create(m_pDevice, L"PixelShader_BloomCombine.hlsl"))
+		return false;
 	//Geometry Shaders:
 
 	//Hull Shaders:
@@ -59,9 +61,7 @@ const bool ResourceManager::CreateAllBindables()
 	//Compute Shaders:
 	if (!m_ComputeShaderPlanet.Create(m_pDevice, L"ComputeShader_Planet.hlsl"))
 		return false;
-	if (!m_ComputeShaderGBlurHorizontal.Create(m_pDevice, L"ComputeShader_GBlurHorizontal.hlsl"))
-		return false;
-	if (!m_ComputeShaderGBlurVertical.Create(m_pDevice, L"ComputeShader_GBlurVertical.hlsl"))
+	if (!m_ComputeShaderGaussianBlur.Create(m_pDevice, L"ComputeShader_Blur.hlsl"))
 		return false;
 	//InputLayouts:
 	if (!m_InputLayoutMinimal.Create(m_pDevice, m_VertexShaderMinimal, LAYOUT_MINIMAL))
@@ -129,10 +129,11 @@ const bool ResourceManager::CreateAllBindables()
 	//Bloom Luma:
 	m_BindablesBloomLuna.insert(m_BindablesBloomLuna.end(), { &m_VertexShaderPostProcessing, &m_PixelShaderBloomLuma, &m_InputLayoutPostProcessing,
 															  &m_TopologyTriList, &m_VertexBufferQuad, &m_IndexBufferQuad });
-	//Horizontal Gaussian Blur:
-	m_BindablesGBlurHorizontal.insert(m_BindablesGBlurHorizontal.end(), { &m_ComputeShaderGBlurHorizontal});
-	//Vertical Gaussian Blur:
-	m_BindablesGBlurVertical.insert(m_BindablesGBlurVertical.end(), { &m_ComputeShaderGBlurVertical });
+	//Gaussian Blur:
+	m_BindablesGaussianBlur.insert(m_BindablesGaussianBlur.end(), { &m_ComputeShaderGaussianBlur});
+	//Bloom Combine:
+	m_BindablesBloomCombine.insert(m_BindablesBloomCombine.end(), { &m_VertexShaderPostProcessing, &m_PixelShaderBloomCombine, &m_InputLayoutPostProcessing,
+															  &m_TopologyTriList, &m_VertexBufferQuad, &m_IndexBufferQuad });
 	return true;
 }
 
@@ -293,9 +294,9 @@ void ResourceManager::BindToPipeline(IEvent& event)
 		}
 		break;
 	}
-	case BindID::ID_GaussianBlurHorizontal:
+	case BindID::ID_GaussianBlur:
 	{
-		for (auto bindables : m_BindablesGBlurHorizontal)
+		for (auto bindables : m_BindablesGaussianBlur)
 		{
 			if (!bindables->IsBound())
 			{
@@ -304,9 +305,9 @@ void ResourceManager::BindToPipeline(IEvent& event)
 		}
 		break;
 	}
-	case BindID::ID_GaussianBlurVertical:
+	case BindID::ID_BloomCombine:
 	{
-		for (auto bindables : m_BindablesGBlurVertical)
+		for (auto bindables : m_BindablesBloomCombine)
 		{
 			if (!bindables->IsBound())
 			{

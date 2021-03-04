@@ -332,3 +332,8 @@ void WaterPostProcessing::CleanUp(const Microsoft::WRL::ComPtr<ID3D11DeviceConte
 	ToggleDepthStencilStateEvent dsEvent;
 	EventBuss::Get().Delegate(dsEvent);
 }
+
+void WaterPostProcessing::BindSRV(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
+{
+	pDeviceContext->PSSetShaderResources(1u, 1u, m_pShaderResourceView.GetAddressOf());
+}

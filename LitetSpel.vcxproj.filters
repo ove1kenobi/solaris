@@ -16,8 +16,8 @@
     <FxCompile Include="VertexShader_WaterSphere.hlsl" />
     <FxCompile Include="PixelShader_WaterSphere.hlsl" />
     <FxCompile Include="PixelShader_BloomLuma.hlsl" />
-    <FxCompile Include="ComputeShader_GBlurHorizontal.hlsl" />
-    <FxCompile Include="ComputeShader_GBlurVertical.hlsl" />
+    <FxCompile Include="ComputeShader_Blur.hlsl" />
+    <FxCompile Include="PixelShader_BloomCombine.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXCore.cpp" />
