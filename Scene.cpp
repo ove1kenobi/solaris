@@ -197,15 +197,16 @@ void Scene::Update() noexcept {
 	float sunDist = distance(sunCenter, playerCenter);
 	if ((sunDist < 3000.0f || sunDist > 8000.0f) && m_damageTimer > 1.0f ) {
 		m_player.UpdateHealth(-5);
-
+		//Send event to UI so that we can tell the player that we are too far away / too close to the sun.
 		m_damageTimer = 0.0f;
 	}
 	
+	//Radioactive planets
 	for (auto r : m_radioactivePlanets) {
 		float planetDist = distance(r->GetCenter(), playerCenter);
 		if (planetDist < 1000.0f && m_damageTimer > 1.0f) {
 			m_player.UpdateHealth(-5);
-
+			//Send event to UI so that we can tell the player that we are too close to the sun.
 			m_damageTimer = 0.0f;
 		}
 	}
@@ -217,4 +218,8 @@ void Scene::Update() noexcept {
 	ImGui::Text("%d", health);
 	ImGui::End();
 #endif
+
+	if (m_player.GetHealth() <= 0) {
+		//game over
+	}
 }

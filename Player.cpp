@@ -50,7 +50,8 @@ Player::Player()
 	m_desiredSpeed = 0.0f;
 	m_thrusterForce = 10000000.0f;
 
-	m_health = 100;
+	m_maxHealth = 100;
+	m_currentHealth = 100;
 }
 
 Player::~Player()
@@ -198,9 +199,21 @@ void Player::OnEvent(IEvent& event) noexcept
 }
 
 int Player::GetHealth() noexcept {
-	return m_health;
+	return m_currentHealth;
 }
 
 void Player::UpdateHealth(int value) {
-	m_health += value;
+	m_currentHealth += value;
+}
+
+int Player::GetMaxHealth() noexcept {
+	return m_maxHealth;
+}
+
+void Player::UpdateMaxHealth(int value) {
+	m_maxHealth += value;
+
+	if (m_currentHealth > m_maxHealth) {
+		m_currentHealth = m_maxHealth;
+	}
 }

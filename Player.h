@@ -27,7 +27,8 @@ private:
 	void UpdateRotation();
 	DirectX::XMFLOAT3 Stabilize();
 
-	int m_health;
+	int m_currentHealth;
+	int m_maxHealth;
 public:
 	Player();
 	~Player();
@@ -40,5 +41,7 @@ public:
 
 	int GetHealth() noexcept;
 	void UpdateHealth(int value);
+	int GetMaxHealth() noexcept;
+	void UpdateMaxHealth(int value);
 };
 
