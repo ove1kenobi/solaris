@@ -114,13 +114,14 @@ bool CosmicBody::update(DirectX::XMMATRIX VMatrix, DirectX::XMMATRIX PMatrix, co
 	data->WMatrix = DirectX::XMMatrixTranspose(WMatrix);
 	data->WVPMatrix = DirectX::XMMatrixTranspose(WMatrix * VMatrix * PMatrix);
 	deviceContext->Unmap(this->m_model->getMatrixBuffer().Get(), 0);
-	
-	//Bounding sphere:
-	m_model->GetBoundingSphere()->Center = m_center;
 
 	//Update the water sphere.
 	if(m_waterSphere)
 		m_waterSphere->updateSphere(VMatrix, PMatrix, deviceContext, m_center.x, m_center.y, m_center.z);
+
+	//Bounding sphere:
+	m_model->GetBoundingSphere()->Center = m_center;
+
 	return true;
 }
 

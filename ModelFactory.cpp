@@ -185,7 +185,7 @@ Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r, UINT typ
 
 	createBuffers(sizeof(vertex_col), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
 
-	model->SetBoundingVolume(new DirectX::BoundingSphere(center, r + (r / 5.0f)));
+	model->SetBoundingVolume(new DirectX::BoundingSphere(center, r + (r / 3.0f)));
 	
 	return model;
 }
@@ -214,7 +214,7 @@ Model* ModelFactory::GenerateWaterSphere(float x, float y, float z, float r) {
 
 	createBuffers(sizeof(Vertex_Position), vertices.size(), static_cast<void*>(vertices.data()), indices, model);
 
-	model->SetBoundingVolume(new DirectX::BoundingSphere(center, r + (r / 10) + (r / 5.0f)));
+	model->SetBoundingVolume(new DirectX::BoundingSphere(center, r / 100.0f));
 
 	return model;
 }
