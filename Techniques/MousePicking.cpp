@@ -68,12 +68,18 @@ void MousePicking::DoIntersectionTests(const unsigned int& x, const unsigned int
 		DirectX::XMVECTOR originVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 		DirectX::XMVECTOR originWorldSpaceVector = DirectX::XMVector4Transform(originVector, inverseViewMatrix);
 
+		DirectX::XMFLOAT3 OriginWorldSpaceVector;
+		DirectX::XMFLOAT3 RayWorldSpaceDirectionVector;
+
+		DirectX::XMStoreFloat3(&OriginWorldSpaceVector, originWorldSpaceVector);
+		DirectX::XMStoreFloat3(&RayWorldSpaceDirectionVector, rayWorldSpaceDirectionVector);
+
 		float distance = {};
 		float t = FLT_MAX;
 		m_pPickedObject = nullptr;
 		for (unsigned int i{ 0u }; i < gameObjects.size(); i++)
 		{
-			if (gameObjects[i]->IntersectRayObject(originWorldSpaceVector, rayWorldSpaceDirectionVector, distance))
+			if (gameObjects[i]->IntersectRayObject(&OriginWorldSpaceVector, &RayWorldSpaceDirectionVector, distance))
 			{
 				if (distance < t)
 				{

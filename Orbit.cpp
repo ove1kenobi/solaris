@@ -72,7 +72,7 @@ void Orbit::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>&
 	//Do nothing as of now...
 }
 
-const bool Orbit::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
+const bool Orbit::IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept
 {
 	return false;
 }

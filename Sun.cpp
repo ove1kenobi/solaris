@@ -41,7 +41,7 @@ const bool Sun::Initialize() noexcept
 	return true;
 }
 
-const bool Sun::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
+const bool Sun::IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept
 {
 	return false;
 }

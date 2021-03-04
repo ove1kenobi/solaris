@@ -102,11 +102,14 @@ void Asteroid::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& de
 	deviceContext->VSSetConstantBuffers(0, 1, m_AmatrixBuffer.GetAddressOf());
 }
 
-const bool Asteroid::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
+const bool Asteroid::IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept
 {
+	DirectX::XMVECTOR Origin = DirectX::XMLoadFloat3(origin);
+	DirectX::XMVECTOR Direction = DirectX::XMLoadFloat3(direction);
 	DirectX::BoundingSphere b = *(m_model->GetBoundingSphere());
 	b.Center = m_center;
-	return b.Intersects(origin, direction, distance);
+	b.Radius *= m_scale;
+	return b.Intersects(Origin, Direction, distance);
 }
 
 const std::string& Asteroid::GetTag() const noexcept

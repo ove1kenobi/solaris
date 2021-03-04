@@ -102,7 +102,7 @@ DirectX::XMFLOAT3 SpaceShip::GetVelocity()
 	return m_velocity;
 }
 
-const bool SpaceShip::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
+const bool SpaceShip::IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept
 {
 	return false;
 }

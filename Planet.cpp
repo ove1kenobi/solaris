@@ -30,9 +30,12 @@ bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zR
 	return true;
 }
 
-const bool Planet::IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept
+const bool Planet::IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept
 {
-	return m_model->GetBoundingSphere()->Intersects(origin, direction, distance);
+	DirectX::XMVECTOR Origin = DirectX::XMLoadFloat3(origin);
+	DirectX::XMVECTOR Direction = DirectX::XMLoadFloat3(direction);
+
+	return m_model->GetBoundingSphere()->Intersects(Origin, Direction, distance);
 }
 
 const std::string& Planet::GetTag() const noexcept
