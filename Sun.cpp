@@ -29,14 +29,16 @@ Sun::Sun() noexcept
 
 const bool Sun::Initialize() noexcept
 {
+	float radius = 900.0f;
 	//The cosmic body
-	this->init(0.0f, 0.0f, 0.0f, 900.0f, 0.0f, 0.0f, 1, nullptr, nullptr, nullptr);
+	this->init(0.0f, 0.0f, 0.0f, radius, 0.0f, 0.0f, 1, nullptr, nullptr, nullptr);
 	//Generate the Sun.
 	this->m_model = ModelFactory::Get().GenerateSun(this->m_center.x, this->m_center.y, this->m_center.z, this->m_radius);
 	//The light
 	//Uses RGB-values as taken from the net from a paper discussing correct sun-RGB-values. Intensity is 1, center is same as sun. 
 	m_PointLight.Initialize(DirectX::XMFLOAT3(1.0f, 0.95f, 0.93f), 1.0f, m_center);
 	m_HasBoundingVolume = true;
+	m_boundingSphere.Radius = radius;
 	m_mass *= 1.0e3f;
 	return true;
 }

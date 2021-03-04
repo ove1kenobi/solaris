@@ -27,6 +27,8 @@ bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zR
 
 	//Generate the Planet.
 	this->m_model = ModelFactory::Get().GeneratePlanet(x, y, z, r, m_planetType, yAxis);
+
+	m_boundingSphere.Radius = r;
 	return true;
 }
 
