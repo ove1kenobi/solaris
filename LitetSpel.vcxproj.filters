@@ -142,7 +142,6 @@
     <ClInclude Include="Resources\GBuffer.h" />
     <ClInclude Include="UI\TypesUI.h" />
     <ClInclude Include="UI\Button.h" />
-    <ClInclude Include="UI\ModuleUI.h" />
     <ClInclude Include="UI\PlanetInteractionUI.h" />
     <ClInclude Include="UI\RandomEventUI.h" />
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
@@ -152,6 +151,8 @@
     <ClInclude Include="ModelTexture.h" />
     <ClInclude Include="Techniques\FrustumCulling.h" />
     <ClInclude Include="WaterSphere.h" />
+    <ClInclude Include="ModuleUI.h" />
+    <ClInclude Include="UI\ModuleUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />
