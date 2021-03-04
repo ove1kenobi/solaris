@@ -6,7 +6,10 @@ Model::Model()
 	m_indexBufferSize{ 0 }, m_vertexBufferSize{ 0 },
 	m_boundingBox{ nullptr }, m_boundingSphere{ nullptr }
 {
-	
+	for (size_t i = 0; i < 1; ++i)
+	{
+		m_texture.push_back(nullptr);
+	}
 }
 
 Model::~Model()
@@ -20,6 +23,10 @@ Model::~Model()
 	{
 		delete m_boundingSphere;
 		m_boundingSphere = nullptr;
+	}
+	for (auto t : m_texture)
+	{
+		if (t) delete t;
 	}
 }
 
@@ -97,3 +104,12 @@ DirectX::BoundingSphere* Model::GetBoundingSphere()
 	return m_boundingSphere;
 }
 
+std::vector<ModelTexture*>& Model::GetTextures()
+{
+	return m_texture;
+}
+
+void Model::AddTexture(ModelTexture* tex, UINT type)
+{
+	m_texture[type] = tex;
+}

@@ -3,7 +3,9 @@
 
 const bool FrustumCulling::Initialize(PlayerCamera& playerCamera) noexcept
 {
-	m_BoundingFrustum = DirectX::BoundingFrustum(playerCamera.getPMatrix());
+	DirectX::XMFLOAT4X4 PMatrix = playerCamera.getPMatrix();
+	DirectX::XMMATRIX pMatrix = DirectX::XMLoadFloat4x4(&PMatrix);
+	m_BoundingFrustum = DirectX::BoundingFrustum(pMatrix);
 	return true;
 }
 
@@ -25,13 +27,15 @@ void FrustumCulling::CullObjects(std::vector<GameObject*>& gameObjects, PlayerCa
 	renderData = {};
 	renderData.sunCulled = true;
 	renderData.allObjects = &gameObjects;
+	DirectX::XMFLOAT4X4 VMatrix = playerCamera.getVMatrix();
+	DirectX::XMMATRIX vMatrix = DirectX::XMLoadFloat4x4(&VMatrix);
 	for (unsigned int i{ 0u }; i < gameObjects.size(); ++i)
 	{
 		//The objects is either a planet or the sun:
 		if (gameObjects[i]->ShallBeTestedForCulling())
 		{
-			DirectX::BoundingSphere boundingSphere = *gameObjects[i]->GetModel()->GetBoundingSphere();
-			boundingSphere.Transform(boundingSphere, playerCamera.getVMatrix());
+			DirectX::BoundingSphere boundingSphere = gameObjects[i]->GetBoundingSphere();
+			boundingSphere.Transform(boundingSphere, vMatrix);
 			if (m_BoundingFrustum.Contains(boundingSphere) > DirectX::DISJOINT)
 			{
 				renderData.culledObjects.push_back(gameObjects[i]);
@@ -50,8 +54,12 @@ void FrustumCulling::CullObjects(std::vector<GameObject*>& gameObjects, PlayerCa
 				{
 					renderData.sunCulled = false;
 				}
+				else if (gameObjects[i]->GetTag() == "Asteroid")
+				{
+					renderData.nrOfAsteroidsInView++;
+				}
 			}
-		}// The object is either an orbits or the ship, and they are to be rendered always
+		}// The object is either an orbit or the ship, and they are to be rendered always
 		 // Therefore, include by default:
 		else
 		{
@@ -67,8 +75,8 @@ void FrustumCulling::CullObjects(std::vector<GameObject*>& gameObjects, PlayerCa
 	  Planets -> Orbits -> Sun -> SpaceShip*/
 #if defined(DEBUG) | defined (_DEBUG)
 	ImGui::Begin("Frustum Culling");
-	ImGui::Text("Objects being rendered: %d\nPlanets being rendered: %d\nSun rendered: %d", 
-		renderData.culledObjects.size(), renderData.nrOfPlanetsInView, !renderData.sunCulled);
+	ImGui::Text("Objects being rendered: %d\nPlanets being rendered: %d\nSun rendered: %d\nAsteroids rendered: %d", 
+		renderData.culledObjects.size(), renderData.nrOfPlanetsInView, !renderData.sunCulled, renderData.nrOfAsteroidsInView);
 	ImGui::End();
 #endif
 	//It remains to sort the culled planets based on distance:
