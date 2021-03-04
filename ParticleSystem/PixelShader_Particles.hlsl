@@ -4,8 +4,8 @@ SamplerState LinearSampler : register(s0);
 struct PS_INPUT
 {
 	float4 positoin : SV_POSITION;
-	float2 texcoords;
-	float4 color;
+	float2 texcoords : TEXCOORDS;
+	float4 color : COLOR;
 };
 
 float4 main(in PS_INPUT input) : SV_TARGET

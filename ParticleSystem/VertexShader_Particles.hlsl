@@ -13,7 +13,7 @@ struct VS_INPUT
 
 struct GS_INPUT
 {
-	float3 position : POSITION
+	float3 position : POSITION;
 };
 
 GS_INPUT main( in VS_INPUT input )

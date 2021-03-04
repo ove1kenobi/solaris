@@ -28,9 +28,9 @@ static const float2 g_texcoords[4] =
 
 struct PS_INPUT
 {
-	float4 positoin : SV_POSITION;
-	float2 texcoords;
-	float4 color;
+	float4 position : SV_POSITION;
+	float2 texcoords : TEXCOORDS;
+	float4 color : COLOT;
 };
 
 struct GS_INPUT
@@ -56,7 +56,7 @@ void main(point GS_INPUT input[1], inout TriangleStream<PS_INPUT> SpriteStream)
 	for (uint i = 0; i < 4; i++)
 	{
 		// Transform to clip space
-		output.position = mul(viewPosition + g_position[i], PMatrix);
+		output.position = mul(viewPosition + g_positions[i], PMatrix);
 		output.texcoords = g_texcoords[i];
 		output.color = color;
 		
