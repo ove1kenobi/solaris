@@ -13,7 +13,7 @@ private:
 	std::wstring m_pHoverText;
 
 	//For User Story 30: icons
-	//std::vector<> m_pIconPicture;
+	//std::vector<D2D1_RECT_F> m_pIconPicture;
 	std::vector<std::wstring> m_pIconText;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pIconTextFormat;
 

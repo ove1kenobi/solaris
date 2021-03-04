@@ -89,6 +89,10 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="UI\HeadsUpDisplayBar.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="Bloom.cpp" />
     <ClCompile Include="UI\HeadsUpDisplayUI.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
@@ -232,7 +236,9 @@
     <ClCompile Include="WaterSphere.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="UI\HeadsUpDisplayBar.h" />
     <ClInclude Include="Bloom.h" />
+    <ClInclude Include="EventSystem\UIEvents.h" />
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
     <ClInclude Include="UI\RandomEventUI.h" />
     <ClInclude Include="UI\Button.h" />
