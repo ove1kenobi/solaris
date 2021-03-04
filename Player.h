@@ -9,8 +9,6 @@
 #include "EventSystem/SoundEvents.h"
 #include "Resources.h"
 
-//#include <iostream>
-
 class Player : public IEventListener
 {
 private:
@@ -26,7 +24,6 @@ private:
 	int m_storageCapacity;
 	int m_storageUsage;
 	int m_resources[numberOfResources];
-
 
 	float m_thrusterForce, m_desiredSpeed, m_topSpeed;
 

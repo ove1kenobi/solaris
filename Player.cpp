@@ -71,34 +71,25 @@ bool Player::Initialize(PlayerCamera* camera)
 	m_camera = camera;
 	m_ship = new SpaceShip();
 	m_topSpeed = m_ship->GetTopSpeed();
-	/*
-	std::cout << "Test 1: " << std::endl;
-	AddResource(100, Resource::Fuel);
-	AddResource(450, Resource::Fuel);
-	AddResource(100, Resource::Fuel);
-	AddResource(-200, Resource::Fuel);
-
-	std::cout << "Test 2: " << std::endl;
-	AddResource(-600, Resource::Oxygen);
-	AddResource(-100, Resource::Oxygen);
-	AddResource(1, Resource::Oxygen);
-	AddResource(0, Resource::Oxygen);
-
-	std::cout << "Test 3: " << std::endl;
-	AddResource(400, Resource::Titanium);
-	AddResource(300, Resource::Khionerite);
-	AddResource(1000, Resource::Nanotech);
-	AddResource(100, Resource::Nanotech);
-	AddResource(-500, Resource::Plasma);
-	AddResource(-200, Resource::Titanium);
-	AddResource(-1000, Resource::Nanotech);*/
-
 
 	return true;
 }
 
 bool Player::update()
 {
+#if defined(DEBUG) | defined(_DEBUG)
+	ImGui::Begin("Inventiry");
+	ImGui::Text("Fuel: %d", m_resources[0]);
+	ImGui::Text("Oxygen: %d", m_resources[1]);
+	ImGui::Text("Titanium: %d", m_resources[2]);
+	ImGui::Text("Scrap Metal: %d", m_resources[3]);
+	ImGui::Text("Nanotech: %d", m_resources[4]);
+	ImGui::Text("Plasma: %d", m_resources[5]);
+	ImGui::Text("Radium: %d", m_resources[6]);
+	ImGui::Text("Khionerite: %d", m_resources[7]);
+	ImGui::End();
+#endif
+
 	DirectX::XMFLOAT3 shipForce = { 0.0f, 0.0f, 0.0f };
 
 	// Handle player input
@@ -193,15 +184,22 @@ void Player::AddResource(int amount, Resource resource)
 		}
 		default:
 		{
-			int newUsage = m_storageUsage + amount;
-			if (newUsage > m_storageCapacity) {
-				m_resources[index] += m_storageCapacity - m_storageUsage;
-				m_storageUsage = m_storageCapacity;
+			int storageLeft = m_storageCapacity - m_storageUsage;
+
+			if (storageLeft < amount) {
+				m_resources[index] += storageLeft;
+				m_storageUsage += storageLeft;
+			}
+			else if (m_resources[index] + amount < 0) {
+				int tempAmount = m_resources[index];
+				m_resources[index] = 0;
+				m_storageUsage -= tempAmount;
 			}
 			else {
 				m_resources[index] += amount;
 				m_storageUsage += amount;
 			}
+
 			break;
 		}
 	}
@@ -209,14 +207,6 @@ void Player::AddResource(int amount, Resource resource)
 	if (m_resources[index] < 0) {
 		m_resources[index] = 0;
 	}
-	if (m_storageUsage < 0) {
-		m_storageUsage = 0;
-	}
-
-	//for (unsigned int i = 0; i < numberOfResources; i++) {
-	//	std::cout << m_resources[i] << std::endl;
-	//}
-	//std::cout << std::endl << m_storageUsage << std::endl << std::endl << std::endl;
 }
 
 void Player::OnEvent(IEvent& event) noexcept
