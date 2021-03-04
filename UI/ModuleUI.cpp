@@ -16,6 +16,53 @@ bool ModuleUI::CreateBrush() {
 	);
 }
 
+std::wstring ModuleUI::GetIconFilePath(std::wstring iconFile) {
+	std::wstring FilePath;
+
+	//Get current directory
+	TCHAR NPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, NPath);
+	FilePath.append(NPath);
+
+	//Get icon file
+	FilePath.append(L"\\UI\\Icons\\");
+	FilePath.append(iconFile);
+
+	return FilePath;
+}
+
+void ModuleUI::LoadBitmapFromFile(PCWSTR uri, UINT destinationWidth, UINT destinationHeight, ID2D1Bitmap** ppBitmap) {
+	IWICImagingFactory* pIWICFactory = NULL;
+	//------------
+	IWICBitmapDecoder* pDecoder = NULL;
+	IWICBitmapFrameDecode* pSource = NULL;
+	IWICStream* pStream = NULL;
+	IWICFormatConverter* pConverter = NULL;
+	IWICBitmapScaler* pScaler = NULL;
+
+	if (ErrorCheck(CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pIWICFactory)), "CreateInstance")) {
+		ErrorCheck(pIWICFactory->CreateDecoderFromFilename(uri, NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &pDecoder), "CreateDecoderFromFilename");
+
+		//Create the initial frame.
+		ErrorCheck(pDecoder->GetFrame(0, &pSource), "GetFrame");
+
+		//Convert the image format to 32bppPBGRA
+		//(DXGI_FORMAT_B8G8R8A8_UNORM + D2D1_ALPHA_MODE_PREMULTIPLIED).
+		ErrorCheck(pIWICFactory->CreateFormatConverter(&pConverter), "");
+
+		ErrorCheck(pConverter->Initialize(pSource, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.f, WICBitmapPaletteTypeMedianCut), "");
+
+		//Create a Direct2D bitmap from the WIC bitmap.
+		ErrorCheck(m_pRenderTarget2D->CreateBitmapFromWicBitmap(pConverter, NULL, ppBitmap), "");
+	}
+
+	//pDecoder->Release();
+	//pSource->Release();
+	//pStream->Release();
+	//pConverter->Release();
+	//pScaler->Release();
+}
+
 void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {
 	DelegateDXEvent& derivedEvent = static_cast<DelegateDXEvent&>(event);
 	

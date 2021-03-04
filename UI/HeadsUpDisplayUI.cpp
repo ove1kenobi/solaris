@@ -16,6 +16,11 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pRightDisplayScreen = D2D1::RectF();
 	m_pLeftDisplayScreen = D2D1::RectF();
 
+	m_pHealthIcon = D2D1::RectF();
+	m_pOxygenIcon = D2D1::RectF();
+	m_pFuelIcon = D2D1::RectF();
+
+	m_pCapacityIcon = D2D1::RectF();
 	m_pCapacityTextBox = D2D1::RectF();
 	m_pCapacityText = L"500 / 1225";
 
@@ -68,9 +73,23 @@ bool HeadsUpDisplayUI::CreateDisplayScreens() {
 }
 
 bool HeadsUpDisplayUI::CreateBars() {
+	//Health bar
 	m_pHealthBar.Initialize();
+	//Load icon from file
+	LoadBitmapFromFile(GetIconFilePath(L"health.png").c_str(), 512, 512, &m_pHealthBitmap);
+	ErrorCheck(m_pRenderTarget2D->CreateBitmapBrush(m_pHealthBitmap.Get(), &m_pHealthBitmapBrush),"CreateBitmapBrush");
+
+	//OxygenBar
 	m_pOxygenBar.Initialize();
+	//Load icon from file
+	LoadBitmapFromFile(GetIconFilePath(L"Oxygen.png").c_str(), 512, 512, &m_pOxygenBitmap);
+	ErrorCheck(m_pRenderTarget2D->CreateBitmapBrush(m_pOxygenBitmap.Get(), &m_pOxygenBitmapBrush), "CreateBitmapBrush");
+
+	//FuelBar
 	m_pFuelBar.Initialize();
+	//Load icon from file
+	LoadBitmapFromFile(GetIconFilePath(L"Fuel.png").c_str(), 512, 512, &m_pFuelBitmap);
+	ErrorCheck(m_pRenderTarget2D->CreateBitmapBrush(m_pFuelBitmap.Get(), &m_pFuelBitmapBrush), "CreateBitmapBrush");
 	return true;
 }
 
@@ -133,6 +152,7 @@ bool HeadsUpDisplayUI::UpdateDisplayScreens() {
 }
 
 bool HeadsUpDisplayUI::UpdateBars() {
+	//Health bar
 	m_pHealthBar.SetTools(D2D1::ColorF(1.0f, 0.0f, 0.0f, 1.0f),
 		D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.5f),
 		D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.5f));
@@ -144,6 +164,14 @@ bool HeadsUpDisplayUI::UpdateBars() {
 		m_pRightDisplayScreen.bottom - 40.0f,
 		5.0f);
 
+	m_pHealthIcon = D2D1::RectF(
+		m_pRightDisplayScreen.right - 50.0f,
+		m_pRightDisplayScreen.bottom - 60.0f,
+		m_pRightDisplayScreen.right - 30.0f,
+		m_pRightDisplayScreen.bottom - 40.0f
+	);
+
+	//Oxygen bar
 	m_pOxygenBar.SetTools(D2D1::ColorF(0.0f, 0.0f, 1.0f, 1.0f),
 		D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.5f),
 		D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.5f));
@@ -155,6 +183,14 @@ bool HeadsUpDisplayUI::UpdateBars() {
 		m_pRightDisplayScreen.bottom - 75.0f,
 		5.0f);
 
+	m_pOxygenIcon = D2D1::RectF(
+		m_pRightDisplayScreen.right - 50.0f,
+		m_pRightDisplayScreen.bottom - 95.0f,
+		m_pRightDisplayScreen.right - 30.0f,
+		m_pRightDisplayScreen.bottom - 75.0f
+	);
+
+	//Fuel bar
 	m_pFuelBar.SetTools(D2D1::ColorF(0.0f, 1.0f, 0.0f, 1.0f),
 		D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.5f),
 		D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.5f));
@@ -165,6 +201,13 @@ bool HeadsUpDisplayUI::UpdateBars() {
 		m_pRightDisplayScreen.right - 55.0f,
 		m_pRightDisplayScreen.bottom - 110.0f,
 		5.0f);
+
+	m_pFuelIcon = D2D1::RectF(
+		m_pRightDisplayScreen.right - 50.0f,
+		m_pRightDisplayScreen.bottom - 130.0f,
+		m_pRightDisplayScreen.right - 30.0f,
+		m_pRightDisplayScreen.bottom - 110.0f
+	);
 	return true;
 }
 
@@ -173,6 +216,13 @@ bool HeadsUpDisplayUI::UpdateCapacity() {
 		m_pRightDisplayScreen.left + ((m_pRightDisplayScreen.right - m_pRightDisplayScreen.left)/2.0f),
 		m_pRightDisplayScreen.bottom - 165.0f,
 		m_pRightDisplayScreen.right - 55.0f,
+		m_pRightDisplayScreen.bottom - 145.0f
+	);
+
+	m_pCapacityIcon = D2D1::RectF(
+		m_pRightDisplayScreen.right - 50.0f,
+		m_pRightDisplayScreen.bottom - 165.0f,
+		m_pRightDisplayScreen.right - 30.0f,
 		m_pRightDisplayScreen.bottom - 145.0f
 	);
 	return true;
@@ -256,6 +306,11 @@ void HeadsUpDisplayUI::RenderBars() {
 	m_pHealthBar.Render();
 	m_pOxygenBar.Render();
 	m_pFuelBar.Render();
+
+	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	m_pRenderTarget2D->FillRectangle(m_pHealthIcon, m_pHealthBitmapBrush.Get());
+	m_pRenderTarget2D->FillRectangle(m_pOxygenIcon, m_pOxygenBitmapBrush.Get());
+	m_pRenderTarget2D->FillRectangle(m_pFuelIcon, m_pFuelBitmapBrush.Get());
 }
 
 void HeadsUpDisplayUI::RenderCapacity() {
@@ -269,6 +324,8 @@ void HeadsUpDisplayUI::RenderCapacity() {
 		m_pCapacityTextBox,
 		m_pBrush.Get()
 	);
+
+	m_pRenderTarget2D->FillRectangle(m_pCapacityIcon, m_pBrush.Get());
 }
 
 void HeadsUpDisplayUI::RenderWarningModule() {

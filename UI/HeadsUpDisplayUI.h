@@ -25,14 +25,20 @@ private:
 	std::wstring m_pPlanetText;
 
 	//Healthbar
+	Microsoft::WRL::ComPtr<ID2D1BitmapBrush> m_pHealthBitmapBrush;
+	Microsoft::WRL::ComPtr<ID2D1Bitmap> m_pHealthBitmap;
 	HeadsUpDisplayBar m_pHealthBar;
 	D2D1_RECT_F m_pHealthIcon;
 
-	//CO2Bar
+	//OxygenBar
+	Microsoft::WRL::ComPtr<ID2D1BitmapBrush> m_pOxygenBitmapBrush;
+	Microsoft::WRL::ComPtr<ID2D1Bitmap> m_pOxygenBitmap;
 	HeadsUpDisplayBar m_pOxygenBar;
 	D2D1_RECT_F m_pOxygenIcon;
 
 	//FuelBar
+	Microsoft::WRL::ComPtr<ID2D1BitmapBrush> m_pFuelBitmapBrush;
+	Microsoft::WRL::ComPtr<ID2D1Bitmap> m_pFuelBitmap;
 	HeadsUpDisplayBar m_pFuelBar;
 	D2D1_RECT_F m_pFuelIcon;
 
@@ -40,6 +46,7 @@ private:
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pCapacityFormat;
 	D2D1_RECT_F m_pCapacityTextBox;
 	std::wstring m_pCapacityText;
+	D2D1_RECT_F m_pCapacityIcon;
 
 	//Warning module
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pWarningTriangle;
