@@ -88,7 +88,7 @@ GameObject* CosmicBody::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 
 
 	//Update the wMatrix and the angle.
 	DirectX::XMMATRIX result = scaleMatrix * rotMatrix  * transMatrix;
-	DirectX::XMStoreFloat4x4(&this->m_wMatrix, result);
+	DirectX::XMStoreFloat4x4(&this->m_wMatrix, DirectX::XMMatrixTranspose(result));
 	//Angle change depends on planets radius (smaller planet = faster spin)
 	angle += 0.001f * static_cast<float>(this->m_timer.DeltaTime()) * (250 / this->m_radius);
 

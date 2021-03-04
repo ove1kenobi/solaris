@@ -60,7 +60,7 @@ GameObject* Asteroid::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PM
 	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationRollPitchYaw(m_roll, m_pitch, m_yaw);
 	DirectX::XMMATRIX trans = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);
 	DirectX::XMMATRIX result = scale * rot * trans;
-	DirectX::XMStoreFloat4x4(&m_wMatrix, result);
+	DirectX::XMStoreFloat4x4(&m_wMatrix, DirectX::XMMatrixTranspose(result));
 
 	//Update the matrixBuffer.
 

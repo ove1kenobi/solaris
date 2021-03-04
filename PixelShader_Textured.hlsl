@@ -22,7 +22,7 @@ PS_OUT ps_main(in PS_IN psIn)
 
     psOut.color = diffuseTex.Sample(linearSampler, psIn.inTexCoords);
 
-    psOut.wPos = float4(psIn.inPositionWS, 0.0);
+    psOut.wPos = float4(psIn.inPositionWS, 0.0f);
 
     psOut.normal = float4(normalize(psIn.inNormalWS), -1.0f);
     return psOut;

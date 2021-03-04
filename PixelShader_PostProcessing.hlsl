@@ -15,7 +15,7 @@ cbuffer PlanetData : register(b0)
 cbuffer CameraData : register(b1)
 {
 	float4 cameraPos;
-	matrix inverseVMatrix;
+	float4x4 inverseVMatrix;
 	float4x4 PMatrix;
 };
 
@@ -147,7 +147,7 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	//And if there is supposed to be water in that pixel or we are looking through water.
 	//Calculate water
 	[flatten]
-	if (closestPlanet.y != -1.0f && depth < 12000.0f && (depth - closestPlanet.x + 0.001f > 0.0f)) {
+	if ((closestPlanet.y != -1.0f && depth < 12000.0f && (depth - closestPlanet.x + 0.001f > 0.0f)) && normalTemp.w != -1.0f) {
 		/*LIGHTING ON BOTTOM OF THE OCEAN*/
 		//Does not use specular.
 		/*Note, attenuation is not relevant FOR THE SUN, and is as such not included in the calculations*/
