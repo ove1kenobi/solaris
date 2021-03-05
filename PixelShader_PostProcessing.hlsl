@@ -153,8 +153,8 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	//And if there is supposed to be water in that pixel or we are looking through water.
 	//Calculate water
 	[flatten]
-	if ((distFromCenter < radian + (radian * 0.03f) ||
-		(closestPlanet.y != -1.0f && (depth - closestPlanet.x + 0.001f > 0.0f))) &&
+	if ((distFromCenter < radian + (radian * 0.03f) || closestPlanet.y != -1.0f) &&
+		depth - closestPlanet.x + 0.001f > 0.0f &&
 		normalTemp.w != -1.0f
 	) {
 		/*LIGHTING ON BOTTOM OF THE OCEAN*/
