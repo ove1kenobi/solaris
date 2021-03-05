@@ -38,6 +38,6 @@ public:
 	DirectX::XMFLOAT3 getPos();
 	DirectX::XMFLOAT3 getRot();
 
-	DirectX::XMMATRIX getVMatrix();
-	DirectX::XMMATRIX getPMatrix();
+	DirectX::XMFLOAT4X4 getVMatrix();
+	DirectX::XMFLOAT4X4 getPMatrix();
 };

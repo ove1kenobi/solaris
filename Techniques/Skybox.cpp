@@ -61,9 +61,14 @@ void Skybox::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDev
 	EventBuss::Get().Delegate(dsEvent);
 
 	//There should be as serious thought whether this should really be done here (Emil F)
-	MatrixBuffer buffer = {};
-	buffer.VMatrix = DirectX::XMMatrixTranspose(m_pCamera->getVMatrix());
-	buffer.PMatrix = DirectX::XMMatrixTranspose(m_pCamera->getPMatrix());
+	DirectX::XMFLOAT4X4 VMatrix = m_pCamera->getVMatrix();
+	DirectX::XMFLOAT4X4 PMatrix = m_pCamera->getPMatrix();
+
+	DirectX::XMMATRIX vMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&VMatrix));
+	DirectX::XMMATRIX pMatrix = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&PMatrix));
+
+	DirectX::XMStoreFloat4x4(&VMatrix, vMatrix);
+	DirectX::XMStoreFloat4x4(&PMatrix, pMatrix);
 
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource = {};
 	HR_X(pDeviceContext->Map(m_pCameraCBuffer.Get(),
@@ -72,10 +77,12 @@ void Skybox::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDev
 							 0,
 							 &mappedSubresource), 
 							 "Map");
-	MatrixBuffer* data = (MatrixBuffer*)mappedSubresource.pData;
-	data->VMatrix = buffer.VMatrix;
-	data->PMatrix = buffer.PMatrix;
+
+	memcpy(mappedSubresource.pData, &vMatrix, sizeof(DirectX::XMFLOAT4X4));
+	memcpy(((char*)mappedSubresource.pData) + sizeof(DirectX::XMFLOAT4X4), &pMatrix, sizeof(DirectX::XMFLOAT4X4));
+
 	pDeviceContext->Unmap(m_pCameraCBuffer.Get(), 0);
+
 	pDeviceContext->VSSetConstantBuffers(0u, 1u, m_pCameraCBuffer.GetAddressOf());
 }
 

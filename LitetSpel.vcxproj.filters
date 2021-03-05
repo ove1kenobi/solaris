@@ -15,6 +15,8 @@
     <FxCompile Include="VertexShader_PostProcessing.hlsl" />
     <FxCompile Include="VertexShader_WaterSphere.hlsl" />
     <FxCompile Include="PixelShader_WaterSphere.hlsl" />
+    <FxCompile Include="PixelShader_Textured.hlsl" />
+    <FxCompile Include="VertexShader_Textured.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bloom.cpp" />
@@ -74,6 +76,8 @@
     <ClCompile Include="UI\HeadsUpDisplayUI.cpp" />
     <ClCompile Include="UI\HeadsUpDisplayBar.cpp" />
     <ClCompile Include="WaterSphere.cpp" />
+    <ClCompile Include="Asteroid.cpp" />
+    <ClCompile Include="ModelTexture.cpp" />
     <ClCompile Include="SoundManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +149,8 @@
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
     <ClInclude Include="EventSystem\UIEvents.h" />
     <ClInclude Include="UI\HeadsUpDisplayBar.h" />
+    <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="ModelTexture.h" />
     <ClInclude Include="Techniques\FrustumCulling.h" />
     <ClInclude Include="WaterSphere.h" />
     <ClInclude Include="SoundManager.h" />

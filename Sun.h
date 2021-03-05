@@ -21,7 +21,7 @@ public:
 	//Uses the CosmicBody init() and light init() to set everything up related to the sun
 	[[nodiscard]] const bool Initialize() noexcept;
 	[[nodiscard]] const PointLight& GetPointLight() const;
-	[[nodiscard]] const bool IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept override;
+	[[nodiscard]] const bool IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept override;
 	[[nodiscard]] const std::string& GetTag() const noexcept override;
 	[[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept override;
 };

@@ -33,6 +33,8 @@ const bool ResourceManager::CreateAllBindables()
 		return false;
 	if (!m_VertexShaderShadow.Create(m_pDevice, L"VertexShader_Shadow.hlsl"))
 		return false;
+	if (!m_VertexShaderTextured.Create(m_pDevice, L"VertexShader_Textured.hlsl"))
+		return false;
 	//Pixel Shaders:
 	if (!m_PixelShaderMinimal.Create(m_pDevice, L"PixelShader_Minimalistic.hlsl"))
 		return false;
@@ -47,6 +49,8 @@ const bool ResourceManager::CreateAllBindables()
 	if (!m_PixelShaderWaterSpheres.Create(m_pDevice, L"PixelShader_WaterSphere.hlsl"))
 		return false;
 	if (!m_PixelShaderShadow.Create(m_pDevice, L"PixelShader_Shadow.hlsl"))
+		return false;
+	if (!m_PixelShaderTextured.Create(m_pDevice, L"PixelShader_Textured.hlsl"))
 		return false;
 	//Geometry Shaders:
 
@@ -65,6 +69,8 @@ const bool ResourceManager::CreateAllBindables()
 	if (!m_InputLayoutPostProcessing.Create(m_pDevice, m_VertexShaderPostProcessing, LAYOUT_POSTPROCESSING))
 		return false;
 	if (!m_InputLayoutWaterSpheres.Create(m_pDevice, m_VertexShaderWaterSpheres, LAYOUT_WATERSPHERES))
+		return false;
+	if (!m_InputLayoutPlayerModel.Create(m_pDevice, m_VertexShaderTextured, LAYOUT_PLAYER))
 		return false;
 	//Primitive topologies:
 	if (!m_TopologyTriList.Create(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST))
@@ -107,7 +113,9 @@ const bool ResourceManager::CreateAllBindables()
 	m_BindablesSkybox.insert(m_BindablesSkybox.end(), { &m_VertexShaderSkybox, &m_PixelShaderSkybox, &m_InputLayoutPositionOnly,
 														&m_TopologyTriList, &m_CubeTextureSkybox, &m_SamplerSkybox,
 														&m_VertexBufferCube, &m_IndexBufferCube});
+	// Orbits
 	m_BindablesOrbit.insert(m_BindablesOrbit.end(), { &m_VertexShaderOrbit, &m_PixelShaderOrbit, &m_InputLayoutPositionOnly, &m_TopologyLineStrip });
+	// Sun
 	m_BindablesSun.insert(m_BindablesSun.end(), { &m_VertexShaderMinimal, &m_PixelShaderSun, &m_InputLayoutMinimal, &m_TopologyTriList });
 
 	//RenderQuad First Pass:
@@ -120,6 +128,9 @@ const bool ResourceManager::CreateAllBindables()
 	m_BindablesWaterSpheres.insert(m_BindablesWaterSpheres.end(), { &m_VertexShaderWaterSpheres, &m_PixelShaderWaterSpheres, &m_InputLayoutWaterSpheres, &m_TopologyTriList });
 	//Shadow mapping:
 	m_BindablesShadow.insert(m_BindablesShadow.end(), { &m_VertexShaderShadow, &m_PixelShaderShadow, &m_InputLayoutPositionOnly, &m_TopologyTriList });
+	//Textured models
+	m_BindablesTextured.insert(m_BindablesTextured.end(), { &m_VertexShaderTextured, &m_PixelShaderTextured, 
+															&m_InputLayoutPlayerModel, &m_TopologyTriList, & m_SamplerSkybox });
 	return true;
 }
 
@@ -164,7 +175,7 @@ void ResourceManager::BindToPipeline(IEvent& event)
 	BindIDEvent& derivedEvent = static_cast<BindIDEvent&>(event);
 	switch (derivedEvent.GetBindID())
 	{
-	case BindID::ID_Minimal :
+	case BindID::ID_Minimal:
 	{
 		for (auto bindables : m_BindablesMinimalistic)
 		{
@@ -175,7 +186,7 @@ void ResourceManager::BindToPipeline(IEvent& event)
 		}
 		break;
 	}
-	case BindID::ID_RenderQuad :
+	case BindID::ID_RenderQuad:
 	{
 		for (auto bindables : m_BindablesRenderQuad)
 		{
@@ -186,7 +197,7 @@ void ResourceManager::BindToPipeline(IEvent& event)
 		}
 		break;
 	}
-	case BindID::ID_Player :
+	case BindID::ID_Player:
 	{
 		for (auto bindables : m_BindablesPlayer)
 		{
@@ -196,7 +207,7 @@ void ResourceManager::BindToPipeline(IEvent& event)
 			}
 		}
 		break;
-	case BindID::ID_PlanetHeight :
+	case BindID::ID_PlanetHeight:
 		if (!m_ComputeShaderPlanet.IsBound())
 		{
 			m_ComputeShaderPlanet.Bind(m_pDeviceContext);
@@ -263,6 +274,17 @@ void ResourceManager::BindToPipeline(IEvent& event)
 	case BindID::ID_Water:
 	{
 		for (auto bindables : m_BindablesWater)
+		{
+			if (!bindables->IsBound())
+			{
+				bindables->Bind(m_pDeviceContext);
+			}
+		}
+		break;
+	}
+	case BindID::ID_Textured:
+	{
+		for (auto bindables : m_BindablesTextured)
 		{
 			if (!bindables->IsBound())
 			{
