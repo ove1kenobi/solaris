@@ -190,15 +190,20 @@ void Player::AddResource(int amount, Resource resource)
 		{
 			int storageLeft = m_storageCapacity - m_storageUsage;
 
+			// Storage space have run out, add only as much as you can
 			if (storageLeft < amount) {
 				m_resources[index] += storageLeft;
 				m_storageUsage += storageLeft;
 			}
+
+			// We can't have less then 0 of a resource, only remove what we have
 			else if (m_resources[index] + amount < 0) {
 				int tempAmount = m_resources[index];
 				m_resources[index] = 0;
 				m_storageUsage -= tempAmount;
 			}
+
+			// Normal scenario
 			else {
 				m_resources[index] += amount;
 				m_storageUsage += amount;

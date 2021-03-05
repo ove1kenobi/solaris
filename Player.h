@@ -25,13 +25,16 @@ private:
 	int m_storageUsage;
 	int m_resources[numberOfResources];
 
+	// Movement
 	float m_thrusterForce, m_desiredSpeed, m_topSpeed;
+	float m_rotationSpeed;
 
+	// Input 
 	float m_mousePosX, m_mousePosY;
 	bool m_moveForwards, m_moveBackwards;
 	bool m_stopMovement;
 	bool m_playerControlsActive, m_stabilizerActive;
-	float m_rotationSpeed;
+
 	// Updates the rotation for the camera and the ship
 	void UpdateRotation();
 	DirectX::XMFLOAT3 Stabilize();
