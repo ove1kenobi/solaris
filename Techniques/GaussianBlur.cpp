@@ -25,12 +25,15 @@ const bool GaussianBlur::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& 
 	textureDescriptor.CPUAccessFlags = 0U;
 	textureDescriptor.MiscFlags = 0u;
 	HR(pDevice->CreateTexture2D(&textureDescriptor, nullptr, &pTexture2D), "CreateTexture2D");
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pSecondTexture2D = nullptr;
+	HR(pDevice->CreateTexture2D(&textureDescriptor, nullptr, &pSecondTexture2D), "CreateTexture2D");
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC unorderedAccessViewDesc = {};
 	unorderedAccessViewDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	unorderedAccessViewDesc.ViewDimension = D3D11_UAV_DIMENSION::D3D11_UAV_DIMENSION_TEXTURE2D;
 	unorderedAccessViewDesc.Texture2D.MipSlice = 0u;
 	HR(pDevice->CreateUnorderedAccessView(pTexture2D.Get(), &unorderedAccessViewDesc, m_pBlurredUAV.GetAddressOf()), "CreateUnorderedAccessView");
+	HR(pDevice->CreateUnorderedAccessView(pSecondTexture2D.Get(), &unorderedAccessViewDesc, m_pSecondBlurredUAV.GetAddressOf()), "CreateUnorderedAccessView");
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
 	shaderResourceViewDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -38,6 +41,7 @@ const bool GaussianBlur::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& 
 	shaderResourceViewDesc.Texture2D.MipLevels = 1u;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0u;
 	HR(pDevice->CreateShaderResourceView(pTexture2D.Get(), &shaderResourceViewDesc, &m_pBlurredSRV), "CreateShaderResourceView");
+	HR(pDevice->CreateShaderResourceView(pSecondTexture2D.Get(), &shaderResourceViewDesc, &m_pSecondBlurredSRV), "CreateShaderResourceView");
 
 	return true;
 }
@@ -56,7 +60,21 @@ void GaussianBlur::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>
 void GaussianBlur::DoPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
 	pDeviceContext->Dispatch(59u, 33u, 1u);
-}
+
+	//ID3D11UnorderedAccessView* nullUAV[1] = { nullptr };
+	//pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, nullUAV, nullptr);
+	//
+	//pDeviceContext->CSSetShaderResources(0u, 1u, m_pBlurredSRV.GetAddressOf());
+	//pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, m_pSecondBlurredUAV.GetAddressOf(), nullptr);
+	//
+	//pDeviceContext->Dispatch(59u, 33u, 1u);
+	//
+	//pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, nullUAV, nullptr);
+	//pDeviceContext->ClearUnorderedAccessViewFloat(m_pBlurredUAV.Get(), m_ClearColor);
+	//pDeviceContext->CSSetShaderResources(0u, 1u, m_pSecondBlurredSRV.GetAddressOf());
+	//pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, m_pBlurredUAV.GetAddressOf(), nullptr);
+	//pDeviceContext->Dispatch(59u, 33u, 1u);
+}	//
 
 void GaussianBlur::CleanUpPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {

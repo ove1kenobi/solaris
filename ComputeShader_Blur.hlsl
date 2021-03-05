@@ -14,6 +14,7 @@ static const float filter[7][7] =
     0.000904706, 0.003157733, 0.00668492, 0.008583607, 0.00668492, 0.003157733, 0.000904706
 };
 
+
 //Hard coded for MY resolution as of now, should be dynamic of course.
 [numthreads(32, 32, 1)]
 void cs_main( uint3 DTid : SV_DispatchThreadID)

@@ -7,6 +7,8 @@ class GaussianBlur : public EventPublisher
 private:
 	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> m_pBlurredUAV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pBlurredSRV;
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> m_pSecondBlurredUAV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSecondBlurredSRV;
 	FLOAT m_ClearColor[4];
 public:
 	GaussianBlur() noexcept;
