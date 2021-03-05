@@ -453,6 +453,19 @@
     <Font Include="UI\Fonts\NeoteriqueItalic-rAVK.ttf" />
     <Font Include="UI\Fonts\Tenika400Regular-Rpyql.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="UI\Icons\Fuel.png" />
+    <Image Include="UI\Icons\galaxy.png" />
+    <Image Include="UI\Icons\health.png" />
+    <Image Include="UI\Icons\khionerite.png" />
+    <Image Include="UI\Icons\nanotech.png" />
+    <Image Include="UI\Icons\Oxygen.png" />
+    <Image Include="UI\Icons\plasma.png" />
+    <Image Include="UI\Icons\radium.png" />
+    <Image Include="UI\Icons\Scrap.png" />
+    <Image Include="UI\Icons\Titanium.png" />
+    <Image Include="UI\Icons\weight.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -12,9 +12,14 @@ protected:
 	Microsoft::WRL::ComPtr<ID2D1Factory> m_pFactory2D;
 	Microsoft::WRL::ComPtr<ID2D1RenderTarget> m_pRenderTarget2D;
 	Microsoft::WRL::ComPtr<IDWriteFactory> m_pTextFactory;
-	Microsoft::WRL::ComPtr<IWICImagingFactory> m_pBitMapFactory;
 	Microsoft::WRL::ComPtr<ID2D1GeometrySink> m_pSink;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBrush;
+
+	//For creating bitmaps
+	Microsoft::WRL::ComPtr<IWICImagingFactory> m_pBitMapFactory;
+	Microsoft::WRL::ComPtr<IWICBitmapDecoder> m_pBitMapDecoder;
+	Microsoft::WRL::ComPtr<IWICBitmapFrameDecode> m_pBitMapSource;
+	Microsoft::WRL::ComPtr<IWICFormatConverter> m_pBitMapConvert;
 
 	//Window information
 	float m_pWindowWidth;
