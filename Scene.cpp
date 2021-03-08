@@ -1,8 +1,19 @@
 #include "pch.h"
 #include "Scene.h"
 
-void initPlanet(Planet* planet, Orbit* orbit, WaterSphere* waterSphere, std::vector<GameObject*>& gameObjects, std::vector<Planet*>& planets, std::vector<WaterSphere*>& waterSpheres, size_t id, size_t num, float x, float y, float z, float r, float xRot, float zRot, int rotDir, UINT type, GameObject* tetherTo) {
+void initPlanet(Planet* planet, Orbit* orbit, WaterSphere* waterSphere, std::vector<GameObject*>& gameObjects, std::vector<Planet*>& planets, std::vector<WaterSphere*>& waterSpheres, std::vector<Planet*>& radioactivePlanets, size_t id, size_t num, float x, float y, float z, float r, float xRot, float zRot, int rotDir, UINT type, GameObject* tetherTo) {
+	float distanceFromSun = std::sqrt(x * x + y * y + z * z);
+	//Planet types can be found in planet.h
+	if (distanceFromSun < 5000.0f)
+		type = 0;
+	else if (distanceFromSun > 10000.0f)
+		type = 1;
+
 	planet->Initialize(x, y, z, r, xRot, zRot, rotDir, type, tetherTo, orbit, waterSphere);
+
+	if (type == 2) {
+		radioactivePlanets[id] = planet;
+	}
 
 	gameObjects[id] = planet;
 	gameObjects[id + num] = orbit;
@@ -11,7 +22,7 @@ void initPlanet(Planet* planet, Orbit* orbit, WaterSphere* waterSphere, std::vec
 }
 
 Scene::Scene() noexcept
-	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }, m_RenderData{ }
+	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }, m_RenderData{ }, m_sun{ nullptr }, m_damageTimer{ 0 }, m_persistentObjEnd{ 0u }
 {
 
 }
@@ -73,19 +84,20 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	}
 	
 	//Generate sun.
-	Sun* sun = new Sun();
-	if (!sun->Initialize()) {
+	m_sun = new Sun();
+	if (!m_sun->Initialize()) {
 		return false;
 	}
-
+	
 	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
 	std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
-	std::uniform_int_distribution<int> distributionPlanets(20, 30);
+	std::uniform_int_distribution<int> distributionPlanets(10, 15);
 	this->m_numPlanets = distributionPlanets(generator);
 	std::uniform_int_distribution<int> distributionRadius(5, 50);
 	//World space coordinates
-	std::uniform_int_distribution<int> distributionX(3000, 10000);
+	//X IS USED AS AN ADDITATIVE COMPONENT
+	std::uniform_int_distribution<int> distributionX(600, 1000);
 	std::uniform_int_distribution<int> distributionY(0, 0);
 	std::uniform_int_distribution<int> distributionZ(0, 0);
 	//Needs to be radians
@@ -97,15 +109,18 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	ModelFactory::Get().PreparePlanetDisplacement();
 	std::vector<std::thread> threads;
 
+	float xCoord = 2500.0f;
 	this->m_gameObjects.resize(this->m_numPlanets * 2);
 	this->m_planets.resize(this->m_numPlanets);
 	this->m_waterSpheres.resize(this->m_numPlanets);
+	this->m_radioactivePlanets.resize(this->m_numPlanets);
 	//Create all the planets using the distributions.
 
 	for(size_t i = 0; i < this->m_numPlanets; ++i){
 		Planet* planet = new Planet();
 		Orbit* orbit = new Orbit();
 		WaterSphere* waterSphere = new WaterSphere();
+		xCoord += static_cast<float>(distributionX(generator));
 		threads.push_back(std::thread(
 			initPlanet,
 			planet,
@@ -114,9 +129,10 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 			std::ref(this->m_gameObjects),
 			std::ref(this->m_planets),
 			std::ref(this->m_waterSpheres),
+			std::ref(this->m_radioactivePlanets),
 			i,
 			m_numPlanets,
-			static_cast<float>(distributionX(generator)),
+			xCoord,
 			static_cast<float>(distributionY(generator)),
 			static_cast<float>(distributionZ(generator)),
 			static_cast<float>(distributionRadius(generator)),
@@ -124,17 +140,32 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 			static_cast<float>(distributionXZRot(generator)),
 			static_cast<int>(distributionRotDir(generator)),
 			static_cast<UINT>(distributionType(generator)),
-			sun
+			m_sun
 		));
 	}
 	for (int i = 0; i < this->m_numPlanets; i++) {
 		threads[i].join();
 	}
 
+	//Remove empty spots in the vector.
+	size_t j = 0;
+	for (size_t i = 0; i < m_radioactivePlanets.capacity(); i++) {
+		if (m_radioactivePlanets[j] == NULL) {
+			m_radioactivePlanets.erase(m_radioactivePlanets.begin() + j);
+		}
+		else {
+			j++;
+		}
+	}
+	
 	// Push sun to stack
-	this->m_gameObjects.push_back(sun);
+	this->m_gameObjects.push_back(m_sun);
 	//Add the ship to the gameObject vector.
 	this->m_gameObjects.push_back(this->m_player.getShip());
+
+	// Finished creating persistent objects
+	// The rest of m_gameObjects contain eventual transient objects
+	m_persistentObjEnd = m_gameObjects.size() - 1;
 
 	if (!m_Picking.Initialize())
 		return false;
@@ -144,20 +175,76 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	return true;
 }
 
-void Scene::Update() noexcept {
-	// Calculate gravity between each pair of GameObjects
-	SpaceShip* ship = this->m_player.getShip();
-	for (size_t i = 0; i < m_gameObjects.size(); ++i)
-	{
-		ship->CalculateGravity(m_gameObjects[i]);
-	}
-	//Update the player and all the game objects.
-	m_player.update();
-	DirectX::XMMATRIX vMatrix = this->m_perspectiveCamera.getVMatrix();
-	DirectX::XMMATRIX pMatrix = this->m_perspectiveCamera.getPMatrix();
+void Scene::AddGameObject(GameObject* obj)
+{
+	m_gameObjects.push_back(obj);
+}
 
+void Scene::RemoveGameObject(GameObject* obj)
+{
+	auto i = m_gameObjects.begin() + m_persistentObjEnd;
+
+	while (++i < m_gameObjects.end() && *i != obj);
+	if (i != m_gameObjects.end())
+	{
+		delete* i;
+		m_gameObjects.erase(i);
+	}
+}
+
+
+void Scene::Update() noexcept {
+	//Update the player and all the game objects.
+	size_t num = m_gameObjects.size() - m_persistentObjEnd;
+	if (m_player.update() &&  num < 30)
+	{
+		//Generator and distributions used for generating planet values.
+		using t_clock = std::chrono::high_resolution_clock;
+		std::default_random_engine gen(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
+		std::uniform_real_distribution<float> dist(200.0f, 900.0f);
+		std::uniform_real_distribution<float> adj(0.1f, 10.0f);
+
+		// Add an asteroid to the gameObject vector.
+		GameObject* ship = m_player.getShip();
+		DirectX::XMFLOAT3 velocity = norm(ship->GetVelocity());
+		// Start pos in front of spaceship, and randomise it slightly
+		DirectX::XMFLOAT3 pos = ship->GetCenter() + velocity * 4000.0f;
+		pos = pos + DirectX::XMFLOAT3(dist(gen), dist(gen), dist(gen));
+		// Give asteroid a random velocity in the general direction of spaceship
+		velocity = velocity * DirectX::XMFLOAT3(-adj(gen), -adj(gen), -adj(gen));
+		Asteroid* ast = new Asteroid();
+		ast->init(pos, velocity, ship);
+		m_gameObjects.push_back(ast);
+	}
+
+	ImGui::Begin("Asteroids Data");
+	for (size_t i = m_persistentObjEnd + 1; i < m_gameObjects.size(); ++i)
+	{
+		DirectX::XMFLOAT3 c = m_gameObjects[i]->GetCenter();
+		ImGui::Text("%d - center: (%.0f, %.0f, %.0f)", i, c.x, c.y, c.z);
+	}
+	ImGui::End();
+
+	// Calculate gravity between each pair of GameObjects
+	for (size_t i = 0; i < m_gameObjects.size() - 1; ++i)
+	{
+		for (size_t j = i + 1; j < m_gameObjects.size(); ++j)
+		{
+			m_gameObjects[i]->CalculateGravity(m_gameObjects[j]);
+		}
+	}
+
+	DirectX::XMFLOAT4X4 vMatrix = m_perspectiveCamera.getVMatrix();
+	DirectX::XMFLOAT4X4 pMatrix = m_perspectiveCamera.getPMatrix();
+
+	GameObject* del = nullptr;
+	std::vector<GameObject*> remove;
 	for (auto r : this->m_gameObjects) {
-		r->update(vMatrix, pMatrix, m_pDeviceContext);
+		del = r->update(vMatrix, pMatrix, m_pDeviceContext);
+		if (del) remove.push_back(del);
+	}
+	for (auto r : remove) {
+		RemoveGameObject(r);
 	}
 	//Cull the objects, update the RenderData-struct for use in forward renderer:
 	m_FrustumCulling.CullObjects(m_gameObjects, m_perspectiveCamera, m_RenderData);
@@ -165,4 +252,43 @@ void Scene::Update() noexcept {
 	m_RenderData.waterSpheres = &m_waterSpheres;
 
 	m_Picking.DisplayPickedObject();
+
+	//Update player health
+	//Sun
+	m_damageTimer += m_time.DeltaTime();
+	DirectX::XMFLOAT3 sunCenter = m_sun->GetCenter();
+	DirectX::XMFLOAT3 playerCenter = m_player.getShip()->getCenter();
+	float sunDist = distance(sunCenter, playerCenter);
+	if ((sunDist < 5000.0f || sunDist > 10000.0f) && m_damageTimer > 1.0f ) {
+		m_player.UpdateHealth(-5);
+		//Send event to UI so that we can tell the player that we are too far away / too close to the sun.
+		m_damageTimer = 0.0f;
+	}
+	
+	//Radioactive planets
+	for (auto r : m_radioactivePlanets) {
+		float planetDist = distance(r->GetCenter(), playerCenter);
+		if (planetDist < 1000.0f && m_damageTimer > 1.0f) {
+			m_player.UpdateHealth(-5);
+			//Send event to UI so that we can tell the player that we are too close to the sun.
+			m_damageTimer = 0.0f;
+		}
+	}
+	
+#if defined(DEBUG) | defined(_DEBUG)
+	int health = m_player.GetHealth();
+
+	ImGui::Begin("Health");
+	ImGui::Text("%d", health);
+	ImGui::End();
+
+	ImGui::Begin("Asteroids");
+	ImGui::Text("gameObjects: %d", m_gameObjects.size());
+	ImGui::Text("Asteroids  : %d", m_gameObjects.size() - m_persistentObjEnd - 1);
+	ImGui::End();
+#endif
+
+	if (m_player.GetHealth() <= 0) {
+		//game over
+	}
 }

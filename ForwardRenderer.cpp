@@ -63,13 +63,15 @@ void ForwardRenderer::BeginFrame()
 		i++;
 	}
 
-	//REDO. Need to somehow bind the ship without using minimal as that will be removed.
-	BindIDEvent bindEventMin(BindID::ID_Minimal);
-	EventBuss::Get().Delegate(bindEventMin);
-	
-	//Player:
-	(m_pRenderData->culledObjects)[i]->bindUniques(m_pDeviceContext);
-	m_pDeviceContext->DrawIndexed((m_pRenderData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
+	//Bind Textured models:
+	BindIDEvent bindEventTextured(BindID::ID_Textured);
+	EventBuss::Get().Delegate(bindEventTextured);
+	// Textured models:
+	for (i; i < m_pRenderData->totalNrOfObjects; ++i) {
+		(m_pRenderData->culledObjects)[i]->bindUniques(m_pDeviceContext);
+		m_pDeviceContext->DrawIndexed((m_pRenderData->culledObjects)[i]->getIndexBufferSize(), 0u, 0u);
+	}
+
 
 	//Skybox time:
 	m_Skybox.PreparePass(m_pDeviceContext);

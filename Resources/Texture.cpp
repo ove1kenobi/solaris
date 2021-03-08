@@ -23,6 +23,8 @@ const bool Texture::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, 
     texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
     texDesc.CPUAccessFlags = 0;
     texDesc.MiscFlags = 0;
+    pDevice->CheckMultisampleQualityLevels(texDesc.Format, texDesc.SampleDesc.Count, &texDesc.SampleDesc.Quality);
+    texDesc.SampleDesc.Quality--;
 
     Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
     HRESULT hr = pDevice->CreateTexture2D(&texDesc, NULL, &texture);

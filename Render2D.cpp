@@ -68,6 +68,11 @@ std::wstring Render2D::GetFontFilePath(std::wstring fontFile) {
 }
 
 void Render2D::RenderUI() {
+	//For now always render HUD
+	m_Modules.at(static_cast<int>(TypesUI::HUD))->BeginFrame();
+	m_Modules.at(static_cast<int>(TypesUI::HUD))->Render();
+	m_Modules.at(static_cast<int>(TypesUI::HUD))->EndFrame();
+
 	if (m_Render) {
 		m_Modules.at(static_cast<int>(m_CurrentUI))->BeginFrame();
 		m_Modules.at(static_cast<int>(m_CurrentUI))->Render();
@@ -94,7 +99,7 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 					}
 				}
 				if (virKey == 'R') {
-					m_CurrentUI = TypesUI::HUD;
+					//m_CurrentUI = TypesUI::HUD;
 					if (m_Render) {
 						m_Render = false;
 					}

@@ -74,10 +74,10 @@ DirectX::XMFLOAT3 Camera::getRot() {
 	return DirectX::XMFLOAT3(this->m_pitch, this->m_roll, this->m_yaw);
 }
 
-DirectX::XMMATRIX Camera::getVMatrix() {
-	return DirectX::XMLoadFloat4x4(&this->m_vMatrix);
+DirectX::XMFLOAT4X4 Camera::getVMatrix() {
+	return this->m_vMatrix;
 }
 
-DirectX::XMMATRIX Camera::getPMatrix() {
-	return DirectX::XMLoadFloat4x4(&this->m_pMatrix);
+DirectX::XMFLOAT4X4 Camera::getPMatrix() {
+	return m_pMatrix;
 }

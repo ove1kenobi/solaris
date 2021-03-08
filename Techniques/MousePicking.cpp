@@ -43,8 +43,7 @@ void MousePicking::OnEvent(IEvent& event) noexcept
 //Note, this function should always in the future take the CULLED objects, and not all objects.
 void MousePicking::DoIntersectionTests(const unsigned int& x, const unsigned int& y, const std::vector<GameObject*>& gameObjects) noexcept
 {
-	DirectX::XMFLOAT4X4 pMatrix = {};
-	DirectX::XMStoreFloat4x4(&pMatrix, m_pCamera->getPMatrix());
+	DirectX::XMFLOAT4X4 pMatrix = m_pCamera->getPMatrix();
 
 	//rayViewSpaceDirection is obviously a direction, so w = 0.0f.
 	DirectX::XMFLOAT4 rayViewSpaceDirection = {};
@@ -53,8 +52,8 @@ void MousePicking::DoIntersectionTests(const unsigned int& x, const unsigned int
 	rayViewSpaceDirection.z = 1.0f;
 	rayViewSpaceDirection.w = 0.0f;
 
-
-	DirectX::XMMATRIX viewMatrix = m_pCamera->getVMatrix();
+	DirectX::XMFLOAT4X4 vMatrix = m_pCamera->getVMatrix();
+	DirectX::XMMATRIX viewMatrix = DirectX::XMLoadFloat4x4(&vMatrix);
 	DirectX::XMVECTOR determinant = DirectX::XMMatrixDeterminant(viewMatrix);
 
 	//We check if the determinant is above 0, because ONLY then does an inverse exist. 
@@ -69,12 +68,18 @@ void MousePicking::DoIntersectionTests(const unsigned int& x, const unsigned int
 		DirectX::XMVECTOR originVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 		DirectX::XMVECTOR originWorldSpaceVector = DirectX::XMVector4Transform(originVector, inverseViewMatrix);
 
+		DirectX::XMFLOAT3 OriginWorldSpaceVector;
+		DirectX::XMFLOAT3 RayWorldSpaceDirectionVector;
+
+		DirectX::XMStoreFloat3(&OriginWorldSpaceVector, originWorldSpaceVector);
+		DirectX::XMStoreFloat3(&RayWorldSpaceDirectionVector, rayWorldSpaceDirectionVector);
+
 		float distance = {};
 		float t = FLT_MAX;
 		m_pPickedObject = nullptr;
 		for (unsigned int i{ 0u }; i < gameObjects.size(); i++)
 		{
-			if (gameObjects[i]->IntersectRayObject(originWorldSpaceVector, rayWorldSpaceDirectionVector, distance))
+			if (gameObjects[i]->IntersectRayObject(&OriginWorldSpaceVector, &RayWorldSpaceDirectionVector, distance))
 			{
 				if (distance < t)
 				{
@@ -96,13 +101,12 @@ void MousePicking::DisplayPickedObject() noexcept
 	//(Emil F)
 	if (m_pPickedObject != nullptr)
 	{
-		ImGui::Begin("Picked GameObject");
-		ImGui::Text("Distance to Object: %.0f", m_DistanceToObject);
-		ImGui::End();
+		DelegatePlanetDistanceEvent pde(m_DistanceToObject, L"Planet name");
+		EventBuss::Get().Delegate(pde);
 	}
 	else
 	{
-		ImGui::Begin("Picked GameObject");
-		ImGui::End();
+		DelegatePlanetDistanceEvent pde(0.0f, L"");
+		EventBuss::Get().Delegate(pde);
 	}
 }

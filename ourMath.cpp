@@ -73,6 +73,11 @@ DirectX::XMFLOAT3 operator*(const float b, const DirectX::XMFLOAT3& a)
 	return { a.x * b, a.y * b, a.z * b };
 }
 
+DirectX::XMFLOAT3 operator*(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b)
+{
+	return { a.x * b.x, a.y * b.y, a.z * b.z };
+}
+
 DirectX::XMFLOAT3 operator/(const DirectX::XMFLOAT3& a, const float b)
 {
 	return { a.x / b, a.y / b, a.z / b };
@@ -86,4 +91,15 @@ DirectX::XMFLOAT3 operator/(const float b, const DirectX::XMFLOAT3& a)
 float length(const DirectX::XMFLOAT3& a)
 {
 	return sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
+}
+
+DirectX::XMFLOAT3 norm(const DirectX::XMFLOAT3& a)
+{
+	return a * (1.0f / length(a));
+}
+
+float distance(const DirectX::XMFLOAT3 a, const DirectX::XMFLOAT3 b)
+{
+	DirectX::XMFLOAT3 result = { a.x - b.x, a.y - b.y, a.z - b.z };
+	return length(result);
 }

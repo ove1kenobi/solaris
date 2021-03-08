@@ -1,5 +1,11 @@
 #pragma once
 #include "vertex.h"
+#include "ModelTexture.h"
+
+#define TEX_DIFFUSE = 0
+#define TEX_MAX = 1
+//#define TEX_NORMAL = 1
+
 class Model
 {
 private:
@@ -9,6 +15,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_matrixBuffer;
+	std::vector<ModelTexture*> m_texture;
 	UINT m_vertexBufferSize;
 	UINT m_indexBufferSize;
 	DirectX::BoundingBox* m_boundingBox;
@@ -37,4 +44,6 @@ public:
 	void SetBoundingVolume(DirectX::BoundingSphere* sphere);
 	DirectX::BoundingBox* GetBoundingBox();
 	DirectX::BoundingSphere* GetBoundingSphere();
+	std::vector<ModelTexture*>& GetTextures();
+	void AddTexture(ModelTexture* tex, UINT type);
 };

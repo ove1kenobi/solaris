@@ -10,10 +10,11 @@ private:
 	bool m_TestForCulling;
 	float m_DistanceToCamera;
 	UINT m_planetType;
+	DirectX::XMFLOAT4 m_WaterColor;
 public:
 	Planet(const std::string& planetName = "?") noexcept;
 	virtual ~Planet() = default;
-	[[nodiscard]] const bool IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept override;
+	[[nodiscard]] const bool IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept override;
 	bool Initialize(float x, float y, float z, float r, float xRot, float zRot, int rotDir, UINT type, GameObject* tetherTo, Orbit* orbit, WaterSphere* waterSphere);
 
 /*
@@ -32,4 +33,5 @@ PLANET TYPES
 
 [[nodiscard]] const std::string& GetTag() const noexcept override;
 [[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept override;
+DirectX::XMFLOAT4 GetWaterColor() noexcept;
 };
