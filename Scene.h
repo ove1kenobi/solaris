@@ -31,6 +31,8 @@ private:
 	long double m_damageTimer;
 
 	size_t m_persistentObjEnd;
+private:
+	[[nodiscard]] const std::vector<std::wstring> RandomizePlanetNames(std::default_random_engine generator) noexcept;
 public:
 	Scene() noexcept;
 	virtual ~Scene();

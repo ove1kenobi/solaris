@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "Planet.h"
 
-Planet::Planet() noexcept
+Planet::Planet(const std::wstring& name) noexcept
 	:m_Tag{ "Planet"},
+	 m_Name{ name },
 	 m_TestForCulling{ true },
 	 m_DistanceToCamera{ 0.0f },
 	 m_planetType{ 0 },
@@ -68,4 +69,9 @@ const bool& Planet::ShallBeTestedForCulling() const noexcept
 DirectX::XMFLOAT4 Planet::GetWaterColor() noexcept
 {
 	return m_WaterColor;
+}
+
+std::wstring& Planet::GetName() noexcept
+{
+	return m_Name;
 }
