@@ -195,7 +195,7 @@ void Scene::RemoveGameObject(GameObject* obj)
 void Scene::Update() noexcept {
 	//Update the player and all the game objects.
 	size_t num = m_gameObjects.size() - m_persistentObjEnd;
-	if (m_player.update() &&  num < 30)
+	if (m_player.update(m_planets) &&  num < 30)
 	{
 		//Generator and distributions used for generating planet values.
 		using t_clock = std::chrono::high_resolution_clock;
@@ -273,7 +273,7 @@ void Scene::Update() noexcept {
 			m_damageTimer = 0.0f;
 		}
 	}
-	
+
 #if defined(DEBUG) | defined(_DEBUG)
 	int health = m_player.GetHealth();
 

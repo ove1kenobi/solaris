@@ -6,7 +6,7 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);			
 	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
 	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent);
-
+	EventBuss::Get().AddListener(this, EventType::DelegatePlayerInfoEvent);
 	m_pMainRectangle = D2D1::RectF();
 	m_pPlanetNameTextBox = D2D1::RectF();
 	m_pPlanetFlavourTextBox = D2D1::RectF();
@@ -18,7 +18,7 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pRandomEvents.push_back(new RandomEventUI());
 	m_pRandomEvents.push_back(new RandomEventUI());
 	//Example text: should be removed once event system is in place.
-	m_pPlanetNameText = L"TATOOINE";
+	m_pPlanetNameText = L"Place holder";
 
 	m_pPlanetFlavourText = L"Luke Skywalker has returned to his home planet of Tatooine in an attempt "
 		L"to rescue his friend Han Solo from the clutches of the vile gangster Jabba the Hutt."
@@ -764,6 +764,13 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		m_pWindowWidth = static_cast<float>(static_cast<DelegateResolutionEvent*>(&event)->GetClientWindowWidth());
 		m_pWindowHeight = static_cast<float>(static_cast<DelegateResolutionEvent*>(&event)->GetClientWindowHeight());
 		this->UpdateModules();
+		break;
+	}
+	case EventType::DelegatePlayerInfoEvent:
+	{
+		DelegatePlayerInfoEvent& derivedEvent = static_cast<DelegatePlayerInfoEvent&>(event);
+		m_pPlayerInfo = derivedEvent.GetPlayerInfo();
+		m_pPlanetNameText = m_pPlayerInfo->closestPlanet->GetName();
 		break;
 	}
 	default:
