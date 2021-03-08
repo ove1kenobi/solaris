@@ -99,7 +99,7 @@ void ForwardRenderer::BeginFrame()
 	m_WaterPP.DoPass(m_pDeviceContext);
 	m_WaterPP.CleanUp(m_pDeviceContext);
 
-	//Bloom Luma Pass:
+	////Bloom Luma Pass:
 	m_Bloom.PrepareLumaExtractionPass(m_pDeviceContext);
 	m_Bloom.DoLumaExtractionPass(m_pDeviceContext);
 	m_Bloom.CleanUpLumaExtractionPass(m_pDeviceContext);
