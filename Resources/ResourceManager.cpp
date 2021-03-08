@@ -122,7 +122,8 @@ const bool ResourceManager::CreateAllBindables()
 	// Orbits
 	m_BindablesOrbit.insert(m_BindablesOrbit.end(), { &m_VertexShaderOrbit, &m_PixelShaderOrbit, &m_InputLayoutPositionOnly, &m_TopologyLineStrip });
 	// Sun
-	m_BindablesSun.insert(m_BindablesSun.end(), { &m_VertexShaderMinimal, &m_PixelShaderSun, &m_InputLayoutMinimal, &m_TopologyTriList });
+	m_BindablesSun.insert(m_BindablesSun.end(), { &m_VertexShaderTextured, &m_PixelShaderSun,
+												&m_InputLayoutPlayerModel, &m_TopologyTriList, &m_SamplerSkybox });
 
 	//RenderQuad First Pass:
 	m_BindablesRenderQuad.insert(m_BindablesRenderQuad.end(), { &m_VertexShaderMinimal, &m_PixelShaderMinimal, &m_InputLayoutMinimal, &m_TopologyTriList, &m_GBuffer });
@@ -144,7 +145,7 @@ const bool ResourceManager::CreateAllBindables()
 															  &m_TopologyTriList, &m_VertexBufferQuad, &m_IndexBufferQuad });
 	//Textured models
 	m_BindablesTextured.insert(m_BindablesTextured.end(), { &m_VertexShaderTextured, &m_PixelShaderTextured, 
-															&m_InputLayoutPlayerModel, &m_TopologyTriList, & m_SamplerSkybox });
+															&m_InputLayoutPlayerModel, &m_TopologyTriList, &m_SamplerSkybox });
 	return true;
 }
 

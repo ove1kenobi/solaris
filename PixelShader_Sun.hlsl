@@ -1,15 +1,34 @@
+Texture2D diffuseTex         : register(t0);
+SamplerState linearSampler : register(s0);
+
 struct PS_IN
 {
-    float4 inPositionSS     : SV_Position;
-    float3 inPositionWS     : POSITION;
-    float inLengthToCenter  : LENGTHCENTER;
-    float4 inColor	        : COLOR;
-    float3 inNormalWS       : NORMAL;
+    float4 inPositionSS : SV_Position;
+    float3 inPositionWS : POSITION;
+    float2 inTexCoords  : TEXCOORD;
+    float3 inNormalWS   : NORMAL;
 };
 
-float4 ps_main(in PS_IN psIn) : SV_TARGET
+struct PS_OUT
 {
-    float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
-    color = dot(normalize(color.xyz), normalize(psIn.inNormalWS));
-    return saturate(color + psIn.inColor);
+    float4 color            : SV_target0;
+    float4 wPos             : SV_target1;
+    float4 normal           : SV_target2;
+};
+
+
+PS_OUT ps_main(in PS_IN psIn)
+{
+    PS_OUT psOut = (PS_OUT)0;
+
+    psOut.color = diffuseTex.Sample(linearSampler, psIn.inTexCoords);
+
+    psOut.wPos = float4(psIn.inPositionWS, 0.0f);
+
+    psOut.normal = float4(normalize(psIn.inNormalWS), -1.0f);
+    return psOut;
+
+    //float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    //color = dot(normalize(color.xyz), normalize(psIn.inNormalWS));
+    //return saturate(color + psIn.inColor);
 }
