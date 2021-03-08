@@ -33,10 +33,10 @@ std::wstring ModuleUI::GetIconFilePath(std::wstring iconFile) {
 
 void ModuleUI::LoadBitmapFromFile(PCWSTR filePath, ID2D1Bitmap** bitmap) {
 	//Variables needed for creating bitmaps
-	IWICImagingFactory* m_pBitMapFactory = NULL;	//once
-	IWICBitmapDecoder* m_pBitMapDecoder = NULL;		//per function call
-	IWICBitmapFrameDecode* m_pBitMapSource = NULL;	//per function call
-	IWICFormatConverter* m_pBitMapConvert = NULL;	//per function call
+	IWICImagingFactory* m_pBitMapFactory = NULL;
+	IWICBitmapDecoder* m_pBitMapDecoder = NULL;
+	IWICBitmapFrameDecode* m_pBitMapSource = NULL;
+	IWICFormatConverter* m_pBitMapConvert = NULL;
 
 	//Encode picture from filepath into WICmipmap
 	ErrorCheck(CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_pBitMapFactory)), "CreateInstance");
@@ -51,6 +51,12 @@ void ModuleUI::LoadBitmapFromFile(PCWSTR filePath, ID2D1Bitmap** bitmap) {
 
 	//Create a Direct2D bitmap from the WIC bitmap.
 	ErrorCheck(m_pRenderTarget2D->CreateBitmapFromWicBitmap(m_pBitMapConvert, NULL, bitmap), "CreateBitmapFromWicBitmap");
+
+	//Clean up
+	m_pBitMapFactory->Release();
+	m_pBitMapDecoder->Release();
+	m_pBitMapSource->Release();
+	m_pBitMapConvert->Release();
 }
 
 void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {

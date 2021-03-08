@@ -25,7 +25,6 @@ private:
 	std::wstring m_pPlanetText;
 
 	//Healthbar
-	//Microsoft::WRL::ComPtr<ID2D1Bitmap> m_pHealthBitmap;
 	ID2D1Bitmap* m_pHealthBitmap;
 	HeadsUpDisplayBar m_pHealthBar;
 	D2D1_RECT_F m_pHealthIcon;
