@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "Planet.h"
 
-Planet::Planet() noexcept
+Planet::Planet(const std::string& planetName) noexcept
 	:m_Tag{ "Planet"},
+	 m_PlanetName{ planetName },
 	 m_TestForCulling{ true },
 	 m_DistanceToCamera{ 0.0f },
 	 m_planetType{ 0 }

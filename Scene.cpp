@@ -101,6 +101,7 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	this->m_planets.resize(this->m_numPlanets);
 	this->m_waterSpheres.resize(this->m_numPlanets);
 	//Create all the planets using the distributions.
+
 	for(size_t i = 0; i < this->m_numPlanets; ++i){
 		Planet* planet = new Planet();
 		Orbit* orbit = new Orbit();

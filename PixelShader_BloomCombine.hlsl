@@ -1,4 +1,4 @@
-Texture2D highlightBlurTexture	: register(t0);
+Texture2D<float4> highlightBlurTexture	: register(t0);
 Texture2D<float4> colorTexture	: register(t1);
 
 struct PS_IN

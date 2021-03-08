@@ -6,11 +6,12 @@ class Orbit;
 class Planet : public CosmicBody{
 private:
 	std::string m_Tag;
+	std::string m_PlanetName;
 	bool m_TestForCulling;
 	float m_DistanceToCamera;
 	UINT m_planetType;
 public:
-	Planet() noexcept;
+	Planet(const std::string& planetName = "?") noexcept;
 	virtual ~Planet() = default;
 	[[nodiscard]] const bool IntersectRayObject(const DirectX::FXMVECTOR& origin, const DirectX::FXMVECTOR& direction, float& distance) noexcept override;
 	bool Initialize(float x, float y, float z, float r, float xRot, float zRot, int rotDir, UINT type, GameObject* tetherTo, Orbit* orbit, WaterSphere* waterSphere);

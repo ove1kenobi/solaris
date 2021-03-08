@@ -14,6 +14,7 @@
 #include <DirectXTK/DDSTextureLoader.h>
 #include <imgui.h>
 #include <string>
+#include <fstream>
 #include <unordered_map>
 #include <vector>
 #include <crtdbg.h>

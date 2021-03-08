@@ -60,21 +60,33 @@ void GaussianBlur::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>
 void GaussianBlur::DoPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
 	pDeviceContext->Dispatch(59u, 33u, 1u);
+	ID3D11UnorderedAccessView* nullUAV[1] = { nullptr };
+	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+	bool regular = false;
+	for (unsigned int i{ 0u }; i < 2; i++)
+	{
+		if (regular)
+		{
+			pDeviceContext->CSSetShaderResources(0u, 1u, nullSRV);
+			pDeviceContext->ClearUnorderedAccessViewFloat(m_pBlurredUAV.Get(), m_ClearColor);
+			pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, nullUAV, nullptr);
+			pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, m_pBlurredUAV.GetAddressOf(), nullptr);
+			pDeviceContext->CSSetShaderResources(0u, 1u, m_pSecondBlurredSRV.GetAddressOf());
+			pDeviceContext->Dispatch(59u, 33u, 1u);
+		}
+		else
+		{
+			pDeviceContext->CSSetShaderResources(0u, 1u, nullSRV);
+			pDeviceContext->ClearUnorderedAccessViewFloat(m_pSecondBlurredUAV.Get(), m_ClearColor);
+			pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, nullUAV, nullptr);
+			pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, m_pSecondBlurredUAV.GetAddressOf(), nullptr);
 
-	//ID3D11UnorderedAccessView* nullUAV[1] = { nullptr };
-	//pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, nullUAV, nullptr);
-	//
-	//pDeviceContext->CSSetShaderResources(0u, 1u, m_pBlurredSRV.GetAddressOf());
-	//pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, m_pSecondBlurredUAV.GetAddressOf(), nullptr);
-	//
-	//pDeviceContext->Dispatch(59u, 33u, 1u);
-	//
-	//pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, nullUAV, nullptr);
-	//pDeviceContext->ClearUnorderedAccessViewFloat(m_pBlurredUAV.Get(), m_ClearColor);
-	//pDeviceContext->CSSetShaderResources(0u, 1u, m_pSecondBlurredSRV.GetAddressOf());
-	//pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, m_pBlurredUAV.GetAddressOf(), nullptr);
-	//pDeviceContext->Dispatch(59u, 33u, 1u);
-}	//
+			pDeviceContext->CSSetShaderResources(0u, 1u, m_pBlurredSRV.GetAddressOf());
+			pDeviceContext->Dispatch(59u, 33u, 1u);
+		}
+		regular = !regular;
+	}
+}	
 
 void GaussianBlur::CleanUpPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
