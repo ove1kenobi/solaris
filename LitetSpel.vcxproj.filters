@@ -165,7 +165,6 @@
     <Font Include="UI\Fonts\AwareBold-qZo3x.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="UI\Icons\galaxy.png" />
     <Image Include="UI\Icons\Fuel.png" />
     <Image Include="UI\Icons\health.png" />
     <Image Include="UI\Icons\khionerite.png" />

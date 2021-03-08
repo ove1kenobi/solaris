@@ -13,8 +13,10 @@ private:
 	std::wstring m_pHoverText;
 
 	//For User Story 30: icons
-	//std::vector<D2D1_RECT_F> m_pIconPicture;
-	std::vector<std::wstring> m_pIconText;
+	std::vector<ID2D1Bitmap> m_pIconBitmap;
+	std::vector<D2D1_RECT_F> m_pIconPosition;
+	std::vector<D2D1_RECT_F> m_pIconTextbox;
+	std::vector<std::wstring> m_pIconAmount;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pIconTextFormat;
 
 	bool CreateText();
@@ -28,7 +30,7 @@ public:
 	bool Initialize();
 
 	//For User Story 30:
-	void AddIcon(std::wstring amount);
+	void AddIcon(std::wstring resource, std::wstring amount);
 
 	bool UpdateModules();
 

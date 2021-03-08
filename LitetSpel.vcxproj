@@ -455,7 +455,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="UI\Icons\Fuel.png" />
-    <Image Include="UI\Icons\galaxy.png" />
     <Image Include="UI\Icons\health.png" />
     <Image Include="UI\Icons\khionerite.png" />
     <Image Include="UI\Icons\nanotech.png" />

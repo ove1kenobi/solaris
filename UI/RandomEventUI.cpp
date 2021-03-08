@@ -179,6 +179,13 @@ void RandomEventUI::Render(int mouseX, int mouseY) {
 	this->UpdateBrush(D2D1::ColorF::Aqua, 0.05f);
 	m_pRenderTarget2D->FillRectangle(m_pHoverBox, m_pBrush.Get());
 
+	this->UpdateBrush(D2D1::ColorF::Red, 0.5f);
+
+	for (unsigned int i = 0; i < m_pIconPosition.size(); i++) {
+		m_pRenderTarget2D->FillRectangle(m_pIconPosition.at(i), m_pBrush.Get());
+		m_pRenderTarget2D->FillRectangle(m_pIconTextbox.at(i), m_pBrush.Get());
+	}
+
 	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
 
 	m_pRenderTarget2D.Get()->DrawTextW(
@@ -215,7 +222,34 @@ void RandomEventUI::OnClick(int mouseX, int mouseY) {
 	}
 }
 
-void RandomEventUI::AddIcon(std::wstring amount) {
+void RandomEventUI::AddIcon(std::wstring resource, std::wstring amount) {
+	float iconSize = 50.0f;
+	float amountSize = 50.0f;
+	float padding = 20.0f;
+	m_pIconPosition.push_back(D2D1::RectF(
+		m_pHoverTextBox.right,
+		m_pHoverTextBox.top,
+		m_pHoverTextBox.right + iconSize,
+		m_pHoverTextBox.top + iconSize
+	));
+	//y = (blockSize + padding)*math.floor(vector.size()/2.0f);
+	//x = if vector.size() is even then x = basePadding else x = basePadding + blockSize + basePadding 
+	//If even it goes in the first row
+	/*
+	if (m_pIconBitmap.size() % 2 == 0) {
+		//m_pIconBitmap.push_back();
+		//m_pIconPosition.push_back();
+		//m_pIconTextbox.push_back();
+		m_pIconAmount.push_back(amount);
+	}
+	//if odd it goes in the second row
+	else {
+		//m_pIconBitmap.push_back();
+		//m_pIconPosition.push_back();
+		//m_pIconTextbox.push_back();
+		m_pIconAmount.push_back(amount);
+	}*/
+	//if even put is somewhere
 	/*Will in the future take in a picture and a string,
 	which will be stored in the icon vectors */
 }
