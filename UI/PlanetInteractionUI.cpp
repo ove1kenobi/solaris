@@ -11,9 +11,6 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pPlanetNameTextBox = D2D1::RectF();
 	m_pPlanetFlavourTextBox = D2D1::RectF();
 
-
-	//AddFontResource(this->GetFontFilePath(L"AwareBold-qZo3x.ttf").c_str());
-
 	m_pRandomEvents.push_back(new RandomEventUI());
 	m_pRandomEvents.push_back(new RandomEventUI());
 	m_pRandomEvents.push_back(new RandomEventUI());

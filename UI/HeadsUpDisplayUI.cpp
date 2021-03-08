@@ -33,10 +33,6 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pMouseY = 10;
 }
 
-HeadsUpDisplayUI::~HeadsUpDisplayUI() {
-
-}
-
 bool HeadsUpDisplayUI::Initialize() {
 	if (!CreateTools()) {
 		return false;
@@ -78,20 +74,20 @@ bool HeadsUpDisplayUI::CreateDisplayScreens() {
 bool HeadsUpDisplayUI::CreateBars() {
 	//Health bar
 	m_pHealthBar.Initialize();
-	LoadBitmapFromFile(GetIconFilePath(L"Health.png").c_str(), 512u, 512u, &m_pHealthBitmap);
+	LoadBitmapFromFile(GetIconFilePath(L"Health.png").c_str(), &m_pHealthBitmap);
 
 	//OxygenBar
 	m_pOxygenBar.Initialize();
-	LoadBitmapFromFile(GetIconFilePath(L"Oxygen.png").c_str(), 512u, 512u, &m_pOxygenBitmap);
+	//LoadBitmapFromFile(GetIconFilePath(L"Oxygen.png").c_str(), &m_pOxygenBitmap);
 
 	//FuelBar
 	m_pFuelBar.Initialize();
-	LoadBitmapFromFile(GetIconFilePath(L"Fuel.png").c_str(), 512u, 512u, &m_pFuelBitmap);
+	//LoadBitmapFromFile(GetIconFilePath(L"Fuel.png").c_str(), &m_pFuelBitmap);
 	return true;
 }
 
 bool HeadsUpDisplayUI::CreateCapacity() {
-	LoadBitmapFromFile(GetIconFilePath(L"Weight.png").c_str(), 512u, 512u, &m_pCapacityBitmap);
+	//LoadBitmapFromFile(GetIconFilePath(L"Weight.png").c_str(), &m_pCapacityBitmap);
 	return true;
 }
 
@@ -309,10 +305,9 @@ void HeadsUpDisplayUI::RenderBars() {
 	m_pOxygenBar.Render();
 	m_pFuelBar.Render();
 
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
 	m_pRenderTarget2D->DrawBitmap(m_pHealthBitmap.Get(), m_pHealthIcon);
-	m_pRenderTarget2D->DrawBitmap(m_pOxygenBitmap.Get(), m_pOxygenIcon);
-	m_pRenderTarget2D->DrawBitmap(m_pFuelBitmap.Get(), m_pFuelIcon);
+	//m_pRenderTarget2D->DrawBitmap(m_pOxygenBitmap.Get(), m_pOxygenIcon);
+	//m_pRenderTarget2D->DrawBitmap(m_pFuelBitmap.Get(), m_pFuelIcon);
 }
 
 void HeadsUpDisplayUI::RenderCapacity() {
@@ -327,7 +322,7 @@ void HeadsUpDisplayUI::RenderCapacity() {
 		m_pBrush.Get()
 	);
 
-	m_pRenderTarget2D->DrawBitmap(m_pCapacityBitmap.Get(), m_pCapacityIcon);
+	//m_pRenderTarget2D->DrawBitmap(m_pCapacityBitmap.Get(), m_pCapacityIcon);
 }
 
 void HeadsUpDisplayUI::RenderWarningModule() {

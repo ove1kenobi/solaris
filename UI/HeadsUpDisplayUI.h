@@ -30,18 +30,18 @@ private:
 	D2D1_RECT_F m_pHealthIcon;
 
 	//OxygenBar
-	Microsoft::WRL::ComPtr<ID2D1Bitmap> m_pOxygenBitmap;
+	//Microsoft::WRL::ComPtr<ID2D1Bitmap> m_pOxygenBitmap;
 	HeadsUpDisplayBar m_pOxygenBar;
 	D2D1_RECT_F m_pOxygenIcon;
 
 	//FuelBar
-	Microsoft::WRL::ComPtr<ID2D1Bitmap> m_pFuelBitmap;
+	//Microsoft::WRL::ComPtr<ID2D1Bitmap> m_pFuelBitmap;
 	HeadsUpDisplayBar m_pFuelBar;
 	D2D1_RECT_F m_pFuelIcon;
 
 	//Weight capacity
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pCapacityFormat;
-	Microsoft::WRL::ComPtr<ID2D1Bitmap> m_pCapacityBitmap;
+	//Microsoft::WRL::ComPtr<ID2D1Bitmap> m_pCapacityBitmap;
 	D2D1_RECT_F m_pCapacityTextBox;
 	std::wstring m_pCapacityText;
 	D2D1_RECT_F m_pCapacityIcon;
@@ -89,7 +89,7 @@ private:
 public:
 	//Creation and destruction functions
 	HeadsUpDisplayUI();
-	~HeadsUpDisplayUI();
+	virtual ~HeadsUpDisplayUI() = default;
 	bool Initialize();
 
 	//Used by Render2D to render whole module
