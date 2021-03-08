@@ -78,16 +78,16 @@ bool HeadsUpDisplayUI::CreateBars() {
 
 	//OxygenBar
 	m_pOxygenBar.Initialize();
-	//LoadBitmapFromFile(GetIconFilePath(L"Oxygen.png").c_str(), &m_pOxygenBitmap);
+	LoadBitmapFromFile(GetIconFilePath(L"Oxygen.png").c_str(), &m_pOxygenBitmap);
 
 	//FuelBar
 	m_pFuelBar.Initialize();
-	//LoadBitmapFromFile(GetIconFilePath(L"Fuel.png").c_str(), &m_pFuelBitmap);
+	LoadBitmapFromFile(GetIconFilePath(L"Fuel.png").c_str(), &m_pFuelBitmap);
 	return true;
 }
 
 bool HeadsUpDisplayUI::CreateCapacity() {
-	//LoadBitmapFromFile(GetIconFilePath(L"Weight.png").c_str(), &m_pCapacityBitmap);
+	LoadBitmapFromFile(GetIconFilePath(L"Weight.png").c_str(), &m_pCapacityBitmap);
 	return true;
 }
 
@@ -305,9 +305,9 @@ void HeadsUpDisplayUI::RenderBars() {
 	m_pOxygenBar.Render();
 	m_pFuelBar.Render();
 
-	m_pRenderTarget2D->DrawBitmap(m_pHealthBitmap.Get(), m_pHealthIcon);
-	//m_pRenderTarget2D->DrawBitmap(m_pOxygenBitmap.Get(), m_pOxygenIcon);
-	//m_pRenderTarget2D->DrawBitmap(m_pFuelBitmap.Get(), m_pFuelIcon);
+	m_pRenderTarget2D->DrawBitmap(m_pHealthBitmap, m_pHealthIcon);
+	m_pRenderTarget2D->DrawBitmap(m_pOxygenBitmap, m_pOxygenIcon);
+	m_pRenderTarget2D->DrawBitmap(m_pFuelBitmap, m_pFuelIcon);
 }
 
 void HeadsUpDisplayUI::RenderCapacity() {
@@ -322,7 +322,7 @@ void HeadsUpDisplayUI::RenderCapacity() {
 		m_pBrush.Get()
 	);
 
-	//m_pRenderTarget2D->DrawBitmap(m_pCapacityBitmap.Get(), m_pCapacityIcon);
+	m_pRenderTarget2D->DrawBitmap(m_pCapacityBitmap, m_pCapacityIcon);
 }
 
 void HeadsUpDisplayUI::RenderWarningModule() {

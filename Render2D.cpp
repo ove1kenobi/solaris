@@ -98,15 +98,6 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 						m_Render = true;
 					}
 				}
-				if (virKey == 'R') {
-					//m_CurrentUI = TypesUI::HUD;
-					if (m_Render) {
-						m_Render = false;
-					}
-					else {
-						m_Render = true;
-					}
-				}
 			}
 		}
 			break;

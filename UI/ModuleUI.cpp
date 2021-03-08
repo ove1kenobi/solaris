@@ -32,6 +32,12 @@ std::wstring ModuleUI::GetIconFilePath(std::wstring iconFile) {
 }
 
 void ModuleUI::LoadBitmapFromFile(PCWSTR filePath, ID2D1Bitmap** bitmap) {
+	//Variables needed for creating bitmaps
+	IWICImagingFactory* m_pBitMapFactory = NULL;	//once
+	IWICBitmapDecoder* m_pBitMapDecoder = NULL;		//per function call
+	IWICBitmapFrameDecode* m_pBitMapSource = NULL;	//per function call
+	IWICFormatConverter* m_pBitMapConvert = NULL;	//per function call
+
 	//Encode picture from filepath into WICmipmap
 	ErrorCheck(CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_pBitMapFactory)), "CreateInstance");
 	ErrorCheck(m_pBitMapFactory->CreateDecoderFromFilename(filePath, &GUID_ContainerFormatPng, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &m_pBitMapDecoder), "CreateDecoderFromFilename");
@@ -41,10 +47,10 @@ void ModuleUI::LoadBitmapFromFile(PCWSTR filePath, ID2D1Bitmap** bitmap) {
 
 	//Convert the image format to 32bppPBGRA as that what direct2D bitmaps has to be in
 	ErrorCheck(m_pBitMapFactory->CreateFormatConverter(&m_pBitMapConvert), "CreateFormatConverter");
-	ErrorCheck(m_pBitMapConvert->Initialize(m_pBitMapSource.Get(), GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.f, WICBitmapPaletteTypeMedianCut), "pConverter");
+	ErrorCheck(m_pBitMapConvert->Initialize(m_pBitMapSource, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.f, WICBitmapPaletteTypeMedianCut), "pConverter");
 
 	//Create a Direct2D bitmap from the WIC bitmap.
-	ErrorCheck(m_pRenderTarget2D->CreateBitmapFromWicBitmap(m_pBitMapConvert.Get(), NULL, bitmap), "CreateBitmapFromWicBitmap");
+	ErrorCheck(m_pRenderTarget2D->CreateBitmapFromWicBitmap(m_pBitMapConvert, NULL, bitmap), "CreateBitmapFromWicBitmap");
 }
 
 void ModuleUI::UpdateDXHandlers(IEvent& event) noexcept {
