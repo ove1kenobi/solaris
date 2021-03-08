@@ -78,6 +78,7 @@
     <ClCompile Include="WaterSphere.cpp" />
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="ModelTexture.cpp" />
+    <ClCompile Include="SpaceShipUpgrade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -142,7 +143,6 @@
     <ClInclude Include="Resources\GBuffer.h" />
     <ClInclude Include="UI\TypesUI.h" />
     <ClInclude Include="UI\Button.h" />
-    <ClInclude Include="UI\ModuleUI.h" />
     <ClInclude Include="UI\PlanetInteractionUI.h" />
     <ClInclude Include="UI\RandomEventUI.h" />
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
@@ -152,6 +152,8 @@
     <ClInclude Include="ModelTexture.h" />
     <ClInclude Include="Techniques\FrustumCulling.h" />
     <ClInclude Include="WaterSphere.h" />
+    <ClInclude Include="ModuleUI.h" />
+    <ClInclude Include="SpaceShipUpgrade.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

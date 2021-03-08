@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "ourMath.h"
+#include "SpaceShipUpgrade.h"
 
 class SpaceShip : public GameObject
 {
@@ -10,9 +11,12 @@ private:
 	std::string m_Tag;
 	bool m_TestForCulling;
 
+	// Spaceship upgrades
+	std::vector<GameObject*> m_upgrades;
+
 public:
 	SpaceShip();
-	virtual ~SpaceShip() = default;
+	virtual ~SpaceShip();
 
 
 	void AddRotation(float yaw, float pitch);
@@ -28,4 +32,5 @@ public:
 	void BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) override;
 	[[nodiscard]] const std::string& GetTag() const noexcept override;
 	[[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept override;
+	std::vector<GameObject*>& GetActiveUpgrades();
 };

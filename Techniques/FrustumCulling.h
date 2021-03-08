@@ -1,6 +1,7 @@
 #pragma once
 #include "../PlayerCamera.h"
 #include "../GameObject.h"
+#include "../SpaceShip.h"
 
 class WaterSphere;
 

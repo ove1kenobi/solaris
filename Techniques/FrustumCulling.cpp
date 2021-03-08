@@ -67,6 +67,16 @@ void FrustumCulling::CullObjects(std::vector<GameObject*>& gameObjects, PlayerCa
 			{
 				renderData.totalNrOfOrbits++;
 			}
+			else if (gameObjects[i]->GetTag() == "SpaceShip")
+			{
+				SpaceShip* ship = static_cast<SpaceShip*>(gameObjects[i]);
+				std::vector<GameObject*> upgrades = ship->GetActiveUpgrades();
+				for (GameObject* u : upgrades)
+				{
+					if (u) renderData.culledObjects.push_back(u);
+					renderData.totalNrOfObjects++;
+				}
+			}
 			renderData.culledObjects.push_back(gameObjects[i]);
 			renderData.totalNrOfObjects++;
 		}
