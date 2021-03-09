@@ -34,7 +34,7 @@ GameEvent GameEventManager::GetAGameEvent(UINT type)
 	}
 	default:
 	{
-		// Normal
+		// General
 		if (!generalEventPool.empty()) {
 			gameEv = generalEventPool.back();
 			generalEventPool.pop_back();
@@ -54,7 +54,76 @@ GameEvent GameEventManager::GetAGameEvent(UINT type)
 GameEventManager::GameEventManager()
 {
 
+	GameEvent general[] = { 
+		{
+		"Now this is the story all about how My life got flipped, turned upside down",
+		"In west Philadelphia born and raised On the playground where I spent most of my days Chilling out, maxing, relaxing all cool",
+		{10, 0, 0, 0, 0, 5, 0, 0}
+		},
+		{
+		"Test",
+		"Bad choice",
+		{10, 5, -10, 0, 0, 0, 0, -1}
+		},
+		{
+		"Raid: Shadow Legends",
+		"Throw down the gauntlet and brawl with other players in fierce arena battles. Smoke your competition, climb Tiers, and earn valuable Rewards.",
+		{100, 100, 100, 100, 100, 10, 10, 10}
+		},
+		{
+		"Prevent wildfires",
+		"Smokey The Bear liked that",
+		{100, -100, 10, 0, 0, -2, 0, 0}
+		}
+	};
 
+	GameEvent hot[] = {
+		{
+		"Test 1",
+		"result",
+		{0, 0, 0, 0, 0, 5, 0, 0}
+		},
+		{
+		"Test 2",
+		"result",
+		{10, 5, 0, 0, 0, 1, 0, 0}
+		},
+		{
+		"Test 3",
+		"result",
+		{100, 100, 100, 100, 100, 10, 10, 10}
+		},
+		{
+		"Test 4",
+		"result",
+		{100, -100, 100, 0, 0, 5, 0, 0}
+		}
+	};
+
+	GameEvent cold[] = {
+		{
+		"Test 5",
+		"result",
+		{0, 0, 0, 0, 0, 0, 0, 5}
+		},
+		{
+		"Test 6",
+		"result",
+		{10, 5, 0, 0, 0, 0, 0, 1}
+		},
+		{
+		"Test 7",
+		"result",
+		{100, 100, 100, 100, 100, 10, 10, 10}
+		},
+		{
+		"Test 8",
+		"result",
+		{100, -100, 100, 0, 0, 0, 0, 5}
+		}
+	};
+
+	
 
 	srand(time(NULL));
 	std::random_shuffle(generalEventPool.begin(), generalEventPool.end());

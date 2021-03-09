@@ -16,6 +16,9 @@ SpaceShip::SpaceShip()
 	this->m_center = { 0.0f, 1000.0f, -10000.0f };
 	this->m_mass = 10000.0f;
 	m_yaw = (float)M_PI;
+
+	//m_pitch = (float)M_PI / 8.0f;
+
 	m_pitchTilt = 0.0f;
 	m_rollTilt = 0.0f;
 	m_velocity = { 1.0f, 1.0f, 1.0f };
@@ -77,8 +80,8 @@ void SpaceShip::AddRotation(float yaw, float pitch)
 	else if (m_yaw <= -2 * (float)M_PI) m_yaw += 2 * (float)M_PI;
 
 	m_pitch += pitch;
-	if (m_pitch > (float)M_PI_2 - alpha) m_pitch = (float)M_PI_2 - alpha;
-	else if (m_pitch < -(float)M_PI_2 + alpha) m_pitch = -(float)M_PI_2 + alpha;
+	if (m_pitch > (float)M_PI_2 + (float)M_PI / 8.0f - alpha) m_pitch = (float)M_PI_2 + (float)M_PI / 8.0f - alpha;
+	else if (m_pitch < -(float)M_PI_2 + (float)M_PI / 8.0f + alpha) m_pitch = -(float)M_PI_2 + (float)M_PI / 8.0f + alpha;
 }
 
 void SpaceShip::SetTilt(float pitchLerp, float rollLerp)

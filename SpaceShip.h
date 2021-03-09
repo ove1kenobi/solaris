@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "ourMath.h"
 
+#include <iostream>
+
 class SpaceShip : public GameObject
 {
 private:

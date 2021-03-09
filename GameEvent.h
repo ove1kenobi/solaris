@@ -1,9 +1,9 @@
 #pragma once
-// Add resources
+#include "Resources.h"
 #include <string>	// pch?
 
 struct GameEvent {
 	std::string prologue;
 	std::string consequence;
-	//int resources[numOfResources] = {0};
+	int reward[numberOfResources] = {0};
 };
