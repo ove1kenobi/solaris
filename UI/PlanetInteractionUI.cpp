@@ -455,16 +455,6 @@ bool PlanetInteractionUI::UpdateTextElements() {
 		m_pMainRectangle.bottom - m_pScreenOffset - m_pBlockSize - m_pPadding
 	), m_pPadding);
 
-	//FOR TESTING
-	for (unsigned int i = 0; i < 3; i++) {
-		m_pRandomEvents.at(i)->AddIcon(L"Scrap.png", L"25");
-		m_pRandomEvents.at(i)->AddIcon(L"Khionerite.png", L"10");
-		m_pRandomEvents.at(i)->AddIcon(L"Nanotech.png", L"1");
-		m_pRandomEvents.at(i)->AddIcon(L"Plasma.png", L"5");
-		m_pRandomEvents.at(i)->AddIcon(L"Radium.png", L"11");
-		m_pRandomEvents.at(i)->AddIcon(L"Titanium.png", L"65");
-	}
-
 	return true;
 }
 
@@ -766,6 +756,17 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		this->UpdateModules();
 		break;
 	}
+	/*
+	Example of Random event:
+	{
+		m_pRandomEvents.at(0)->SetText(L"Event text here");
+
+		//Set icons and resources for the event
+		m_pRandomEvents.at(0)->AddIcon(L"Scrap.png", L"25");
+		m_pRandomEvents.at(0)->AddIcon(L"Khionerite.png", L"10");
+		m_pRandomEvents.at(0)->AddIcon(L"Nanotech.png", L"1");
+	}
+	*/
 	default:
 		break;
 	}

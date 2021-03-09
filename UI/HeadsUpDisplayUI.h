@@ -10,11 +10,6 @@ private:
 	D2D1_RECT_F m_pRightDisplayScreen;
 	D2D1_RECT_F m_pLeftDisplayScreen;
 
-	//Crosshair
-	float m_pCrosshairSize;
-	float m_pCrosshairLength;
-	float m_pCrosshairDistance;
-
 	//Distance to planet module
 	bool m_pRenderDistance;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pDistanceFormat;
@@ -50,6 +45,7 @@ private:
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pWarningTriangle;
 	D2D1_RECT_F m_pWarningTextBox;
 	std::wstring m_pWarningText;
+	bool m_pCapacityWarning;
 
 	//Resources
 	std::vector<D2D1_RECT_F> m_pIconPicture;
@@ -70,7 +66,6 @@ private:
 	//Update modules if screen size changes
 	bool UpdateDisplayScreens();
 	bool UpdateBars();
-	bool UpdateCapacity();
 	bool UpdateWarningModule();
 	bool UpdatePlanetDistanceModule();
 	bool UpdateTools();
@@ -82,10 +77,10 @@ private:
 	void RenderCapacity();
 	void RenderWarningModule();
 	void RenderPlanetDistanceModule();
-	void RenderCrosshair();
 
 	//For updating things based on information from the event handler
 	void SetPlanetDistance(float distanceToPlanet, std::wstring planetName);
+	void SetCapacity(unsigned int currentAmount, unsigned int maximumAmount);
 public:
 	//Creation and destruction functions
 	HeadsUpDisplayUI();
