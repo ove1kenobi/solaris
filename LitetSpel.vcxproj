@@ -89,6 +89,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SpaceShipUpgrade.cpp" />
     <ClCompile Include="UI\HeadsUpDisplayBar.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
@@ -187,6 +188,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Sun.cpp" />
     <ClCompile Include="SpaceShip.cpp" />
     <ClCompile Include="Techniques\FrustumCulling.cpp">
@@ -238,6 +240,8 @@
     <ClCompile Include="WaterSphere.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Resources.h" />
+    <ClInclude Include="SpaceShipUpgrade.h" />
     <ClInclude Include="UI\HeadsUpDisplayBar.h" />
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="Bloom.h" />
@@ -258,6 +262,7 @@
     <ClInclude Include="EventSystem\InputEvents.h" />
     <ClInclude Include="EventSystem\RenderEvents.h" />
     <ClInclude Include="EventSystem\KeyState.h" />
+    <ClInclude Include="EventSystem\SoundEvents.h" />
     <ClInclude Include="EventSystem\UtilityEvents.h" />
     <ClInclude Include="EventSystem\WindowEvents.h" />
     <ClInclude Include="ForwardRenderer.h" />
@@ -290,6 +295,7 @@
     <ClInclude Include="Resources\Texture.h" />
     <ClInclude Include="Resources\VertexBuffer.h" />
     <ClInclude Include="Resources\ComputeShader.h" />
+    <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Sun.h" />
     <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="Techniques\FrustumCulling.h" />

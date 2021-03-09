@@ -78,6 +78,8 @@
     <ClCompile Include="WaterSphere.cpp" />
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="ModelTexture.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="SpaceShipUpgrade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -153,6 +155,11 @@
     <ClInclude Include="WaterSphere.h" />
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="UI\ModuleUI.h" />
+    <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="EventSystem\SoundEvents.h" />
+    <ClInclude Include="Resources.h" />
+    <ClInclude Include="ModuleUI.h" />
+    <ClInclude Include="SpaceShipUpgrade.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />
