@@ -14,6 +14,7 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pRandomEvents.push_back(new RandomEventUI());
 	m_pRandomEvents.push_back(new RandomEventUI());
 	m_pRandomEvents.push_back(new RandomEventUI());
+
 	//Example text: should be removed once event system is in place.
 	m_pPlanetNameText = L"TATOOINE";
 
@@ -108,7 +109,7 @@ bool PlanetInteractionUI::CreateTextElements() {
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		16.0f,
+		18.0f,
 		L"en-us",
 		&m_pBodyFormat
 	), "TextFormat");
@@ -175,20 +176,11 @@ bool PlanetInteractionUI::CreateTools() {
 
 //Update functions
 bool PlanetInteractionUI::UpdateScreen() {
-	//In case we want to make it dynamic:
-	/*m_pMainRectangle = D2D1::RectF(
-		100.0f,
-		50.0f,
-		m_pWindowWidth - 100.0f,
-		m_pWindowHeight - 200.0f
-	);*/
-
-	//Locked UI size
 	m_pMainRectangle = D2D1::RectF(
-		(m_pWindowWidth/2.0f) - 500.0f,
-		(m_pWindowHeight / 2.0f) - 350.0f,
-		(m_pWindowWidth/2.0f) + 500.0f,
-		(m_pWindowHeight/2.0f) + 200.0f
+		(m_pWindowWidth/2.0f) - 650.0f,
+		(m_pWindowHeight / 2.0f) - 450.0f,
+		(m_pWindowWidth/2.0f) + 650.0f,
+		(m_pWindowHeight/2.0f) + 250.0f
 	);
 
 	//Module information
@@ -348,10 +340,11 @@ bool PlanetInteractionUI::UpdateTopCorners() {
 		);
 		D2D1_POINT_2F points[] = {
 			//Title area
-		   D2D1::Point2F(m_pMainRectangle.right - 280.0f, m_pMainRectangle.top - 10.0f),
-		   D2D1::Point2F(m_pMainRectangle.right - 300.0f, m_pMainRectangle.top - 30.0f),
-		   D2D1::Point2F(m_pMainRectangle.left + 300.0f, m_pMainRectangle.top - 30.0f),
-		   D2D1::Point2F(m_pMainRectangle.left + 280.0f, m_pMainRectangle.top - 10.0f),
+		   D2D1::Point2F(m_pMainRectangle.right - 380.0f, m_pMainRectangle.top - 10.0f),
+		   D2D1::Point2F(m_pMainRectangle.right - 400.0f, m_pMainRectangle.top - 30.0f),
+
+		   D2D1::Point2F(m_pMainRectangle.left + 400.0f, m_pMainRectangle.top - 30.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 380.0f, m_pMainRectangle.top - 10.0f),
 
 		   //Left corner
 		   D2D1::Point2F(m_pMainRectangle.left + 10.0f, m_pMainRectangle.top - 10.0f),
@@ -461,6 +454,16 @@ bool PlanetInteractionUI::UpdateTextElements() {
 		(static_cast<float>(m_pWindowWidth) / 2.0f) - m_pPadding,
 		m_pMainRectangle.bottom - m_pScreenOffset - m_pBlockSize - m_pPadding
 	), m_pPadding);
+
+	//FOR TESTING
+	for (unsigned int i = 0; i < 3; i++) {
+		m_pRandomEvents.at(i)->AddIcon(L"Scrap.png", L"25");
+		m_pRandomEvents.at(i)->AddIcon(L"Khionerite.png", L"10");
+		m_pRandomEvents.at(i)->AddIcon(L"Nanotech.png", L"1");
+		m_pRandomEvents.at(i)->AddIcon(L"Plasma.png", L"5");
+		m_pRandomEvents.at(i)->AddIcon(L"Radium.png", L"11");
+		m_pRandomEvents.at(i)->AddIcon(L"Titanium.png", L"65");
+	}
 
 	return true;
 }
