@@ -3,6 +3,9 @@
 
 bool Render2D::AddFonts() {
 	//Load in fonts which the UI will use
+	if (AddFontResource(this->GetFontFilePath(L"Netron-p7gq1.otf").c_str()) == 0) {
+		return false;
+	}
 	if (AddFontResource(this->GetFontFilePath(L"AwareBold-qZo3x.ttf").c_str()) == 0) {
 		return false;
 	}
@@ -27,6 +30,7 @@ Render2D::Render2D() noexcept {
 		m_CurrentUI = TypesUI::PlanetInteraction;
 		m_Modules.push_back(new PlanetInteractionUI());
 		m_Modules.push_back(new HeadsUpDisplayUI());
+		m_Modules.push_back(new MenuUI());
 	}
 
 	m_Render = false;
@@ -41,6 +45,7 @@ Render2D::~Render2D() {
 	RemoveFontResource(this->GetFontFilePath(L"Tenika400Regular-Rpyql.ttf").c_str());
 	RemoveFontResource(this->GetFontFilePath(L"NeoteriqueItalic-rAVK.ttf").c_str());
 	RemoveFontResource(this->GetFontFilePath(L"Neoterique-Y08L.ttf").c_str());
+	RemoveFontResource(this->GetFontFilePath(L"Netron-p7gq1.otf").c_str());
 }
 
 const bool Render2D::Initialize() noexcept {
@@ -91,6 +96,15 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 			if (state == KeyState::KeyPress) {
 				if (virKey == 'E') {
 					m_CurrentUI = TypesUI::PlanetInteraction;
+					if (m_Render) {
+						m_Render = false;
+					}
+					else {
+						m_Render = true;
+					}
+				}
+				if (virKey == 'R') {
+					m_CurrentUI = TypesUI::MainMenu;
 					if (m_Render) {
 						m_Render = false;
 					}

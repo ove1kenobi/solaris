@@ -80,6 +80,7 @@
     <ClCompile Include="ModelTexture.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="SpaceShipUpgrade.cpp" />
+    <ClCompile Include="UI\MenuUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bloom.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Resources.h" />
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="SpaceShipUpgrade.h" />
+    <ClInclude Include="UI\MenuUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />
