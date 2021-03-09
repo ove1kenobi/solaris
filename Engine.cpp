@@ -48,6 +48,10 @@ const bool Engine::Initialize()
 	if (!m_ForwardRenderer.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
 		return false;
 
+	// Sound Manager
+	if (!m_SoundManager.Initialize())
+		return false;
+
 	//All components must have the correct monitor resolution: (Emil F)
 	m_Window.DelegateResolution();
 
@@ -100,6 +104,7 @@ void Engine::Update() noexcept
 	//Should RenderWindow be a layer...? (Emil F)
 	m_LayerStack.Update();
 	m_Window.Update();
+	m_SoundManager.Update();
 }
 
 void Engine::Render()

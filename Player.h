@@ -6,6 +6,8 @@
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventBuss.h"
 #include "EventSystem/InputEvents.h"
+#include "EventSystem/SoundEvents.h"
+#include "Resources.h"
 
 class Player : public IEventListener
 {
@@ -16,13 +18,23 @@ private:
 	PlayerCamera* m_camera;
 	Time m_time;
 
-	float m_thrusterForce, m_desiredSpeed, m_topSpeed;
+	// Resources
+	int m_fuelCapacity;
+	int m_oxygenCapacity;
+	int m_storageCapacity;
+	int m_storageUsage;
+	int m_resources[numberOfResources];
 
+	// Movement
+	float m_thrusterForce, m_desiredSpeed, m_topSpeed;
+	float m_rotationSpeed;
+
+	// Input 
 	float m_mousePosX, m_mousePosY;
 	bool m_moveForwards, m_moveBackwards;
 	bool m_stopMovement;
 	bool m_playerControlsActive, m_stabilizerActive;
-	float m_rotationSpeed;
+
 	// Updates the rotation for the camera and the ship
 	void UpdateRotation();
 	DirectX::XMFLOAT3 Stabilize();
@@ -36,6 +48,7 @@ public:
 	bool Initialize(PlayerCamera* camera);
 	bool update();
 	SpaceShip* getShip();
+	void AddResource(int amount, Resource resource);
 
 	void OnEvent(IEvent& event) noexcept;
 

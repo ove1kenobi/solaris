@@ -34,6 +34,14 @@ DirectX::XMFLOAT3 Player::Stabilize()
 
 Player::Player()
 {
+	m_fuelCapacity = 500;
+	m_oxygenCapacity = 500;
+	m_storageCapacity = 1000;
+	for (unsigned int i = 0; i < numberOfResources; i++) {
+		m_resources[i] = 0;
+	}
+	m_storageUsage = 0;
+
 	m_moveForwards = false;
 	m_moveBackwards = false;
 	m_stopMovement = false;
@@ -72,6 +80,19 @@ bool Player::Initialize(PlayerCamera* camera)
 
 bool Player::update()
 {
+#if defined(DEBUG) | defined(_DEBUG)
+	ImGui::Begin("Inventiry");
+	ImGui::Text("Fuel: %d", m_resources[0]);
+	ImGui::Text("Oxygen: %d", m_resources[1]);
+	ImGui::Text("Titanium: %d", m_resources[2]);
+	ImGui::Text("Scrap Metal: %d", m_resources[3]);
+	ImGui::Text("Nanotech: %d", m_resources[4]);
+	ImGui::Text("Plasma: %d", m_resources[5]);
+	ImGui::Text("Radium: %d", m_resources[6]);
+	ImGui::Text("Khionerite: %d", m_resources[7]);
+	ImGui::End();
+#endif
+
 	DirectX::XMFLOAT3 shipForce = { 0.0f, 0.0f, 0.0f };
 
 	// Handle player input
@@ -143,6 +164,60 @@ SpaceShip* Player::getShip() {
 	return this->m_ship;
 }
 
+void Player::AddResource(int amount, Resource resource)
+{
+	int index = static_cast<int>(resource);
+
+	switch (resource)
+	{
+		case Resource::Fuel:
+		{
+			m_resources[index] += amount;
+			if (m_resources[index] > m_fuelCapacity) {
+				m_resources[index] = m_fuelCapacity;
+			}
+			break;
+		}
+		case Resource::Oxygen:
+		{
+			m_resources[index] += amount;
+			if (m_resources[index] > m_oxygenCapacity) {
+				m_resources[index] = m_oxygenCapacity;
+			}
+			break;
+		}
+		default:
+		{
+			int storageLeft = m_storageCapacity - m_storageUsage;
+
+			// Storage space have run out, add only as much as you can
+			if (storageLeft < amount) {
+				m_resources[index] += storageLeft;
+				m_storageUsage += storageLeft;
+			}
+
+			// We can't have less then 0 of a resource, only remove what we have
+			else if (m_resources[index] + amount < 0) {
+				int tempAmount = m_resources[index];
+				m_resources[index] = 0;
+				m_storageUsage -= tempAmount;
+			}
+
+			// Normal scenario
+			else {
+				m_resources[index] += amount;
+				m_storageUsage += amount;
+			}
+
+			break;
+		}
+	}
+
+	if (m_resources[index] < 0) {
+		m_resources[index] = 0;
+	}
+}
+
 void Player::OnEvent(IEvent& event) noexcept
 {
 	switch (event.GetEventType())
@@ -162,12 +237,18 @@ void Player::OnEvent(IEvent& event) noexcept
 
 			if (state == KeyState::KeyPress) {
 				if (virKey == 'W') {
+					PlaySoundEvent thrusterSound(SoundID::Thrusters, true, 1.2f);
+					EventBuss::Get().Delegate(thrusterSound);
 					m_moveForwards = true;
 				}
 				if (virKey == 'S') {
+					PlaySoundEvent thrusterSound(SoundID::Thrusters, true);
+					EventBuss::Get().Delegate(thrusterSound);
 					m_moveBackwards = true;
 				}
 				if (virKey == VK_SPACE) {
+					PlaySoundEvent thrusterSound(SoundID::Thrusters, true);
+					EventBuss::Get().Delegate(thrusterSound);
 					m_stopMovement = true;
 				}
 				if (virKey == 'Q') {
@@ -178,12 +259,18 @@ void Player::OnEvent(IEvent& event) noexcept
 
 			if (state == KeyState::KeyRelease) {
 				if (virKey == 'W') {
+					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
+					EventBuss::Get().Delegate(thrusterSound);
 					m_moveForwards = false;
 				}
 				if (virKey == 'S') {
+					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
+					EventBuss::Get().Delegate(thrusterSound);
 					m_moveBackwards = false;
 				}
 				if (virKey == VK_SPACE) {
+					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
+					EventBuss::Get().Delegate(thrusterSound);
 					m_stopMovement = false;
 				}
 			}

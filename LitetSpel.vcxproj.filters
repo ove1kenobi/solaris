@@ -78,6 +78,7 @@
     <ClCompile Include="WaterSphere.cpp" />
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="ModelTexture.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="GameEventManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +144,7 @@
     <ClInclude Include="Resources\GBuffer.h" />
     <ClInclude Include="UI\TypesUI.h" />
     <ClInclude Include="UI\Button.h" />
+    <ClInclude Include="UI\ModuleUI.h" />
     <ClInclude Include="UI\PlanetInteractionUI.h" />
     <ClInclude Include="UI\RandomEventUI.h" />
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
@@ -152,7 +154,9 @@
     <ClInclude Include="ModelTexture.h" />
     <ClInclude Include="Techniques\FrustumCulling.h" />
     <ClInclude Include="WaterSphere.h" />
-    <ClInclude Include="ModuleUI.h" />
+    <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="EventSystem\SoundEvents.h" />
+    <ClInclude Include="Resources.h" />
     <ClInclude Include="GameEventManager.h" />
     <ClInclude Include="GameEvent.h" />
   </ItemGroup>
