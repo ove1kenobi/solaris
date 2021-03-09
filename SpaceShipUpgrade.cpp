@@ -4,7 +4,6 @@
 SpaceShipUpgrade::SpaceShipUpgrade()
 	: m_Tag{ "Upgrade" }, m_TestForCulling{ false }
 {
-	m_center = { 1000.0f, 1000.0f, 1000.0f };
 }
 
 SpaceShipUpgrade::SpaceShipUpgrade(std::string modelFile)
@@ -30,7 +29,6 @@ void SpaceShipUpgrade::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceCont
 		&this->m_model->getOffset());
 
 	deviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
-	//deviceContext->VSSetConstantBuffers(0, 1, this->m_model->getMatrixBuffer().GetAddressOf());
 }
 
 void SpaceShipUpgrade::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)

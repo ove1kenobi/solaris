@@ -32,5 +32,5 @@ public:
 	void BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) override;
 	[[nodiscard]] const std::string& GetTag() const noexcept override;
 	[[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept override;
-	std::vector<GameObject*>& GetActiveUpgrades();
+	std::vector<GameObject*>& GetUpgrades();
 };

@@ -24,14 +24,14 @@ SpaceShip::SpaceShip()
 	// Upgrades
 	std::string folder = "models/";
 	std::vector<std::string> upgradeModels = {
-		//"spaceship_afterburner.obj",
-		//"spaceship_antenna.obj",
-		//"spaceship_cargo.obj",
-		//"spaceship_cold.obj",
-		//"spaceship_fuelcells.obj",
-		//"spaceship_livingquarters.obj",
-		//"spaceship_shield.obj",
-		//"spaceship_warm.obj",
+		"spaceship_afterburner.obj",
+		"spaceship_antenna.obj",
+		"spaceship_cargo.obj",
+		"spaceship_cold.obj",
+		"spaceship_fuelcells.obj",
+		"spaceship_livingquarters.obj",
+		"spaceship_shield.obj",
+		"spaceship_warm.obj",
 		"spaceship_warpdrive.obj"
 	};
 	for (std::string file : upgradeModels)
@@ -174,7 +174,7 @@ const bool& SpaceShip::ShallBeTestedForCulling() const noexcept
 	return m_TestForCulling;
 }
 
-std::vector<GameObject*>& SpaceShip::GetActiveUpgrades()
+std::vector<GameObject*>& SpaceShip::GetUpgrades()
 {
 	return m_upgrades;
 }
