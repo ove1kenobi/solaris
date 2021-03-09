@@ -32,5 +32,10 @@ public:
 	void BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) override;
 	[[nodiscard]] const std::string& GetTag() const noexcept override;
 	[[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept override;
+	void Activate(size_t upgrade);
 	std::vector<GameObject*>& GetUpgrades();
+
+	enum UpgradeTypes {
+		afterburner = 0, antenna, cargo, cold, fuelcells, livingquarters, shield, warm, warpdrive, numUpgrades
+	};
 };

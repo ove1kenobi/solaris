@@ -1,6 +1,20 @@
 #include "pch.h"
 #include "SpaceShip.h"
 
+const std::string folder = "models/";
+
+const std::vector<std::string> upgradeFiles = {
+		folder + "spaceship_afterburner.obj",
+		folder + "spaceship_antenna.obj",
+		folder + "spaceship_cargo.obj",
+		folder + "spaceship_cold.obj",
+		folder + "spaceship_fuelcells.obj",
+		folder + "spaceship_livingquarters.obj",
+		folder + "spaceship_shield.obj",
+		folder + "spaceship_warm.obj",
+		folder + "spaceship_warpdrive.obj"
+};
+
 SpaceShip::SpaceShip()
 	: m_Tag{ "SpaceShip"},
 	  m_TestForCulling{ false }
@@ -21,22 +35,15 @@ SpaceShip::SpaceShip()
 	m_rollTilt = 0.0f;
 	m_velocity = { 1.0f, 1.0f, 1.0f };
 
-	// Upgrades
-	std::string folder = "models/";
-	std::vector<std::string> upgradeModels = {
-		"spaceship_afterburner.obj",
-		"spaceship_antenna.obj",
-		"spaceship_cargo.obj",
-		"spaceship_cold.obj",
-		"spaceship_fuelcells.obj",
-		"spaceship_livingquarters.obj",
-		"spaceship_shield.obj",
-		"spaceship_warm.obj",
-		"spaceship_warpdrive.obj"
-	};
-	for (std::string file : upgradeModels)
+	for (size_t upgrade = 0; upgrade < numUpgrades; upgrade++)
 	{
-		m_upgrades.push_back(new SpaceShipUpgrade(folder + file));
+		m_upgrades.push_back(nullptr);
+	}
+
+	// Remove this loop when ready for in game upgrades
+	for (size_t upgrade = 0; upgrade < numUpgrades; upgrade++)
+	{
+		Activate(upgrade);
 	}
 }
 
@@ -172,6 +179,12 @@ const std::string& SpaceShip::GetTag() const noexcept
 const bool& SpaceShip::ShallBeTestedForCulling() const noexcept
 {
 	return m_TestForCulling;
+}
+
+void SpaceShip::Activate(size_t upgrade)
+{	// Only activate if not already activated
+	if (upgrade < numUpgrades && !m_upgrades[upgrade])
+		m_upgrades[upgrade] = new SpaceShipUpgrade(upgradeFiles[upgrade]);
 }
 
 std::vector<GameObject*>& SpaceShip::GetUpgrades()

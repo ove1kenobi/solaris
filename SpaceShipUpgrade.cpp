@@ -7,6 +7,7 @@ SpaceShipUpgrade::SpaceShipUpgrade()
 }
 
 SpaceShipUpgrade::SpaceShipUpgrade(std::string modelFile)
+	: m_Tag{ "Upgrade" }, m_TestForCulling{ false }
 {
 	m_model = ModelFactory::Get().GetModel(modelFile);
 }
