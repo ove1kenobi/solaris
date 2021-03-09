@@ -7,9 +7,11 @@ private:
 	std::vector<GameEvent> coldEventPool;
 	std::vector<GameEvent> hotEventPool;
 
+	GameEvent GetAGameEvent(UINT type);
+
 public:
 	GameEventManager();
 	~GameEventManager();
 
-	void RequestGameEvents(GameEvent *setOfGameEvents, UINT planetType);
+	void RequestGameEvents(GameEvent setOfGameEvents[3], UINT planetType);
 };
