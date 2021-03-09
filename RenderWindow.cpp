@@ -20,12 +20,12 @@ RenderWindow::RenderWindow()
     wc.hInstance = (HINSTANCE)GetModuleHandle(nullptr);  //Handle to the instance that contains the Window Procedure
     wc.hIcon = nullptr;                                  //Handle to the class icon. Must be a handle to an icon resource. We are not currently assigning an icon, so this is null.
     wc.hIconSm = nullptr;                                //Handle to small icon for this class. We are not currently assigning an icon, so this is null.
-    wc.hCursor =  nullptr;                                //Default Cursor - If we leave this null, we have to explicitly set the cursor's shape each time it enters the window.
+    wc.hCursor = nullptr;               //Default Cursor - If we leave this null, we have to explicitly set the cursor's shape each time it enters the window.
     wc.hbrBackground = nullptr;                          //Handle to the class background brush for the window's background color - we will leave this blank for now and later set this to black. For stock brushes, see: https://msdn.microsoft.com/en-us/library/windows/desktop/dd144925(v=vs.85).aspx
     wc.lpszMenuName = nullptr;                           //Pointer to a null terminated character string for the menu. We are not using a menu yet, so this will be NULL.
     wc.lpszClassName = className;                        //Pointer to null terminated string of our class name for this window.
     wc.cbSize = sizeof(WNDCLASSEX);                      //Need to fill in the size of our struct for cbSize
-
+   
     RegisterClassEx(&wc);
 
     RECT winRect = {0, 0, static_cast<long>(m_clientWinWidth), static_cast<long>(m_clientWinHeight)};
@@ -144,7 +144,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             }
             if (wParam == 'I')
             {
-
                 ToggleImGuiEvent imEvent;
                 EventBuss::Get().Delegate(imEvent);
             }
