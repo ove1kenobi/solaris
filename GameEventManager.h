@@ -3,10 +3,13 @@
 
 class GameEventManager {
 private:
-	std::vector<GameEvent> gameEvents;
+	std::vector<GameEvent> generalEventPool;
+	std::vector<GameEvent> coldEventPool;
+	std::vector<GameEvent> hotEventPool;
+
 public:
 	GameEventManager();
 	~GameEventManager();
 
-	void RequestGameEvents(GameEvent *setOfGameEvents);
+	void RequestGameEvents(GameEvent *setOfGameEvents, UINT planetType);
 };
