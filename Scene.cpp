@@ -323,8 +323,8 @@ void Scene::Update() noexcept {
 
 	
 	bool radioactiveUpgrade = false; //Temporary, change to return value of function
-	bool coldUpgrade = false;
-	bool hotUpgrade = false;
+	bool coldUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::cold);
+	bool hotUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::hot);
 	//Only waste time on updating the damage timer if we do not have all of these upgrades.
 	//This is correct.
 	if (!coldUpgrade || !hotUpgrade || !radioactiveUpgrade) {
