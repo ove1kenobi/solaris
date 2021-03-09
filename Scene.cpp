@@ -322,9 +322,9 @@ void Scene::Update() noexcept {
 	m_Picking.DisplayPickedObject();
 
 	
-	Model* radioactiveUpgrade = nullptr; //Temporary, change to the pointer to the radioactive upgrade.
-	Model* coldUpgrade = nullptr;
-	Model* hotUpgrade = nullptr;
+	bool radioactiveUpgrade = false; //Temporary, change to return value of function
+	bool coldUpgrade = false;
+	bool hotUpgrade = false;
 	//Only waste time on updating the damage timer if we do not have all of these upgrades.
 	//This is correct.
 	if (!coldUpgrade || !hotUpgrade || !radioactiveUpgrade) {
@@ -333,7 +333,7 @@ void Scene::Update() noexcept {
 
 	//Update player health
 	//Sun
-	if (!coldUpgrade || !hotUpgrade) { //change so that it is IF its not nullptr.
+	if (!coldUpgrade || !hotUpgrade) {
 		DirectX::XMFLOAT3 playerCenter = m_player.getShip()->getCenter();
 		DirectX::XMFLOAT3 sunCenter = m_sun->GetCenter();
 		float sunDist = distance(sunCenter, playerCenter);
@@ -345,7 +345,7 @@ void Scene::Update() noexcept {
 	}
 
 	//Radioactive planets
-	if (!radioactiveUpgrade) { //change so that it is IF its not nullptr.
+	if (!radioactiveUpgrade) {
 		DirectX::XMFLOAT3 playerCenter = m_player.getShip()->getCenter();
 		for (auto r : m_radioactivePlanets) {
 			float planetDist = distance(r->GetCenter(), playerCenter);
