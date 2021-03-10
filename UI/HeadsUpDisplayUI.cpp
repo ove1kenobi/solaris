@@ -13,6 +13,7 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pLeftDisplayScreen = D2D1::RectF();
 
 	m_pHealthIcon = D2D1::RectF();
+	m_pHealthBitmap = NULL;
 	m_pOxygenIcon = D2D1::RectF();
 	m_pFuelIcon = D2D1::RectF();
 
@@ -28,6 +29,13 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 
 	m_pMouseX = 10;
 	m_pMouseY = 10;
+}
+
+HeadsUpDisplayUI::~HeadsUpDisplayUI() {
+	m_pHealthBitmap->Release();
+	m_pOxygenBitmap->Release();
+	m_pFuelBitmap->Release();
+	m_pCapacityBitmap->Release();
 }
 
 bool HeadsUpDisplayUI::Initialize() {

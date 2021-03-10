@@ -28,6 +28,7 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISurface>			m_pSurface;
 	Microsoft::WRL::ComPtr<ID2D1RenderTarget>		m_pSurfaceRenderTarget;
 	Microsoft::WRL::ComPtr<IDWriteFactory>			m_pTextFactory;
+	Microsoft::WRL::ComPtr<IWICImagingFactory>		m_pBitMapFactory;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_pRasterizerStateNoCull;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_pRasterizerStateNoCullWF;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_pDepthStencilStateDefault;
@@ -58,4 +59,5 @@ public:
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID2D1Factory>& GetFactory2D() const noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID2D1RenderTarget>& GetSurfaceRenderTarget() const noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<IDWriteFactory>& GetTextFactory() const noexcept;
+	[[nodiscard]] const Microsoft::WRL::ComPtr<IWICImagingFactory>& GetBitMapFactory() const noexcept;
 };

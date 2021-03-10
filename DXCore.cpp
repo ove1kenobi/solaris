@@ -12,6 +12,7 @@ DXCore::DXCore() noexcept
 	  m_pSurface{ nullptr },
 	  m_pSurfaceRenderTarget{ nullptr },
 	  m_pTextFactory{ nullptr },
+	  m_pBitMapFactory{ nullptr },
 	  m_pRasterizerStateNoCull{ nullptr },
 	  m_pRasterizerStateNoCullWF{ nullptr },
 	  m_pDepthStencilStateDefault{ nullptr },
@@ -184,6 +185,8 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 
 	HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), &m_pTextFactory), "CreateTextFactory");
 
+	HR(CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_pBitMapFactory)), "CreateBitMapFactory");
+
 	m_DefaultViewport.TopLeftX = 0.0f;
 	m_DefaultViewport.TopLeftY = 0.0f;
 	m_DefaultViewport.Width = static_cast<FLOAT>(clientWindowWidth);
@@ -322,7 +325,8 @@ void DXCore::DelegateDXHandles() noexcept
 		m_pDepthShaderResourceView,
 		m_pFactory2D, 
 		m_pSurfaceRenderTarget,
-		m_pTextFactory
+		m_pTextFactory,
+		m_pBitMapFactory
 	);
 	EventBuss::Get().Delegate(event);
 }
@@ -386,4 +390,9 @@ const Microsoft::WRL::ComPtr<ID2D1RenderTarget>& DXCore::GetSurfaceRenderTarget(
 const Microsoft::WRL::ComPtr<IDWriteFactory>& DXCore::GetTextFactory() const noexcept
 {
 	return m_pTextFactory;
+}
+
+const Microsoft::WRL::ComPtr<IWICImagingFactory>& DXCore::GetBitMapFactory() const noexcept
+{
+	return m_pBitMapFactory;
 }

@@ -14,6 +14,7 @@ private:
 	Microsoft::WRL::ComPtr<ID2D1Factory>				m_pFactory2D;
 	Microsoft::WRL::ComPtr<ID2D1RenderTarget>			m_pSurfaceRenderTarget;
 	Microsoft::WRL::ComPtr<IDWriteFactory>				m_pTextFactory;
+	Microsoft::WRL::ComPtr<IWICImagingFactory>			m_pBitMapFactory;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	m_ppDepthShaderResourceView;
 public:
 	DelegateDXEvent(Microsoft::WRL::ComPtr<ID3D11Device>& pdevice,
@@ -24,7 +25,8 @@ public:
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& pdepthShaderResourceView,
 		Microsoft::WRL::ComPtr<ID2D1Factory>& pfactory,
 		Microsoft::WRL::ComPtr<ID2D1RenderTarget>& pSurfaceRenderTarget,
-		Microsoft::WRL::ComPtr<IDWriteFactory>&	pTextFactory) noexcept
+		Microsoft::WRL::ComPtr<IDWriteFactory>&	pTextFactory,
+		Microsoft::WRL::ComPtr<IWICImagingFactory>& pBitMapFactory) noexcept
 	{
 		m_ppDevice = pdevice;
 		m_ppDeviceContext = pdeviceContext;
@@ -35,6 +37,7 @@ public:
 		m_pFactory2D = pfactory;
 		m_pSurfaceRenderTarget = pSurfaceRenderTarget;
 		m_pTextFactory = pTextFactory;
+		m_pBitMapFactory = pBitMapFactory;
 
 	}
 	virtual ~DelegateDXEvent() noexcept = default;
@@ -78,6 +81,10 @@ public:
 	[[nodiscard]] const Microsoft::WRL::ComPtr<IDWriteFactory>& GetTextFactory() const
 	{
 		return m_pTextFactory;
+	}
+	[[nodiscard]] const Microsoft::WRL::ComPtr<IWICImagingFactory>& GetBitMapFactory() const
+	{
+		return m_pBitMapFactory;
 	}
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetShaderResourceView() const
 	{
