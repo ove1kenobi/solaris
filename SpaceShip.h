@@ -6,6 +6,7 @@
 class SpaceShip : public GameObject
 {
 private:
+	float m_maxPitch, m_minPitch;
 	float m_pitchTilt, m_rollTilt;
 
 	std::string m_Tag;

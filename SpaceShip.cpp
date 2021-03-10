@@ -31,9 +31,14 @@ SpaceShip::SpaceShip()
 	this->m_mass = 10000.0f;
 	m_scale = 0.5f;
 	m_yaw = (float)M_PI;
+	m_pitch = (float)M_PI / 8.0f;
 	m_pitchTilt = 0.0f;
 	m_rollTilt = 0.0f;
 	m_velocity = { 1.0f, 1.0f, 1.0f };
+
+	float alpha = 0.1f;
+	m_maxPitch = (float)M_PI_2 - alpha + m_pitch;
+	m_minPitch = -(float)M_PI_2 + alpha + m_pitch;
 
 	for (size_t upgrade = 0; upgrade < numUpgrades; upgrade++)
 	{
@@ -103,15 +108,13 @@ GameObject* SpaceShip::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 P
 
 void SpaceShip::AddRotation(float yaw, float pitch)
 {
-	float alpha = 0.1f;
-
 	m_yaw += yaw;
 	if (m_yaw >= 2 * (float)M_PI) m_yaw -= 2 * (float)M_PI;
 	else if (m_yaw <= -2 * (float)M_PI) m_yaw += 2 * (float)M_PI;
 
 	m_pitch += pitch;
-	if (m_pitch > (float)M_PI_2 - alpha) m_pitch = (float)M_PI_2 - alpha;
-	else if (m_pitch < -(float)M_PI_2 + alpha) m_pitch = -(float)M_PI_2 + alpha;
+	if (m_pitch > m_maxPitch) m_pitch = m_maxPitch;
+	else if (m_pitch < m_minPitch) m_pitch = m_minPitch;
 }
 
 void SpaceShip::SetTilt(float pitchLerp, float rollLerp)
