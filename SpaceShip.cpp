@@ -1,11 +1,25 @@
 #include "pch.h"
 #include "SpaceShip.h"
 
+const std::string folder = "models/";
+
+const std::vector<std::string> upgradeFiles = {
+		folder + "spaceship_afterburner.obj",
+		folder + "spaceship_antenna.obj",
+		folder + "spaceship_cargo.obj",
+		folder + "spaceship_cold.obj",
+		folder + "spaceship_fuelcells.obj",
+		folder + "spaceship_livingquarters.obj",
+		folder + "spaceship_shield.obj",
+		folder + "spaceship_warm.obj",
+		folder + "spaceship_warpdrive.obj"
+};
+
 SpaceShip::SpaceShip()
 	: m_Tag{ "SpaceShip"},
 	  m_TestForCulling{ false }
 {
-	this->m_model = ModelFactory::Get().GetModel(std::string("models/SciFi_Fighter_AK5.obj"));
+	this->m_model = ModelFactory::Get().GetModel(std::string("models/spaceship_basic.obj"));
 	//this->m_model = ModelFactory::Get().GetModel(std::string("models/cubemetal.obj"));
 	this->m_wMatrix = {
 		0.03f, 0.0f, 0.0f, 0.0f,
@@ -15,6 +29,7 @@ SpaceShip::SpaceShip()
 	};
 	this->m_center = { 0.0f, 1000.0f, -10000.0f };
 	this->m_mass = 10000.0f;
+	m_scale = 0.5f;
 	m_yaw = (float)M_PI;
 
 	//m_pitch = (float)M_PI / 8.0f;
@@ -22,6 +37,25 @@ SpaceShip::SpaceShip()
 	m_pitchTilt = 0.0f;
 	m_rollTilt = 0.0f;
 	m_velocity = { 1.0f, 1.0f, 1.0f };
+
+	for (size_t upgrade = 0; upgrade < numUpgrades; upgrade++)
+	{
+		m_upgrades.push_back(nullptr);
+	}
+
+	// Remove this loop when ready for in game upgrades
+	for (size_t upgrade = 0; upgrade < numUpgrades; upgrade++)
+	{
+		Activate(upgrade);
+	}
+}
+
+SpaceShip::~SpaceShip()
+{
+	for (GameObject* upgrade : m_upgrades)
+	{
+		if (upgrade) delete upgrade;
+	}
 }
 
 GameObject* SpaceShip::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
@@ -37,8 +71,7 @@ GameObject* SpaceShip::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 P
 
 	//Updated the same way as a cosmicbody, with S * R * T. Rotation is around the ships up vector.
 	DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&this->m_upVector);
-	//100 times smaller. TODO: make variable?
-	DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(m_scale, m_scale, m_scale);
 	DirectX::XMMATRIX rotX = DirectX::XMMatrixRotationX(m_pitch + m_pitchTilt);
 	DirectX::XMMATRIX rotY = DirectX::XMMatrixRotationY(m_yaw);
 	DirectX::XMVECTOR forward{ m_forwardVector.x, m_forwardVector.y, m_forwardVector.z };
@@ -149,4 +182,22 @@ const std::string& SpaceShip::GetTag() const noexcept
 const bool& SpaceShip::ShallBeTestedForCulling() const noexcept
 {
 	return m_TestForCulling;
+}
+
+void SpaceShip::Activate(size_t upgrade)
+{	// Only activate if not already activated
+	if (upgrade < numUpgrades && !m_upgrades[upgrade])
+		m_upgrades[upgrade] = new SpaceShipUpgrade(upgradeFiles[upgrade]);
+}
+
+bool SpaceShip::IsUpgraded(size_t upgrade)
+{
+	if (upgrade < numUpgrades)
+		return m_upgrades[upgrade] != nullptr;
+	return false;
+}
+
+std::vector<GameObject*>& SpaceShip::GetUpgrades()
+{
+	return m_upgrades;
 }

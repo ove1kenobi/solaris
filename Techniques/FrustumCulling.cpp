@@ -63,12 +63,24 @@ void FrustumCulling::CullObjects(std::vector<GameObject*>& gameObjects, PlayerCa
 		 // Therefore, include by default:
 		else
 		{
+			renderData.culledObjects.push_back(gameObjects[i]);
+			renderData.totalNrOfObjects++;
 			if (gameObjects[i]->GetTag() == "Orbit")
 			{
 				renderData.totalNrOfOrbits++;
 			}
-			renderData.culledObjects.push_back(gameObjects[i]);
-			renderData.totalNrOfObjects++;
+			else if (gameObjects[i]->GetTag() == "SpaceShip")
+			{
+				/* Add spaceship upgrades to render queue */
+				SpaceShip* ship = static_cast<SpaceShip*>(gameObjects[i]);
+				std::vector<GameObject*> upgrades = ship->GetUpgrades();
+				for (GameObject* u : upgrades)
+				{
+					// Filter out possible empty upgrades
+					if (u) renderData.culledObjects.push_back(u);
+					renderData.totalNrOfObjects++;
+				}
+			}
 		}
 	}
 	/*ALL ITEMS in culledObjects are still in the order of:

@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "ourMath.h"
+#include "SpaceShipUpgrade.h"
 
 #include <iostream>
 
@@ -12,9 +13,12 @@ private:
 	std::string m_Tag;
 	bool m_TestForCulling;
 
+	// Spaceship upgrades
+	std::vector<GameObject*> m_upgrades;
+
 public:
 	SpaceShip();
-	virtual ~SpaceShip() = default;
+	virtual ~SpaceShip();
 
 
 	void AddRotation(float yaw, float pitch);
@@ -30,4 +34,11 @@ public:
 	void BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) override;
 	[[nodiscard]] const std::string& GetTag() const noexcept override;
 	[[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept override;
+	void Activate(size_t upgrade);
+	bool IsUpgraded(size_t upgrade);
+	std::vector<GameObject*>& GetUpgrades();
+
+	enum UpgradeTypes {
+		afterburner = 0, antenna, cargo, cold, fuelcells, livingquarters, shield, hot, warpdrive, numUpgrades
+	};
 };
