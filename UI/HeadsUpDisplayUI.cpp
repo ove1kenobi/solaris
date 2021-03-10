@@ -17,7 +17,6 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pLeftDisplayScreen = D2D1::RectF();
 
 	m_pHealthIcon = D2D1::RectF();
-	m_pHealthBitmap = NULL;
 	m_pOxygenIcon = D2D1::RectF();
 	m_pFuelIcon = D2D1::RectF();
 
@@ -33,13 +32,6 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 
 	m_pMouseX = 10;
 	m_pMouseY = 10;
-}
-
-HeadsUpDisplayUI::~HeadsUpDisplayUI() {
-	m_pHealthBitmap->Release();
-	m_pOxygenBitmap->Release();
-	m_pFuelBitmap->Release();
-	m_pCapacityBitmap->Release();
 }
 
 bool HeadsUpDisplayUI::Initialize() {
@@ -348,9 +340,9 @@ void HeadsUpDisplayUI::RenderBars() {
 	m_pOxygenBar.Render();
 	m_pFuelBar.Render();
 
-	m_pRenderTarget2D->DrawBitmap(m_pHealthBitmap, m_pHealthIcon);
-	m_pRenderTarget2D->DrawBitmap(m_pOxygenBitmap, m_pOxygenIcon);
-	m_pRenderTarget2D->DrawBitmap(m_pFuelBitmap, m_pFuelIcon);
+	m_pRenderTarget2D->DrawBitmap(m_pHealthBitmap.Get(), m_pHealthIcon);
+	m_pRenderTarget2D->DrawBitmap(m_pOxygenBitmap.Get(), m_pOxygenIcon);
+	m_pRenderTarget2D->DrawBitmap(m_pFuelBitmap.Get(), m_pFuelIcon);
 }
 
 void HeadsUpDisplayUI::RenderCapacity() {
@@ -365,7 +357,7 @@ void HeadsUpDisplayUI::RenderCapacity() {
 		m_pBrush.Get()
 	);
 
-	m_pRenderTarget2D->DrawBitmap(m_pCapacityBitmap, m_pCapacityIcon);
+	m_pRenderTarget2D->DrawBitmap(m_pCapacityBitmap.Get(), m_pCapacityIcon);
 }
 
 void HeadsUpDisplayUI::RenderWarningModule() {
