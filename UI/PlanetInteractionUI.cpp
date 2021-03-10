@@ -454,21 +454,6 @@ bool PlanetInteractionUI::UpdateTextElements() {
 		(static_cast<float>(m_pWindowWidth) / 2.0f) - m_pPadding,
 		m_pMainRectangle.bottom - m_pScreenOffset - m_pBlockSize - m_pPadding
 	), m_pPadding);
-
-	m_pRandomEvents.at(0)->AddIcon(L"Scrap.png", L"22");
-	m_pRandomEvents.at(0)->AddIcon(L"Plasma.png", L"19");
-	m_pRandomEvents.at(0)->AddIcon(L"Nanotech.png", L"1");
-
-	m_pRandomEvents.at(1)->AddIcon(L"Health.png", L"90");
-	m_pRandomEvents.at(1)->AddIcon(L"Khionerite.png", L"7");
-
-	m_pRandomEvents.at(2)->AddIcon(L"Fuel.png", L"10");
-	m_pRandomEvents.at(2)->AddIcon(L"Plasma.png", L"25");
-	m_pRandomEvents.at(2)->AddIcon(L"Nanotech.png", L"35");
-	m_pRandomEvents.at(2)->AddIcon(L"Radium.png", L"11");
-	m_pRandomEvents.at(2)->AddIcon(L"Titanium.png", L"24");
-	m_pRandomEvents.at(2)->AddIcon(L"Health.png", L"5");
-
 	return true;
 }
 

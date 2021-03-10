@@ -10,6 +10,11 @@ private:
 	D2D1_RECT_F m_pRightDisplayScreen;
 	D2D1_RECT_F m_pLeftDisplayScreen;
 
+	//Crosshair
+	float m_pCrosshairDistance;
+	float m_pCrosshairLength;
+	float m_pCrosshairSize;
+
 	//Distance to planet module
 	bool m_pRenderDistance;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pDistanceFormat;
@@ -51,7 +56,7 @@ private:
 	std::vector<D2D1_RECT_F> m_pIconPicture;
 	std::vector<std::wstring> m_pIconText;
 
-	//Current mouse coords (will be removed once UI event handler is in place)
+	//Current mouse coords
 	unsigned int m_pMouseX;
 	unsigned int m_pMouseY;
 
@@ -75,6 +80,7 @@ private:
 	//Render modules
 	void RenderBars();
 	void RenderCapacity();
+	void RenderCrosshair();
 	void RenderWarningModule();
 	void RenderPlanetDistanceModule();
 

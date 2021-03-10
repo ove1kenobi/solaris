@@ -4,6 +4,10 @@
 HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent, EventType::DelegatePlanetDistanceEvent);
 
+	m_pCrosshairDistance = 12.0f;
+	m_pCrosshairLength = 2.5f;
+	m_pCrosshairSize = 2.5f;
+
 	m_pPlanetText = L"TATOOINE";
 	m_pDistanceText = L"100000m";
 	m_pPlanetNameTextBox = D2D1::RectF();
@@ -307,6 +311,38 @@ bool HeadsUpDisplayUI::UpdateModules() {
 }
 
 //Render functions
+void HeadsUpDisplayUI::RenderCrosshair() {
+	this->UpdateBrush(D2D1::ColorF::Snow, 0.5f);
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMouseX - m_pCrosshairLength, m_pMouseY - m_pCrosshairDistance),
+		D2D1::Point2F(m_pMouseX + m_pCrosshairLength, m_pMouseY - m_pCrosshairDistance),
+		m_pBrush.Get(),
+		m_pCrosshairSize
+	);
+
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMouseX + m_pCrosshairDistance, m_pMouseY - m_pCrosshairLength),
+		D2D1::Point2F(m_pMouseX + m_pCrosshairDistance, m_pMouseY + m_pCrosshairLength),
+		m_pBrush.Get(),
+		m_pCrosshairSize
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMouseX - m_pCrosshairLength, m_pMouseY + m_pCrosshairDistance),
+		D2D1::Point2F(m_pMouseX + m_pCrosshairLength, m_pMouseY + m_pCrosshairDistance),
+		m_pBrush.Get(),
+		m_pCrosshairSize
+	);
+
+	m_pRenderTarget2D->DrawLine(
+		D2D1::Point2F(m_pMouseX - m_pCrosshairDistance, m_pMouseY - m_pCrosshairLength),
+		D2D1::Point2F(m_pMouseX - m_pCrosshairDistance, m_pMouseY + m_pCrosshairLength),
+		m_pBrush.Get(),
+		m_pCrosshairSize
+	);
+}
+
 void HeadsUpDisplayUI::RenderBars() {
 	m_pHealthBar.Render();
 	m_pOxygenBar.Render();
@@ -374,6 +410,7 @@ void HeadsUpDisplayUI::Render() {
 		RenderPlanetDistanceModule();
 	}
 
+   RenderCrosshair();
    RenderBars();
    RenderCapacity();
 
