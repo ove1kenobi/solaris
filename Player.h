@@ -43,7 +43,7 @@ private:
 	int m_maxHealth;
 public:
 	Player();
-	~Player();
+	virtual ~Player();
 
 	bool Initialize(PlayerCamera* camera);
 	bool update();

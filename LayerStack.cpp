@@ -11,6 +11,12 @@ void LayerStack::Push(Layer* pLayer) noexcept
 	m_EndOfNormalLayers = m_Layers.emplace(m_EndOfNormalLayers,pLayer);
 }
 
+void LayerStack::RemoveFirst() noexcept
+{
+	m_Layers.erase(m_Layers.begin());
+	m_EndOfNormalLayers = m_Layers.begin();
+}
+
 void LayerStack::PushOverlay(Layer* pLayer) noexcept
 {
 	m_Layers.emplace_back(pLayer);

@@ -61,6 +61,10 @@ PlanetInteractionUI::~PlanetInteractionUI() {
 	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
 		delete m_pRandomEvents.at(i);
 	}
+
+	EventBuss::Get().RemoveListener(this, EventType::KeyboardEvent);
+	EventBuss::Get().RemoveListener(this, EventType::MouseButtonEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateMouseCoordsEvent);
 }
 
 //Creation functions

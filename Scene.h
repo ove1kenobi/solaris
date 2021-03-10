@@ -41,4 +41,6 @@ public:
 	void sendObjects();
 	void AddGameObject(GameObject* obj);
 	void RemoveGameObject(GameObject* obj);
+
+	int GetPlayerHealth();
 };

@@ -29,7 +29,8 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 }
 
 HeadsUpDisplayUI::~HeadsUpDisplayUI() {
-
+	EventBuss::Get().RemoveListener(this, EventType::DelegateMouseCoordsEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegatePlanetDistanceEvent);
 }
 
 bool HeadsUpDisplayUI::Initialize() {

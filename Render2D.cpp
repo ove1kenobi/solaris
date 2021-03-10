@@ -41,6 +41,8 @@ Render2D::~Render2D() {
 	RemoveFontResource(this->GetFontFilePath(L"Tenika400Regular-Rpyql.ttf").c_str());
 	RemoveFontResource(this->GetFontFilePath(L"NeoteriqueItalic-rAVK.ttf").c_str());
 	RemoveFontResource(this->GetFontFilePath(L"Neoterique-Y08L.ttf").c_str());
+
+	EventBuss::Get().RemoveListener(this, EventType::KeyboardEvent);
 }
 
 const bool Render2D::Initialize() noexcept {

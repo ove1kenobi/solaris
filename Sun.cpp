@@ -27,6 +27,10 @@ Sun::Sun() noexcept
 	EventBuss::Get().AddListener(this, EventType::RequestSunLightEvent, EventType::RequestSunEvent);
 }
 
+Sun::~Sun() {
+	EventBuss::Get().RemoveListener(this, EventType::RequestSunLightEvent);
+	EventBuss::Get().RemoveListener(this, EventType::RequestSunEvent);
+}
 const bool Sun::Initialize() noexcept
 {
 	float radius = 900.0f;

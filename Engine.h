@@ -18,11 +18,11 @@ private:
 	RenderWindow m_Window;
 	DXCore m_DXCore;
 	ForwardRenderer m_ForwardRenderer;
-	Render2D m_Render2D;
+	Render2D* m_Render2D;
 	ResourceManager m_ResourceManager;
 	SoundManager m_SoundManager;
 	Time m_gameTime;
-	Scene m_scene;
+	Scene* m_scene;
 	ImGuiManager m_imguiManager;
 	LayerStack m_LayerStack;
 	bool m_Running;
@@ -34,7 +34,7 @@ private:
 	void OnEvent(IEvent& event) noexcept override;
 public:
 	Engine() noexcept;
-	virtual ~Engine() = default;
+	virtual ~Engine();
 	const bool Initialize();
 	void Run();
 };
