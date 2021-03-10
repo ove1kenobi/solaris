@@ -770,7 +770,7 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 	{
 		DelegatePlayerInfoEvent& derivedEvent = static_cast<DelegatePlayerInfoEvent&>(event);
 		m_pPlayerInfo = derivedEvent.GetPlayerInfo();
-		m_pPlanetNameText = m_pPlayerInfo->closestPlanet->GetName();
+		SetPlanetName(m_pPlayerInfo->closestPlanet->GetName());
 		break;
 	}
 	default:
