@@ -33,9 +33,10 @@ public:
 	[[nodiscard]] const std::string& GetTag() const noexcept override;
 	[[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept override;
 	void Activate(size_t upgrade);
+	bool IsUpgraded(size_t upgrade);
 	std::vector<GameObject*>& GetUpgrades();
 
 	enum UpgradeTypes {
-		afterburner = 0, antenna, cargo, cold, fuelcells, livingquarters, shield, warm, warpdrive, numUpgrades
+		afterburner = 0, antenna, cargo, cold, fuelcells, livingquarters, shield, hot, warpdrive, numUpgrades
 	};
 };

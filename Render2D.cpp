@@ -18,9 +18,12 @@ bool Render2D::AddFonts() {
 	return true;
 }
 
-Render2D::Render2D() noexcept {
+Render2D::Render2D() noexcept 
+	: m_pPlayerInfo{ nullptr },
+	  m_PlanetInteractionUIOpen{ false }
+{
 	//Make render2D able to UI handle events (for now, only keyboard ones)
-	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);
+	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::DelegatePlayerInfoEvent);
 
 	if (AddFonts()) {
 		//Set start UI and load them all into an vector
@@ -89,18 +92,30 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 			int virKey = static_cast<KeyboardEvent*>(&event)->GetVirtualKeyCode();
 
 			if (state == KeyState::KeyPress) {
-				if (virKey == 'E') {
-					m_CurrentUI = TypesUI::PlanetInteraction;
-					if (m_Render) {
-						m_Render = false;
-					}
-					else {
-						m_Render = true;
+				if (virKey == 'E') 
+				{
+					if (m_pPlayerInfo->distanceToClosestPlanet <= DISTANCE_THRESHOLD
+						&& m_pPlayerInfo->closestPlanet->IsVisited() == false)
+					{
+						m_CurrentUI = TypesUI::PlanetInteraction;
+						if (m_Render) {
+							m_Render = false;
+							m_pPlayerInfo->closestPlanet->MarkAsVisited();
+						}
+						else {
+							m_Render = true;
+						}
 					}
 				}
 			}
-		}
 			break;
+		}
+		case EventType::DelegatePlayerInfoEvent:
+		{
+			DelegatePlayerInfoEvent& derivedEvent = static_cast<DelegatePlayerInfoEvent&>(event);
+			m_pPlayerInfo = derivedEvent.GetPlayerInfo();
+			break;
+		}
 		default:
 			break;
 	}

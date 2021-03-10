@@ -2,6 +2,8 @@
 #include "IEvent.h"
 class PlayerCamera;
 class Planet;
+class Player;
+struct PlayerInfo;
 class Sun;
 class DelegateDXEvent : public IEvent
 {
@@ -221,5 +223,30 @@ public:
 	[[nodiscard]] float* GetRadius() const noexcept
 	{
 		return m_Radius;
+	}
+};
+
+class DelegatePlayerInfoEvent : public IEvent
+{
+private:
+	PlayerInfo* m_pPlayerInfo;
+public:
+	DelegatePlayerInfoEvent(PlayerInfo* pPlayerInfo) noexcept
+	{
+		m_pPlayerInfo = pPlayerInfo;
+	}
+	virtual ~DelegatePlayerInfoEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::DelegatePlayerInfoEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "DelegatePlayerInfoEvent";
+	}
+	[[nodiscard]] PlayerInfo* GetPlayerInfo() const noexcept
+	{
+		return m_pPlayerInfo;
 	}
 };

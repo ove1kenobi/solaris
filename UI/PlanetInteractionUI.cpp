@@ -6,7 +6,7 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);			
 	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
 	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent);
-
+	EventBuss::Get().AddListener(this, EventType::DelegatePlayerInfoEvent);
 	m_pMainRectangle = D2D1::RectF();
 	m_pPlanetNameTextBox = D2D1::RectF();
 	m_pPlanetFlavourTextBox = D2D1::RectF();
@@ -16,7 +16,7 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pRandomEvents.push_back(new RandomEventUI());
 
 	//Example text: should be removed once event system is in place.
-	m_pPlanetNameText = L"TATOOINE";
+	m_pPlanetNameText = L"Place holder";
 
 	m_pPlanetFlavourText = L"Luke Skywalker has returned to his home planet of Tatooine in an attempt "
 		L"to rescue his friend Han Solo from the clutches of the vile gangster Jabba the Hutt."
@@ -27,7 +27,7 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 
 	m_pRandomEvents.at(0)->SetText(L"It is a period of civil war. Rebel spaceships, striking from a hidden base, "
 		L"have won their first victory against the evil Galactic Empire. During the battle, "
-		L"Rebel spies managed to steal secret plans to the Empire’s ultimate weapon, the death star, "
+		L"Rebel spies managed to steal secret plans to the Empire?s ultimate weapon, the death star, "
 		L"an armored space station with enough power to destroy an entire planet. ");
 
 	m_pRandomEvents.at(1)->SetText(L"It is a dark time for the Rebellion.Although the Death Star has been destroyed, "
@@ -753,6 +753,13 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		m_pWindowWidth = static_cast<float>(static_cast<DelegateResolutionEvent*>(&event)->GetClientWindowWidth());
 		m_pWindowHeight = static_cast<float>(static_cast<DelegateResolutionEvent*>(&event)->GetClientWindowHeight());
 		this->UpdateModules();
+		break;
+	}
+	case EventType::DelegatePlayerInfoEvent:
+	{
+		DelegatePlayerInfoEvent& derivedEvent = static_cast<DelegatePlayerInfoEvent&>(event);
+		m_pPlayerInfo = derivedEvent.GetPlayerInfo();
+		SetPlanetName(m_pPlayerInfo->closestPlanet->GetName());
 		break;
 	}
 	/*

@@ -187,6 +187,13 @@ void SpaceShip::Activate(size_t upgrade)
 		m_upgrades[upgrade] = new SpaceShipUpgrade(upgradeFiles[upgrade]);
 }
 
+bool SpaceShip::IsUpgraded(size_t upgrade)
+{
+	if (upgrade < numUpgrades)
+		return m_upgrades[upgrade] != nullptr;
+	return false;
+}
+
 std::vector<GameObject*>& SpaceShip::GetUpgrades()
 {
 	return m_upgrades;

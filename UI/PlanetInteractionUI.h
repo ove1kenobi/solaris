@@ -1,7 +1,8 @@
 #pragma once
 #include "ModuleUI.h"
 #include "RandomEventUI.h"
-
+#include "../EventSystem/UtilityEvents.h"
+#include "../Player.h"
 //Module handeling everything related to planet interaction UI
 class PlanetInteractionUI : public ModuleUI {
 private:
@@ -43,6 +44,9 @@ private:
 	//Current mouse coords
 	unsigned int m_pMouseX;
 	unsigned int m_pMouseY;
+
+	//PlayerData:
+	PlayerInfo* m_pPlayerInfo;
 
 	//Creation functions
 	bool CreateScreen();
