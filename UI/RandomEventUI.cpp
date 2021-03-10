@@ -21,7 +21,9 @@ bool RandomEventUI::Initialize() {
 }
 
 RandomEventUI::~RandomEventUI() {
-
+	for (auto const& bitmap : m_pIconBitmap) {
+		bitmap->Release();
+	}
 }
 
 //Create functions

@@ -12,7 +12,6 @@ private:
 	D2D1_RECT_F m_pHoverTextBox;
 	std::wstring m_pHoverText;
 
-	//For User Story 30: icons
 	ID2D1Bitmap* holder;
 	std::list<ID2D1Bitmap*> m_pIconBitmap;
 	std::vector<D2D1_RECT_F> m_pIconPosition;
