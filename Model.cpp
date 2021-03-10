@@ -6,7 +6,8 @@ Model::Model()
 	m_indexBufferSize{ 0 }, m_vertexBufferSize{ 0 },
 	m_boundingBox{ nullptr }, m_boundingSphere{ nullptr }
 {
-	for (size_t i = 0; i < 2; ++i)
+	// As of now the vector may hold two diffuse textures
+	for (size_t i = 0; i < numTextures; ++i)
 	{
 		m_texture.push_back(nullptr);
 	}
@@ -111,6 +112,7 @@ std::vector<ModelTexture*>& Model::GetTextures()
 
 void Model::AddTexture(ModelTexture* tex, UINT type)
 {
+	// If there exist a diffuse texture add in next slot
 	if (m_texture[type]) type++;
 	m_texture[type] = tex;
 }

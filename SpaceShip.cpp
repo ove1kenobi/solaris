@@ -21,7 +21,7 @@ SpaceShip::SpaceShip()
 	  m_radProtect{ false }
 {
 	this->m_model = ModelFactory::Get().GetModel(std::string("models/spaceship_basic.obj"));
-	ModelFactory::Get().LoadTexture(m_model, "spaceship1_Dark Ship_BaseColor.png");
+	ModelFactory::Get().LoadTexture(m_model, "spaceship1_Dark Ship_BaseColor.png", Model::diffuse); // second diffuse texture
 	this->m_wMatrix = {
 		0.03f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.03f, 0.0f, 0.0f,

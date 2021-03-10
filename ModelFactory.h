@@ -45,7 +45,7 @@ private:
 public:
 	static ModelFactory& Get() noexcept;
 	Model* GetModel(std::string filePath);
-	void LoadTexture(Model* model, std::string texFile);
+	void LoadTexture(Model* model, std::string texFile, UINT texType);
 	Model* GeneratePlanet(float x, float y, float z, float r, UINT type, DirectX::XMFLOAT3 yAxis, DirectX::XMFLOAT4 water);
 	Model* GenerateWaterSphere(float x, float y, float z, float r);
 	Model* GenerateSun(float x, float y, float z, float r);
