@@ -21,7 +21,6 @@ SpaceShip::SpaceShip()
 	  m_radProtect{ false }
 {
 	this->m_model = ModelFactory::Get().GetModel(std::string("models/spaceship_basic.obj"));
-	//this->m_model = ModelFactory::Get().GetModel(std::string("models/cubemetal.obj"));
 	ModelFactory::Get().LoadTexture(m_model, "spaceship1_Dark Ship_BaseColor.png");
 	this->m_wMatrix = {
 		0.03f, 0.0f, 0.0f, 0.0f,
@@ -40,12 +39,6 @@ SpaceShip::SpaceShip()
 	for (size_t upgrade = 0; upgrade < numUpgrades; upgrade++)
 	{
 		m_upgrades.push_back(nullptr);
-	}
-
-	// Remove this loop when ready for in game upgrades
-	for (size_t upgrade = 0; upgrade < numUpgrades; upgrade++)
-	{
-		Activate(upgrade);
 	}
 }
 
