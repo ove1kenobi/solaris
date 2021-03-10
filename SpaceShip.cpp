@@ -17,10 +17,12 @@ const std::vector<std::string> upgradeFiles = {
 
 SpaceShip::SpaceShip()
 	: m_Tag{ "SpaceShip"},
-	  m_TestForCulling{ false }
+	  m_TestForCulling{ false },
+	  m_radProtect{ false }
 {
 	this->m_model = ModelFactory::Get().GetModel(std::string("models/spaceship_basic.obj"));
 	//this->m_model = ModelFactory::Get().GetModel(std::string("models/cubemetal.obj"));
+	ModelFactory::Get().LoadTexture(m_model, "spaceship1_Dark Ship_BaseColor.png");
 	this->m_wMatrix = {
 		0.03f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.03f, 0.0f, 0.0f,
@@ -146,10 +148,13 @@ DirectX::XMFLOAT3 SpaceShip::getCenter() {
 
 void SpaceShip::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
-	for (auto tex : m_model->GetTextures())
-	{
-		if (tex) tex->Bind(deviceContext);
-	}
+	ModelTexture* tex;
+	if (m_radProtect)
+		tex = m_model->GetTextures()[1];
+	else
+		tex = m_model->GetTextures()[0];
+	tex->Bind(deviceContext);
+	
 	deviceContext->IASetVertexBuffers(0u,
 									  1u,
 									  this->m_model->getVertexBuffer().GetAddressOf(),
@@ -185,13 +190,15 @@ void SpaceShip::Activate(size_t upgrade)
 {	// Only activate if not already activated
 	if (upgrade < numUpgrades && !m_upgrades[upgrade])
 		m_upgrades[upgrade] = new SpaceShipUpgrade(upgradeFiles[upgrade]);
+	else if (upgrade == radProtect)
+		m_radProtect = true;
 }
 
 bool SpaceShip::IsUpgraded(size_t upgrade)
 {
 	if (upgrade < numUpgrades)
 		return m_upgrades[upgrade] != nullptr;
-	return false;
+	return m_radProtect;
 }
 
 std::vector<GameObject*>& SpaceShip::GetUpgrades()

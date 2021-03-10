@@ -322,7 +322,7 @@ void Scene::Update() noexcept {
 	m_Picking.DisplayPickedObject();
 
 	
-	bool radioactiveUpgrade = false; //Temporary, change to return value of function
+	bool radioactiveUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::radProtect);
 	bool coldUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::cold);
 	bool hotUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::hot);
 	//Only waste time on updating the damage timer if we do not have all of these upgrades.

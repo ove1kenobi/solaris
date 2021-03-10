@@ -3,8 +3,9 @@
 #include "ModelTexture.h"
 
 #define TEX_DIFFUSE = 0
-#define TEX_MAX = 1
-//#define TEX_NORMAL = 1
+#define TEX_DIFFUSE2 = 1
+#define TEX_MAX = 2
+//#define TEX_NORMAL = 3
 
 class Model
 {
