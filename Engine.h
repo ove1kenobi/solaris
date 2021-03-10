@@ -10,6 +10,7 @@
 #include "ImGui\ImGuiManager.h"
 #include "LayerStack.h"
 #include "Techniques/MousePicking.h"
+#include "SoundManager.h"
 
 class Engine : IEventListener
 {
@@ -19,6 +20,7 @@ private:
 	ForwardRenderer m_ForwardRenderer;
 	Render2D m_Render2D;
 	ResourceManager m_ResourceManager;
+	SoundManager m_SoundManager;
 	Time m_gameTime;
 	Scene m_scene;
 	ImGuiManager m_imguiManager;

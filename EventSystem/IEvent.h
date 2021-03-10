@@ -1,5 +1,7 @@
 #pragma once
 #include "EventType.h"
+#include <string>
+
 class IEvent
 {
 private:

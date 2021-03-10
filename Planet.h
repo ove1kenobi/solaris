@@ -11,6 +11,7 @@ private:
 	float m_DistanceToCamera;
 	UINT m_planetType;
 	DirectX::XMFLOAT4 m_WaterColor;
+	bool m_VisitedByPlayer;
 public:
 	Planet(const std::wstring& name = L"?") noexcept;
 	virtual ~Planet() = default;
@@ -20,6 +21,8 @@ public:
 	[[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept override;
 	DirectX::XMFLOAT4 GetWaterColor() noexcept;
 	[[nodiscard]] std::wstring& GetName() noexcept;
+	[[nodiscard]] const bool& IsVisited() const noexcept;
+	void MarkAsVisited() noexcept;
 };
 
 /*

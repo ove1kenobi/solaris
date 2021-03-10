@@ -7,7 +7,8 @@ Planet::Planet(const std::wstring& name) noexcept
 	 m_TestForCulling{ true },
 	 m_DistanceToCamera{ 0.0f },
 	 m_planetType{ 0 },
-	 m_WaterColor{ 0.0f, 0.0f, 1.0f, 1.0f }
+	 m_WaterColor{ 0.0f, 0.0f, 1.0f, 1.0f },
+	 m_VisitedByPlayer{ false }
 {
 
 }
@@ -74,4 +75,14 @@ DirectX::XMFLOAT4 Planet::GetWaterColor() noexcept
 std::wstring& Planet::GetName() noexcept
 {
 	return m_Name;
+}
+
+const bool& Planet::IsVisited() const noexcept
+{
+	return m_VisitedByPlayer;
+}
+
+void Planet::MarkAsVisited() noexcept
+{
+	m_VisitedByPlayer = true;
 }

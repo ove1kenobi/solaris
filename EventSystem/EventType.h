@@ -3,5 +3,6 @@ enum class EventType { WindowCloseEvent = 0, GetRenderObjectsEvent, SendRenderOb
 					   UnbindPipelineEvent, ToggleWireFrameEvent, BindIDEvent, WindowResizeEvent, MouseMoveAbsoluteEvent, MouseButtonEvent, MouseScrollEvent, KeyboardEvent,
 					   ToggleImGuiEvent, DelegateDXEvent, RequestCameraEvent, DelegateCameraEvent, ToggleDepthStencilStateEvent, MouseMoveRelativeEvent, DelegateMouseCoordsEvent,
 					   DelegateSunLightEvent, RequestSunLightEvent, RequestDSVEvent, SendDSVEvent,
-					   BindBackBufferEvent, RequestSunEvent, DelegateSunEvent, ResetDefaultViewportEvent, CreateShadowMapViewportEvent, SetShadowMapViewportEvent, SetShadowBlendStateEvent, ResetDefaultBlendStateEvent, DelegatePlanetDistanceEvent
+					   BindBackBufferEvent, RequestSunEvent, DelegateSunEvent, ResetDefaultViewportEvent, CreateShadowMapViewportEvent, SetShadowMapViewportEvent, SetShadowBlendStateEvent, ResetDefaultBlendStateEvent, DelegatePlanetDistanceEvent,
+					   PlaySoundEvent, SetMusicEvent, StopLoopingSoundEvent, DelegatePlayerInfoEvent
 };
