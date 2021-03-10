@@ -6,16 +6,24 @@ class Orbit;
 class Planet : public CosmicBody{
 private:
 	std::string m_Tag;
-	std::string m_PlanetName;
+	std::wstring m_Name;
 	bool m_TestForCulling;
 	float m_DistanceToCamera;
 	UINT m_planetType;
 	DirectX::XMFLOAT4 m_WaterColor;
+	bool m_VisitedByPlayer;
 public:
-	Planet(const std::string& planetName = "?") noexcept;
+	Planet(const std::wstring& name = L"?") noexcept;
 	virtual ~Planet() = default;
 	[[nodiscard]] const bool IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept override;
 	bool Initialize(float x, float y, float z, float r, float xRot, float zRot, int rotDir, UINT type, GameObject* tetherTo, Orbit* orbit, WaterSphere* waterSphere);
+	[[nodiscard]] const std::string& GetTag() const noexcept override;
+	[[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept override;
+	DirectX::XMFLOAT4 GetWaterColor() noexcept;
+	[[nodiscard]] std::wstring& GetName() noexcept;
+	[[nodiscard]] const bool& IsVisited() const noexcept;
+	void MarkAsVisited() noexcept;
+};
 
 /*
 PLANET TYPES
@@ -30,8 +38,3 @@ PLANET TYPES
 4 = Scrap metal
 5 = Nanotech
 */
-
-[[nodiscard]] const std::string& GetTag() const noexcept override;
-[[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept override;
-DirectX::XMFLOAT4 GetWaterColor() noexcept;
-};

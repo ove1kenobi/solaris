@@ -11,8 +11,8 @@ Bloom::Bloom() noexcept
 const bool Bloom::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice)
 {
 	D3D11_TEXTURE2D_DESC textureDescriptor = {};
-	textureDescriptor.Width = 1880;  //Change to dynamic (Emil F)
-	textureDescriptor.Height = 1040; // *-*
+	textureDescriptor.Width = 1880;
+	textureDescriptor.Height = 1040;
 	textureDescriptor.MipLevels = 1u;
 	textureDescriptor.ArraySize = 1u;
 	textureDescriptor.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -53,6 +53,7 @@ const bool Bloom::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice
 
 void Bloom::PrepareLumaExtractionPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
+	//Prepare the pass that will extract the colors over a certain brightness threshold:
 	pDeviceContext->ClearRenderTargetView(m_pRenderTargetViewBright.Get(), m_ClearColor);
 	ID3D11DepthStencilView* nullDSV = nullptr;
 	pDeviceContext->OMSetRenderTargets(1u, m_pRenderTargetViewBright.GetAddressOf(), nullDSV);
@@ -72,6 +73,7 @@ void Bloom::DoLumaExtractionPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContex
 
 void Bloom::CleanUpLumaExtractionPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
+	//We unbind the pipeline, making sure to follow that up with binding the render texture as a compute shader resource:
 	UnbindPipelineEvent ubEvent;
 	EventBuss::Get().Delegate(ubEvent);
 	ID3D11RenderTargetView* nullRTV[1] = { nullptr };
@@ -96,14 +98,15 @@ void Bloom::PrepareCombinePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>
 
 void Bloom::DoCombinePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
-	//Post process pass: so we render a quad:
+	/*Post process pass, so we render a quad.
+	  This pass combines the colors from the original color texture yielded from the 
+	  water pass with the colors from the brightened and blurred colors from the Gaussian filter pass.
+	*/
 	pDeviceContext->DrawIndexed(6u, 0u, 0u);
 }
 
 void Bloom::CleanUpCombinePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
-
-
 	ToggleDepthStencilStateEvent dsEvent;
 	EventBuss::Get().Delegate(dsEvent);
 }

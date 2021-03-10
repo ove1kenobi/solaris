@@ -15,6 +15,8 @@
 #include <imgui.h>
 #include <string>
 #include <fstream>
+#include <codecvt>
+#include <locale>
 #include <unordered_map>
 #include <vector>
 #include <crtdbg.h>

@@ -13,6 +13,6 @@ float4 ps_main(in PS_IN psIn) : SV_TARGET
 	
     float4 sceneColor = colorTexture.Load(colorTexelLocation);
     float4 highlightColor = highlightBlurTexture.Load(HBTexelLocation);
-	
+    
     return saturate((sceneColor + highlightColor));
 }

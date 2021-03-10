@@ -10,7 +10,7 @@ GaussianBlur::GaussianBlur() noexcept
 
 const bool GaussianBlur::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, const unsigned int& textureWidth, const unsigned int& textureHeight)
 {
-	//We need 2 textures for the 2 blur passes, and their respecitve views:
+	//We need 2 textures for the 2 blur passes, and their respective views:
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture2D = nullptr;
 	D3D11_TEXTURE2D_DESC textureDescriptor = {};
 	textureDescriptor.Width = textureWidth;
@@ -59,10 +59,13 @@ void GaussianBlur::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>
 
 void GaussianBlur::DoPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
-	pDeviceContext->Dispatch(59u, 33u, 1u);
+	pDeviceContext->Dispatch(118u, 66u, 1u);
 	ID3D11UnorderedAccessView* nullUAV[1] = { nullptr };
 	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
 	bool regular = false;
+	//We do 3 passes, to increase the blurred effect, which spreads the bloom out.
+	//Because of non-HDR, this has a marginal effect, but it is there.
+	//We alternate between two textures, the one we wrote to is the one we read from etc:
 	for (unsigned int i{ 0u }; i < 2; i++)
 	{
 		if (regular)
@@ -72,7 +75,7 @@ void GaussianBlur::DoPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDe
 			pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, nullUAV, nullptr);
 			pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, m_pBlurredUAV.GetAddressOf(), nullptr);
 			pDeviceContext->CSSetShaderResources(0u, 1u, m_pSecondBlurredSRV.GetAddressOf());
-			pDeviceContext->Dispatch(59u, 33u, 1u);
+			pDeviceContext->Dispatch(118u, 66u, 1u);
 		}
 		else
 		{
@@ -80,9 +83,8 @@ void GaussianBlur::DoPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDe
 			pDeviceContext->ClearUnorderedAccessViewFloat(m_pSecondBlurredUAV.Get(), m_ClearColor);
 			pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, nullUAV, nullptr);
 			pDeviceContext->CSSetUnorderedAccessViews(0u, 1u, m_pSecondBlurredUAV.GetAddressOf(), nullptr);
-
 			pDeviceContext->CSSetShaderResources(0u, 1u, m_pBlurredSRV.GetAddressOf());
-			pDeviceContext->Dispatch(59u, 33u, 1u);
+			pDeviceContext->Dispatch(118u, 66u, 1u);
 		}
 		regular = !regular;
 	}

@@ -82,6 +82,8 @@
     <ClCompile Include="Techniques\GaussianBlur.cpp" />
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="ModelTexture.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="SpaceShipUpgrade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXCore.h" />
@@ -154,9 +156,13 @@
     <ClInclude Include="ModelTexture.h" />
     <ClInclude Include="Techniques\FrustumCulling.h" />
     <ClInclude Include="WaterSphere.h" />
+    <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="EventSystem\SoundEvents.h" />
+    <ClInclude Include="Resources.h" />
+    <ClInclude Include="ModuleUI.h" />
+    <ClInclude Include="SpaceShipUpgrade.h" />
     <ClInclude Include="Techniques\Bloom.h" />
     <ClInclude Include="Techniques\GaussianBlur.h" />
-    <ClInclude Include="ModuleUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

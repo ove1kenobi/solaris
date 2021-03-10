@@ -16,7 +16,7 @@ static const float filter[7][7] =
 };
 
 //Hard coded for MY resolution as of now, should be dynamic of course.
-[numthreads(32, 32, 1)]
+[numthreads(16, 16, 1)]
 void cs_main( uint3 DTid : SV_DispatchThreadID)
 {
     //The offset texture location to sample from first:
@@ -31,7 +31,6 @@ void cs_main( uint3 DTid : SV_DispatchThreadID)
         for (int y = 0; y < 7; y++)
         {
             outputColor += inputTexture.Load(textureLocation + int3(x, y, 0)) * filter[x][y];
-
         }
     }
     outputTexture[DTid.xy] = outputColor;
