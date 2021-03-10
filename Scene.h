@@ -9,6 +9,7 @@
 #include "EventSystem/RenderEvents.h"
 #include "Techniques/MousePicking.h"
 #include "Techniques/FrustumCulling.h"
+class fstream;
 class Scene : public EventPublisher, public Layer
 {
 private:
