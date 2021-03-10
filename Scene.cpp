@@ -79,6 +79,8 @@ Scene::~Scene() {
 	for (auto r : this->m_waterSpheres) {
 		delete r;
 	}
+	EventBuss::Get().RemoveListener(this, EventType::AskForRenderObjectsEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateMouseCoordsEvent);
 }
 
 //All events that Scene are listening to.
@@ -406,7 +408,7 @@ void Scene::Update() noexcept {
 		for (auto r : m_radioactivePlanets) {
 			float planetDist = distance(r->GetCenter(), playerCenter);
 			if (planetDist < 1000.0f && m_damageTimer > 1.0f) {
-				m_player.UpdateHealth(-5);
+				m_player.UpdateHealth(-100);
 				//Send event to UI so that we can tell the player that we are too close to the sun.
 				m_damageTimer = 0.0f;
 			}
@@ -425,8 +427,8 @@ void Scene::Update() noexcept {
 	ImGui::Text("Asteroids  : %d", m_gameObjects.size() - m_persistentObjEnd - 1);
 	ImGui::End();
 #endif
+}
 
-	if (m_player.GetHealth() <= 0) {
-		//game over
-	}
+int Scene::GetPlayerHealth() {
+	return m_player.GetHealth();
 }

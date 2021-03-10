@@ -12,7 +12,6 @@ void Skybox::AssignCamera(IEvent& event) noexcept
 {
 	DelegateCameraEvent& derivedEvent = static_cast<DelegateCameraEvent&>(event);
 	m_pCamera = derivedEvent.GetCamera();
-	EventBuss::Get().RemoveListener(this, EventType::DelegateCameraEvent);
 }
 
 void Skybox::OnEvent(IEvent& event) noexcept

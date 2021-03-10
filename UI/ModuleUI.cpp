@@ -8,6 +8,11 @@ ModuleUI::ModuleUI() noexcept {
 	m_pWindowHeight = 0.0f;
 }
 
+ModuleUI::~ModuleUI() {
+	EventBuss::Get().RemoveListener(this, EventType::DelegateDXEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateResolutionEvent);
+}
+
 bool ModuleUI::CreateBrush() {
 	return ErrorCheck(m_pRenderTarget2D->CreateSolidColorBrush(
 		D2D1::ColorF(D2D1::ColorF::Aqua, 0.5f),

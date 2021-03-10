@@ -52,7 +52,7 @@ private:
 	DirectX::XMFLOAT3 Stabilize();
 public:
 	Player();
-	~Player();
+	virtual ~Player();
 
 	bool Initialize(PlayerCamera* camera);
 	bool update(const std::vector<Planet*>& planets);

@@ -43,13 +43,14 @@ private:
 	void OnEvent(IEvent& event) noexcept override;
 	void ToggleWireFrame() noexcept;
 	void ToggleDepthStencilState() noexcept;
-	void DelegateDXHandles() noexcept;
+	
 public:
 	DXCore() noexcept;
 	virtual ~DXCore() noexcept = default;
 	const bool Initialize(const unsigned int& clientWindowWidth, const unsigned int& clientWindowHeight, const HWND& windowHandle);
 	void CreateShadowMapViewport(IEvent& event) noexcept;
 	void ResetDefaultViewport() const noexcept;
+	void DelegateDXHandles() noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice() const noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetDeviceContext() const noexcept;
 	[[nodiscard]] const Microsoft::WRL::ComPtr<IDXGISwapChain>& GetSwapChain() const noexcept;
