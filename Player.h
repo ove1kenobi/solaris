@@ -7,6 +7,8 @@
 #include "EventSystem/IEventListener.h"
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem/InputEvents.h"
+#include "EventSystem/SoundEvents.h"
+#include "Resources.h"
 #include "EventSystem\UtilityEvents.h"
 
 struct PlayerInfo
@@ -23,8 +25,19 @@ private:
 	// Reference to the camera that is connected to the player/ship.
 	PlayerCamera* m_camera;
 	Time m_time;
+
+	// Resources
+	int m_fuelCapacity;
+	int m_oxygenCapacity;
+	int m_storageCapacity;
+	int m_storageUsage;
+	int m_resources[numberOfResources];
+
+	// Movement
 	PlayerInfo m_PlayerInfo;
 	float m_thrusterForce, m_desiredSpeed, m_topSpeed;
+
+	// Input 
 	float m_mousePosX, m_mousePosY;
 	bool m_moveForwards, m_moveBackwards;
 	bool m_stopMovement;
@@ -44,6 +57,7 @@ public:
 	bool Initialize(PlayerCamera* camera);
 	bool update(const std::vector<Planet*>& planets);
 	SpaceShip* getShip();
+	void AddResource(int amount, Resource resource);
 
 	void OnEvent(IEvent& event) noexcept;
 	void DelegatePlayerInfo() noexcept;
