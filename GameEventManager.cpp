@@ -123,12 +123,21 @@ GameEventManager::GameEventManager()
 		}
 	};
 
-	
+	for (unsigned int i = 0; i < 4; i++) {
+		generalEventPool.push_back(general[i]);
+	}
+	for (unsigned int i = 0; i < 4; i++) {
+		hotEventPool.push_back(hot[i]);
+	}
+	for (unsigned int i = 0; i < 4; i++) {
+		coldEventPool.push_back(cold[i]);
+	}
 
 	srand(time(NULL));
 	std::random_shuffle(generalEventPool.begin(), generalEventPool.end());
 	std::random_shuffle(coldEventPool.begin(), coldEventPool.end());
 	std::random_shuffle(hotEventPool.begin(), hotEventPool.end());
+
 }
 
 GameEventManager::~GameEventManager()

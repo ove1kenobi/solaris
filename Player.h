@@ -9,9 +9,14 @@
 #include "EventSystem/SoundEvents.h"
 #include "Resources.h"
 
+#include "GameEventManager.h"
+
 class Player : public IEventListener
 {
 private:
+
+	GameEventManager gameEvManager;
+
 	// Reference to the game object that is the ship and that has the model.
 	SpaceShip* m_ship;
 	// Reference to the camera that is connected to the player/ship.

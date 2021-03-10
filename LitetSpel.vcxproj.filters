@@ -157,10 +157,10 @@
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="EventSystem\SoundEvents.h" />
     <ClInclude Include="Resources.h" />
-    <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="SpaceShipUpgrade.h" />
     <ClInclude Include="GameEventManager.h" />
     <ClInclude Include="GameEvent.h" />
+    <ClInclude Include="UI\ModuleUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

@@ -1,6 +1,8 @@
 #pragma once
 #include "GameEvent.h"
 
+#include <iostream>
+
 class GameEventManager {
 private:
 	std::vector<GameEvent> generalEventPool;

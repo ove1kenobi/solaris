@@ -250,6 +250,7 @@
     <ClInclude Include="Bloom.h" />
     <ClInclude Include="EventSystem\UIEvents.h" />
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
+    <ClInclude Include="UI\ModuleUI.h" />
     <ClInclude Include="UI\RandomEventUI.h" />
     <ClInclude Include="UI\Button.h" />
     <ClInclude Include="DXCore.h" />
@@ -277,7 +278,6 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelFactory.h" />
     <ClInclude Include="ModelTexture.h" />
-    <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="Orbit.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Planet.h" />

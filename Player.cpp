@@ -235,6 +235,23 @@ void Player::OnEvent(IEvent& event) noexcept
 			KeyState state = static_cast<KeyboardEvent*>(&event)->GetKeyState();
 			int virKey = static_cast<KeyboardEvent*>(&event)->GetVirtualKeyCode();
 
+
+			if (virKey == 'O' && state == KeyState::KeyPress) {
+				GameEvent gameEv[3];
+				gameEvManager.RequestGameEvents(gameEv, 3);
+
+				for (int i = 0; i < 3; i++) {
+				    std::cout << gameEv[i].prologue << std::endl;
+				    std::cout << gameEv[i].consequence << std::endl;
+					std::cout << gameEv[i].reward.fuel << " " << gameEv[i].reward.oxygen << " " << gameEv[i].reward.titanium << " "
+						<< gameEv[i].reward.scrapMetal << " " << gameEv[i].reward.nanotech << " " << gameEv[i].reward.plasma << " "
+						<< gameEv[i].reward.radium << " " << gameEv[i].reward.khionerite << std::endl;
+				    std::cout << std::endl << std::endl;
+				}
+			}
+
+
+
 			if (state == KeyState::KeyPress) {
 				if (virKey == 'W') {
 					PlaySoundEvent thrusterSound(SoundID::Thrusters, true, 1.2f);

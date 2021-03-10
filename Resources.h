@@ -12,3 +12,14 @@ enum class Resource{
 	Radium,
 	Khionerite
 };
+
+struct Inventory {
+	int fuel;
+	int oxygen;
+	int titanium;
+	int scrapMetal;
+	int nanotech;
+	int plasma;
+	int radium;
+	int khionerite;
+};
