@@ -7,6 +7,7 @@
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/InputEvents.h"
 #include "EventSystem\UtilityEvents.h"
+#include "EventSystem\PlayerEvents.h"
 #include "Player.h"
 //Direct2D will be used to render all of the graphics, and use XAML for everything else UI related (Layout, interactions).
 //XAML: https://docs.microsoft.com/en-us/windows/uwp/gaming/directx-and-xaml-interop

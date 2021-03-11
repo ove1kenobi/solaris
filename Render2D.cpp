@@ -98,6 +98,8 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 						&& m_pPlayerInfo->closestPlanet->IsVisited() == false)
 					{
 						m_CurrentUI = TypesUI::PlanetInteraction;
+						ToggleTetheredEvent TTEvent;
+						EventBuss::Get().Delegate(TTEvent);
 						if (m_Render) {
 							m_Render = false;
 							m_pPlayerInfo->closestPlanet->MarkAsVisited();

@@ -32,8 +32,11 @@ DirectX::XMFLOAT3 Player::Stabilize()
 	return stabilizingForce;
 }
 
+
 Player::Player()
-	: m_PlayerInfo{ }
+	: m_PlayerInfo{ },
+	  m_TetheredToClosestPlanet{ false },
+	  m_TetheredDistanceToUphold{ -1.0f, -1.0f, -1.0f }
 {
 	m_fuelCapacity = 500;
 	m_oxygenCapacity = 500;
@@ -71,6 +74,7 @@ Player::~Player()
 bool Player::Initialize(PlayerCamera* camera)
 {
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::ToggleImGuiEvent, EventType::MouseMoveAbsoluteEvent);
+	EventBuss::Get().AddListener(this, EventType::ToggleTetheredEvent);
 
 	m_camera = camera;
 	m_ship = new SpaceShip();
@@ -146,20 +150,28 @@ bool Player::update(const std::vector<Planet*>& planets)
 		}
 	}
 
-	if (m_stabilizerActive) {
-		DirectX::XMFLOAT3 stabilizingForce = Stabilize();
-		shipForce = shipForce + stabilizingForce;
+	//Calculate closest distance to player:
+	DetermineClosestPlanet(planets);
+	DelegatePlayerInfo();
+
+	if (m_TetheredToClosestPlanet)
+	{
+		m_ship->SetCenter(m_PlayerInfo.closestPlanet->GetCenter() - m_TetheredDistanceToUphold);
 	}
-	m_ship->AddForce(shipForce);
-	m_ship->UpdatePhysics();
+	else
+	{
+		if (m_stabilizerActive) {
+			DirectX::XMFLOAT3 stabilizingForce = Stabilize();
+			shipForce = shipForce + stabilizingForce;
+		}
+
+		m_ship->AddForce(shipForce);
+		m_ship->UpdatePhysics();
+	}
 
 	DirectX::XMFLOAT3 a = m_ship->getCenter();
 	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
 	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
-
-	//Calculate closest distance to player:
-	DetermineClosestPlanet(planets);
-	DelegatePlayerInfo();
 
 	if (length(m_ship->GetVelocity()) < 500.0f) return false;
 	return true;
@@ -286,6 +298,21 @@ void Player::OnEvent(IEvent& event) noexcept
 		{
 			if (m_playerControlsActive) m_playerControlsActive = false;
 			else m_playerControlsActive = true;
+			break;
+		}
+		case EventType::ToggleTetheredEvent:
+		{
+			if (m_TetheredToClosestPlanet == false)
+			{
+				//Get the "distance" that must remain during the whole planet interaction:
+				m_TetheredDistanceToUphold = m_PlayerInfo.closestPlanet->GetCenter() - m_ship->getCenter();
+			}
+			else
+			{
+				//Nullify all forces, continue from clean slate:
+				m_ship->AddForce(m_ship->GetVelocity() * m_ship->GetMass() * -1);
+			}
+			m_TetheredToClosestPlanet = !m_TetheredToClosestPlanet;
 			break;
 		}
 	}

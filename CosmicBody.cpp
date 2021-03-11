@@ -32,7 +32,7 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	{
 		this->m_major_semi_axis = length(m_center - tetherTo->GetCenter());
 		this->m_minor_semi_axis = this->m_major_semi_axis * 0.8f;
-		this->m_orbital_speed = static_cast<float>(6.674e-11 * tetherTo->GetMass() / (m_major_semi_axis * m_major_semi_axis));
+		this->m_orbital_speed = (static_cast<float>(6.674e-11 * tetherTo->GetMass() / (m_major_semi_axis * m_major_semi_axis)) * 4);
 	}
 	if (orbit)
 	{
@@ -78,7 +78,6 @@ GameObject* CosmicBody::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 
 
 	//Construct rotation matrices
 	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixScaling(m_scale, m_scale, m_scale);
-
 
 	//Angle change is positive or negative depending on a randomized value PER PLANET.
 	DirectX::XMMATRIX rotMatrix = DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat4(&this->m_yAxis), angle * this->m_rotationDir);

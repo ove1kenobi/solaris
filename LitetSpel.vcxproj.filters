@@ -163,6 +163,7 @@
     <ClInclude Include="SpaceShipUpgrade.h" />
     <ClInclude Include="Techniques\Bloom.h" />
     <ClInclude Include="Techniques\GaussianBlur.h" />
+    <ClInclude Include="EventSystem\PlayerEvents.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

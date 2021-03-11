@@ -247,6 +247,7 @@
     <ClCompile Include="WaterSphere.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EventSystem\PlayerEvents.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="SpaceShipUpgrade.h" />
     <ClInclude Include="UI\HeadsUpDisplayBar.h" />
