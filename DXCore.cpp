@@ -282,9 +282,6 @@ void DXCore::OnEvent(IEvent& event) noexcept
 	case EventType::ResetDefaultBlendStateEvent:
 		m_pDeviceContext->OMSetBlendState(m_pBlendStateDefault.Get(), NULL, 0xffffffff);
 		break;
-		ToggleDepthStencilState();
-		break;
-
 	case EventType::RequestDSVEvent:
 	{
 		SendDSVEvent dsvEvent(m_pDepthStencilView);

@@ -94,13 +94,12 @@ Model* ModelFactory::GetModel(std::string filePath)
 				if (scene->mMaterials[mesh->mMaterialIndex]->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 				{
 					scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &texFile);
-					ModelTexture* tex = new ModelTexture();
-					std::string texPath = std::string("models/") + std::string(texFile.C_Str());
 #ifdef _DEBUG
+					std::string texPath = std::string("models/") + std::string(texFile.C_Str());
 					loadDebug += std::string("Texture file: ") + texPath + std::string("\n");
 #endif
-					tex->LoadTexture(m_device, CA2W(texPath.c_str()), 0);
-					model->AddTexture(tex, 0);
+					// Texture type is diffuse
+					LoadTexture(model, std::string(texFile.C_Str()), Model::diffuse);
 				}
 
 				// Create bounding box
@@ -138,6 +137,14 @@ Model* ModelFactory::GetModel(std::string filePath)
 	assert(model->NotLoaded() == false);
 #endif
 	return model;
+}
+
+void ModelFactory::LoadTexture(Model* model, std::string texFile, UINT texType)
+{
+	ModelTexture* tex = new ModelTexture();
+	std::string texPath = std::string("models/") + texFile;
+	tex->LoadTexture(m_device, CA2W(texPath.c_str()), texType);
+	model->AddTexture(tex, texType);
 }
 
 Model* ModelFactory::GeneratePlanet(float x, float y, float z, float r, UINT type, DirectX::XMFLOAT3 yAxis, DirectX::XMFLOAT4 water) {

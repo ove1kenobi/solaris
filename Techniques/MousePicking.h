@@ -7,6 +7,7 @@
 #include "..\EventSystem\UIEvents.h"
 #include "..\PlayerCamera.h"
 #include "..\GameObject.h"
+#include "../Planet.h"
 
 class MousePicking : public IEventListener, public EventPublisher
 {

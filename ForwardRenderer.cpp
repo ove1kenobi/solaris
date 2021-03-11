@@ -97,7 +97,31 @@ void ForwardRenderer::BeginFrame()
 	m_ShadowMapping.BindSRV(m_pDeviceContext);
 	m_ShadowMapping.UpdateBias(m_pDeviceContext);
 	m_WaterPP.DoPass(m_pDeviceContext);
-	m_WaterPP.CleanUp();
+	m_WaterPP.CleanUp(m_pDeviceContext);
+
+	//Bloom Luma Pass:
+	//This pass extracts the colors from the texture of the previous pass that pass a certain threshold:
+	m_Bloom.PrepareLumaExtractionPass(m_pDeviceContext);
+	m_Bloom.DoLumaExtractionPass(m_pDeviceContext);
+	m_Bloom.CleanUpLumaExtractionPass(m_pDeviceContext);
+
+	//Bloom Blur Pass:
+	//This pass does, 3 times, a Gaussian blur over the texture with the highlight-only-colors: 
+	m_Bloom.DoBlurPass(m_pDeviceContext);
+
+	//Anew bind the normal color texture from the water pass:
+	m_WaterPP.BindSRV(m_pDeviceContext);
+
+	//Rebind back buffer:
+	BindBackBufferEvent bbEvent;
+	EventBuss::Get().Delegate(bbEvent);
+
+	//Prepare for the last Bloom phase:
+	//This pass combines the original texture color with the colors from the 
+	//brightened and Gaussian filtered texture:
+	m_Bloom.PrepareCombinePass(m_pDeviceContext);
+	m_Bloom.DoCombinePass(m_pDeviceContext);
+	m_Bloom.CleanUpCombinePass(m_pDeviceContext);
 }
 
 //Cleans up for the next frame and applies post processing effects
@@ -130,6 +154,8 @@ const bool ForwardRenderer::Initialize(UINT screenWidth, UINT screenHeight) noex
 	if (!m_WaterPP.Initialize(m_pDevice, screenWidth, screenHeight))
 		return false;
 	if (!m_ShadowMapping.Initialize(m_pDevice))
+		return false;
+	if (!m_Bloom.Initialize(m_pDevice))
 		return false;
 
 	return true;
