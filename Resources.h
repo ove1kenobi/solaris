@@ -1,19 +1,9 @@
 #pragma once
 
-const unsigned int numberOfResources = 8;
+const unsigned int numberOfResources = 8;//9;
 
-enum class Resource{
-	Fuel = 0,
-	Oxygen,
-	Titanium,
-	ScrapMetal,
-	Nanotech,
-	Plasma,
-	Radium,
-	Khionerite
-};
-
-struct Inventory {
+struct Resources {
+	//int health;
 	int fuel;
 	int oxygen;
 	int titanium;

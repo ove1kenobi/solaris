@@ -104,7 +104,9 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 						}
 						else {
 							m_Render = true;
-							//static_cast<PlanetInteractionUI*>(m_Modules[(int)TypesUI::PlanetInteraction])->SetGameEventText(0, L"Some text");
+							UINT gameEvIDs[3];
+							gameEventManager.RequestGameEvents(gameEvIDs, m_pPlayerInfo->closestPlanet->GetPlanetType());
+							static_cast<PlanetInteractionUI*>(m_Modules[(int)TypesUI::PlanetInteraction])->SetGameEvents(gameEvIDs);
 						}
 					}
 				}

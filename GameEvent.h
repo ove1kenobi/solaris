@@ -1,15 +1,15 @@
 #pragma once
 #include "Resources.h"
 
-struct GameEventID {
-	int planetType;
-	int columnID;
-};
+#include <iostream>
 
 struct GameEvent {
-	std::string prologue;
-	std::string consequence;
-	Inventory reward;
+	std::wstring prologue;
+	std::wstring consequence;
+	Resources reward;
 };
+
+GameEvent GetGameEvent(UINT ID);
+UINT CreateID(UINT type, UINT index);
 
 extern std::vector< std::vector<GameEvent> > gameEvents;

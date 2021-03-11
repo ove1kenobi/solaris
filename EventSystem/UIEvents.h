@@ -30,6 +30,27 @@ public:
 	}
 };
 
+class GameEventSelectedEvent : public IEvent {
+private:
+	UINT m_gameEventID;
+public:
+	GameEventSelectedEvent(UINT gameEventID) noexcept
+	{
+		m_gameEventID = gameEventID;
+	}
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::GameEventSelectedEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "GameEventSelectedEvent";
+	}
+	[[nodiscard]] const UINT GetGameEventID() const noexcept
+	{
+		return m_gameEventID;
+	}
+};
 
 /*
 What the UI will need to listen after or send out requests for:

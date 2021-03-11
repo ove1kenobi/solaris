@@ -10,8 +10,10 @@
 #include "EventSystem/SoundEvents.h"
 #include "Resources.h"
 #include "EventSystem\UtilityEvents.h"
+#include "EventSystem/UIEvents.h"
+#include "GameEvent.h"
 
-#include "GameEventManager.h"
+#include <iostream>
 
 struct PlayerInfo
 {
@@ -22,9 +24,6 @@ struct PlayerInfo
 class Player : public IEventListener, public EventPublisher
 {
 private:
-
-	GameEventManager gameEvManager;
-
 	// Reference to the game object that is the ship and that has the model.
 	SpaceShip* m_ship;
 	// Reference to the camera that is connected to the player/ship.
@@ -32,11 +31,12 @@ private:
 	Time m_time;
 
 	// Resources
+	int m_maxHealth, m_currentHealth;
 	int m_fuelCapacity;
 	int m_oxygenCapacity;
 	int m_storageCapacity;
 	int m_storageUsage;
-	int m_resources[numberOfResources];
+	Resources m_inventory;
 
 	// Movement
 	PlayerInfo m_PlayerInfo;
@@ -48,8 +48,7 @@ private:
 	bool m_stopMovement;
 	bool m_playerControlsActive, m_stabilizerActive;
 	float m_rotationSpeed;
-	int m_currentHealth;
-	int m_maxHealth;
+	
 private:
 	void DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcept;
 	// Updates the rotation for the camera and the ship
@@ -62,7 +61,7 @@ public:
 	bool Initialize(PlayerCamera* camera);
 	bool update(const std::vector<Planet*>& planets);
 	SpaceShip* getShip();
-	void AddResource(int amount, Resource resource);
+	void AddResources(Resources resources);
 
 	void OnEvent(IEvent& event) noexcept;
 	void DelegatePlayerInfo() noexcept;

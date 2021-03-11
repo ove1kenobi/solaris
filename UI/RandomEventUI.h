@@ -1,7 +1,9 @@
 #pragma once
 #include "Button.h"
+#include "../GameEvent.h"
+#include "../EventSystem/UIEvents.h"
 
-class RandomEventUI : public Button {
+class RandomEventUI : public Button, public EventPublisher {
 private:
 	//Hovering details
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pLeftHover;
@@ -34,6 +36,6 @@ public:
 
 	//Should take in coord arguments to figure out what to render
 	void Render(int mouseX, int mouseY);
-	void OnClick(int mouseX, int mouseY);
+	void OnClick(int mouseX, int mouseY, UINT gameEventID);
 };
 

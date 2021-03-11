@@ -10,11 +10,11 @@ private:
 	std::vector<int> m_hotEventPool;
 	std::vector<int> m_radioactiveEventPool;
 
-	GameEventID GetAGameEvent(UINT type);
+	UINT GetAGameEvent(UINT type);
 
 public:
 	GameEventManager();
 	~GameEventManager();
 
-	void RequestGameEvents(GameEventID setOfGameEvents[3], UINT planetType);
+	void RequestGameEvents(UINT setOfGameEvents[3], UINT planetType);
 };

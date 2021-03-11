@@ -721,9 +721,12 @@ void PlanetInteractionUI::Render() {
 	this->RenderRandomEvents();
 }
 
-void PlanetInteractionUI::SetGameEventText(int textSlot, std::wstring text)
+void PlanetInteractionUI::SetGameEvents(UINT gameEventIDs[3])
 {
-	m_pRandomEvents.at(textSlot)->SetText(text);
+	for (int i = 0; i < 3; i++) {
+		m_gameEventIDs[i] = gameEventIDs[i];
+		m_pRandomEvents[i]->SetText(GetGameEvent(gameEventIDs[i]).prologue);
+	}
 }
 
 //Event functions
@@ -759,7 +762,7 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
 		if (virKey == VK_LBUTTON && state == KeyState::KeyPress) {
 			for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
-				m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY);
+				m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY, m_gameEventIDs[i]);
 			}
 		}
 		break;

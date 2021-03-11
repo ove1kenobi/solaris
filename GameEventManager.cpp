@@ -2,64 +2,65 @@
 #include "GameEventManager.h"
 
 
-GameEventID GameEventManager::GetAGameEvent(UINT type)
+UINT GameEventManager::GetAGameEvent(UINT type)
 {
-	GameEventID gameEventID;
-	gameEventID.planetType = type;
+	UINT index = 0, evType = type;
 
 	switch (type)
 	{
-	case 0:
-	{
-		// Hot
-		if (!m_hotEventPool.empty()) {
-			gameEventID.columnID = m_hotEventPool.back();
-			m_hotEventPool.pop_back();
+		case 0:
+		{
+			// Hot
+			if (!m_hotEventPool.empty()) {
+				index = m_hotEventPool.back();
+				m_hotEventPool.pop_back();
+			}
+			else {
+				// handle special case
+			}
+			break;
 		}
-		else {
-			// handle special case
+		case 1:
+		{
+			// Cold
+			if (!m_coldEventPool.empty()) {
+				index = m_coldEventPool.back();
+				m_coldEventPool.pop_back();
+			}
+			else {
+				// handle special case
+			}
+			break;
 		}
-		break;
-	}
-	case 1:
-	{
-		// Cold
-		if (!m_coldEventPool.empty()) {
-			gameEventID.columnID = m_coldEventPool.back();
-			m_coldEventPool.pop_back();
+		case 2:
+		{
+			// Radioactive
+			if (!m_radioactiveEventPool.empty()) {
+				index = m_radioactiveEventPool.back();
+				m_radioactiveEventPool.pop_back();
+			}
+			else {
+				// handle special case
+			}
+			break;
 		}
-		else {
-			// handle special case
+		default:
+		{
+			// General
+			if (!m_generalEventPool.empty()) {
+				index = m_generalEventPool.back();
+				m_generalEventPool.pop_back();
+			}
+			else {
+				// handle special case
+			}
+			break;
 		}
-		break;
-	}
-	case 2:
-	{
-		// Radioactive
-		if (!m_radioactiveEventPool.empty()) {
-			gameEventID.columnID = m_radioactiveEventPool.back();
-			m_radioactiveEventPool.pop_back();
-		}
-		else {
-			// handle special case
-		}
-		break;
-	}
-	default:
-	{
-		// General
-		if (!m_generalEventPool.empty()) {
-			gameEventID.columnID = m_generalEventPool.back();
-			m_generalEventPool.pop_back();
-		}
-		else {
-			// handle special case
-		}
-		break;
-	}
 	}
 
-	return gameEventID;
+	UINT ID = CreateID(evType, index);
+
+	return ID;
 }
 
 
@@ -67,16 +68,16 @@ GameEventID GameEventManager::GetAGameEvent(UINT type)
 GameEventManager::GameEventManager()
 {
 	for (unsigned int i = 0; i < gameEvents[0].size(); i++) {
-		m_generalEventPool.push_back(i);
-	}
-	for (unsigned int i = 0; i < gameEvents[1].size(); i++) {
 		m_hotEventPool.push_back(i);
 	}
-	for (unsigned int i = 0; i < gameEvents[2].size(); i++) {
+	for (unsigned int i = 0; i < gameEvents[1].size(); i++) {
 		m_coldEventPool.push_back(i);
 	}
-	for (unsigned int i = 0; i < gameEvents[3].size(); i++) {
+	for (unsigned int i = 0; i < gameEvents[2].size(); i++) {
 		m_radioactiveEventPool.push_back(i);
+	}
+	for (unsigned int i = 0; i < gameEvents[3].size(); i++) {
+		m_generalEventPool.push_back(i);
 	}
 
 	srand(time(NULL));
@@ -90,7 +91,7 @@ GameEventManager::~GameEventManager()
 {
 }
 
-void GameEventManager::RequestGameEvents(GameEventID setOfGameEvents[3], UINT planetType)
+void GameEventManager::RequestGameEvents(UINT setOfGameEvents[3], UINT planetType)
 {
 	setOfGameEvents[0] = GetAGameEvent(planetType);
 

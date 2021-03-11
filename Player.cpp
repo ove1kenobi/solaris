@@ -38,9 +38,14 @@ Player::Player()
 	m_fuelCapacity = 500;
 	m_oxygenCapacity = 500;
 	m_storageCapacity = 1000;
-	for (unsigned int i = 0; i < numberOfResources; i++) {
-		m_resources[i] = 0;
-	}
+	m_inventory.fuel = 0;
+	m_inventory.oxygen = 0;
+	m_inventory.titanium = 0;
+	m_inventory.scrapMetal = 0;
+	m_inventory.nanotech = 0;
+	m_inventory.plasma = 0;
+	m_inventory.radium = 0;
+	m_inventory.khionerite = 0;
 	m_storageUsage = 0;
 
 	m_moveForwards = false;
@@ -71,6 +76,7 @@ Player::~Player()
 bool Player::Initialize(PlayerCamera* camera)
 {
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::ToggleImGuiEvent, EventType::MouseMoveAbsoluteEvent);
+	EventBuss::Get().AddListener(this, EventType::GameEventSelectedEvent);
 
 	m_camera = camera;
 	m_ship = new SpaceShip();
@@ -83,14 +89,15 @@ bool Player::update(const std::vector<Planet*>& planets)
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	ImGui::Begin("Inventiry");
-	ImGui::Text("Fuel: %d", m_resources[0]);
-	ImGui::Text("Oxygen: %d", m_resources[1]);
-	ImGui::Text("Titanium: %d", m_resources[2]);
-	ImGui::Text("Scrap Metal: %d", m_resources[3]);
-	ImGui::Text("Nanotech: %d", m_resources[4]);
-	ImGui::Text("Plasma: %d", m_resources[5]);
-	ImGui::Text("Radium: %d", m_resources[6]);
-	ImGui::Text("Khionerite: %d", m_resources[7]);
+	ImGui::Text("Fuel: %d", m_inventory.fuel);
+	ImGui::Text("Oxygen: %d", m_inventory.oxygen);
+	ImGui::Text("Titanium: %d", m_inventory.titanium);
+	ImGui::Text("Scrap Metal: %d", m_inventory.scrapMetal);
+	ImGui::Text("Nanotech: %d", m_inventory.nanotech);
+	ImGui::Text("Plasma: %d", m_inventory.plasma);
+	ImGui::Text("Radium: %d", m_inventory.radium);
+	ImGui::Text("Khionerite: %d", m_inventory.khionerite);
+	//ImGui::Text("Storage Usage %d/%d", m_storageUsage, m_storageCapacity);
 	ImGui::End();
 #endif
 
@@ -169,58 +176,69 @@ SpaceShip* Player::getShip() {
 	return this->m_ship;
 }
 
-void Player::AddResource(int amount, Resource resource)
+void Player::AddResources(Resources resources)
 {
-	int index = static_cast<int>(resource);
-
-	switch (resource)
-	{
-		case Resource::Fuel:
-		{
-			m_resources[index] += amount;
-			if (m_resources[index] > m_fuelCapacity) {
-				m_resources[index] = m_fuelCapacity;
-			}
-			break;
-		}
-		case Resource::Oxygen:
-		{
-			m_resources[index] += amount;
-			if (m_resources[index] > m_oxygenCapacity) {
-				m_resources[index] = m_oxygenCapacity;
-			}
-			break;
-		}
-		default:
-		{
-			int storageLeft = m_storageCapacity - m_storageUsage;
-
-			// Storage space have run out, add only as much as you can
-			if (storageLeft < amount) {
-				m_resources[index] += storageLeft;
-				m_storageUsage += storageLeft;
-			}
-
-			// We can't have less then 0 of a resource, only remove what we have
-			else if (m_resources[index] + amount < 0) {
-				int tempAmount = m_resources[index];
-				m_resources[index] = 0;
-				m_storageUsage -= tempAmount;
-			}
-
-			// Normal scenario
-			else {
-				m_resources[index] += amount;
-				m_storageUsage += amount;
-			}
-
-			break;
-		}
+	/*m_inventory.fuel += resources.fuel;
+	if (m_inventory.fuel > m_fuelCapacity) {
+		m_inventory.fuel = m_fuelCapacity;
 	}
 
-	if (m_resources[index] < 0) {
-		m_resources[index] = 0;
-	}
+	m_inventory.oxygen += resources.oxygen;
+	if (m_inventory.oxygen > m_oxygenCapacity) {
+		m_inventory.oxygen = m_oxygenCapacity;
+	}*/
+
+
+	m_inventory.fuel += resources.fuel;
+	m_inventory.oxygen += resources.oxygen;
+	m_inventory.titanium += resources.titanium;
+	m_inventory.scrapMetal += resources.scrapMetal;
+	m_inventory.nanotech += resources.nanotech;
+	m_inventory.plasma += resources.plasma;
+	m_inventory.radium += resources.radium;
+	m_inventory.khionerite += resources.khionerite;
+
+	//switch (resources)
+	//{
+
+	//	case Resource::Oxygen:
+	//	{
+	//		m_resources[index] += amount;
+	//		if (m_resources[index] > m_oxygenCapacity) {
+	//			m_resources[index] = m_oxygenCapacity;
+	//		}
+	//		break;
+	//	}
+	//	default:
+	//	{
+	//		int storageLeft = m_storageCapacity - m_storageUsage;
+
+	//		// Storage space have run out, add only as much as you can
+	//		if (storageLeft < amount) {
+	//			m_resources[index] += storageLeft;
+	//			m_storageUsage += storageLeft;
+	//		}
+
+	//		// We can't have less then 0 of a resource, only remove what we have
+	//		else if (m_resources[index] + amount < 0) {
+	//			int tempAmount = m_resources[index];
+	//			m_resources[index] = 0;
+	//			m_storageUsage -= tempAmount;
+	//		}
+
+	//		// Normal scenario
+	//		else {
+	//			m_resources[index] += amount;
+	//			m_storageUsage += amount;
+	//		}
+
+	//		break;
+	//	}
+	//}
+
+	//if (m_resources[index] < 0) {
+	//	m_resources[index] = 0;
+	//}
 }
 
 void Player::OnEvent(IEvent& event) noexcept
@@ -241,14 +259,12 @@ void Player::OnEvent(IEvent& event) noexcept
 			int virKey = static_cast<KeyboardEvent*>(&event)->GetVirtualKeyCode();
 
 
-			if (virKey == 'O' && state == KeyState::KeyPress) {
-				GameEventID gameEventID[3];
-				gameEvManager.RequestGameEvents(gameEventID, 3);
+			/*if (virKey == 'O' && state == KeyState::KeyPress) {
+				UINT gameEventID[3];
+				gameEvManager.RequestGameEvents(gameEventID, 2);
 
 				for (int i = 0; i < 3; i++) {
-					int type = gameEventID[i].planetType;
-					int id = gameEventID[i].columnID;
-					GameEvent gameEv = gameEvents[type][id];
+					GameEvent gameEv = GetGameEvent(gameEventID[i]);
 
 				    std::cout << gameEv.prologue << std::endl;
 				    std::cout << gameEv.consequence << std::endl;
@@ -257,7 +273,7 @@ void Player::OnEvent(IEvent& event) noexcept
 						<< gameEv.reward.radium << " " << gameEv.reward.khionerite << std::endl;
 				    std::cout << std::endl << std::endl;
 				}
-			}
+			}*/
 
 
 
@@ -301,6 +317,13 @@ void Player::OnEvent(IEvent& event) noexcept
 				}
 			}
 
+			break;
+		}
+		case EventType::GameEventSelectedEvent:
+		{
+			UINT gameEventID = static_cast<GameEventSelectedEvent*>(&event)->GetGameEventID();
+			Resources reward = GetGameEvent(gameEventID).reward;
+			AddResources(reward);
 			break;
 		}
 		case EventType::ToggleImGuiEvent:
