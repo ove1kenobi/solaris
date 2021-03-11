@@ -21,7 +21,9 @@ bool RandomEventUI::Initialize() {
 }
 
 RandomEventUI::~RandomEventUI() {
-
+	for (auto const& bitmap : m_pIconBitmap) {
+		bitmap->Release();
+	}
 }
 
 //Create functions
@@ -232,7 +234,7 @@ void RandomEventUI::OnClick(int mouseX, int mouseY) {
 
 //To add resources to the event
 void RandomEventUI::AddIcon(std::wstring resource, std::wstring amount) {
-	ID2D1Bitmap* holder;
+	ID2D1Bitmap* holder = NULL;
 
 	float iconSize = 25.0f;
 	float amountSize = 25.0f;

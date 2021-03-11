@@ -4,6 +4,11 @@
 HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent, EventType::DelegatePlanetDistanceEvent);
 
+	m_pHealthBitmap = NULL;
+	m_pOxygenBitmap = NULL;
+	m_pFuelBitmap = NULL;
+	m_pCapacityBitmap = NULL;
+
 	m_pPlanetText = L"TATOOINE";
 	m_pDistanceText = L"100000m";
 	m_pPlanetNameTextBox = D2D1::RectF();
@@ -28,6 +33,13 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 
 	m_pMouseX = 10;
 	m_pMouseY = 10;
+}
+
+HeadsUpDisplayUI::~HeadsUpDisplayUI() {
+	m_pHealthBitmap->Release();
+	m_pOxygenBitmap->Release();
+	m_pFuelBitmap->Release();
+	m_pCapacityBitmap->Release();
 }
 
 bool HeadsUpDisplayUI::Initialize() {

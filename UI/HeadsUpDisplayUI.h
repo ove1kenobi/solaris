@@ -84,7 +84,7 @@ private:
 public:
 	//Creation and destruction functions
 	HeadsUpDisplayUI();
-	virtual ~HeadsUpDisplayUI() = default;
+	virtual ~HeadsUpDisplayUI();
 	bool Initialize();
 
 	//Used by Render2D to render whole module
