@@ -40,7 +40,7 @@ void ModuleUI::LoadBitmapFromFile(PCWSTR filePath, ID2D1Bitmap** bitmap) {
 
 	//Encode picture from filepath into WICmipmap
 	ErrorCheck(CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_pBitMapFactory)), "CreateInstance");
-	ErrorCheck(m_pBitMapFactory->CreateDecoderFromFilename(filePath, &GUID_ContainerFormatPng, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &m_pBitMapDecoder), "CreateDecoderFromFilename");
+	ErrorCheck(m_pBitMapFactory->CreateDecoderFromFilename(filePath, NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &m_pBitMapDecoder), "CreateDecoderFromFilename");
 	
 	//Get first frame of picture (has to be done in case it is a gif).
 	ErrorCheck(m_pBitMapDecoder->GetFrame(0, &m_pBitMapSource), "GetFrame");
@@ -53,6 +53,7 @@ void ModuleUI::LoadBitmapFromFile(PCWSTR filePath, ID2D1Bitmap** bitmap) {
 	ErrorCheck(m_pRenderTarget2D->CreateBitmapFromWicBitmap(m_pBitMapConvert, NULL, bitmap), "CreateBitmapFromWicBitmap");
 
 	//Clean up
+	//(*bitmap)->Release();
 	m_pBitMapFactory->Release();
 	m_pBitMapDecoder->Release();
 	m_pBitMapSource->Release();

@@ -4,10 +4,10 @@
 class PressInteractUI : public ModuleUI {
 private:
 	//Text
-	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pTextFont;
-	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTitleFormat;
-	D2D1_RECT_F m_pTitleTextBox;
-	std::wstring m_pTitleText;
+	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pFont;
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pFormat;
+	D2D1_RECT_F m_pTextBox;
+	std::wstring m_pText;
 
 	//Create functions
 	bool CreateText();
