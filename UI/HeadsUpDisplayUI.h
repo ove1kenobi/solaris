@@ -10,6 +10,11 @@ private:
 	D2D1_RECT_F m_pRightDisplayScreen;
 	D2D1_RECT_F m_pLeftDisplayScreen;
 
+	//Crosshair
+	float m_pCrosshairDistance;
+	float m_pCrosshairLength;
+	float m_pCrosshairSize;
+
 	//Distance to planet module
 	bool m_pRenderDistance;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pDistanceFormat;
@@ -73,6 +78,7 @@ private:
 	bool UpdateModules();
 
 	//Render modules
+	void RenderCrosshair();
 	void RenderBars();
 	void RenderCapacity();
 	void RenderWarningModule();

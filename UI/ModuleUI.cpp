@@ -53,7 +53,6 @@ void ModuleUI::LoadBitmapFromFile(PCWSTR filePath, ID2D1Bitmap** bitmap) {
 	ErrorCheck(m_pRenderTarget2D->CreateBitmapFromWicBitmap(m_pBitMapConvert, NULL, bitmap), "CreateBitmapFromWicBitmap");
 
 	//Clean up
-	//(*bitmap)->Release();
 	m_pBitMapFactory->Release();
 	m_pBitMapDecoder->Release();
 	m_pBitMapSource->Release();
