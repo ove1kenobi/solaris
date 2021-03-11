@@ -4,7 +4,6 @@
 RandomEventUI::RandomEventUI() {
 	m_pHoverTextBox = D2D1::RectF();
 	m_pHoverText = L"SELECT";
-	m_pDrawBitmaps = true;
 }
 
 bool RandomEventUI::Initialize() {
@@ -21,7 +20,9 @@ bool RandomEventUI::Initialize() {
 }
 
 RandomEventUI::~RandomEventUI() {
-	
+	for (auto const& bitmap : m_pIconBitmap) {
+		bitmap->Release();
+	}
 }
 
 //Create functions
@@ -245,14 +246,6 @@ void RandomEventUI::OnEvent(IEvent& event) noexcept {
 		m_pWindowHeight = static_cast<float>(static_cast<DelegateResolutionEvent*>(&event)->GetClientWindowHeight());
 		this->UpdateModules();
 		break;
-	}
-	case EventType::WindowCloseEvent:
-	{
-		m_pDrawBitmaps = false;
-		for (auto const& bitmap : m_pIconBitmap) {
-			bitmap->Release();
-		}
-
 	}
 	default:
 		break;

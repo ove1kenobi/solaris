@@ -59,6 +59,11 @@ PlanetInteractionUI::~PlanetInteractionUI() {
 	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
 		delete m_pRandomEvents.at(i);
 	}
+
+	EventBuss::Get().RemoveListener(this, EventType::KeyboardEvent);
+	EventBuss::Get().RemoveListener(this, EventType::MouseButtonEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateMouseCoordsEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
 }
 
 //Creation functions
@@ -454,6 +459,18 @@ bool PlanetInteractionUI::UpdateTextElements() {
 		(static_cast<float>(m_pWindowWidth) / 2.0f) - m_pPadding,
 		m_pMainRectangle.bottom - m_pScreenOffset - m_pBlockSize - m_pPadding
 	), m_pPadding);
+
+	m_pRandomEvents.at(0)->AddIcon(L"Health.png", L"24");
+	m_pRandomEvents.at(0)->AddIcon(L"Health.png", L"24");
+
+	m_pRandomEvents.at(1)->AddIcon(L"Health.png", L"24");
+	m_pRandomEvents.at(1)->AddIcon(L"Health.png", L"24");
+	m_pRandomEvents.at(1)->AddIcon(L"Health.png", L"24");
+
+	m_pRandomEvents.at(2)->AddIcon(L"Health.png", L"24");
+	m_pRandomEvents.at(2)->AddIcon(L"Health.png", L"24");
+	m_pRandomEvents.at(2)->AddIcon(L"Health.png", L"24");
+	m_pRandomEvents.at(2)->AddIcon(L"Health.png", L"24");
 
 	return true;
 }
