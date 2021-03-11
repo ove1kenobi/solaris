@@ -89,6 +89,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameEvent.cpp" />
     <ClCompile Include="SpaceShipUpgrade.cpp" />
     <ClCompile Include="Techniques\Bloom.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../pch.h</PrecompiledHeaderFile>

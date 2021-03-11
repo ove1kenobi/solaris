@@ -242,15 +242,19 @@ void Player::OnEvent(IEvent& event) noexcept
 
 
 			if (virKey == 'O' && state == KeyState::KeyPress) {
-				GameEvent gameEv[3];
-				gameEvManager.RequestGameEvents(gameEv, 3);
+				GameEventID gameEventID[3];
+				gameEvManager.RequestGameEvents(gameEventID, 3);
 
 				for (int i = 0; i < 3; i++) {
-				    std::cout << gameEv[i].prologue << std::endl;
-				    std::cout << gameEv[i].consequence << std::endl;
-					std::cout << gameEv[i].reward.fuel << " " << gameEv[i].reward.oxygen << " " << gameEv[i].reward.titanium << " "
-						<< gameEv[i].reward.scrapMetal << " " << gameEv[i].reward.nanotech << " " << gameEv[i].reward.plasma << " "
-						<< gameEv[i].reward.radium << " " << gameEv[i].reward.khionerite << std::endl;
+					int type = gameEventID[i].planetType;
+					int id = gameEventID[i].columnID;
+					GameEvent gameEv = gameEvents[type][id];
+
+				    std::cout << gameEv.prologue << std::endl;
+				    std::cout << gameEv.consequence << std::endl;
+					std::cout << gameEv.reward.fuel << " " << gameEv.reward.oxygen << " " << gameEv.reward.titanium << " "
+						<< gameEv.reward.scrapMetal << " " << gameEv.reward.nanotech << " " << gameEv.reward.plasma << " "
+						<< gameEv.reward.radium << " " << gameEv.reward.khionerite << std::endl;
 				    std::cout << std::endl << std::endl;
 				}
 			}

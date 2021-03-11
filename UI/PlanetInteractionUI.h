@@ -77,6 +77,7 @@ public:
 	void Render();
 
 	//Event functions
+	void SetGameEventText(int textSlot, std::wstring text);
 	void SetPlanetName(std::wstring text);
 	void SetPlanetFlavourText(std::wstring text);
 	void OnEvent(IEvent& event) noexcept;

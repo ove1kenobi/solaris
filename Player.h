@@ -11,7 +11,6 @@
 #include "Resources.h"
 #include "EventSystem\UtilityEvents.h"
 
-
 #include "GameEventManager.h"
 
 struct PlayerInfo

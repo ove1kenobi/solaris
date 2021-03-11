@@ -85,6 +85,7 @@
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="SpaceShipUpgrade.cpp" />
     <ClCompile Include="GameEventManager.cpp" />
+    <ClCompile Include="GameEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXCore.h" />

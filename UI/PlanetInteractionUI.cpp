@@ -721,6 +721,11 @@ void PlanetInteractionUI::Render() {
 	this->RenderRandomEvents();
 }
 
+void PlanetInteractionUI::SetGameEventText(int textSlot, std::wstring text)
+{
+	m_pRandomEvents.at(textSlot)->SetText(text);
+}
+
 //Event functions
 void PlanetInteractionUI::SetPlanetName(std::wstring text) {
 	std::transform(text.begin(), text.end(), text.begin(), ::toupper);
