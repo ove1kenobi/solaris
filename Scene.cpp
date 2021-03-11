@@ -17,6 +17,55 @@ void initPlanet(Planet* planet, Orbit* orbit, WaterSphere* waterSphere, std::vec
 	waterSpheres[id] = waterSphere;
 }
 
+const std::vector<std::wstring> Scene::RandomizePlanetNames(std::default_random_engine generator) noexcept
+{
+	//Fill a vector with the names for the planets:
+	std::vector<std::wstring> planetNames;
+	std::vector<UINT> indexesUsed;
+	std::ifstream inFile;
+	inFile.open("PlanetNames.txt");
+	if (inFile.is_open())
+	{
+		for (int i{ 0u }; i < m_numPlanets; ++i)
+		{
+			bool nameOccupied = false;
+			std::uniform_int_distribution<UINT> nameIndex(0, 49);
+			UINT index = static_cast<UINT>(nameIndex(generator));
+			for (unsigned int j{ 0u }; j < indexesUsed.size() && nameOccupied == false; j++)
+			{
+				if (indexesUsed[j] == index)
+				{
+					nameOccupied = true;
+					//Go back one step to retry with a random number:
+					i--;
+				}
+			}
+			if (nameOccupied == false)
+			{
+				/*Name was not in use, so the line corresponding to the index should be used to fetch
+				  the planet name at corresponding line in .txt-file.*/
+				indexesUsed.push_back(index);
+				inFile.seekg(std::ios::beg);
+				for (int i = 0; i < static_cast<int>(index); ++i)
+				{
+					inFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				}
+				std::string planetName;
+				std::getline(inFile, planetName);
+				std::wstring widePlanetName = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(planetName);
+				planetNames.push_back(widePlanetName);
+			}
+		}
+		inFile.close();
+	}
+	else
+	{
+		//We need a way to send back an error signal:
+		planetNames.push_back(L"ERROR");
+	}
+	return planetNames;
+}
+
 Scene::Scene() noexcept
 	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }, m_RenderData{ }, m_sun{ nullptr }, m_damageTimer{ 0 }, m_persistentObjEnd{ 0u }
 {
@@ -116,10 +165,17 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	UINT sC = 0; //scrap metal counter, nr 4
 	UINT nC = 0; //nanotech counter, nr 5
 	
+
+	//Randomize and return all planet names to be used:
+	std::vector<std::wstring> planetNames = RandomizePlanetNames(generator);
+	if (planetNames[0] == L"ERROR")
+		return false;
+
 	//Create all the planets using the distributions.
+
 	for(size_t i = 0; i < this->m_numPlanets; ++i){
 		bool changeType = false;
-		Planet* planet = new Planet();
+		Planet* planet = new Planet(planetNames[i]);
 		Orbit* orbit = new Orbit();
 		WaterSphere* waterSphere = new WaterSphere();
 		xCoord += static_cast<float>(distributionX(generator));
@@ -264,7 +320,7 @@ void Scene::RemoveGameObject(GameObject* obj)
 void Scene::Update() noexcept {
 	//Update the player and all the game objects.
 	size_t num = m_gameObjects.size() - m_persistentObjEnd;
-	if (m_player.update() &&  num < 30)
+	if (m_player.update(m_planets) &&  num < 30)
 	{
 		//Generator and distributions used for generating planet values.
 		using t_clock = std::chrono::high_resolution_clock;

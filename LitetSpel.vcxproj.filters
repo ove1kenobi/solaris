@@ -17,9 +17,11 @@
     <FxCompile Include="PixelShader_WaterSphere.hlsl" />
     <FxCompile Include="PixelShader_Textured.hlsl" />
     <FxCompile Include="VertexShader_Textured.hlsl" />
+    <FxCompile Include="PixelShader_BloomLuma.hlsl" />
+    <FxCompile Include="ComputeShader_Blur.hlsl" />
+    <FxCompile Include="PixelShader_BloomCombine.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Bloom.cpp" />
     <ClCompile Include="DXCore.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
@@ -76,13 +78,14 @@
     <ClCompile Include="UI\HeadsUpDisplayUI.cpp" />
     <ClCompile Include="UI\HeadsUpDisplayBar.cpp" />
     <ClCompile Include="WaterSphere.cpp" />
+    <ClCompile Include="Techniques\Bloom.cpp" />
+    <ClCompile Include="Techniques\GaussianBlur.cpp" />
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="ModelTexture.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="SpaceShipUpgrade.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bloom.h" />
     <ClInclude Include="DXCore.h" />
     <ClInclude Include="DXDebug.h" />
     <ClInclude Include="Engine.h" />
@@ -158,6 +161,8 @@
     <ClInclude Include="Resources.h" />
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="SpaceShipUpgrade.h" />
+    <ClInclude Include="Techniques\Bloom.h" />
+    <ClInclude Include="Techniques\GaussianBlur.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

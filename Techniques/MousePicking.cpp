@@ -101,8 +101,17 @@ void MousePicking::DisplayPickedObject() noexcept
 	//(Emil F)
 	if (m_pPickedObject != nullptr)
 	{
-		DelegatePlanetDistanceEvent pde(m_DistanceToObject, L"Planet name");
-		EventBuss::Get().Delegate(pde);
+		Planet* planet = static_cast<Planet*>(m_pPickedObject);
+		if (planet->IsVisited())
+		{
+			DelegatePlanetDistanceEvent pde(m_DistanceToObject, planet->GetName());
+			EventBuss::Get().Delegate(pde);
+		}
+		else
+		{
+			DelegatePlanetDistanceEvent pde(m_DistanceToObject, L"Unknown Planet");
+			EventBuss::Get().Delegate(pde);
+		}
 	}
 	else
 	{
