@@ -79,7 +79,7 @@ GameEventManager::GameEventManager()
 		},
 		{
 		"Raid: Shadow Legends",
-		"Throw down the gauntlet and brawl with other players in fierce arena battles. Smoke your competition, climb Tiers, and earn valuable Rewards.",
+		"You got a great sponsorship that rewarded you with plenty of resources.",
 		{100, 100, 100, 100, 100, 10, 10, 10}
 		},
 		{
