@@ -9,6 +9,7 @@
 #include "EventSystem/RenderEvents.h"
 #include "Techniques/MousePicking.h"
 #include "Techniques/FrustumCulling.h"
+class fstream;
 class Scene : public EventPublisher, public Layer
 {
 private:
@@ -31,6 +32,8 @@ private:
 	long double m_damageTimer;
 
 	size_t m_persistentObjEnd;
+private:
+	[[nodiscard]] const std::vector<std::wstring> RandomizePlanetNames(std::default_random_engine generator) noexcept;
 public:
 	Scene() noexcept;
 	virtual ~Scene();

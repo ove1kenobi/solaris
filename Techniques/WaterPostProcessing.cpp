@@ -8,12 +8,12 @@ WaterPostProcessing::WaterPostProcessing() noexcept
 	m_screenWidth{ 0 },
 	m_screenHeight{ 0 },
 	m_pSunCenter{ nullptr },
-	m_pSunRadius{ nullptr } 
+	m_pSunRadius{ nullptr },
+	m_pRenderTargetView{ nullptr },
+	m_pShaderResourceView{ nullptr },
+	m_ClearColor{ 0.0f, 0.0f, 0.0f, 1.0f }
 {
 	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent, EventType::DelegateSunLightEvent, EventType::DelegateSunEvent);
-}
-
-WaterPostProcessing::~WaterPostProcessing() {
 }
 
 void WaterPostProcessing::AssignCamera(IEvent& event) noexcept
@@ -67,8 +67,9 @@ const bool WaterPostProcessing::Initialize(const Microsoft::WRL::ComPtr<ID3D11De
 	planetBufferDesc.MiscFlags = 0;
 	planetBufferDesc.StructureByteStride = 0;
 	HR(pDevice->CreateBuffer(&planetBufferDesc,
-		nullptr,
-		&m_pPlanetCBuffer), "CreateBuffer");
+							 nullptr,
+							 &m_pPlanetCBuffer), 
+							 "CreateBuffer");
 
 	//Constant buffer for camera:
 	D3D11_BUFFER_DESC cameraBufferDesc = {};
@@ -79,8 +80,9 @@ const bool WaterPostProcessing::Initialize(const Microsoft::WRL::ComPtr<ID3D11De
 	cameraBufferDesc.MiscFlags = 0;
 	cameraBufferDesc.StructureByteStride = 0;
 	HR(pDevice->CreateBuffer(&cameraBufferDesc,
-		nullptr,
-		&m_pCameraCBuffer), "CreateBuffer");
+							 nullptr,
+							 &m_pCameraCBuffer), 
+							 "CreateBuffer");
 
 	//Constant buffer for screen:
 	D3D11_BUFFER_DESC screenBufferDesc = {};
@@ -91,8 +93,9 @@ const bool WaterPostProcessing::Initialize(const Microsoft::WRL::ComPtr<ID3D11De
 	screenBufferDesc.MiscFlags = 0;
 	screenBufferDesc.StructureByteStride = 0;
 	HR(pDevice->CreateBuffer(&screenBufferDesc,
-		nullptr,
-		&m_pScreenCBuffer), "CreateBuffer");
+							 nullptr,
+							 &m_pScreenCBuffer), 
+							 "CreateBuffer");
 
 	//Constant buffer for light:
 	D3D11_BUFFER_DESC lightBufferDesc = {};
@@ -103,8 +106,45 @@ const bool WaterPostProcessing::Initialize(const Microsoft::WRL::ComPtr<ID3D11De
 	lightBufferDesc.MiscFlags = 0;
 	lightBufferDesc.StructureByteStride = 0;
 	HR(pDevice->CreateBuffer(&lightBufferDesc,
-		nullptr,
-		&m_pLightCBuffer), "CreateBuffer");
+							 nullptr,
+							 &m_pLightCBuffer), 
+							 "CreateBuffer");
+
+	//RTV and SRV:
+	D3D11_TEXTURE2D_DESC textureDescriptor = {};
+	textureDescriptor.Width = screenWidth;
+	textureDescriptor.Height = screenHeight;
+	textureDescriptor.MipLevels = 1u;
+	textureDescriptor.ArraySize = 1u;
+	textureDescriptor.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	textureDescriptor.SampleDesc.Count = 1u;
+	textureDescriptor.SampleDesc.Quality = 0u;
+	textureDescriptor.Usage = D3D11_USAGE_DEFAULT;
+	textureDescriptor.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_RENDER_TARGET | D3D11_BIND_FLAG::D3D11_BIND_SHADER_RESOURCE;
+	textureDescriptor.CPUAccessFlags = 0U;
+	textureDescriptor.MiscFlags = 0u;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pRenderTexture = nullptr;
+	HR(pDevice->CreateTexture2D(&textureDescriptor,
+								nullptr,
+								&pRenderTexture),
+								"CreateTexture2D");
+	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDescriptor = {};
+	renderTargetViewDescriptor.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	renderTargetViewDescriptor.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	renderTargetViewDescriptor.Texture2D.MipSlice = 0u;
+	HR(pDevice->CreateRenderTargetView(pRenderTexture.Get(),
+									   &renderTargetViewDescriptor,
+									   &m_pRenderTargetView),
+									   "CreateRenderTargetView");
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
+	shaderResourceViewDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1u;
+	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0u;
+	HR(pDevice->CreateShaderResourceView(pRenderTexture.Get(),
+										 &shaderResourceViewDesc,
+										 &m_pShaderResourceView),
+										 "CreateShaderResourceView");
 
 	//Get the camera for its matrices
 	RequestCameraEvent requestCameraEvent;
@@ -130,17 +170,23 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 	BindIDEvent bindWaterEvent(BindID::ID_Water);
 	EventBuss::Get().Delegate(bindWaterEvent);
 
-	//Bind backbuffer
-	BindBackBufferEvent bindBackBuffer;
-	EventBuss::Get().Delegate(bindBackBuffer);
+	//Bind backbuffer Temp. disabled (Emil F)
+	//BindBackBufferEvent bindBackBuffer;
+	//EventBuss::Get().Delegate(bindBackBuffer);
+
+	//Bind the render target and clean it:
+	ID3D11DepthStencilView* nullDSV = nullptr;
+	pDeviceContext->OMSetRenderTargets(1u, m_pRenderTargetView.GetAddressOf(), nullDSV);
+	pDeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), m_ClearColor);
 
 	//Planet Constant Buffer
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource = {};
 	HR_X(pDeviceContext->Map(m_pPlanetCBuffer.Get(),
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&mappedSubresource), "Map");
+							 0,
+							 D3D11_MAP_WRITE_DISCARD,
+							 0,
+							 &mappedSubresource), 
+							 "Map");
 
 	PlanetData* data = (PlanetData*)mappedSubresource.pData;
 
@@ -162,10 +208,11 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 	//Camera Constant Buffer
 	D3D11_MAPPED_SUBRESOURCE mappedSubresourceCamera = {};
 	HR_X(pDeviceContext->Map(m_pCameraCBuffer.Get(),
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&mappedSubresourceCamera), "Map");
+							 0,
+							 D3D11_MAP_WRITE_DISCARD,
+							 0,
+							 &mappedSubresourceCamera), 
+							 "Map");
 
 	DirectX::XMFLOAT4X4 VMatrix = m_pCamera->getVMatrix();
 	DirectX::XMFLOAT4X4 PMatrix = m_pCamera->getPMatrix();
@@ -191,10 +238,10 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 	//Screen Constant Buffer
 	D3D11_MAPPED_SUBRESOURCE mappedSubresourceScreen = {};
 	HR_X(pDeviceContext->Map(m_pScreenCBuffer.Get(),
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&mappedSubresourceScreen), "Map");
+							 0,
+							 D3D11_MAP_WRITE_DISCARD,
+							 0,
+							 &mappedSubresourceScreen), "Map");
 
 	ScreenData* dataScreen = (ScreenData*)mappedSubresourceScreen.pData;
 
@@ -206,11 +253,11 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 	//Light constant buffer
 	D3D11_MAPPED_SUBRESOURCE mappedSubresourceLight = {};
 	HR_X(pDeviceContext->Map(m_pLightCBuffer.Get(),
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&mappedSubresourceLight),
-		"Map");
+							 0,
+							 D3D11_MAP_WRITE_DISCARD,
+							 0,
+							 &mappedSubresourceLight),
+							 "Map");
 	BlinnPhongLightCB* dataLight = (BlinnPhongLightCB*)mappedSubresourceLight.pData;
 #if defined(DEBUG) | defined(_DEBUG)
 	static float sAmbientColor[3] = { 0.5f, 0.5f, 0.5f };
@@ -264,7 +311,6 @@ void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceC
 #endif
 	pDeviceContext->Unmap(m_pLightCBuffer.Get(), 0);
 
-	
 	pDeviceContext->PSSetConstantBuffers(0u, 1u, m_pPlanetCBuffer.GetAddressOf());
 	pDeviceContext->PSSetConstantBuffers(1u, 1u, m_pCameraCBuffer.GetAddressOf());
 	pDeviceContext->PSSetConstantBuffers(2u, 1u, m_pScreenCBuffer.GetAddressOf());
@@ -280,8 +326,24 @@ void WaterPostProcessing::DoPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContex
 	pDeviceContext->DrawIndexed(6u, 0u, 0u);
 }
 
-void WaterPostProcessing::CleanUp() noexcept
+void WaterPostProcessing::CleanUp(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept
 {
+	UnbindPipelineEvent ubEvent;
+	EventBuss::Get().Delegate(ubEvent);
+
+	//Unbind Render target:
+	ID3D11RenderTargetView* nullRTV[1] = { nullptr };
+	ID3D11DepthStencilView* nullDSV = nullptr;
+	pDeviceContext->OMSetRenderTargets(1u, nullRTV, nullDSV);
+
+	//Bind the previous render target as shader resource:
+	pDeviceContext->PSSetShaderResources(0u, 1u, m_pShaderResourceView.GetAddressOf());
+
 	ToggleDepthStencilStateEvent dsEvent;
 	EventBuss::Get().Delegate(dsEvent);
+}
+
+void WaterPostProcessing::BindSRV(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
+{
+	pDeviceContext->PSSetShaderResources(1u, 1u, m_pShaderResourceView.GetAddressOf());
 }

@@ -209,9 +209,9 @@ bool HeadsUpDisplayUI::UpdateWarningModule() {
 
 bool HeadsUpDisplayUI::UpdatePlanetDistanceModule() {
 	m_pPlanetNameTextBox = D2D1::RectF(
-		(m_pWindowWidth / 2.0f) - 200.0f,
+		(m_pWindowWidth / 2.0f) - 300.0f,
 		0.0f,
-		(m_pWindowWidth / 2.0f) + 200.0f,
+		(m_pWindowWidth / 2.0f) + 300.0f,
 		40.0f
 	);
 

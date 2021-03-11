@@ -77,7 +77,7 @@ GameObject* CosmicBody::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 
 	static float angle = 0.0f;
 
 	//Construct rotation matrices
-	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixIdentity();
+	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixScaling(m_scale, m_scale, m_scale);
 
 
 	//Angle change is positive or negative depending on a randomized value PER PLANET.

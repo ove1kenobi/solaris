@@ -33,6 +33,7 @@ DirectX::XMFLOAT3 Player::Stabilize()
 }
 
 Player::Player()
+	: m_PlayerInfo{ }
 {
 	m_fuelCapacity = 500;
 	m_oxygenCapacity = 500;
@@ -78,7 +79,7 @@ bool Player::Initialize(PlayerCamera* camera)
 	return true;
 }
 
-bool Player::update()
+bool Player::update(const std::vector<Planet*>& planets)
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	ImGui::Begin("Inventiry");
@@ -155,6 +156,10 @@ bool Player::update()
 	DirectX::XMFLOAT3 a = m_ship->getCenter();
 	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
 	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
+
+	//Calculate closest distance to player:
+	DetermineClosestPlanet(planets);
+	DelegatePlayerInfo();
 
 	if (length(m_ship->GetVelocity()) < 500.0f) return false;
 	return true;
@@ -303,6 +308,12 @@ void Player::OnEvent(IEvent& event) noexcept
 	}
 }
 
+void Player::DelegatePlayerInfo() noexcept
+{
+	DelegatePlayerInfoEvent piEvent(&m_PlayerInfo);
+	EventBuss::Get().Delegate(piEvent);
+}
+
 int Player::GetHealth() noexcept {
 	return m_currentHealth;
 }
@@ -321,4 +332,21 @@ void Player::UpdateMaxHealth(int value) {
 	if (m_currentHealth > m_maxHealth) {
 		m_currentHealth = m_maxHealth;
 	}
+}
+
+void Player::DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcept
+{
+	Planet* contender = nullptr;
+	float closestDistance = D3D11_FLOAT32_MAX;
+	for (unsigned int i{ 0u }; i < planets.size(); ++i)
+	{
+		DirectX::XMVECTOR distance = DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&planets[i]->GetCenter()), DirectX::XMLoadFloat3(&m_ship->GetCenter())));
+		if (DirectX::XMVectorGetX(distance) < closestDistance)
+		{
+			closestDistance = DirectX::XMVectorGetX(distance);
+			contender = planets[i];
+		}
+	}
+	m_PlayerInfo.closestPlanet = contender;
+	m_PlayerInfo.distanceToClosestPlanet = closestDistance;
 }
