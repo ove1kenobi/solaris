@@ -2,9 +2,6 @@
 #include "vertex.h"
 #include "ModelTexture.h"
 
-#define TEX_DIFFUSE = 0
-#define TEX_MAX = 1
-//#define TEX_NORMAL = 1
 
 class Model
 {
@@ -46,4 +43,8 @@ public:
 	DirectX::BoundingSphere* GetBoundingSphere();
 	std::vector<ModelTexture*>& GetTextures();
 	void AddTexture(ModelTexture* tex, UINT type);
+
+	enum TextureType {
+		diffuse, diffuse2, numTextures
+	};
 };

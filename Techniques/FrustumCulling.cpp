@@ -77,8 +77,11 @@ void FrustumCulling::CullObjects(std::vector<GameObject*>& gameObjects, PlayerCa
 				for (GameObject* u : upgrades)
 				{
 					// Filter out possible empty upgrades
-					if (u) renderData.culledObjects.push_back(u);
-					renderData.totalNrOfObjects++;
+					if (u)
+					{
+						renderData.culledObjects.push_back(u);
+						renderData.totalNrOfObjects++;
+					}
 				}
 			}
 		}

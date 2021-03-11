@@ -14,6 +14,7 @@ private:
 
 	// Spaceship upgrades
 	std::vector<GameObject*> m_upgrades;
+	bool m_radProtect;
 
 public:
 	SpaceShip();
@@ -38,6 +39,6 @@ public:
 	std::vector<GameObject*>& GetUpgrades();
 
 	enum UpgradeTypes {
-		afterburner = 0, antenna, cargo, cold, fuelcells, livingquarters, shield, hot, warpdrive, numUpgrades
+		afterburner = 0, antenna, cargo, cold, fuelcells, livingquarters, shield, hot, warpdrive, numUpgrades, radProtect = numUpgrades
 	};
 };

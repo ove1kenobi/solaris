@@ -2,6 +2,7 @@
 #include "ModuleUI.h"
 #include "HeadsUpDisplayBar.h"
 #include "..\EventSystem\UIEvents.h"
+#include "..\EventSystem\WindowEvents.h"
 
 class HeadsUpDisplayUI : public ModuleUI {
 private:
@@ -9,11 +10,12 @@ private:
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pHUDFormat;
 	D2D1_RECT_F m_pRightDisplayScreen;
 	D2D1_RECT_F m_pLeftDisplayScreen;
+	bool drawBitMaps;
 
 	//Crosshair
-	float m_pCrosshairSize;
-	float m_pCrosshairLength;
 	float m_pCrosshairDistance;
+	float m_pCrosshairLength;
+	float m_pCrosshairSize;
 
 	//Distance to planet module
 	bool m_pRenderDistance;
@@ -25,26 +27,32 @@ private:
 	std::wstring m_pPlanetText;
 
 	//Healthbar
+	ID2D1Bitmap* m_pHealthBitmap;
 	HeadsUpDisplayBar m_pHealthBar;
 	D2D1_RECT_F m_pHealthIcon;
 
-	//CO2Bar
+	//OxygenBar
+	ID2D1Bitmap* m_pOxygenBitmap;
 	HeadsUpDisplayBar m_pOxygenBar;
 	D2D1_RECT_F m_pOxygenIcon;
 
 	//FuelBar
+	ID2D1Bitmap* m_pFuelBitmap;
 	HeadsUpDisplayBar m_pFuelBar;
 	D2D1_RECT_F m_pFuelIcon;
 
 	//Weight capacity
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pCapacityFormat;
+	ID2D1Bitmap* m_pCapacityBitmap;
 	D2D1_RECT_F m_pCapacityTextBox;
 	std::wstring m_pCapacityText;
+	D2D1_RECT_F m_pCapacityIcon;
 
 	//Warning module
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pWarningTriangle;
 	D2D1_RECT_F m_pWarningTextBox;
 	std::wstring m_pWarningText;
+	bool m_pCapacityWarning;
 
 	//Resources
 	std::vector<D2D1_RECT_F> m_pIconPicture;
@@ -57,6 +65,7 @@ private:
 	//Create modules
 	bool CreateDisplayScreens();
 	bool CreateBars();
+	bool CreateCapacity();
 	bool CreateWarningModule();
 	bool CreatePlanetDistanceModule();
 	bool CreateTools();
@@ -64,7 +73,6 @@ private:
 	//Update modules if screen size changes
 	bool UpdateDisplayScreens();
 	bool UpdateBars();
-	bool UpdateCapacity();
 	bool UpdateWarningModule();
 	bool UpdatePlanetDistanceModule();
 	bool UpdateTools();
@@ -72,18 +80,19 @@ private:
 	bool UpdateModules();
 
 	//Render modules
+	void RenderCrosshair();
 	void RenderBars();
 	void RenderCapacity();
 	void RenderWarningModule();
 	void RenderPlanetDistanceModule();
-	void RenderCrosshair();
 
 	//For updating things based on information from the event handler
 	void SetPlanetDistance(float distanceToPlanet, std::wstring planetName);
+	void SetCapacity(unsigned int currentAmount, unsigned int maximumAmount);
 public:
 	//Creation and destruction functions
 	HeadsUpDisplayUI();
-	~HeadsUpDisplayUI();
+	virtual ~HeadsUpDisplayUI();
 	bool Initialize();
 
 	//Used by Render2D to render whole module
