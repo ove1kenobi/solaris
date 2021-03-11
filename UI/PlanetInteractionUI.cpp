@@ -65,6 +65,7 @@ PlanetInteractionUI::~PlanetInteractionUI() {
 	EventBuss::Get().RemoveListener(this, EventType::KeyboardEvent);
 	EventBuss::Get().RemoveListener(this, EventType::MouseButtonEvent);
 	EventBuss::Get().RemoveListener(this, EventType::DelegateMouseCoordsEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
 }
 
 //Creation functions

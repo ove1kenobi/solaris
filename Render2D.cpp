@@ -46,6 +46,7 @@ Render2D::~Render2D() {
 	RemoveFontResource(this->GetFontFilePath(L"Neoterique-Y08L.ttf").c_str());
 
 	EventBuss::Get().RemoveListener(this, EventType::KeyboardEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
 }
 
 const bool Render2D::Initialize() noexcept {
