@@ -17,7 +17,7 @@ class Engine : IEventListener
 private:
 	RenderWindow m_Window;
 	DXCore m_DXCore;
-	ForwardRenderer m_ForwardRenderer;
+	ForwardRenderer* m_ForwardRenderer;
 	Render2D* m_Render2D;
 	ResourceManager m_ResourceManager;
 	SoundManager m_SoundManager;

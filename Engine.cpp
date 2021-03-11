@@ -11,6 +11,7 @@ Engine::~Engine()
 {
 	delete m_scene;
 	delete m_Render2D;
+	delete m_ForwardRenderer;
 }
 
 const bool Engine::Initialize()
@@ -18,6 +19,8 @@ const bool Engine::Initialize()
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
 
 	m_Render2D = new Render2D();
+	m_scene = new Scene();
+	m_ForwardRenderer = new ForwardRenderer();
 
 	//DirectX Core
 	if (!m_DXCore.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_Window.GetHandle()))
@@ -48,13 +51,12 @@ const bool Engine::Initialize()
 	if (!m_ResourceManager.Initialize())
 		return false;
 
-	this->m_scene = new Scene();
 	//Scene
 	if (!this->m_scene->init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
 		return false;
 
 	//Forward Renderer:
-	if (!m_ForwardRenderer.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
+	if (!m_ForwardRenderer->Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
 		return false;
 
 	// Sound Manager
@@ -88,21 +90,28 @@ void Engine::Run()
 
 		//The player died, restart the scene.
 		if (m_scene->GetPlayerHealth() <= 0) {
+			delete m_ForwardRenderer;
+			//Deletes the scene aswell
 			m_LayerStack.RemoveFirst();
-			delete m_scene;
 			delete m_Render2D;
+
 			m_Render2D = new Render2D;
+			m_scene = new Scene();
+			m_LayerStack.Push(m_scene);
+			m_ForwardRenderer = new ForwardRenderer();
+
 			m_DXCore.DelegateDXHandles();
+
 			if (!m_Render2D->Initialize())
 				assert(false);
 
-			m_scene = new Scene();
 			if (!this->m_scene->init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
 				assert(false);
 
-			m_Window.DelegateResolution();
+			if (!m_ForwardRenderer->Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
+				assert(false);
 
-			m_LayerStack.Push(m_scene);
+			m_Window.DelegateResolution();
 		}
 	}
 }
@@ -137,7 +146,7 @@ void Engine::Update() noexcept
 
 void Engine::Render()
 {
-	m_ForwardRenderer.RenderFrame();
+	m_ForwardRenderer->RenderFrame();
 	m_Render2D->RenderUI();
 
 	m_imguiManager.Render();

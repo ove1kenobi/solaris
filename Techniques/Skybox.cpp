@@ -5,7 +5,11 @@ Skybox::Skybox() noexcept
 	: m_pCameraCBuffer{ nullptr },
 	  m_pCamera{ nullptr }
 {
+	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent);
+}
 
+Skybox::~Skybox() {
+	EventBuss::Get().RemoveListener(this, EventType::DelegateCameraEvent);
 }
 
 void Skybox::AssignCamera(IEvent& event) noexcept
@@ -26,8 +30,6 @@ void Skybox::OnEvent(IEvent& event) noexcept
 
 const bool Skybox::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice) noexcept
 {
-	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent);
-
 	//Constant buffer for camera:
 	D3D11_BUFFER_DESC matrixBufferDesc = {};
 	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;

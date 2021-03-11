@@ -21,7 +21,7 @@ private:
 	void OnEvent(IEvent& event) noexcept override;
 public:
 	Skybox() noexcept;
-	virtual ~Skybox() noexcept = default;
+	virtual ~Skybox();
 	[[nodiscard]] const bool Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice) noexcept;
 	void PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;
 	void DoPass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept;

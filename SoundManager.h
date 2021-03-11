@@ -24,7 +24,7 @@ private:
 	float m_sfxVolume;
 public:
 	SoundManager();
-	~SoundManager();
+	virtual ~SoundManager();
 
 	bool Initialize(float musicVolume = 100.0f, float sfxVolume = 100.0f);
 	void Update();

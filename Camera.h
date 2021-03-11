@@ -27,7 +27,7 @@ protected:
 	Time m_time;
 public:
 	Camera() noexcept;
-	~Camera();
+	virtual ~Camera();
 
 	//Initializes the pMatrix & vMatrix of the orthographic camera.
 	virtual bool init(int screenWidth, int screenHeight, float cameraHeight);

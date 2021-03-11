@@ -24,7 +24,7 @@ private:
 protected:
 public:
 	RandomEventUI();
-	~RandomEventUI();
+	virtual ~RandomEventUI();
 	bool Initialize();
 
 	//For User Story 30:

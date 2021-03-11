@@ -21,7 +21,7 @@ private:
 	std::mutex m_mutex;
 private:
 	ModelFactory() noexcept = default;
-	~ModelFactory() noexcept = default;
+	virtual ~ModelFactory() noexcept = default;
 	ModelFactory& operator=(const ModelFactory& other) = delete;
 
 	//Called in GenerateSphere to create the sphere.

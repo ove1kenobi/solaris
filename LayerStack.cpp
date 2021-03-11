@@ -13,6 +13,7 @@ void LayerStack::Push(Layer* pLayer) noexcept
 
 void LayerStack::RemoveFirst() noexcept
 {
+	delete m_Layers[0];
 	m_Layers.erase(m_Layers.begin());
 	m_EndOfNormalLayers = m_Layers.begin();
 }
