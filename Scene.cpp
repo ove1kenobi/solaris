@@ -341,6 +341,7 @@ void Scene::Update() noexcept {
 		m_gameObjects.push_back(ast);
 	}
 
+#if defined(DEBUG) | defined(_DEBUG)
 	ImGui::Begin("Asteroids Data");
 	for (size_t i = m_persistentObjEnd + 1; i < m_gameObjects.size(); ++i)
 	{
@@ -348,6 +349,7 @@ void Scene::Update() noexcept {
 		ImGui::Text("%d - center: (%.0f, %.0f, %.0f)", i, c.x, c.y, c.z);
 	}
 	ImGui::End();
+#endif
 
 	// Calculate gravity between each pair of GameObjects
 	for (size_t i = 0; i < m_gameObjects.size() - 1; ++i)

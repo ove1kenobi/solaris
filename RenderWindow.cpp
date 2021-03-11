@@ -142,11 +142,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 ToggleWireFrameEvent event;
                 EventBuss::Get().Delegate(event);
             }
-            if (wParam == 'I')
-            {
-                ToggleImGuiEvent imEvent;
-                EventBuss::Get().Delegate(imEvent);
-            }
             #endif
             if (wParam == VK_ESCAPE)
             {

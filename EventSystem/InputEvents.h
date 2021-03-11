@@ -181,7 +181,6 @@ public:
 	[[nodiscard]] const std::string GetDebugName() const noexcept override
 	{
 		return "DelegateMouseCoordsEvent";
-
 	}
 	[[nodiscard]] const unsigned int& GetXCoord() const noexcept
 	{
@@ -190,5 +189,21 @@ public:
 	[[nodiscard]] const unsigned int& GetYCoord() const noexcept
 	{
 		return m_YCoord;
+	}
+};
+
+class ToggleControlsEvent : public IEvent
+{
+private:
+public:
+	ToggleControlsEvent() noexcept = default;
+	virtual ~ToggleControlsEvent() noexcept = default;
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::ToggleControlsEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "ToggleControlsEvent";
 	}
 };

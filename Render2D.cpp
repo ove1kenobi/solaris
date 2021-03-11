@@ -97,6 +97,8 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 					if (m_pPlayerInfo->distanceToClosestPlanet <= DISTANCE_THRESHOLD
 						&& m_pPlayerInfo->closestPlanet->IsVisited() == false)
 					{
+						ToggleControlsEvent controlsEvent;
+						EventBuss::Get().Delegate(controlsEvent);
 						m_CurrentUI = TypesUI::PlanetInteraction;
 						if (m_Render) {
 							m_Render = false;
