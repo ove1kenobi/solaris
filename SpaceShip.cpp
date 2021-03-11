@@ -197,3 +197,8 @@ void SpaceShip::SetVelocity(const DirectX::XMFLOAT3& velocity) noexcept
 {
 	m_velocity = velocity;
 }
+
+void SpaceShip::NullifyForces() noexcept
+{
+	m_sumForces = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+}

@@ -34,6 +34,7 @@ public:
 	bool IsUpgraded(size_t upgrade);
 	std::vector<GameObject*>& GetUpgrades();
 	void SetVelocity(const DirectX::XMFLOAT3& velocity) noexcept;
+	void NullifyForces() noexcept;
 
 	enum UpgradeTypes {
 		afterburner = 0, antenna, cargo, cold, fuelcells, livingquarters, shield, hot, warpdrive, numUpgrades
