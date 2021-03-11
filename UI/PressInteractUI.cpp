@@ -29,7 +29,7 @@ bool PressInteractUI::CreateText() {
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		100.0f,
+		30.0f,
 		L"en-us",
 		&m_pFormat
 	), "TextFormat");
@@ -41,17 +41,14 @@ bool PressInteractUI::CreateText() {
 bool PressInteractUI::UpdateModules() {
 	m_pTextBox = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) - 650.0f,
-		(m_pWindowHeight / 2.0f) - 100.0f,
+		(m_pWindowHeight)- 400.0f,
 		(m_pWindowWidth / 2.0f) + 650.0f,
-		(m_pWindowHeight / 2.0f) + 100.0f
+		(m_pWindowHeight) - 300.0f
 	);
 	return true;
 }
 
 void PressInteractUI::Render() {
-	this->UpdateBrush(D2D1::ColorF::MediumPurple, 0.5f);
-	m_pRenderTarget2D->FillRectangle(m_pTextBox, m_pBrush.Get());
-
 	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pText.c_str(),

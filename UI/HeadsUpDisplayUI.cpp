@@ -36,18 +36,7 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 }
 
 HeadsUpDisplayUI::~HeadsUpDisplayUI() {
-	if (m_pHealthBitmap) {
-		//m_pHealthBitmap->Release();
-	}
-	if (m_pOxygenBitmap) {
-		//m_pOxygenBitmap->Release();
-	}
-	if (m_pFuelBitmap) {
-		//m_pFuelBitmap->Release();
-	}
-	if (m_pCapacityBitmap) {
-		//m_pCapacityBitmap->Release();
-	}
+
 }
 
 bool HeadsUpDisplayUI::Initialize() {

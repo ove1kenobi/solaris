@@ -34,6 +34,7 @@ Render2D::Render2D() noexcept
 		m_Modules.push_back(new PlanetInteractionUI());
 		m_Modules.push_back(new HeadsUpDisplayUI());
 		m_Modules.push_back(new MenuUI());
+		m_Modules.push_back(new PressInteractUI());
 	}
 
 	m_Render = false;
@@ -80,6 +81,14 @@ void Render2D::RenderUI() {
 	m_Modules.at(static_cast<int>(TypesUI::HUD))->BeginFrame();
 	m_Modules.at(static_cast<int>(TypesUI::HUD))->Render();
 	m_Modules.at(static_cast<int>(TypesUI::HUD))->EndFrame();
+
+	if (m_pPlayerInfo->distanceToClosestPlanet <= DISTANCE_THRESHOLD
+		&& m_pPlayerInfo->closestPlanet->IsVisited() == false 
+		&& !m_Render) {
+		m_Modules.at(static_cast<int>(TypesUI::PressInteract))->BeginFrame();
+		m_Modules.at(static_cast<int>(TypesUI::PressInteract))->Render();
+		m_Modules.at(static_cast<int>(TypesUI::PressInteract))->EndFrame();
+	}
 
 	if (m_Render) {
 		m_Modules.at(static_cast<int>(m_CurrentUI))->BeginFrame();
