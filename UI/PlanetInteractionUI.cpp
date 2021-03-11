@@ -460,18 +460,6 @@ bool PlanetInteractionUI::UpdateTextElements() {
 		m_pMainRectangle.bottom - m_pScreenOffset - m_pBlockSize - m_pPadding
 	), m_pPadding);
 
-	m_pRandomEvents.at(0)->AddIcon(L"Health.png", L"24");
-	m_pRandomEvents.at(0)->AddIcon(L"Health.png", L"24");
-
-	m_pRandomEvents.at(1)->AddIcon(L"Health.png", L"24");
-	m_pRandomEvents.at(1)->AddIcon(L"Health.png", L"24");
-	m_pRandomEvents.at(1)->AddIcon(L"Health.png", L"24");
-
-	m_pRandomEvents.at(2)->AddIcon(L"Health.png", L"24");
-	m_pRandomEvents.at(2)->AddIcon(L"Health.png", L"24");
-	m_pRandomEvents.at(2)->AddIcon(L"Health.png", L"24");
-	m_pRandomEvents.at(2)->AddIcon(L"Health.png", L"24");
-
 	return true;
 }
 

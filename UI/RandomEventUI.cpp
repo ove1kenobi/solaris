@@ -181,19 +181,17 @@ void RandomEventUI::Render(int mouseX, int mouseY) {
 	m_pRenderTarget2D->FillRectangle(m_pHoverBox, m_pBrush.Get());
 
 	unsigned int i = 0;
-	if (m_pDrawBitmaps) {
-		for (auto const& bitmap : m_pIconBitmap) {
-			m_pRenderTarget2D->DrawBitmap(bitmap, m_pIconPosition.at(i));
-			this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
-			m_pRenderTarget2D.Get()->DrawTextW(
-				m_pIconAmount.at(i).c_str(),
-				(UINT32)m_pIconAmount.at(i).length(),
-				m_pIconTextFormat.Get(),
-				m_pIconTextbox.at(i),
-				m_pBrush.Get()
-			);
-			i++;
-		}
+	for (auto const& bitmap : m_pIconBitmap) {
+		m_pRenderTarget2D->DrawBitmap(bitmap, m_pIconPosition.at(i));
+		this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+		m_pRenderTarget2D.Get()->DrawTextW(
+			m_pIconAmount.at(i).c_str(),
+			(UINT32)m_pIconAmount.at(i).length(),
+			m_pIconTextFormat.Get(),
+			m_pIconTextbox.at(i),
+			m_pBrush.Get()
+		);
+		i++;
 	}
 
 	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
