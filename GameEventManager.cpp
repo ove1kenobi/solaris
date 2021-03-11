@@ -32,6 +32,18 @@ GameEvent GameEventManager::GetAGameEvent(UINT type)
 		}
 		break;
 	}
+	case 2:
+	{
+		// Radioactive
+		if (!radioactiveEventPool.empty()) {
+			gameEv = radioactiveEventPool.back();
+			radioactiveEventPool.pop_back();
+		}
+		else {
+			// handle special case
+		}
+		break;
+	}
 	default:
 	{
 		// General
@@ -123,6 +135,29 @@ GameEventManager::GameEventManager()
 		}
 	};
 
+	GameEvent radioactive[] = {
+		{
+		"Test 9",
+		"result",
+		{0, 0, 0, 0, 0, 0, 0, 5}
+		},
+		{
+		"Test 10",
+		"result",
+		{10, 5, 0, 0, 0, 0, 0, 1}
+		},
+		{
+		"Test 11",
+		"result",
+		{100, 100, 100, 100, 100, 10, 10, 10}
+		},
+		{
+		"Test 12",
+		"result",
+		{100, -100, 100, 0, 0, 0, 0, 5}
+		}
+	};
+
 	for (unsigned int i = 0; i < 4; i++) {
 		generalEventPool.push_back(general[i]);
 	}
@@ -132,12 +167,15 @@ GameEventManager::GameEventManager()
 	for (unsigned int i = 0; i < 4; i++) {
 		coldEventPool.push_back(cold[i]);
 	}
+	for (unsigned int i = 0; i < 4; i++) {
+		radioactiveEventPool.push_back(radioactive[i]);
+	}
 
 	srand(time(NULL));
 	std::random_shuffle(generalEventPool.begin(), generalEventPool.end());
 	std::random_shuffle(coldEventPool.begin(), coldEventPool.end());
 	std::random_shuffle(hotEventPool.begin(), hotEventPool.end());
-
+	std::random_shuffle(radioactiveEventPool.begin(), radioactiveEventPool.end());
 }
 
 GameEventManager::~GameEventManager()
@@ -154,7 +192,7 @@ void GameEventManager::RequestGameEvents(GameEvent setOfGameEvents[3], UINT plan
 		rnd = rand() % 2;
 
 		if (rnd) type = planetType;
-		else  type = 2;
+		else  type = 3;
 		setOfGameEvents[i] = GetAGameEvent(type);
 	}
 }

@@ -8,6 +8,7 @@ private:
 	std::vector<GameEvent> generalEventPool;
 	std::vector<GameEvent> coldEventPool;
 	std::vector<GameEvent> hotEventPool;
+	std::vector<GameEvent> radioactiveEventPool;
 
 	GameEvent GetAGameEvent(UINT type);
 
