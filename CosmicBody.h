@@ -28,4 +28,5 @@ public:
 	GameObject* GetOrbit();
 	float GetRadius();
 	int GetRotDir();
+	[[nodiscard]] const float& GetOrbitalSpeed() const noexcept;
 };

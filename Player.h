@@ -14,6 +14,7 @@
 struct PlayerInfo
 {
 	Planet* closestPlanet;
+	Planet* planetInteractedWith;
 	float distanceToClosestPlanet;
 };
 
@@ -37,6 +38,7 @@ private:
 	PlayerInfo m_PlayerInfo;
 	float m_thrusterForce, m_desiredSpeed, m_topSpeed;
 	DirectX::XMFLOAT3 m_TetheredDistanceToUphold;
+	DirectX::XMFLOAT3 m_PreviousCenterPosition;
 
 	// Input 
 	float m_mousePosX, m_mousePosY;

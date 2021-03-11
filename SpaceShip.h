@@ -8,7 +8,6 @@ class SpaceShip : public GameObject
 private:
 	float m_pitchTilt, m_rollTilt;
 
-	std::string m_Tag;
 	bool m_TestForCulling;
 
 	// Spaceship upgrades
@@ -30,11 +29,11 @@ public:
 	virtual void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
 	[[nodiscard]] const bool IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept override;
 	void BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) override;
-	[[nodiscard]] const std::string& GetTag() const noexcept override;
 	[[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept override;
 	void Activate(size_t upgrade);
 	bool IsUpgraded(size_t upgrade);
 	std::vector<GameObject*>& GetUpgrades();
+	void SetVelocity(const DirectX::XMFLOAT3& velocity) noexcept;
 
 	enum UpgradeTypes {
 		afterburner = 0, antenna, cargo, cold, fuelcells, livingquarters, shield, hot, warpdrive, numUpgrades

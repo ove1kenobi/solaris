@@ -2,9 +2,9 @@
 #include "Asteroid.h"
 
 Asteroid::Asteroid() noexcept
-	: m_Tag{"Asteroid"}, m_TestForCulling{true}, m_deltaPitch{ 0.0f }, m_deltaRoll{ 0.0f }, m_deltaYaw{ 0.0f }, m_ship{ nullptr }
+	: m_TestForCulling{true}, m_deltaPitch{ 0.0f }, m_deltaRoll{ 0.0f }, m_deltaYaw{ 0.0f }, m_ship{ nullptr }
 {
-
+	m_Tag = "Asteroid";
 }
 
 Asteroid::~Asteroid()
@@ -106,11 +106,6 @@ void Asteroid::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& de
 const bool Asteroid::IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept
 {
 	return false;
-}
-
-const std::string& Asteroid::GetTag() const noexcept
-{
-	return m_Tag;
 }
 
 const bool& Asteroid::ShallBeTestedForCulling() const noexcept

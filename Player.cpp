@@ -156,7 +156,10 @@ bool Player::update(const std::vector<Planet*>& planets)
 
 	if (m_TetheredToClosestPlanet)
 	{
-		m_ship->SetCenter(m_PlayerInfo.closestPlanet->GetCenter() - m_TetheredDistanceToUphold);
+		m_ship->AddForce(m_ship->GetVelocity() * m_ship->GetMass() * -1);
+		m_ship->SetVelocity(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
+		m_PreviousCenterPosition = m_ship->GetCenter();
+		m_ship->SetCenter(m_PlayerInfo.planetInteractedWith->GetCenter() - m_TetheredDistanceToUphold);
 	}
 	else
 	{
@@ -305,12 +308,20 @@ void Player::OnEvent(IEvent& event) noexcept
 			if (m_TetheredToClosestPlanet == false)
 			{
 				//Get the "distance" that must remain during the whole planet interaction:
-				m_TetheredDistanceToUphold = m_PlayerInfo.closestPlanet->GetCenter() - m_ship->getCenter();
+				m_PlayerInfo.planetInteractedWith = m_PlayerInfo.closestPlanet;
+				m_TetheredDistanceToUphold = m_PlayerInfo.planetInteractedWith->GetCenter() - m_ship->getCenter();
+				m_ship->AddForce(m_ship->GetVelocity() * m_ship->GetMass() * -1);
 			}
 			else
 			{
 				//Nullify all forces, continue from clean slate:
 				m_ship->AddForce(m_ship->GetVelocity() * m_ship->GetMass() * -1);
+				DirectX::XMFLOAT3 prevCenterToCurCenter = (m_ship->GetCenter() - m_PreviousCenterPosition) * (1 / m_time.DeltaTime());
+				//DirectX::XMVECTOR velocityDirection = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&prevCenterToCurCenter));
+				//DirectX::XMFLOAT3 velocity(DirectX::XMVectorGetX(velocityDirection) * m_PlayerInfo.planetInteractedWith->GetOrbitalSpeed(),
+				//	DirectX::XMVectorGetY(velocityDirection) * m_PlayerInfo.planetInteractedWith->GetOrbitalSpeed(),
+				//	DirectX::XMVectorGetZ(velocityDirection) * m_PlayerInfo.planetInteractedWith->GetOrbitalSpeed());
+				m_ship->SetVelocity(prevCenterToCurCenter);
 			}
 			m_TetheredToClosestPlanet = !m_TetheredToClosestPlanet;
 			break;

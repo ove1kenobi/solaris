@@ -16,8 +16,7 @@ const std::vector<std::string> upgradeFiles = {
 };
 
 SpaceShip::SpaceShip()
-	: m_Tag{ "SpaceShip"},
-	  m_TestForCulling{ false }
+	:m_TestForCulling{ false }
 {
 	this->m_model = ModelFactory::Get().GetModel(std::string("models/spaceship_basic.obj"));
 	//this->m_model = ModelFactory::Get().GetModel(std::string("models/cubemetal.obj"));
@@ -45,6 +44,7 @@ SpaceShip::SpaceShip()
 	{
 		Activate(upgrade);
 	}
+	m_Tag = "SpaceShip";
 }
 
 SpaceShip::~SpaceShip()
@@ -170,12 +170,6 @@ void SpaceShip::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceConte
 	pDeviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 }
 
-
-const std::string& SpaceShip::GetTag() const noexcept
-{
-	return m_Tag;
-}
-
 const bool& SpaceShip::ShallBeTestedForCulling() const noexcept
 {
 	return m_TestForCulling;
@@ -197,4 +191,9 @@ bool SpaceShip::IsUpgraded(size_t upgrade)
 std::vector<GameObject*>& SpaceShip::GetUpgrades()
 {
 	return m_upgrades;
+}
+
+void SpaceShip::SetVelocity(const DirectX::XMFLOAT3& velocity) noexcept
+{
+	m_velocity = velocity;
 }

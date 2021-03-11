@@ -5,7 +5,6 @@ class Orbit;
 
 class Planet : public CosmicBody{
 private:
-	std::string m_Tag;
 	std::wstring m_Name;
 	bool m_TestForCulling;
 	float m_DistanceToCamera;
@@ -17,7 +16,6 @@ public:
 	virtual ~Planet() = default;
 	[[nodiscard]] const bool IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept override;
 	bool Initialize(float x, float y, float z, float r, float xRot, float zRot, int rotDir, UINT type, GameObject* tetherTo, Orbit* orbit, WaterSphere* waterSphere);
-	[[nodiscard]] const std::string& GetTag() const noexcept override;
 	[[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept override;
 	DirectX::XMFLOAT4 GetWaterColor() noexcept;
 	[[nodiscard]] std::wstring& GetName() noexcept;
