@@ -1,10 +1,10 @@
 #include "..\pch.h"
 #include "RandomEventUI.h"
-#include <atlstr.h>
 
 RandomEventUI::RandomEventUI() {
 	m_pHoverTextBox = D2D1::RectF();
 	m_pHoverText = L"SELECT";
+	m_pDrawBitmaps = true;
 }
 
 bool RandomEventUI::Initialize() {
@@ -21,9 +21,7 @@ bool RandomEventUI::Initialize() {
 }
 
 RandomEventUI::~RandomEventUI() {
-	for (auto const& bitmap : m_pIconBitmap) {
-		bitmap->Release();
-	}
+	
 }
 
 //Create functions
@@ -182,17 +180,19 @@ void RandomEventUI::Render(int mouseX, int mouseY) {
 	m_pRenderTarget2D->FillRectangle(m_pHoverBox, m_pBrush.Get());
 
 	unsigned int i = 0;
-	for (auto const& bitmap : m_pIconBitmap) {
-		m_pRenderTarget2D->DrawBitmap(bitmap, m_pIconPosition.at(i));
-		this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
-		m_pRenderTarget2D.Get()->DrawTextW(
-			m_pIconAmount.at(i).c_str(),
-			(UINT32)m_pIconAmount.at(i).length(),
-			m_pIconTextFormat.Get(),
-			m_pIconTextbox.at(i),
-			m_pBrush.Get()
-		);
-		i++;
+	if (m_pDrawBitmaps) {
+		for (auto const& bitmap : m_pIconBitmap) {
+			m_pRenderTarget2D->DrawBitmap(bitmap, m_pIconPosition.at(i));
+			this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+			m_pRenderTarget2D.Get()->DrawTextW(
+				m_pIconAmount.at(i).c_str(),
+				(UINT32)m_pIconAmount.at(i).length(),
+				m_pIconTextFormat.Get(),
+				m_pIconTextbox.at(i),
+				m_pBrush.Get()
+			);
+			i++;
+		}
 	}
 
 	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
@@ -232,6 +232,33 @@ void RandomEventUI::OnClick(int mouseX, int mouseY) {
 	}
 }
 
+void RandomEventUI::OnEvent(IEvent& event) noexcept {
+	switch (event.GetEventType()) {
+	case EventType::DelegateDXEvent:
+	{
+		UpdateDXHandlers(event);
+		break;
+	}
+	case EventType::DelegateResolutionEvent:
+	{
+		m_pWindowWidth = static_cast<float>(static_cast<DelegateResolutionEvent*>(&event)->GetClientWindowWidth());
+		m_pWindowHeight = static_cast<float>(static_cast<DelegateResolutionEvent*>(&event)->GetClientWindowHeight());
+		this->UpdateModules();
+		break;
+	}
+	case EventType::WindowCloseEvent:
+	{
+		m_pDrawBitmaps = false;
+		for (auto const& bitmap : m_pIconBitmap) {
+			bitmap->Release();
+		}
+
+	}
+	default:
+		break;
+	}
+}
+
 //To add resources to the event
 void RandomEventUI::AddIcon(std::wstring resource, std::wstring amount) {
 	ID2D1Bitmap* holder = NULL;
@@ -266,4 +293,6 @@ void RandomEventUI::AddIcon(std::wstring resource, std::wstring amount) {
 	//Add text
 	m_pIconAmount.push_back(amount);
 }
+
+
 

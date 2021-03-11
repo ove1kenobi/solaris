@@ -10,7 +10,6 @@
 #include "EventSystem/InputEvents.h"
 #include "EventSystem\UtilityEvents.h"
 #include "Player.h"
-//Direct2D will be used to render all of the graphics, and use XAML for everything else UI related (Layout, interactions).
 
 #define DISTANCE_THRESHOLD 800.0f
 class Render2D : public EventPublisher, IEventListener {

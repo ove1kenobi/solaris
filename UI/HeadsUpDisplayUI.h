@@ -2,6 +2,7 @@
 #include "ModuleUI.h"
 #include "HeadsUpDisplayBar.h"
 #include "..\EventSystem\UIEvents.h"
+#include "..\EventSystem\WindowEvents.h"
 
 class HeadsUpDisplayUI : public ModuleUI {
 private:
@@ -9,6 +10,7 @@ private:
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pHUDFormat;
 	D2D1_RECT_F m_pRightDisplayScreen;
 	D2D1_RECT_F m_pLeftDisplayScreen;
+	bool drawBitMaps;
 
 	//Crosshair
 	float m_pCrosshairDistance;

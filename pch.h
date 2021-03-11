@@ -32,4 +32,5 @@
 #include <thread>
 #include <sstream>
 #include <mutex>
+#include <atlstr.h>
 #include <iostream>

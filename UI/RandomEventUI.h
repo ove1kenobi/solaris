@@ -1,5 +1,6 @@
 #pragma once
 #include "Button.h"
+#include "..\EventSystem\WindowEvents.h"
 
 class RandomEventUI : public Button {
 private:
@@ -12,7 +13,8 @@ private:
 	D2D1_RECT_F m_pHoverTextBox;
 	std::wstring m_pHoverText;
 
-	//For User Story 30: icons
+	//For icons
+	bool m_pDrawBitmaps;
 	ID2D1Bitmap* holder;
 	std::list<ID2D1Bitmap*> m_pIconBitmap;
 	std::vector<D2D1_RECT_F> m_pIconPosition;
@@ -30,7 +32,6 @@ public:
 	~RandomEventUI();
 	bool Initialize();
 
-	//For User Story 30:
 	void AddIcon(std::wstring resource, std::wstring amount);
 
 	bool UpdateModules();
@@ -38,5 +39,7 @@ public:
 	//Should take in coord arguments to figure out what to render
 	void Render(int mouseX, int mouseY);
 	void OnClick(int mouseX, int mouseY);
+
+	void OnEvent(IEvent& event) noexcept;
 };
 
