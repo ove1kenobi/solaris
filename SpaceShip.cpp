@@ -16,8 +16,7 @@ const std::vector<std::string> upgradeFiles = {
 };
 
 SpaceShip::SpaceShip()
-	: m_Tag{ "SpaceShip"},
-	  m_TestForCulling{ false },
+	:  m_TestForCulling{ false },
 	  m_radProtect{ false }
 {
 	this->m_model = ModelFactory::Get().GetModel(std::string("models/spaceship_basic.obj"));
@@ -45,6 +44,7 @@ SpaceShip::SpaceShip()
 	{
 		m_upgrades.push_back(nullptr);
 	}
+	m_Tag = "SpaceShip";
 }
 
 SpaceShip::~SpaceShip()

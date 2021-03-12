@@ -317,7 +317,7 @@ void Player::OnEvent(IEvent& event) noexcept
 			{
 				//Nullify all forces, continue from clean slate:
 				m_ship->NullifyForces();
-				DirectX::XMFLOAT3 prevCenterToCurCenter = (m_ship->GetCenter() - m_PreviousCenterPosition) * (1 / m_time.DeltaTime());
+				DirectX::XMFLOAT3 prevCenterToCurCenter = (m_ship->GetCenter() - m_PreviousCenterPosition) * (1 / static_cast<float>(m_time.DeltaTime()));
 				m_ship->SetVelocity(prevCenterToCurCenter);
 			}
 			m_TetheredToClosestPlanet = !m_TetheredToClosestPlanet;
