@@ -31,7 +31,7 @@ private:
 	void OnEvent(IEvent& event) noexcept;
 public:
 	ForwardRenderer() noexcept;
-	virtual ~ForwardRenderer() noexcept = default;
+	virtual ~ForwardRenderer();
 	[[nodiscard]] const bool Initialize(UINT screenWidth, UINT screenHeight) noexcept;
 	void RenderFrame();
 };

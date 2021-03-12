@@ -24,5 +24,7 @@ public:
 	virtual void OnClick(int mouseX, int mouseY);
 
 	void OnEvent(IEvent& event) noexcept;
+
+	void CleanUp();
 };
 

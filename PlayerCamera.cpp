@@ -12,6 +12,11 @@ PlayerCamera::PlayerCamera() {
 	m_minPitch = alpha;
 }
 
+PlayerCamera::~PlayerCamera() {
+	EventBuss::Get().RemoveListener(this, EventType::MouseScrollEvent);
+	EventBuss::Get().RemoveListener(this, EventType::RequestCameraEvent);
+}
+
 bool PlayerCamera::init(int screenWidth, int screenHeight) {
 	EventBuss::Get().AddListener(this, EventType::MouseScrollEvent, EventType::RequestCameraEvent);
 	this->m_screenFar = 100000.0f;

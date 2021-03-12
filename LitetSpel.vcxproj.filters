@@ -158,8 +158,6 @@
     <ClInclude Include="ModelTexture.h" />
     <ClInclude Include="Techniques\FrustumCulling.h" />
     <ClInclude Include="WaterSphere.h" />
-    <ClInclude Include="ModuleUI.h" />
-    <ClInclude Include="UI\ModuleUI.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="EventSystem\SoundEvents.h" />
     <ClInclude Include="Resources.h" />
@@ -170,6 +168,7 @@
     <ClInclude Include="Techniques\Bloom.h" />
     <ClInclude Include="Techniques\GaussianBlur.h" />
     <ClInclude Include="EventSystem\PlayerEvents.h" />
+    <ClInclude Include="UI\ModuleUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

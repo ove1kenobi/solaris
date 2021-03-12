@@ -11,6 +11,11 @@ MousePicking::MousePicking() noexcept
 	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent, EventType::DelegateResolutionEvent);
 }
 
+MousePicking::~MousePicking() {
+	EventBuss::Get().RemoveListener(this, EventType::DelegateCameraEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateResolutionEvent);
+}
+
 const bool MousePicking::Initialize() const noexcept
 {
 	RequestCameraEvent event;

@@ -21,7 +21,7 @@ private:
 	void OnEvent(IEvent& event) noexcept override;
 public:
 	MousePicking() noexcept;
-	virtual ~MousePicking() noexcept = default;
+	virtual ~MousePicking();
 	[[nodiscard]] const bool Initialize() const noexcept;
 	void DoIntersectionTests(const unsigned int& x, const unsigned int& y, const std::vector<GameObject*>& gameObjects) noexcept;
 	void DisplayPickedObject() noexcept;

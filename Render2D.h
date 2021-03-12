@@ -29,4 +29,5 @@ public:
 	[[nodiscard]] const bool Initialize() noexcept;
 	void RenderUI();
 	void OnEvent(IEvent& event) noexcept;
+	void CleanUp();
 };

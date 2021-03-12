@@ -77,3 +77,7 @@ void PressInteractUI::OnEvent(IEvent& event) noexcept {
 		break;
 	}
 }
+
+void PressInteractUI::CleanUp() {
+
+}

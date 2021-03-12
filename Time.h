@@ -11,7 +11,7 @@ private:
 	static t_dSec m_deltaTime;
 public:
 	Time();
-	~Time() = default;
+	virtual ~Time() = default;
 	long double SinceStart();
 	long double DeltaTime();
 	void Update();

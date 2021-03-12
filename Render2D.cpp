@@ -50,6 +50,9 @@ Render2D::~Render2D() {
 	RemoveFontResource(this->GetFontFilePath(L"NeoteriqueItalic-rAVK.ttf").c_str());
 	RemoveFontResource(this->GetFontFilePath(L"Neoterique-Y08L.ttf").c_str());
 	RemoveFontResource(this->GetFontFilePath(L"Netron-p7gq1.otf").c_str());
+
+	EventBuss::Get().RemoveListener(this, EventType::KeyboardEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
 }
 
 const bool Render2D::Initialize() noexcept {
@@ -108,20 +111,23 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 			if (state == KeyState::KeyPress) {
 				if (virKey == 'E') 
 				{
-					if (m_pPlayerInfo->distanceToClosestPlanet <= DISTANCE_THRESHOLD
-						&& m_pPlayerInfo->closestPlanet->IsVisited() == false)
+					if (m_pPlayerInfo)
 					{
-						ToggleControlsEvent controlsEvent;
-						EventBuss::Get().Delegate(controlsEvent);
-						m_CurrentUI = TypesUI::PlanetInteraction;
-						ToggleTetheredEvent TTEvent;
-						EventBuss::Get().Delegate(TTEvent);
-						if (m_Render) {
-							m_Render = false;
-							m_pPlayerInfo->closestPlanet->MarkAsVisited();
-						}
-						else {
-							m_Render = true;
+						if (m_pPlayerInfo->distanceToClosestPlanet <= DISTANCE_THRESHOLD
+							&& m_pPlayerInfo->closestPlanet->IsVisited() == false)
+						{
+							ToggleControlsEvent controlsEvent;
+							EventBuss::Get().Delegate(controlsEvent);
+							m_CurrentUI = TypesUI::PlanetInteraction;
+							ToggleTetheredEvent TTEvent;
+							EventBuss::Get().Delegate(TTEvent);
+							if (m_Render) {
+								m_Render = false;
+								m_pPlayerInfo->closestPlanet->MarkAsVisited();
+							}
+							else {
+								m_Render = true;
+							}
 						}
 					}
 				}
@@ -146,4 +152,9 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 		default:
 			break;
 	}
+}
+
+void Render2D::CleanUp() {
+	for (auto r : m_Modules)
+		r->CleanUp();
 }

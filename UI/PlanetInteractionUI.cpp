@@ -772,3 +772,7 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		break;
 	}
 }
+
+void PlanetInteractionUI::CleanUp() {
+
+}

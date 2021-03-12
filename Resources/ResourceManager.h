@@ -89,6 +89,6 @@ private:
 	void CreateQuadData() noexcept;
 public:
 	ResourceManager() noexcept;
-	virtual ~ResourceManager() noexcept = default;
+	virtual ~ResourceManager();
 	[[nodiscard]] const bool Initialize() noexcept;
 };

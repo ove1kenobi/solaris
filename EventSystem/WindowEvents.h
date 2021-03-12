@@ -28,6 +28,7 @@ public:
 		m_ClientWindowWidth = clientWindowWidth;
 		m_ClientWindowHeight = clientWindowHeight;
 	}
+	virtual ~DelegateResolutionEvent() noexcept = default;
 	[[nodiscard]] const EventType GetEventType() const noexcept override
 	{
 		return EventType::DelegateResolutionEvent;

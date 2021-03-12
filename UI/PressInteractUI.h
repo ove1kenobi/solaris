@@ -25,4 +25,6 @@ public:
 
 	//Event functions
 	void OnEvent(IEvent& event) noexcept;
+
+	void CleanUp();
 };

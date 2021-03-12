@@ -15,7 +15,7 @@ private:
 
 public:
 	PlayerCamera();
-	~PlayerCamera() = default;
+	virtual ~PlayerCamera();
 
 	//Initializes the pMatrix
 	bool init(int screenWidth, int screenHeight);

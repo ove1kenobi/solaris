@@ -2,14 +2,23 @@
 #include "Engine.h"
 
 Engine::Engine() noexcept
-	: m_Running{ true }, m_time{ 0.0 }, m_fps{ 0 }
+	: m_Running{ true }, m_time{ 0.0 }, m_fps{ 0 }, m_Render2D{ nullptr }, m_scene{ nullptr }
 {
 	m_gameTime.Update();
+}
+
+Engine::~Engine()
+{
+	delete m_scene;
+	delete m_Render2D;
 }
 
 const bool Engine::Initialize()
 {
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
+
+	m_Render2D = new Render2D();
+	m_scene = new Scene();
 
 	//DirectX Core
 	if (!m_DXCore.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_Window.GetHandle()))
@@ -33,7 +42,7 @@ const bool Engine::Initialize()
 	}*/
 	
 	//2D Renderer
-	if (!m_Render2D.Initialize())
+	if (!m_Render2D->Initialize())
 		return false;
 	
 	//Resource Manager
@@ -41,7 +50,7 @@ const bool Engine::Initialize()
 		return false;
 
 	//Scene
-	if (!this->m_scene.init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
+	if (!this->m_scene->init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
 		return false;
 
 	//Forward Renderer:
@@ -55,7 +64,7 @@ const bool Engine::Initialize()
 	//All components must have the correct monitor resolution: (Emil F)
 	m_Window.DelegateResolution();
 
-	m_LayerStack.Push(&m_scene);
+	m_LayerStack.Push(m_scene);
 	m_LayerStack.PushOverlay(&m_imguiManager);
 	return true;
 }
@@ -76,6 +85,29 @@ void Engine::Run()
 
 		//Render:
 		Render();
+
+		//The player died, restart the scene.
+		if (m_scene->GetPlayerHealth() <= 0) {
+			//Deletes the scene aswell
+			m_LayerStack.RemoveFirst();
+			
+			m_Render2D->CleanUp();
+			delete m_Render2D;
+
+			m_Render2D = new Render2D;
+			m_scene = new Scene();
+			m_LayerStack.Push(m_scene);
+
+			m_DXCore.DelegateDXHandles();
+
+			if (!m_Render2D->Initialize())
+				assert(false);
+
+			if (!this->m_scene->init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
+				assert(false);
+
+			m_Window.DelegateResolution();
+		}
 	}
 }
 
@@ -110,7 +142,7 @@ void Engine::Update() noexcept
 void Engine::Render()
 {
 	m_ForwardRenderer.RenderFrame();
-	m_Render2D.RenderUI();
+	m_Render2D->RenderUI();
 
 	m_imguiManager.Render();
 	HR_A(m_DXCore.GetSwapChain()->Present(0u, 0u), "Present");

@@ -16,7 +16,7 @@ private:
 	void OnEvent(IEvent& event) noexcept override;
 public:
 	Sun() noexcept;
-	virtual ~Sun() noexcept = default;
+	virtual ~Sun();
 	//Uses the CosmicBody init() and light init() to set everything up related to the sun
 	[[nodiscard]] const bool Initialize() noexcept;
 	[[nodiscard]] const PointLight& GetPointLight() const;

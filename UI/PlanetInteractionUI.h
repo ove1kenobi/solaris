@@ -80,5 +80,7 @@ public:
 	void SetPlanetName(std::wstring text);
 	void SetPlanetFlavourText(std::wstring text);
 	void OnEvent(IEvent& event) noexcept;
+
+	void CleanUp();
 };
 

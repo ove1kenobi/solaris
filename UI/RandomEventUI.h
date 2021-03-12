@@ -28,7 +28,7 @@ private:
 protected:
 public:
 	RandomEventUI();
-	~RandomEventUI();
+	virtual ~RandomEventUI();
 	bool Initialize();
 
 	void AddIcon(std::wstring resource, std::wstring amount);

@@ -79,6 +79,8 @@ Scene::~Scene() {
 	for (auto r : this->m_waterSpheres) {
 		delete r;
 	}
+	EventBuss::Get().RemoveListener(this, EventType::AskForRenderObjectsEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateMouseCoordsEvent);
 }
 
 //All events that Scene are listening to.
@@ -448,8 +450,8 @@ void Scene::Update() noexcept {
 	ImGui::Text("Asteroids  : %d", m_gameObjects.size() - m_persistentObjEnd - 1);
 	ImGui::End();
 #endif
+}
 
-	if (m_player.GetHealth() <= 0) {
-		//game over
-	}
+int Scene::GetPlayerHealth() {
+	return m_player.GetHealth();
 }

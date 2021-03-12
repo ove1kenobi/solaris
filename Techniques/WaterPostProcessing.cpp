@@ -16,6 +16,12 @@ WaterPostProcessing::WaterPostProcessing() noexcept
 	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent, EventType::DelegateSunLightEvent, EventType::DelegateSunEvent);
 }
 
+WaterPostProcessing::~WaterPostProcessing() {
+	EventBuss::Get().RemoveListener(this, EventType::DelegateCameraEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateSunLightEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateSunEvent);
+}
+
 void WaterPostProcessing::AssignCamera(IEvent& event) noexcept
 {
 	DelegateCameraEvent& derivedEvent = static_cast<DelegateCameraEvent&>(event);
@@ -146,6 +152,13 @@ const bool WaterPostProcessing::Initialize(const Microsoft::WRL::ComPtr<ID3D11De
 										 &m_pShaderResourceView),
 										 "CreateShaderResourceView");
 
+	
+
+	return true;
+}
+
+void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, std::vector<GameObject*> planets) noexcept
+{
 	//Get the camera for its matrices
 	RequestCameraEvent requestCameraEvent;
 	EventBuss::Get().Delegate(requestCameraEvent);
@@ -157,11 +170,6 @@ const bool WaterPostProcessing::Initialize(const Microsoft::WRL::ComPtr<ID3D11De
 	RequestSunEvent sunEvent;
 	EventBuss::Get().Delegate(sunEvent);
 
-	return true;
-}
-
-void WaterPostProcessing::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext, std::vector<GameObject*> planets) noexcept
-{
 	//Unbind pipeline:
 	UnbindPipelineEvent ubEvent;
 	EventBuss::Get().Delegate(ubEvent);

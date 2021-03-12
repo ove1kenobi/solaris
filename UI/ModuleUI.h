@@ -29,7 +29,7 @@ protected:
 	bool ErrorCheck(HRESULT handle, std::string type);
 public:
 	ModuleUI() noexcept;
-	virtual ~ModuleUI() = default;
+	virtual ~ModuleUI();
 	virtual bool Initialize() = 0;
 
 	//For dynamically changing brush without having to create a new one
@@ -45,5 +45,7 @@ public:
 
 	//Debugging function
 	void RenderHelpGrid(int gridSize);
+
+	virtual void CleanUp() = 0;
 };
 
