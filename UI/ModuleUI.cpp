@@ -10,6 +10,7 @@ ModuleUI::ModuleUI() noexcept {
 	m_pWindowHeight = 0.0f;
 	m_pMouseX = 0u;
 	m_pMouseY = 0u;
+	m_pOnScreen = false;
 }
 
 ModuleUI::~ModuleUI() {

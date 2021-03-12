@@ -48,6 +48,7 @@ public:
 
 	//Render functions used by Render2D
 	virtual void Render() = 0;
+	bool m_pOnScreen;
 
 	//Debugging function
 	void RenderHelpGrid(int gridSize);

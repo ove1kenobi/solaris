@@ -205,7 +205,7 @@ void MenuUI::OnEvent(IEvent& event) noexcept {
 		m_pMouseY = static_cast<MouseButtonEvent*>(&event)->GetYCoord();
 		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
-		if (virKey == VK_LBUTTON && state == KeyState::KeyPress) {
+		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && !m_pOnScreen) {
 			//something something, check where you clicked before doing stuff
 			if (m_pMouseX > m_pStartTextBox.left && m_pMouseX < m_pStartTextBox.right &&
 				m_pMouseY > m_pStartTextBox.top && m_pMouseY < m_pStartTextBox.bottom) {

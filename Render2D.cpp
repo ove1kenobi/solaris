@@ -81,11 +81,9 @@ std::wstring Render2D::GetFontFilePath(std::wstring fontFile) {
 	return FilePath;
 }
 
-//Here's where I would have put my state machine...
+//Here's where I would have put my finite state machine...
 //IF I HAD THE TIME TO MAKE ONE
 //(currently we use if statements to figure out what to render when)
-
-//How do we convey to things here not to accept input when they don't need it?
 void Render2D::RenderUI() {
 	if (m_InGame) {
 		//Always render HUD while in game
@@ -109,7 +107,6 @@ void Render2D::RenderUI() {
 	}
 }
 
-//Will in the future take in UI events to know what to render when
 void Render2D::OnEvent(IEvent& event) noexcept {
 	switch (event.GetEventType()) {
 		case EventType::KeyboardEvent:
@@ -139,18 +136,15 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 							else {
 								m_PlanetInteraction = true;
 							}
+							m_Modules.at(static_cast<int>(TypesUI::PlanetInteraction))->m_pOnScreen = m_PlanetInteraction;
 						}
 					}
 				}
 				//Just and example toggle for the menu
 				//To do it properly just change the bool of InGame
 				if (virKey == 'R') {
-					if (m_InGame) {
-						m_InGame = false;
-					}
-					else {
-						m_InGame = true;
-					}
+					m_InGame = !m_InGame;
+					m_Modules.at(static_cast<int>(TypesUI::MainMenu))->m_pOnScreen = m_InGame;
 				}
 				//If player goes in the upgrade screen we also do not want things to update
 			}
