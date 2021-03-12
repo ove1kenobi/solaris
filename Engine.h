@@ -19,7 +19,7 @@ private:
 	DXCore m_DXCore;
 	ForwardRenderer* m_ForwardRenderer;
 	Render2D* m_Render2D;
-	ResourceManager* m_ResourceManager;
+	ResourceManager m_ResourceManager;
 	SoundManager m_SoundManager;
 	Time m_gameTime;
 	Scene* m_scene;
