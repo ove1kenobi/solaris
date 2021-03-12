@@ -2,9 +2,9 @@
 #include "Asteroid.h"
 
 Asteroid::Asteroid() noexcept
-	: m_Tag{"Asteroid"}, m_TestForCulling{true}, m_deltaPitch{ 0.0f }, m_deltaRoll{ 0.0f }, m_deltaYaw{ 0.0f }, m_ship{ nullptr }
+	: m_TestForCulling{true}, m_deltaPitch{ 0.0f }, m_deltaRoll{ 0.0f }, m_deltaYaw{ 0.0f }, m_ship{ nullptr }
 {
-
+	m_Tag = "Asteroid";
 }
 
 Asteroid::~Asteroid()
@@ -49,8 +49,9 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 
 GameObject* Asteroid::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
-	float distance = length(m_center - m_ship->GetCenter());
-	if (distance > 10000) return this;
+	float distShip = length(m_center - m_ship->GetCenter());
+	float distSun = length(m_center);
+	if (distShip > 20000 || distSun < 500.0f) return this;
 	m_pitch += static_cast<float>(m_deltaPitch * m_timer.DeltaTime());
 	m_roll += static_cast<float>(m_deltaRoll * m_timer.DeltaTime());
 	m_yaw += static_cast<float>(m_deltaYaw * m_timer.DeltaTime());
@@ -106,11 +107,6 @@ void Asteroid::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& de
 const bool Asteroid::IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept
 {
 	return false;
-}
-
-const std::string& Asteroid::GetTag() const noexcept
-{
-	return m_Tag;
 }
 
 const bool& Asteroid::ShallBeTestedForCulling() const noexcept

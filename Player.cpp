@@ -32,8 +32,11 @@ DirectX::XMFLOAT3 Player::Stabilize()
 	return stabilizingForce;
 }
 
+
 Player::Player()
-	: m_PlayerInfo{ }
+	: m_PlayerInfo{ },
+	  m_TetheredToClosestPlanet{ false },
+	  m_TetheredDistanceToUphold{ -1.0f, -1.0f, -1.0f }
 {
 	m_fuelCapacity = 500;
 	m_oxygenCapacity = 500;
@@ -73,7 +76,8 @@ Player::~Player()
 
 bool Player::Initialize(PlayerCamera* camera)
 {
-	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::ToggleImGuiEvent, EventType::MouseMoveAbsoluteEvent);
+	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::ToggleControlsEvent, EventType::MouseMoveAbsoluteEvent);
+	EventBuss::Get().AddListener(this, EventType::ToggleTetheredEvent);
 
 	m_camera = camera;
 	m_ship = new SpaceShip();
@@ -149,20 +153,32 @@ bool Player::update(const std::vector<Planet*>& planets)
 		}
 	}
 
-	if (m_stabilizerActive) {
-		DirectX::XMFLOAT3 stabilizingForce = Stabilize();
-		shipForce = shipForce + stabilizingForce;
+	//Calculate closest distance to player:
+	DetermineClosestPlanet(planets);
+	DelegatePlayerInfo();
+
+	if (m_TetheredToClosestPlanet)
+	{
+		//m_ship->AddForce(m_ship->GetVelocity() * m_ship->GetMass() * -1);
+		m_ship->NullifyForces();
+		m_ship->SetVelocity(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
+		m_PreviousCenterPosition = m_ship->GetCenter();
+		m_ship->SetCenter(m_PlayerInfo.planetInteractedWith->GetCenter() - m_TetheredDistanceToUphold);
 	}
-	m_ship->AddForce(shipForce);
-	m_ship->UpdatePhysics();
+	else
+	{
+		if (m_stabilizerActive) {
+			DirectX::XMFLOAT3 stabilizingForce = Stabilize();
+			shipForce = shipForce + stabilizingForce;
+		}
+
+		m_ship->AddForce(shipForce);
+		m_ship->UpdatePhysics();
+	}
 
 	DirectX::XMFLOAT3 a = m_ship->getCenter();
 	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
 	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
-
-	//Calculate closest distance to player:
-	DetermineClosestPlanet(planets);
-	DelegatePlayerInfo();
 
 	if (length(m_ship->GetVelocity()) < 500.0f) return false;
 	return true;
@@ -243,7 +259,7 @@ void Player::OnEvent(IEvent& event) noexcept
 			KeyState state = static_cast<KeyboardEvent*>(&event)->GetKeyState();
 			int virKey = static_cast<KeyboardEvent*>(&event)->GetVirtualKeyCode();
 
-			if (state == KeyState::KeyPress) {
+			if (state == KeyState::KeyPress && m_playerControlsActive) {
 				if (virKey == 'W') {
 					PlaySoundEvent thrusterSound(SoundID::Thrusters, true, 1.2f);
 					EventBuss::Get().Delegate(thrusterSound);
@@ -264,8 +280,7 @@ void Player::OnEvent(IEvent& event) noexcept
 					else m_stabilizerActive = true;
 				}
 			}
-
-			if (state == KeyState::KeyRelease) {
+			if (state == KeyState::KeyRelease && m_playerControlsActive) {
 				if (virKey == 'W') {
 					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
 					EventBuss::Get().Delegate(thrusterSound);
@@ -282,13 +297,31 @@ void Player::OnEvent(IEvent& event) noexcept
 					m_stopMovement = false;
 				}
 			}
-
 			break;
 		}
-		case EventType::ToggleImGuiEvent:
+		case EventType::ToggleControlsEvent:
 		{
 			if (m_playerControlsActive) m_playerControlsActive = false;
 			else m_playerControlsActive = true;
+			break;
+		}
+		case EventType::ToggleTetheredEvent:
+		{
+			if (m_TetheredToClosestPlanet == false)
+			{
+				//Get the "distance" that must remain during the whole planet interaction:
+				m_PlayerInfo.planetInteractedWith = m_PlayerInfo.closestPlanet;
+				m_TetheredDistanceToUphold = m_PlayerInfo.planetInteractedWith->GetCenter() - m_ship->getCenter();
+				m_ship->AddForce(m_ship->GetVelocity() * m_ship->GetMass() * -1);
+			}
+			else
+			{
+				//Nullify all forces, continue from clean slate:
+				m_ship->NullifyForces();
+				DirectX::XMFLOAT3 prevCenterToCurCenter = (m_ship->GetCenter() - m_PreviousCenterPosition) * (1 / static_cast<float>(m_time.DeltaTime()));
+				m_ship->SetVelocity(prevCenterToCurCenter);
+			}
+			m_TetheredToClosestPlanet = !m_TetheredToClosestPlanet;
 			break;
 		}
 	}

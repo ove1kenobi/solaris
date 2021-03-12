@@ -21,6 +21,8 @@ protected:
 
 	//Create functions
 	bool CreateBrush();
+	std::wstring GetIconFilePath(std::wstring iconFile);
+	void LoadBitmapFromFile(PCWSTR filePath , ID2D1Bitmap** bitmap);
 
 	//Updating handlers and error checking
 	void UpdateDXHandlers(IEvent& event) noexcept;

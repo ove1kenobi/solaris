@@ -16,8 +16,7 @@ const std::vector<std::string> upgradeFiles = {
 };
 
 SpaceShip::SpaceShip()
-	: m_Tag{ "SpaceShip"},
-	  m_TestForCulling{ false },
+	:  m_TestForCulling{ false },
 	  m_radProtect{ false }
 {
 	this->m_model = ModelFactory::Get().GetModel(std::string("models/spaceship_basic.obj"));
@@ -32,14 +31,20 @@ SpaceShip::SpaceShip()
 	this->m_mass = 10000.0f;
 	m_scale = 0.5f;
 	m_yaw = (float)M_PI;
+	m_pitch = (float)M_PI / 8.0f;
 	m_pitchTilt = 0.0f;
 	m_rollTilt = 0.0f;
 	m_velocity = { 1.0f, 1.0f, 1.0f };
+
+	float alpha = 0.1f;
+	m_maxPitch = (float)M_PI_2 - alpha + m_pitch;
+	m_minPitch = -(float)M_PI_2 + alpha + m_pitch;
 
 	for (size_t upgrade = 0; upgrade < numUpgrades; upgrade++)
 	{
 		m_upgrades.push_back(nullptr);
 	}
+	m_Tag = "SpaceShip";
 }
 
 SpaceShip::~SpaceShip()
@@ -98,15 +103,13 @@ GameObject* SpaceShip::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 P
 
 void SpaceShip::AddRotation(float yaw, float pitch)
 {
-	float alpha = 0.1f;
-
 	m_yaw += yaw;
 	if (m_yaw >= 2 * (float)M_PI) m_yaw -= 2 * (float)M_PI;
 	else if (m_yaw <= -2 * (float)M_PI) m_yaw += 2 * (float)M_PI;
 
 	m_pitch += pitch;
-	if (m_pitch > (float)M_PI_2 - alpha) m_pitch = (float)M_PI_2 - alpha;
-	else if (m_pitch < -(float)M_PI_2 + alpha) m_pitch = -(float)M_PI_2 + alpha;
+	if (m_pitch > m_maxPitch) m_pitch = m_maxPitch;
+	else if (m_pitch < m_minPitch) m_pitch = m_minPitch;
 }
 
 void SpaceShip::SetTilt(float pitchLerp, float rollLerp)
@@ -168,12 +171,6 @@ void SpaceShip::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceConte
 	pDeviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 }
 
-
-const std::string& SpaceShip::GetTag() const noexcept
-{
-	return m_Tag;
-}
-
 const bool& SpaceShip::ShallBeTestedForCulling() const noexcept
 {
 	return m_TestForCulling;
@@ -197,4 +194,14 @@ bool SpaceShip::IsUpgraded(size_t upgrade)
 std::vector<GameObject*>& SpaceShip::GetUpgrades()
 {
 	return m_upgrades;
+}
+
+void SpaceShip::SetVelocity(const DirectX::XMFLOAT3& velocity) noexcept
+{
+	m_velocity = velocity;
+}
+
+void SpaceShip::NullifyForces() noexcept
+{
+	m_sumForces = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 }

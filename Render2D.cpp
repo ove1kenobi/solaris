@@ -3,6 +3,9 @@
 
 bool Render2D::AddFonts() {
 	//Load in fonts which the UI will use
+	if (AddFontResource(this->GetFontFilePath(L"Netron-p7gq1.otf").c_str()) == 0) {
+		return false;
+	}
 	if (AddFontResource(this->GetFontFilePath(L"AwareBold-qZo3x.ttf").c_str()) == 0) {
 		return false;
 	}
@@ -30,6 +33,8 @@ Render2D::Render2D() noexcept
 		m_CurrentUI = TypesUI::PlanetInteraction;
 		m_Modules.push_back(new PlanetInteractionUI());
 		m_Modules.push_back(new HeadsUpDisplayUI());
+		m_Modules.push_back(new MenuUI());
+		m_Modules.push_back(new PressInteractUI());
 	}
 
 	m_Render = false;
@@ -44,6 +49,7 @@ Render2D::~Render2D() {
 	RemoveFontResource(this->GetFontFilePath(L"Tenika400Regular-Rpyql.ttf").c_str());
 	RemoveFontResource(this->GetFontFilePath(L"NeoteriqueItalic-rAVK.ttf").c_str());
 	RemoveFontResource(this->GetFontFilePath(L"Neoterique-Y08L.ttf").c_str());
+	RemoveFontResource(this->GetFontFilePath(L"Netron-p7gq1.otf").c_str());
 
 	EventBuss::Get().RemoveListener(this, EventType::KeyboardEvent);
 	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
@@ -79,6 +85,14 @@ void Render2D::RenderUI() {
 	m_Modules.at(static_cast<int>(TypesUI::HUD))->Render();
 	m_Modules.at(static_cast<int>(TypesUI::HUD))->EndFrame();
 
+	if (m_pPlayerInfo->distanceToClosestPlanet <= DISTANCE_THRESHOLD
+		&& m_pPlayerInfo->closestPlanet->IsVisited() == false 
+		&& !m_Render) {
+		m_Modules.at(static_cast<int>(TypesUI::PressInteract))->BeginFrame();
+		m_Modules.at(static_cast<int>(TypesUI::PressInteract))->Render();
+		m_Modules.at(static_cast<int>(TypesUI::PressInteract))->EndFrame();
+	}
+
 	if (m_Render) {
 		m_Modules.at(static_cast<int>(m_CurrentUI))->BeginFrame();
 		m_Modules.at(static_cast<int>(m_CurrentUI))->Render();
@@ -100,7 +114,11 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 					if (m_pPlayerInfo->distanceToClosestPlanet <= DISTANCE_THRESHOLD
 						&& m_pPlayerInfo->closestPlanet->IsVisited() == false)
 					{
+						ToggleControlsEvent controlsEvent;
+						EventBuss::Get().Delegate(controlsEvent);
 						m_CurrentUI = TypesUI::PlanetInteraction;
+						ToggleTetheredEvent TTEvent;
+						EventBuss::Get().Delegate(TTEvent);
 						if (m_Render) {
 							m_Render = false;
 							m_pPlayerInfo->closestPlanet->MarkAsVisited();
@@ -111,7 +129,7 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 					}
 				}
 				if (virKey == 'R') {
-					//m_CurrentUI = TypesUI::HUD;
+					m_CurrentUI = TypesUI::MainMenu;
 					if (m_Render) {
 						m_Render = false;
 					}

@@ -6,6 +6,10 @@ PlayerCamera::PlayerCamera() {
 	m_maxScroll = 100.0f;
 	m_minScroll = 50.0f;
 	m_pitch = (float)M_PI_2;
+
+	float alpha = 0.1f;
+	m_maxPitch = (float)M_PI - alpha;
+	m_minPitch = alpha;
 }
 
 PlayerCamera::~PlayerCamera() {
@@ -35,28 +39,25 @@ void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
 	m_posVector = DirectX::XMVectorSetZ(m_posVector, -sinf(m_pitch) * cosf(m_yaw) * m_distanceFromShip);
 	m_posVector = DirectX::XMVectorAdd(m_posVector, focusPos);
 
+	// Offsets the ship from the camera center
+	focusPos = DirectX::XMVectorAdd(DirectX::operator*(m_upVector, 15.0f), focusPos);
+
 	// Create forward vector 
 	m_forwardVector = DirectX::XMVectorSubtract(focusPos, m_posVector);
 	m_forwardVector = DirectX::XMVector3Normalize(m_forwardVector);
-
-	// Optional, offsets the ship from the camera center
-	//focusPos = DirectX::XMVectorAdd(DirectX::operator*(m_upVector, 10.0f), focusPos);
 
 	// Create the view matrix
 	DirectX::XMStoreFloat4x4(&m_vMatrix, DirectX::XMMatrixLookAtLH(m_posVector, focusPos, m_upVector));
 }
 
 void PlayerCamera::OrbitRotation(float yaw, float pitch) {
-
-	float alpha = 0.1f;
-
 	m_yaw -= yaw;
 	if (m_yaw >= 2.0f * (float)M_PI) m_yaw -= 2.0f * (float)M_PI;
 	else if (m_yaw <= -2.0f * (float)M_PI) m_yaw += 2.0f * (float)M_PI;
 
 	m_pitch += pitch;
-	if (m_pitch > (float)M_PI - alpha) m_pitch = (float)M_PI - alpha;
-	else if (m_pitch < alpha) m_pitch = alpha;
+	if (m_pitch > m_maxPitch) m_pitch = m_maxPitch;
+	else if (m_pitch < m_minPitch) m_pitch = m_minPitch;
 }
 
 void PlayerCamera::mouseScroll(int scroll) {

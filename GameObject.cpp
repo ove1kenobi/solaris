@@ -103,6 +103,7 @@ void GameObject::CalculateGravity(GameObject* other)
 	//ab.x *= f;
 	//ab.y *= f;
 	//ab.z *= f;
+	
 	AddForce(ab);					// Force on object a
 	other->AddForce(ab * (-1.0));	// Equal and opposite force on object b
 }
@@ -119,14 +120,14 @@ void GameObject::UpdatePhysics()
 	if (m_mass != 0.0f) {
 		// Divide the force by the objects mass to get the acceleration F = m*a -> a = F/m
 		m_velocity = m_velocity + m_sumForces / m_mass;
-
+	
 		float speed = length(m_velocity);
 		// Limit how fast an object can travel
 		if (speed > m_topSpeed) {
 			m_velocity = normalize(m_velocity);
 			m_velocity = m_topSpeed * m_velocity;
 		}
-
+	
 		m_center.x += static_cast<float>(m_velocity.x * m_timer.DeltaTime());
 		m_center.y += static_cast<float>(m_velocity.y * m_timer.DeltaTime());
 		m_center.z += static_cast<float>(m_velocity.z * m_timer.DeltaTime());
@@ -143,6 +144,11 @@ const DirectX::BoundingSphere& GameObject::GetBoundingSphere() noexcept
 {
 	m_boundingSphere.Center = m_center;
 	return m_boundingSphere;
+}
+
+const std::string& GameObject::GetTag() const noexcept
+{
+	return m_Tag;
 }
 
 const float& GameObject::GetDistanceToCamera() const noexcept

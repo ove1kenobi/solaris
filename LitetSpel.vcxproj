@@ -107,6 +107,14 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="UI\MenuUI.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="UI\PressInteractUI.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="UI\RandomEventUI.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
@@ -247,6 +255,7 @@
     <ClCompile Include="WaterSphere.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EventSystem\PlayerEvents.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="SpaceShipUpgrade.h" />
     <ClInclude Include="UI\HeadsUpDisplayBar.h" />
@@ -255,7 +264,9 @@
     <ClInclude Include="Techniques\GaussianBlur.h" />
     <ClInclude Include="EventSystem\UIEvents.h" />
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
+    <ClInclude Include="UI\MenuUI.h" />
     <ClInclude Include="UI\ModuleUI.h" />
+    <ClInclude Include="UI\PressInteractUI.h" />
     <ClInclude Include="UI\RandomEventUI.h" />
     <ClInclude Include="UI\Button.h" />
     <ClInclude Include="DXCore.h" />
@@ -490,6 +501,18 @@
     <Font Include="UI\Fonts\Neoterique-Y08L.ttf" />
     <Font Include="UI\Fonts\NeoteriqueItalic-rAVK.ttf" />
     <Font Include="UI\Fonts\Tenika400Regular-Rpyql.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="UI\Icons\Fuel.png" />
+    <Image Include="UI\Icons\health.png" />
+    <Image Include="UI\Icons\khionerite.png" />
+    <Image Include="UI\Icons\nanotech.png" />
+    <Image Include="UI\Icons\Oxygen.png" />
+    <Image Include="UI\Icons\plasma.png" />
+    <Image Include="UI\Icons\radium.png" />
+    <Image Include="UI\Icons\Scrap.png" />
+    <Image Include="UI\Icons\Titanium.png" />
+    <Image Include="UI\Icons\weight.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

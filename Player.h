@@ -14,6 +14,7 @@
 struct PlayerInfo
 {
 	Planet* closestPlanet;
+	Planet* planetInteractedWith;
 	float distanceToClosestPlanet;
 };
 
@@ -36,6 +37,8 @@ private:
 	// Movement
 	PlayerInfo m_PlayerInfo;
 	float m_thrusterForce, m_desiredSpeed, m_topSpeed;
+	DirectX::XMFLOAT3 m_TetheredDistanceToUphold;
+	DirectX::XMFLOAT3 m_PreviousCenterPosition;
 
 	// Input 
 	float m_mousePosX, m_mousePosY;
@@ -45,6 +48,7 @@ private:
 	float m_rotationSpeed;
 	int m_currentHealth;
 	int m_maxHealth;
+	bool m_TetheredToClosestPlanet;
 private:
 	void DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcept;
 	// Updates the rotation for the camera and the ship
