@@ -97,7 +97,7 @@ bool Player::update(const std::vector<Planet*>& planets)
 	ImGui::Text("Plasma: %d", m_inventory.plasma);
 	ImGui::Text("Radium: %d", m_inventory.radium);
 	ImGui::Text("Khionerite: %d", m_inventory.khionerite);
-	//ImGui::Text("Storage Usage %d/%d", m_storageUsage, m_storageCapacity);
+	ImGui::Text("Storage Usage %d/%d", m_storageUsage, m_storageCapacity);
 	ImGui::End();
 #endif
 
@@ -178,19 +178,26 @@ SpaceShip* Player::getShip() {
 
 void Player::AddResources(Resources resources)
 {
-	/*m_inventory.fuel += resources.fuel;
+	m_inventory.fuel += resources.fuel;
 	if (m_inventory.fuel > m_fuelCapacity) {
 		m_inventory.fuel = m_fuelCapacity;
+	}
+	else if (m_inventory.fuel < 0) {
+		m_inventory.fuel = 0;
 	}
 
 	m_inventory.oxygen += resources.oxygen;
 	if (m_inventory.oxygen > m_oxygenCapacity) {
 		m_inventory.oxygen = m_oxygenCapacity;
-	}*/
+	}
+	else if (m_inventory.oxygen < 0) {
+		m_inventory.oxygen = 0;
+	}
 
 
-	m_inventory.fuel += resources.fuel;
-	m_inventory.oxygen += resources.oxygen;
+	//m_inventory.fuel += resources.fuel;
+	//m_inventory.oxygen += resources.oxygen;
+
 	m_inventory.titanium += resources.titanium;
 	m_inventory.scrapMetal += resources.scrapMetal;
 	m_inventory.nanotech += resources.nanotech;
@@ -257,25 +264,6 @@ void Player::OnEvent(IEvent& event) noexcept
 		{
 			KeyState state = static_cast<KeyboardEvent*>(&event)->GetKeyState();
 			int virKey = static_cast<KeyboardEvent*>(&event)->GetVirtualKeyCode();
-
-
-			/*if (virKey == 'O' && state == KeyState::KeyPress) {
-				UINT gameEventID[3];
-				gameEvManager.RequestGameEvents(gameEventID, 2);
-
-				for (int i = 0; i < 3; i++) {
-					GameEvent gameEv = GetGameEvent(gameEventID[i]);
-
-				    std::cout << gameEv.prologue << std::endl;
-				    std::cout << gameEv.consequence << std::endl;
-					std::cout << gameEv.reward.fuel << " " << gameEv.reward.oxygen << " " << gameEv.reward.titanium << " "
-						<< gameEv.reward.scrapMetal << " " << gameEv.reward.nanotech << " " << gameEv.reward.plasma << " "
-						<< gameEv.reward.radium << " " << gameEv.reward.khionerite << std::endl;
-				    std::cout << std::endl << std::endl;
-				}
-			}*/
-
-
 
 			if (state == KeyState::KeyPress) {
 				if (virKey == 'W') {
