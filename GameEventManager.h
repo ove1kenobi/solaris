@@ -11,7 +11,7 @@ private:
 	std::vector<int> m_radioactiveEventPool;
 
 	UINT GetAGameEvent(UINT type);
-
+	void RefillGameEvents(UINT type);
 public:
 	GameEventManager();
 	~GameEventManager();

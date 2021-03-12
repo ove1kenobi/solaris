@@ -11,49 +11,41 @@ UINT GameEventManager::GetAGameEvent(UINT type)
 		case 0:
 		{
 			// Hot
-			if (!m_hotEventPool.empty()) {
-				index = m_hotEventPool.back();
-				m_hotEventPool.pop_back();
+			if (m_hotEventPool.empty()) {
+				RefillGameEvents(type);
 			}
-			else {
-				// handle special case
-			}
+			index = m_hotEventPool.back();
+			m_hotEventPool.pop_back();
 			break;
 		}
 		case 1:
 		{
 			// Cold
-			if (!m_coldEventPool.empty()) {
-				index = m_coldEventPool.back();
-				m_coldEventPool.pop_back();
+			if (m_coldEventPool.empty()) {
+				RefillGameEvents(type);
 			}
-			else {
-				// handle special case
-			}
+			index = m_coldEventPool.back();
+			m_coldEventPool.pop_back();
 			break;
 		}
 		case 2:
 		{
 			// Radioactive
-			if (!m_radioactiveEventPool.empty()) {
-				index = m_radioactiveEventPool.back();
-				m_radioactiveEventPool.pop_back();
+			if (m_radioactiveEventPool.empty()) {
+				RefillGameEvents(type);
 			}
-			else {
-				// handle special case
-			}
+			index = m_radioactiveEventPool.back();
+			m_radioactiveEventPool.pop_back();
 			break;
 		}
 		default:
 		{
 			// General
-			if (!m_generalEventPool.empty()) {
-				index = m_generalEventPool.back();
-				m_generalEventPool.pop_back();
+			if (m_generalEventPool.empty()) {
+				RefillGameEvents(type);
 			}
-			else {
-				// handle special case
-			}
+			index = m_generalEventPool.back();
+			m_generalEventPool.pop_back();
 			break;
 		}
 	}
@@ -61,6 +53,45 @@ UINT GameEventManager::GetAGameEvent(UINT type)
 	UINT ID = CreateID(evType, index);
 
 	return ID;
+}
+
+void GameEventManager::RefillGameEvents(UINT type)
+{
+	switch (type) 
+	{
+		case 0: 
+		{
+			for (unsigned int i = 0; i < gameEvents[0].size(); i++) {
+				m_hotEventPool.push_back(i);
+			}
+			std::random_shuffle(m_hotEventPool.begin(), m_hotEventPool.end());
+			break;
+		}
+		case 1:
+		{
+			for (unsigned int i = 0; i < gameEvents[1].size(); i++) {
+				m_coldEventPool.push_back(i);
+			}
+			std::random_shuffle(m_coldEventPool.begin(), m_coldEventPool.end());
+			break;
+		}
+		case 2:
+		{
+			for (unsigned int i = 0; i < gameEvents[2].size(); i++) {
+				m_radioactiveEventPool.push_back(i);
+			}
+			std::random_shuffle(m_radioactiveEventPool.begin(), m_radioactiveEventPool.end());
+			break;
+		}
+		default:
+		{
+			for (unsigned int i = 0; i < gameEvents[3].size(); i++) {
+				m_generalEventPool.push_back(i);
+			}
+			std::random_shuffle(m_generalEventPool.begin(), m_generalEventPool.end());
+			break;
+		}
+	}
 }
 
 
