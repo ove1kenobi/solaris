@@ -296,6 +296,8 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 	if (!m_FrustumCulling.Initialize(m_perspectiveCamera))
 		return false;
 
+	m_nextAstroSpawnTime = m_time.SinceStart() + 5.0;
+
 	return true;
 }
 
@@ -320,25 +322,34 @@ void Scene::RemoveGameObject(GameObject* obj)
 void Scene::Update() noexcept {
 	//Update the player and all the game objects.
 	size_t num = m_gameObjects.size() - m_persistentObjEnd;
-	if (m_player.update(m_planets) &&  num < 30)
+	if (m_player.update(m_planets) &&  num < 60 && m_nextAstroSpawnTime < m_time.SinceStart())
 	{
 		//Generator and distributions used for generating planet values.
 		using t_clock = std::chrono::high_resolution_clock;
 		std::default_random_engine gen(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
-		std::uniform_real_distribution<float> dist(200.0f, 900.0f);
-		std::uniform_real_distribution<float> adj(0.1f, 10.0f);
-		
-		// Add an asteroid to the gameObject vector.
-		GameObject* ship = m_player.getShip();
-		DirectX::XMFLOAT3 velocity = norm(ship->GetVelocity());
-		// Start pos in front of spaceship, and randomise it slightly
-		DirectX::XMFLOAT3 pos = ship->GetCenter() + velocity * 4000.0f;
-		pos = pos + DirectX::XMFLOAT3(dist(gen), dist(gen), dist(gen));
-		// Give asteroid a random velocity in the general direction of spaceship
-		velocity = velocity * DirectX::XMFLOAT3(-adj(gen), -adj(gen), -adj(gen));
-		Asteroid* ast = new Asteroid();
-		ast->init(pos, velocity, ship);
-		m_gameObjects.push_back(ast);
+		std::uniform_real_distribution<float> dist(12000.0f, 17000.0f);
+		std::normal_distribution<float> adjustPos(0.0f, 750.0f);
+		std::uniform_real_distribution<float> adjustVelocity(0.3f, 1.0f);
+		std::uniform_real_distribution<long double> next(1.0, 5.0);
+		std::uniform_int_distribution<size_t> asteroids(1u, 7u);
+
+		m_nextAstroSpawnTime = m_time.SinceStart() + next(gen);
+
+		// Add some asteroids to the gameObject vector.
+		size_t numAstros = asteroids(gen);
+		for (size_t n = 0; n < numAstros; n++)
+		{
+			GameObject* ship = m_player.getShip();
+			DirectX::XMFLOAT3 velocity = ship->GetVelocity();
+			// Start pos in front of spaceship, and randomise it slightly
+			DirectX::XMFLOAT3 pos = ship->GetCenter() + norm(velocity) * dist(gen);
+			pos = pos + DirectX::XMFLOAT3(adjustPos(gen), adjustPos(gen), adjustPos(gen));
+			// Give asteroid a random velocity in the general direction of spaceship
+			velocity = (ship->GetCenter() - pos) * adjustVelocity(gen);
+			Asteroid* ast = new Asteroid();
+			ast->init(pos, velocity, ship);
+			m_gameObjects.push_back(ast);
+		}
 	}
 
 #if defined(DEBUG) | defined(_DEBUG)
@@ -365,8 +376,18 @@ void Scene::Update() noexcept {
 
 	GameObject* del = nullptr;
 	std::vector<GameObject*> remove;
-	for (auto r : this->m_gameObjects) {
-		del = r->update(vMatrix, pMatrix, m_pDeviceContext);
+	for (GameObject* astr : this->m_gameObjects) {
+		del = astr->update(vMatrix, pMatrix, m_pDeviceContext);
+		size_t i = 0;
+		while (del == nullptr && i < m_numPlanets)
+		{
+			CosmicBody* cosmic = static_cast<CosmicBody*>(m_gameObjects[i]);
+			float dist = length(astr->GetCenter() - cosmic->GetCenter());
+			if (dist < cosmic->GetRadius())
+				del = astr;
+			else
+				i++;
+		}
 		if (del) remove.push_back(del);
 	}
 	for (auto r : remove) {

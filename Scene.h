@@ -29,6 +29,7 @@ private:
 	RenderData m_RenderData;
 
 	Time m_time;
+	long double m_nextAstroSpawnTime;
 	long double m_damageTimer;
 
 	size_t m_persistentObjEnd;

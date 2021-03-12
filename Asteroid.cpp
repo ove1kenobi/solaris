@@ -49,8 +49,9 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 
 GameObject* Asteroid::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
-	float distance = length(m_center - m_ship->GetCenter());
-	if (distance > 10000) return this;
+	float distShip = length(m_center - m_ship->GetCenter());
+	float distSun = length(m_center);
+	if (distShip > 20000 || distSun < 500.0f) return this;
 	m_pitch += static_cast<float>(m_deltaPitch * m_timer.DeltaTime());
 	m_roll += static_cast<float>(m_deltaRoll * m_timer.DeltaTime());
 	m_yaw += static_cast<float>(m_deltaYaw * m_timer.DeltaTime());
