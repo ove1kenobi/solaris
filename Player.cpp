@@ -73,7 +73,7 @@ Player::~Player()
 
 bool Player::Initialize(PlayerCamera* camera)
 {
-	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::ToggleImGuiEvent, EventType::MouseMoveAbsoluteEvent);
+	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::ToggleControlsEvent, EventType::MouseMoveAbsoluteEvent);
 	EventBuss::Get().AddListener(this, EventType::ToggleTetheredEvent);
 
 	m_camera = camera;
@@ -256,7 +256,7 @@ void Player::OnEvent(IEvent& event) noexcept
 			KeyState state = static_cast<KeyboardEvent*>(&event)->GetKeyState();
 			int virKey = static_cast<KeyboardEvent*>(&event)->GetVirtualKeyCode();
 
-			if (state == KeyState::KeyPress) {
+			if (state == KeyState::KeyPress && m_playerControlsActive) {
 				if (virKey == 'W') {
 					PlaySoundEvent thrusterSound(SoundID::Thrusters, true, 1.2f);
 					EventBuss::Get().Delegate(thrusterSound);
@@ -278,7 +278,7 @@ void Player::OnEvent(IEvent& event) noexcept
 				}
 			}
 
-			if (state == KeyState::KeyRelease) {
+			if (state == KeyState::KeyRelease && m_playerControlsActive) {
 				if (virKey == 'W') {
 					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
 					EventBuss::Get().Delegate(thrusterSound);
@@ -298,7 +298,7 @@ void Player::OnEvent(IEvent& event) noexcept
 
 			break;
 		}
-		case EventType::ToggleImGuiEvent:
+		case EventType::ToggleControlsEvent:
 		{
 			if (m_playerControlsActive) m_playerControlsActive = false;
 			else m_playerControlsActive = true;

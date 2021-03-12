@@ -341,6 +341,7 @@ void Scene::Update() noexcept {
 		m_gameObjects.push_back(ast);
 	}
 
+#if defined(DEBUG) | defined(_DEBUG)
 	ImGui::Begin("Asteroids Data");
 	for (size_t i = m_persistentObjEnd + 1; i < m_gameObjects.size(); ++i)
 	{
@@ -348,6 +349,7 @@ void Scene::Update() noexcept {
 		ImGui::Text("%d - center: (%.0f, %.0f, %.0f)", i, c.x, c.y, c.z);
 	}
 	ImGui::End();
+#endif
 
 	// Calculate gravity between each pair of GameObjects
 	for (size_t i = 0; i < m_gameObjects.size() - 1; ++i)
@@ -378,7 +380,7 @@ void Scene::Update() noexcept {
 	m_Picking.DisplayPickedObject();
 
 	
-	bool radioactiveUpgrade = false; //Temporary, change to return value of function
+	bool radioactiveUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::radProtect);
 	bool coldUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::cold);
 	bool hotUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::hot);
 	//Only waste time on updating the damage timer if we do not have all of these upgrades.

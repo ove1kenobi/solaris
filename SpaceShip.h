@@ -6,12 +6,14 @@
 class SpaceShip : public GameObject
 {
 private:
+	float m_maxPitch, m_minPitch;
 	float m_pitchTilt, m_rollTilt;
 
 	bool m_TestForCulling;
 
 	// Spaceship upgrades
 	std::vector<GameObject*> m_upgrades;
+	bool m_radProtect;
 
 public:
 	SpaceShip();
@@ -37,6 +39,6 @@ public:
 	void NullifyForces() noexcept;
 
 	enum UpgradeTypes {
-		afterburner = 0, antenna, cargo, cold, fuelcells, livingquarters, shield, hot, warpdrive, numUpgrades
+		afterburner = 0, antenna, cargo, cold, fuelcells, livingquarters, shield, hot, warpdrive, numUpgrades, radProtect = numUpgrades
 	};
 };

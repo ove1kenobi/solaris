@@ -62,6 +62,7 @@ RenderWindow::RenderWindow()
     //if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE) {
         // handle error
     //}
+    ShowCursor(FALSE);
 }
 
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -141,11 +142,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
             if (wParam == 'P') {
                 ToggleWireFrameEvent event;
                 EventBuss::Get().Delegate(event);
-            }
-            if (wParam == 'I')
-            {
-                ToggleImGuiEvent imEvent;
-                EventBuss::Get().Delegate(imEvent);
             }
             #endif
             if (wParam == VK_ESCAPE)

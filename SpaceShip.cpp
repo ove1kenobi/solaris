@@ -16,10 +16,12 @@ const std::vector<std::string> upgradeFiles = {
 };
 
 SpaceShip::SpaceShip()
-	:m_TestForCulling{ false }
+	: m_Tag{ "SpaceShip"},
+	  m_TestForCulling{ false },
+	  m_radProtect{ false }
 {
 	this->m_model = ModelFactory::Get().GetModel(std::string("models/spaceship_basic.obj"));
-	//this->m_model = ModelFactory::Get().GetModel(std::string("models/cubemetal.obj"));
+	ModelFactory::Get().LoadTexture(m_model, "spaceship1_Dark Ship_BaseColor.png", Model::diffuse); // second diffuse texture
 	this->m_wMatrix = {
 		0.03f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.03f, 0.0f, 0.0f,
@@ -30,21 +32,19 @@ SpaceShip::SpaceShip()
 	this->m_mass = 10000.0f;
 	m_scale = 0.5f;
 	m_yaw = (float)M_PI;
+	m_pitch = (float)M_PI / 8.0f;
 	m_pitchTilt = 0.0f;
 	m_rollTilt = 0.0f;
 	m_velocity = { 1.0f, 1.0f, 1.0f };
+
+	float alpha = 0.1f;
+	m_maxPitch = (float)M_PI_2 - alpha + m_pitch;
+	m_minPitch = -(float)M_PI_2 + alpha + m_pitch;
 
 	for (size_t upgrade = 0; upgrade < numUpgrades; upgrade++)
 	{
 		m_upgrades.push_back(nullptr);
 	}
-
-	// Remove this loop when ready for in game upgrades
-	for (size_t upgrade = 0; upgrade < numUpgrades; upgrade++)
-	{
-		Activate(upgrade);
-	}
-	m_Tag = "SpaceShip";
 }
 
 SpaceShip::~SpaceShip()
@@ -103,15 +103,13 @@ GameObject* SpaceShip::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 P
 
 void SpaceShip::AddRotation(float yaw, float pitch)
 {
-	float alpha = 0.1f;
-
 	m_yaw += yaw;
 	if (m_yaw >= 2 * (float)M_PI) m_yaw -= 2 * (float)M_PI;
 	else if (m_yaw <= -2 * (float)M_PI) m_yaw += 2 * (float)M_PI;
 
 	m_pitch += pitch;
-	if (m_pitch > (float)M_PI_2 - alpha) m_pitch = (float)M_PI_2 - alpha;
-	else if (m_pitch < -(float)M_PI_2 + alpha) m_pitch = -(float)M_PI_2 + alpha;
+	if (m_pitch > m_maxPitch) m_pitch = m_maxPitch;
+	else if (m_pitch < m_minPitch) m_pitch = m_minPitch;
 }
 
 void SpaceShip::SetTilt(float pitchLerp, float rollLerp)
@@ -146,10 +144,13 @@ DirectX::XMFLOAT3 SpaceShip::getCenter() {
 
 void SpaceShip::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
-	for (auto tex : m_model->GetTextures())
-	{
-		if (tex) tex->Bind(deviceContext);
-	}
+	ModelTexture* tex;
+	if (m_radProtect)
+		tex = m_model->GetTextures()[1];
+	else
+		tex = m_model->GetTextures()[0];
+	tex->Bind(deviceContext);
+	
 	deviceContext->IASetVertexBuffers(0u,
 									  1u,
 									  this->m_model->getVertexBuffer().GetAddressOf(),
@@ -179,13 +180,15 @@ void SpaceShip::Activate(size_t upgrade)
 {	// Only activate if not already activated
 	if (upgrade < numUpgrades && !m_upgrades[upgrade])
 		m_upgrades[upgrade] = new SpaceShipUpgrade(upgradeFiles[upgrade]);
+	else if (upgrade == radProtect)
+		m_radProtect = true;
 }
 
 bool SpaceShip::IsUpgraded(size_t upgrade)
 {
 	if (upgrade < numUpgrades)
 		return m_upgrades[upgrade] != nullptr;
-	return false;
+	return m_radProtect;
 }
 
 std::vector<GameObject*>& SpaceShip::GetUpgrades()
