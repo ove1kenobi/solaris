@@ -18,7 +18,9 @@ private:
 	TypesUI m_CurrentUI;
 	std::vector<ModuleUI*> m_Modules;
 	PlayerInfo* m_pPlayerInfo;
-	bool m_PlanetInteractionUIOpen;
+
+	bool m_PlanetInteraction;
+	bool m_InGame;
 	bool m_Render;
 	std::wstring GetFontFilePath(std::wstring fontFile);
 	bool AddFonts();

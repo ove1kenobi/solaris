@@ -2,8 +2,9 @@
 #include "HeadsUpDisplayUI.h"
 
 HeadsUpDisplayUI::HeadsUpDisplayUI() {
-	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent, EventType::DelegatePlanetDistanceEvent, EventType::WindowCloseEvent);
-	drawBitMaps = true;
+	EventBuss::Get().AddListener(this, EventType::DelegatePlanetDistanceEvent);
+	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
+
 	m_pCrosshairDistance = 12.0f;
 	m_pCrosshairLength = 2.5f;
 	m_pCrosshairSize = 2.5f;
@@ -31,16 +32,13 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 
 	m_pWarningTextBox = D2D1::RectF();
 	m_pWarningText = L"!";
+
+	m_pRenderBitmaps = true;
 	m_pCapacityWarning = false;
-
 	m_pRenderDistance = false;
-
-	m_pMouseX = 10;
-	m_pMouseY = 10;
 }
 
 HeadsUpDisplayUI::~HeadsUpDisplayUI() {
-	EventBuss::Get().RemoveListener(this, EventType::DelegateMouseCoordsEvent);
 	EventBuss::Get().RemoveListener(this, EventType::DelegatePlanetDistanceEvent);
 	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 }
@@ -319,7 +317,7 @@ void HeadsUpDisplayUI::RenderBars() {
 	m_pOxygenBar.Render();
 	m_pFuelBar.Render();
 
-	if (drawBitMaps) {
+	if (m_pRenderBitmaps) {
 		m_pRenderTarget2D->DrawBitmap(m_pHealthBitmap, m_pHealthIcon);
 		m_pRenderTarget2D->DrawBitmap(m_pOxygenBitmap, m_pOxygenIcon);
 		m_pRenderTarget2D->DrawBitmap(m_pFuelBitmap, m_pFuelIcon);
@@ -369,7 +367,7 @@ void HeadsUpDisplayUI::RenderCapacity() {
 		m_pCapacityTextBox,
 		m_pBrush.Get()
 	);
-	if (drawBitMaps) {
+	if (m_pRenderBitmaps) {
 		m_pRenderTarget2D->DrawBitmap(m_pCapacityBitmap, m_pCapacityIcon);
 	}
 }
@@ -412,6 +410,8 @@ void HeadsUpDisplayUI::RenderPlanetDistanceModule() {
 }
 
 void HeadsUpDisplayUI::Render() {
+	BeginFrame();
+
 	if (m_pRenderDistance) {
 		RenderPlanetDistanceModule();
 	}
@@ -422,7 +422,9 @@ void HeadsUpDisplayUI::Render() {
    if (m_pCapacityWarning) {
 	   RenderWarningModule();
    }
+
    RenderCrosshair();
+   EndFrame();
 }
 
 //Event functions
@@ -487,7 +489,7 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 	}
 	case EventType::WindowCloseEvent:
 	{
-		drawBitMaps = false;
+		m_pRenderBitmaps = false;
 		if (m_pHealthBitmap) {
 			m_pHealthBitmap->Release();
 		}
@@ -514,7 +516,7 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 }
 
 void HeadsUpDisplayUI::CleanUp() {
-	drawBitMaps = false;
+	m_pRenderBitmaps = false;
 	if (m_pHealthBitmap) {
 		m_pHealthBitmap->Release();
 	}

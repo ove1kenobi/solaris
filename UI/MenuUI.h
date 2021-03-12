@@ -11,6 +11,7 @@ private:
 	//Title
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTitleFormat;
 	D2D1_RECT_F m_pTitleTextBox;
+	D2D1_RECT_F m_pTitleTextShadowBox;
 	std::wstring m_pTitleText;
 
 	//Start game
@@ -30,7 +31,11 @@ private:
 	bool UpdateButtons();
 
 	bool UpdateModules();
+
 	//Private render functions
+	void RenderTitle();
+	void RenderStart();
+	void RenderExit();
 protected:
 public:
 	MenuUI() noexcept;

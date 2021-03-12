@@ -10,7 +10,7 @@ private:
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pHUDFormat;
 	D2D1_RECT_F m_pRightDisplayScreen;
 	D2D1_RECT_F m_pLeftDisplayScreen;
-	bool drawBitMaps;
+	bool m_pRenderBitmaps;
 
 	//Crosshair
 	float m_pCrosshairDistance;
@@ -57,10 +57,6 @@ private:
 	//Resources
 	std::vector<D2D1_RECT_F> m_pIconPicture;
 	std::vector<std::wstring> m_pIconText;
-
-	//Current mouse coords (will be removed once UI event handler is in place)
-	unsigned int m_pMouseX;
-	unsigned int m_pMouseY;
 
 	//Create modules
 	bool CreateDisplayScreens();
