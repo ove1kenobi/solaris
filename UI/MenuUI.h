@@ -4,17 +4,22 @@
 
 class MenuUI : public ModuleUI {
 private:
-	//Title
+	//General
 	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pTextFont;
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pButtonFormat;
+
+	//Title
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTitleFormat;
 	D2D1_RECT_F m_pTitleTextBox;
 	std::wstring m_pTitleText;
 
 	//Start game
-	Button m_pStartGame;
+	D2D1_RECT_F m_pStartTextBox;
+	std::wstring m_pStartText;
 
 	//Exit game
-	Button m_pExitGame;
+	D2D1_RECT_F m_pExitTextBox;
+	std::wstring m_pExitText;
 
 	//Create functions
 	bool CreateTitle();
