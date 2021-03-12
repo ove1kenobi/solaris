@@ -12,6 +12,7 @@ Engine::~Engine()
 	delete m_scene;
 	delete m_Render2D;
 	delete m_ForwardRenderer;
+	delete m_ResourceManager;
 }
 
 const bool Engine::Initialize()
@@ -19,6 +20,7 @@ const bool Engine::Initialize()
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
 
 	m_Render2D = new Render2D();
+	m_ResourceManager = new ResourceManager();
 	m_scene = new Scene();
 	m_ForwardRenderer = new ForwardRenderer();
 
@@ -48,7 +50,7 @@ const bool Engine::Initialize()
 		return false;
 	
 	//Resource Manager
-	if (!m_ResourceManager.Initialize())
+	if (!m_ResourceManager->Initialize())
 		return false;
 
 	//Scene
@@ -93,9 +95,11 @@ void Engine::Run()
 			delete m_ForwardRenderer;
 			//Deletes the scene aswell
 			m_LayerStack.RemoveFirst();
+			delete m_ResourceManager;
 			delete m_Render2D;
 
 			m_Render2D = new Render2D;
+			m_ResourceManager = new ResourceManager;
 			m_scene = new Scene();
 			m_LayerStack.Push(m_scene);
 			m_ForwardRenderer = new ForwardRenderer();
@@ -103,6 +107,9 @@ void Engine::Run()
 			m_DXCore.DelegateDXHandles();
 
 			if (!m_Render2D->Initialize())
+				assert(false);
+
+			if (!m_ResourceManager->Initialize())
 				assert(false);
 
 			if (!this->m_scene->init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
