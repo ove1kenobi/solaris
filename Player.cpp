@@ -316,14 +316,8 @@ void Player::OnEvent(IEvent& event) noexcept
 			else
 			{
 				//Nullify all forces, continue from clean slate:
-				//m_ship->AddForce(m_ship->GetVelocity() * m_ship->GetMass() * -1);
 				m_ship->NullifyForces();
 				DirectX::XMFLOAT3 prevCenterToCurCenter = (m_ship->GetCenter() - m_PreviousCenterPosition) * (1 / m_time.DeltaTime());
-				//DirectX::XMFLOAT3 prevCenterToCurCenter = m_ship->GetCenter() - m_PreviousCenterPosition;
-				//DirectX::XMVECTOR velocityDirection = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&prevCenterToCurCenter));
-				//DirectX::XMFLOAT3 velocity(DirectX::XMVectorGetX(velocityDirection) * m_PlayerInfo.planetInteractedWith->GetOrbitalSpeed(),
-				//	DirectX::XMVectorGetY(velocityDirection) * m_PlayerInfo.planetInteractedWith->GetOrbitalSpeed(),
-				//	DirectX::XMVectorGetZ(velocityDirection) * m_PlayerInfo.planetInteractedWith->GetOrbitalSpeed());
 				m_ship->SetVelocity(prevCenterToCurCenter);
 			}
 			m_TetheredToClosestPlanet = !m_TetheredToClosestPlanet;
