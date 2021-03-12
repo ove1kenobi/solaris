@@ -277,7 +277,6 @@ void Player::OnEvent(IEvent& event) noexcept
 					else m_stabilizerActive = true;
 				}
 			}
-
 			if (state == KeyState::KeyRelease && m_playerControlsActive) {
 				if (virKey == 'W') {
 					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
@@ -295,7 +294,6 @@ void Player::OnEvent(IEvent& event) noexcept
 					m_stopMovement = false;
 				}
 			}
-
 			break;
 		}
 		case EventType::ToggleControlsEvent:
