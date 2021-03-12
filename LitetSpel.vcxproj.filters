@@ -84,6 +84,8 @@
     <ClCompile Include="ModelTexture.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="SpaceShipUpgrade.cpp" />
+    <ClCompile Include="UI\MenuUI.cpp" />
+    <ClCompile Include="UI\PressInteractUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXCore.h" />
@@ -156,11 +158,15 @@
     <ClInclude Include="ModelTexture.h" />
     <ClInclude Include="Techniques\FrustumCulling.h" />
     <ClInclude Include="WaterSphere.h" />
+    <ClInclude Include="ModuleUI.h" />
+    <ClInclude Include="UI\ModuleUI.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="EventSystem\SoundEvents.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="SpaceShipUpgrade.h" />
+    <ClInclude Include="UI\MenuUI.h" />
+    <ClInclude Include="UI\PressInteractUI.h" />
     <ClInclude Include="Techniques\Bloom.h" />
     <ClInclude Include="Techniques\GaussianBlur.h" />
   </ItemGroup>
@@ -173,5 +179,17 @@
     <Font Include="UI\Fonts\Neoterique-Y08L.ttf" />
     <Font Include="UI\Fonts\Tenika400Regular-Rpyql.ttf" />
     <Font Include="UI\Fonts\AwareBold-qZo3x.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="UI\Icons\Fuel.png" />
+    <Image Include="UI\Icons\health.png" />
+    <Image Include="UI\Icons\khionerite.png" />
+    <Image Include="UI\Icons\nanotech.png" />
+    <Image Include="UI\Icons\Oxygen.png" />
+    <Image Include="UI\Icons\plasma.png" />
+    <Image Include="UI\Icons\radium.png" />
+    <Image Include="UI\Icons\weight.png" />
+    <Image Include="UI\Icons\Titanium.png" />
+    <Image Include="UI\Icons\Scrap.png" />
   </ItemGroup>
 </Project>

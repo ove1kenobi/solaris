@@ -62,6 +62,7 @@ RenderWindow::RenderWindow()
     //if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE) {
         // handle error
     //}
+    ShowCursor(FALSE);
 }
 
 LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

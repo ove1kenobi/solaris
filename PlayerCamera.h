@@ -7,6 +7,7 @@
 
 class PlayerCamera : public IEventListener, public EventPublisher, public Camera {
 private:
+	float m_maxPitch, m_minPitch;
 	float m_maxScroll, m_minScroll;
 	float m_FOVvalue = 4.0f;
 	float m_distanceFromShip;
