@@ -66,6 +66,9 @@ const bool Engine::Initialize()
 
 	m_LayerStack.Push(m_scene);
 	m_LayerStack.PushOverlay(&m_imguiManager);
+
+	//Runs until the game is started.
+	RunMainMenu();
 	return true;
 }
 
@@ -107,6 +110,8 @@ void Engine::Run()
 				assert(false);
 
 			m_Window.DelegateResolution();
+
+			RunMainMenu();
 		}
 	}
 }
@@ -116,8 +121,17 @@ void Engine::OnEvent(IEvent& event) noexcept
 	switch (event.GetEventType())
 	{
 	case EventType::WindowCloseEvent:
+	{
 		m_Running = false;
 		break;
+	}
+	case EventType::KeyboardEvent:
+	{
+		int virKey = static_cast<KeyboardEvent*>(&event)->GetVirtualKeyCode();
+		if (virKey == 'V') {
+			m_MainMenuRunning = false;
+		}
+	}
 	}
 }
 
@@ -146,4 +160,13 @@ void Engine::Render()
 
 	m_imguiManager.Render();
 	HR_A(m_DXCore.GetSwapChain()->Present(0u, 0u), "Present");
+}
+
+void Engine::RunMainMenu() {
+	m_MainMenuRunning = true;
+	//While button to start the game is not pressed (v atm). False for now until RenderMainMenu is implemented.
+	while (/*m_MainMenuRunning*/ false) {
+		//Render the main menu.
+		//m_Render2D->RenderMainMenu();
+	}
 }

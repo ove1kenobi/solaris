@@ -25,10 +25,13 @@ private:
 	Scene* m_scene;
 	ImGuiManager m_imguiManager;
 	LayerStack m_LayerStack;
+	std::vector<std::thread> m_MainMenuThread;
 	bool m_Running;
+	bool m_MainMenuRunning;
 	long double m_time;
 	int m_fps;
 private:
+	void RunMainMenu();
 	void Update() noexcept;
 	void Render();
 	void OnEvent(IEvent& event) noexcept override;
