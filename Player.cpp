@@ -69,9 +69,9 @@ Player::Player()
 Player::~Player()
 {
 	EventBuss::Get().RemoveListener(this, EventType::KeyboardEvent);
-	EventBuss::Get().RemoveListener(this, EventType::ToggleImGuiEvent);
+	EventBuss::Get().RemoveListener(this, EventType::ToggleControlsEvent);
 	EventBuss::Get().RemoveListener(this, EventType::MouseMoveAbsoluteEvent);
-
+	EventBuss::Get().RemoveListener(this, EventType::ToggleTetheredEvent);
 }
 
 bool Player::Initialize(PlayerCamera* camera)

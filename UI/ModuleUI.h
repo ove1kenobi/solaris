@@ -45,5 +45,7 @@ public:
 
 	//Debugging function
 	void RenderHelpGrid(int gridSize);
+
+	virtual void CleanUp() = 0;
 };
 

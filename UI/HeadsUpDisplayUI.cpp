@@ -42,6 +42,7 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 HeadsUpDisplayUI::~HeadsUpDisplayUI() {
 	EventBuss::Get().RemoveListener(this, EventType::DelegateMouseCoordsEvent);
 	EventBuss::Get().RemoveListener(this, EventType::DelegatePlanetDistanceEvent);
+	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 }
 
 bool HeadsUpDisplayUI::Initialize() {
@@ -509,5 +510,21 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 	*/
 	default:
 		break;
+	}
+}
+
+void HeadsUpDisplayUI::CleanUp() {
+	drawBitMaps = false;
+	if (m_pHealthBitmap) {
+		m_pHealthBitmap->Release();
+	}
+	if (m_pOxygenBitmap) {
+		m_pOxygenBitmap->Release();
+	}
+	if (m_pFuelBitmap) {
+		m_pFuelBitmap->Release();
+	}
+	if (m_pCapacityBitmap) {
+		m_pCapacityBitmap->Release();
 	}
 }

@@ -104,3 +104,7 @@ void MenuUI::OnEvent(IEvent& event) noexcept {
 		break;
 	}
 }
+
+void MenuUI::CleanUp() {
+
+}

@@ -111,20 +111,23 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 			if (state == KeyState::KeyPress) {
 				if (virKey == 'E') 
 				{
-					if (m_pPlayerInfo->distanceToClosestPlanet <= DISTANCE_THRESHOLD
-						&& m_pPlayerInfo->closestPlanet->IsVisited() == false)
+					if (m_pPlayerInfo)
 					{
-						ToggleControlsEvent controlsEvent;
-						EventBuss::Get().Delegate(controlsEvent);
-						m_CurrentUI = TypesUI::PlanetInteraction;
-						ToggleTetheredEvent TTEvent;
-						EventBuss::Get().Delegate(TTEvent);
-						if (m_Render) {
-							m_Render = false;
-							m_pPlayerInfo->closestPlanet->MarkAsVisited();
-						}
-						else {
-							m_Render = true;
+						if (m_pPlayerInfo->distanceToClosestPlanet <= DISTANCE_THRESHOLD
+							&& m_pPlayerInfo->closestPlanet->IsVisited() == false)
+						{
+							ToggleControlsEvent controlsEvent;
+							EventBuss::Get().Delegate(controlsEvent);
+							m_CurrentUI = TypesUI::PlanetInteraction;
+							ToggleTetheredEvent TTEvent;
+							EventBuss::Get().Delegate(TTEvent);
+							if (m_Render) {
+								m_Render = false;
+								m_pPlayerInfo->closestPlanet->MarkAsVisited();
+							}
+							else {
+								m_Render = true;
+							}
 						}
 					}
 				}
@@ -149,4 +152,9 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 		default:
 			break;
 	}
+}
+
+void Render2D::CleanUp() {
+	for (auto r : m_Modules)
+		r->CleanUp();
 }

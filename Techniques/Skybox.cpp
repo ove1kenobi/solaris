@@ -41,14 +41,16 @@ const bool Skybox::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevic
 	HR(pDevice->CreateBuffer(&matrixBufferDesc,
 							 nullptr,
 							 &m_pCameraCBuffer), "CreateBuffer");
-	//Get the camera for its matrices
-	RequestCameraEvent requestCameraEvent;
-	EventBuss::Get().Delegate(requestCameraEvent);
+	
 	return true;
 }
 
 void Skybox::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept
 {
+	//Get the camera for its matrices
+	RequestCameraEvent requestCameraEvent;
+	EventBuss::Get().Delegate(requestCameraEvent);
+
 	//Unbind pipeline
 	UnbindPipelineEvent ubEvent;
 	EventBuss::Get().Delegate(ubEvent);
