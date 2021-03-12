@@ -431,7 +431,7 @@ void Scene::Update() noexcept {
 		for (auto r : m_radioactivePlanets) {
 			float planetDist = distance(r->GetCenter(), playerCenter);
 			if (planetDist < 1000.0f && m_damageTimer > 1.0f) {
-				m_player.UpdateHealth(-100);
+				m_player.UpdateHealth(-5);
 				//Send event to UI so that we can tell the player that we are too close to the sun.
 				m_damageTimer = 0.0f;
 			}
