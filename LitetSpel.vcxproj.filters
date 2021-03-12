@@ -86,6 +86,7 @@
     <ClCompile Include="SpaceShipUpgrade.cpp" />
     <ClCompile Include="UI\MenuUI.cpp" />
     <ClCompile Include="UI\PressInteractUI.cpp" />
+    <ClCompile Include="UI\CrosshairUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXCore.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Techniques\GaussianBlur.h" />
     <ClInclude Include="EventSystem\PlayerEvents.h" />
     <ClInclude Include="UI\ModuleUI.h" />
+    <ClInclude Include="UI\CrosshairUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

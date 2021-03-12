@@ -36,6 +36,7 @@ Render2D::Render2D() noexcept
 		m_Modules.push_back(new HeadsUpDisplayUI());
 		m_Modules.push_back(new MenuUI());
 		m_Modules.push_back(new PressInteractUI());
+		m_Modules.push_back(new CrosshairUI());
 	}
 
 	//Need to be set to false once we have the main menu working correctly
@@ -105,6 +106,8 @@ void Render2D::RenderUI() {
 	else {
 		m_Modules.at(static_cast<int>(TypesUI::MainMenu))->Render();
 	}
+	//And finally always render crosshair on top of everything
+	m_Modules.at(static_cast<int>(TypesUI::Crosshair))->Render();
 }
 
 void Render2D::OnEvent(IEvent& event) noexcept {

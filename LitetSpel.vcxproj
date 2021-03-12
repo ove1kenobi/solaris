@@ -98,6 +98,10 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="UI\CrosshairUI.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="UI\HeadsUpDisplayBar.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
@@ -258,6 +262,7 @@
     <ClInclude Include="EventSystem\PlayerEvents.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="SpaceShipUpgrade.h" />
+    <ClInclude Include="UI\CrosshairUI.h" />
     <ClInclude Include="UI\HeadsUpDisplayBar.h" />
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="Techniques\Bloom.h" />

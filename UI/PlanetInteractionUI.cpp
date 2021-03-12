@@ -747,7 +747,7 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		m_pMouseY = static_cast<MouseButtonEvent*>(&event)->GetYCoord();
 		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
-		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && !m_pOnScreen) {
+		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && m_pOnScreen) {
 			for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
 				m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY);
 			}

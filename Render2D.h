@@ -5,6 +5,7 @@
 #include "UI/HeadsUpDisplayUI.h"
 #include "UI/MenuUI.h"
 #include "UI/PressInteractUI.h"
+#include "UI/CrosshairUI.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/InputEvents.h"
