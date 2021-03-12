@@ -40,7 +40,7 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 	//m_model = ModelFactory::Get().GetModel(asteroids[distAst(gen)]);
 	// Stand-in for asteroids during testing - comment 'Preload models' in Engine::Initialize()
 	m_model = ModelFactory::Get().GetModel("models/cubemetal.obj");
-	m_scale = distScale(gen) * 30.0f;
+	m_scale = distScale(gen) * 10.0f;
 	m_boundingSphere.Radius *= m_scale;
 	m_mass = m_model->GetBoundingSphere()->Radius * 50000.0f * m_scale;
 	ModelFactory::Get().CreateMatrixBuffer(m_AmatrixBuffer);

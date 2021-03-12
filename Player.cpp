@@ -60,7 +60,7 @@ Player::Player()
 
 	m_topSpeed = 0.0f;
 	m_desiredSpeed = 0.0f;
-	m_thrusterForce = 10000000.0f;
+	m_thrusterForce = 1000000.0f;
 
 	m_maxHealth = 100;
 	m_currentHealth = 100;
@@ -177,7 +177,7 @@ bool Player::update(const std::vector<Planet*>& planets)
 	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
 	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
 
-	if (length(m_ship->GetVelocity()) < 500.0f) return false;
+	if (length(m_ship->GetVelocity()) < 200.0f) return false;
 	return true;
 }
 

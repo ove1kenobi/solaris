@@ -2,9 +2,9 @@
 #include "PlayerCamera.h"
 
 PlayerCamera::PlayerCamera() {
-	m_distanceFromShip = 60.0f;
-	m_maxScroll = 100.0f;
-	m_minScroll = 50.0f;
+	m_distanceFromShip = 1.6f;
+	m_maxScroll = 3.0f;
+	m_minScroll = 1.3f;
 	m_pitch = (float)M_PI_2;
 
 	float alpha = 0.1f;
@@ -35,7 +35,7 @@ void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
 	m_posVector = DirectX::XMVectorAdd(m_posVector, focusPos);
 
 	// Offsets the ship from the camera center
-	focusPos = DirectX::XMVectorAdd(DirectX::operator*(m_upVector, 15.0f), focusPos);
+	focusPos = DirectX::XMVectorAdd(DirectX::operator*(m_upVector, m_distanceFromShip * 0.2f), focusPos);
 
 	// Create forward vector 
 	m_forwardVector = DirectX::XMVectorSubtract(focusPos, m_posVector);
@@ -56,9 +56,9 @@ void PlayerCamera::OrbitRotation(float yaw, float pitch) {
 }
 
 void PlayerCamera::mouseScroll(int scroll) {
-	//Limits scroll between 100 to 50
+	//Limits scroll between 5 to 1
 	if(this->m_distanceFromShip < m_maxScroll && this->m_distanceFromShip > m_minScroll)
-		this->m_distanceFromShip -= scroll / 10;
+		this->m_distanceFromShip -= scroll / 1000.0f;
 	if (this->m_distanceFromShip >= m_maxScroll)
 		this->m_distanceFromShip = m_maxScroll - 0.1f;
 	if (this->m_distanceFromShip <= m_minScroll)

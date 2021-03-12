@@ -20,7 +20,7 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 
 	//Set initial values. All randomized.
 	this->m_radius = r;
-	this->m_mass = r * 1.0e10f;
+	this->m_mass = r * 4.68e12f;
 	this->m_center.x = x;
 	this->m_center.y = y;
 	this->m_center.z = z;
@@ -32,7 +32,7 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	{
 		this->m_major_semi_axis = length(m_center - tetherTo->GetCenter());
 		this->m_minor_semi_axis = this->m_major_semi_axis * 0.8f;
-		this->m_orbital_speed = (static_cast<float>(6.674e-11 * tetherTo->GetMass() / (m_major_semi_axis * m_major_semi_axis)) * 3);
+		this->m_orbital_speed = (static_cast<float>(6.674e-11 * tetherTo->GetMass() / (m_major_semi_axis * m_major_semi_axis)));
 	}
 	if (orbit)
 	{

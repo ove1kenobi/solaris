@@ -329,7 +329,7 @@ void Scene::Update() noexcept {
 		std::default_random_engine gen(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
 		std::uniform_real_distribution<float> dist(12000.0f, 17000.0f);
 		std::normal_distribution<float> adjustPos(0.0f, 750.0f);
-		std::uniform_real_distribution<float> adjustVelocity(0.3f, 1.0f);
+		std::uniform_real_distribution<float> adjustVelocity(0.01f, 1.0f);
 		std::uniform_real_distribution<long double> next(1.0, 5.0);
 		std::uniform_int_distribution<size_t> asteroids(1u, 7u);
 

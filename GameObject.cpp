@@ -87,13 +87,13 @@ void GameObject::CalculateGravity(GameObject* other)
 	DirectX::XMFLOAT3 ab = other->GetCenter() - m_center;
 
 	// r = |ab| -> (distance between a and b)
-	double r = length(ab);
+	long double r = length(ab);
 
 	// Newton's general theory of gravity
-	float f = static_cast<float>(6.674e-11 * static_cast<double>(m_mass) * other->GetMass() / (r * r));
+	float f = static_cast<float>(6.674e-11 * static_cast<long double>(m_mass) * other->GetMass() / (r * r));
 
 	// Normalize ab
-	double inverse_r = 1.0f / r;
+	long double inverse_r = 1.0f / r;
 	ab.x = static_cast<float>(ab.x * inverse_r);
 	ab.y = static_cast<float>(ab.y * inverse_r);
 	ab.z = static_cast<float>(ab.z * inverse_r);
@@ -119,6 +119,7 @@ void GameObject::UpdatePhysics()
 	// Sum forces working on GameObject and apply
 	if (m_mass != 0.0f) {
 		// Divide the force by the objects mass to get the acceleration F = m*a -> a = F/m
+		// Must multiply acceleration by time to get m/s
 		m_velocity = m_velocity + m_sumForces / m_mass;
 	
 		float speed = length(m_velocity);
