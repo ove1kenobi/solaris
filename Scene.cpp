@@ -438,6 +438,8 @@ void Scene::Update() noexcept {
 		}
 	}
 
+	CheckForCollisions();
+
 #if defined(DEBUG) | defined(_DEBUG)
 	int health = m_player.GetHealth();
 
@@ -450,6 +452,21 @@ void Scene::Update() noexcept {
 	ImGui::Text("Asteroids  : %d", m_gameObjects.size() - m_persistentObjEnd - 1);
 	ImGui::End();
 #endif
+}
+
+void Scene::CheckForCollisions() noexcept
+{
+	for (auto planets : m_planets)
+	{
+		if (length(m_player.getShip()->getCenter() - planets->GetCenter()) <= ((m_player.getShip()->GetBoundingSphere().Radius * 10) + planets->GetRadius()))
+		{
+			m_player.Kill();
+		}
+	}
+	if (length(m_player.getShip()->GetCenter() - m_sun->GetCenter()) <= ((m_player.getShip()->GetBoundingSphere().Radius * 10) + m_sun->GetRadius()))
+	{
+		m_player.Kill();
+	}
 }
 
 int Scene::GetPlayerHealth() {

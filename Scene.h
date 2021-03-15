@@ -9,6 +9,7 @@
 #include "EventSystem/RenderEvents.h"
 #include "Techniques/MousePicking.h"
 #include "Techniques/FrustumCulling.h"
+#include "ourMath.h"
 class fstream;
 class Scene : public EventPublisher, public Layer
 {
@@ -45,6 +46,6 @@ public:
 	void sendObjects();
 	void AddGameObject(GameObject* obj);
 	void RemoveGameObject(GameObject* obj);
-
+	void CheckForCollisions() noexcept;
 	int GetPlayerHealth();
 };
