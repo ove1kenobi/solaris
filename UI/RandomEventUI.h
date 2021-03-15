@@ -18,6 +18,7 @@ private:
 	std::vector<D2D1_RECT_F> m_pIconPosition;
 	std::vector<D2D1_RECT_F> m_pIconTextbox;
 	std::vector<std::wstring> m_pIconAmount;
+
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pIconTextFormat;
 
 	bool CreateText();

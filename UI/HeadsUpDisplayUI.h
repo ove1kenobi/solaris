@@ -12,6 +12,12 @@ private:
 	D2D1_RECT_F m_pLeftDisplayScreen;
 	bool m_pRenderBitmaps;
 
+	//Colors
+	UINT32 m_pWhite;
+	UINT32 m_pYellow;
+	UINT32 m_pBlue;
+	UINT32 m_pRed;
+
 	//Distance to planet module
 	bool m_pRenderDistance;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pDistanceFormat;

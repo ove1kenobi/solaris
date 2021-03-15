@@ -10,6 +10,15 @@ private:
 	float m_pDisplayPadding;
 	D2D1_RECT_F m_pScreen;
 
+	//Colors
+	UINT32 m_pYellow;
+	UINT32 m_pWhite;
+	UINT32 m_pCyan;
+	UINT32 m_pGray;
+	UINT32 m_pLightGray;
+	UINT32 m_pLightBlue;
+	UINT32 m_pDarkblue;
+
 	//Vector of Upgrades
 	std::vector<UpgradeUI*> m_pUpgrades;
 

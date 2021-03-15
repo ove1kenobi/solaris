@@ -26,6 +26,14 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 	resources.push_back(L"Scrap.png");
 	resources.push_back(L"Titanium.png");
 	resources.push_back(L"Science.png");
+
+	m_pYellow = 0xFFB724;
+	m_pWhite = 0xFFFDF9;
+	m_pCyan = 0x00ffff;
+	m_pGray = 0x393b3d;
+	m_pLightGray = 0x636363;
+	m_pLightBlue = 0x0BA4CC;
+	m_pDarkblue = 0x2741b4;
 }
 
 UpgradeScreenUI::~UpgradeScreenUI() {
@@ -254,15 +262,15 @@ bool UpgradeScreenUI::UpdateModules() {
 }
 
 void UpgradeScreenUI::RenderScreen() {
-	this->UpdateBrush(D2D1::ColorF::MediumPurple, 0.5f);
+	this->UpdateBrush(m_pGray, 1.0f);
 	m_pRenderTarget2D->FillRectangle(m_pScreen, m_pBrush.Get());
 }
 
 void UpgradeScreenUI::RenderObjective() {
-	this->UpdateBrush(D2D1::ColorF::MediumPurple, 0.5f);
+	this->UpdateBrush(m_pDarkblue, 0.5f);
 	m_pRenderTarget2D->FillRectangle(m_pObjectiveTextBox, m_pBrush.Get());
 
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pObjectiveText.c_str(),
 		(UINT32)m_pObjectiveText.length(),
@@ -279,18 +287,18 @@ void UpgradeScreenUI::RenderUpgrades() {
 }
 
 void UpgradeScreenUI::RenderShipDisplay() {
-	this->UpdateBrush(0x991144, 1.0f);
+	this->UpdateBrush(m_pDarkblue, 0.5f);
 	m_pRenderTarget2D->FillRectangle(m_pShipDisplay, m_pBrush.Get());
 }
 
 void UpgradeScreenUI::RenderResourceList() {
-	this->UpdateBrush(D2D1::ColorF::PapayaWhip, 0.5f);
+	this->UpdateBrush(m_pDarkblue, 0.5f);
 	m_pRenderTarget2D->FillRectangle(m_pResourceDisplay, m_pBrush.Get());
 
 	unsigned int i = 0;
 	for (auto const& bitmap : m_pResourceBitmap) {
 		m_pRenderTarget2D->DrawBitmap(bitmap, m_pResourcePosition.at(i));
-		this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+		this->UpdateBrush(m_pWhite, 1.0f);
 		m_pRenderTarget2D.Get()->DrawTextW(
 			m_pAmount.at(i).c_str(),
 			(UINT32)m_pAmount.at(i).length(),

@@ -7,6 +7,10 @@ private:
 	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pTextFont;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pButtonFormat;
 
+	//Colors
+	UINT32 m_pWhite;
+	UINT32 m_pHighlight;
+
 	//Title
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTitleFormat;
 	D2D1_RECT_F m_pTitleTextBox;

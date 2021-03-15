@@ -29,6 +29,11 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pWarningTextBox = D2D1::RectF();
 	m_pWarningText = L"!";
 
+	m_pWhite = 0xFFFDF9;
+	m_pYellow = 0xFFB724;
+	m_pBlue = 0x0BA4CC;
+	m_pRed = 0xff4a24;
+
 	m_pRenderBitmaps = true;
 	m_pCapacityWarning = false;
 	m_pRenderDistance = false;
@@ -164,9 +169,9 @@ bool HeadsUpDisplayUI::UpdateBars() {
 	float barSize = 25.0f;
 
 	//Health bar
-	m_pHealthBar.SetTools(D2D1::ColorF(1.0f, 0.0f, 0.0f, 1.0f),
-		D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.5f),
-		D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.5f));
+	m_pHealthBar.SetTools(D2D1::ColorF(m_pRed, 1.0f),
+		D2D1::ColorF(0xffb824, 0.5f),
+		D2D1::ColorF(0xff246c, 0.5f));
 
 	m_pHealthIcon = D2D1::RectF(
 		iconLeft,
@@ -183,9 +188,9 @@ bool HeadsUpDisplayUI::UpdateBars() {
 		5.0f);
 
 	//Oxygen bar
-	m_pOxygenBar.SetTools(D2D1::ColorF(0.0f, 0.0f, 1.0f, 1.0f),
-		D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.5f),
-		D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.5f));
+	m_pOxygenBar.SetTools(D2D1::ColorF(m_pBlue, 1.0f),
+		D2D1::ColorF(0x0bcc94, 0.5f),
+		D2D1::ColorF(0x0b44cc, 0.5f));
 
 	m_pOxygenIcon = D2D1::RectF(
 		iconLeft,
@@ -202,9 +207,9 @@ bool HeadsUpDisplayUI::UpdateBars() {
 		5.0f);
 
 	//Fuel bar
-	m_pFuelBar.SetTools(D2D1::ColorF(0.0f, 1.0f, 0.0f, 1.0f),
-		D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.5f),
-		D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.5f));
+	m_pFuelBar.SetTools(D2D1::ColorF(m_pYellow, 1.0f),
+		D2D1::ColorF(0xdaff24, 0.5f),
+		D2D1::ColorF(0xff4a24, 0.5f));
 
 	m_pFuelIcon = D2D1::RectF(
 		iconLeft,
@@ -323,7 +328,7 @@ void HeadsUpDisplayUI::RenderBars() {
 void HeadsUpDisplayUI::RenderCapacity() {
 	ErrorCheck(m_pHUDFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING), "TextAlignment");
 
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pCapacityText.c_str(),
 		(UINT32)m_pCapacityText.length(),
@@ -337,9 +342,9 @@ void HeadsUpDisplayUI::RenderCapacity() {
 }
 
 void HeadsUpDisplayUI::RenderWarningModule() {
-	this->UpdateBrush(D2D1::ColorF::OrangeRed, 1.0f);
+	this->UpdateBrush(m_pRed, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pWarningTriangle.Get(), m_pBrush.Get());
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D->DrawGeometry(m_pWarningTriangle.Get(), m_pBrush.Get(), 2.0f);
 
 	ErrorCheck(m_pHUDFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
@@ -355,7 +360,7 @@ void HeadsUpDisplayUI::RenderWarningModule() {
 
 void HeadsUpDisplayUI::RenderPlanetDistanceModule() {
 	//Render the text
-	UpdateBrush(D2D1::ColorF::White, 1.0f);
+	UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pPlanetText.c_str(),
 		(UINT32)m_pPlanetText.length(),

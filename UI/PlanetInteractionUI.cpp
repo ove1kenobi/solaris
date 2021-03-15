@@ -495,12 +495,12 @@ bool PlanetInteractionUI::UpdateModules() {
 //Render functions
 void PlanetInteractionUI::RenderScreen() {
 	//Main square
-	this->UpdateBrush(0x40e3ea, 0.05f);
+	this->UpdateBrush(m_pDarkblue, 0.05f);
 	m_pRenderTarget2D->FillRectangle(m_pMainRectangle, m_pBrush.Get());
 
 	//Grid for the square
 	unsigned int gridSize = 25;
-	this->UpdateBrush(0x77f9ff, 0.25f);
+	this->UpdateBrush(m_pCyan, 0.25f);
 	for (float x = m_pMainRectangle.left; x < m_pMainRectangle.right; x += gridSize)
 	{
 		m_pRenderTarget2D->DrawLine(
