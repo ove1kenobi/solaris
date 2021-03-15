@@ -2,7 +2,7 @@
 #include "Asteroid.h"
 
 Asteroid::Asteroid() noexcept
-	: m_TestForCulling{true}, m_deltaPitch{ 0.0f }, m_deltaRoll{ 0.0f }, m_deltaYaw{ 0.0f }, m_ship{ nullptr }
+	: m_TestForCulling{true}, m_deltaPitch{ 0.0f }, m_deltaRoll{ 0.0f }, m_deltaYaw{ 0.0f }, m_ship{ nullptr }, m_IsDestroyed{ false }
 {
 	m_Tag = "Asteroid";
 }
@@ -41,7 +41,7 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 	// Stand-in for asteroids during testing - comment 'Preload models' in Engine::Initialize()
 	m_model = ModelFactory::Get().GetModel("models/cubemetal.obj");
 	m_scale = distScale(gen) * 30.0f;
-	m_boundingSphere.Radius *= m_scale;
+	m_boundingSphere.Radius *= m_scale * 10;
 	m_mass = m_model->GetBoundingSphere()->Radius * 50000.0f * m_scale;
 	ModelFactory::Get().CreateMatrixBuffer(m_AmatrixBuffer);
 	return true;
@@ -49,6 +49,10 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 
 GameObject* Asteroid::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
+	if (m_IsDestroyed)
+	{
+		return this;
+	}
 	float distShip = length(m_center - m_ship->GetCenter());
 	float distSun = length(m_center);
 	if (distShip > 20000 || distSun < 500.0f) return this;
@@ -63,6 +67,8 @@ GameObject* Asteroid::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PM
 	DirectX::XMMATRIX trans = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);
 	DirectX::XMMATRIX result = scale * rot * trans;
 	DirectX::XMStoreFloat4x4(&m_wMatrix, DirectX::XMMatrixTranspose(result));
+
+	m_boundingSphere.Center = m_center;
 
 	//Update the matrixBuffer.
 
@@ -122,4 +128,14 @@ void Asteroid::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContex
 		&this->m_model->getStride(),
 		&this->m_model->getOffset());
 	pDeviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+}
+
+void Asteroid::MarkAsDestroyed() noexcept
+{
+	m_IsDestroyed = true;
+}
+
+void Asteroid::SetVelocity(const DirectX::XMFLOAT3& velocity) noexcept
+{
+	m_velocity = velocity;
 }

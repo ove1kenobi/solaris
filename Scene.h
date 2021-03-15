@@ -24,6 +24,7 @@ private:
 	std::vector<Planet*> m_planets; //USED FOR SENDING DATA TO THE SHADER
 	std::vector<WaterSphere*> m_waterSpheres;
 	std::vector<Planet*> m_radioactivePlanets;
+	std::vector<Asteroid*> m_Asteroids;
 	Sun* m_sun;
 	MousePicking m_Picking;
 	FrustumCulling m_FrustumCulling;

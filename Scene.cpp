@@ -322,8 +322,11 @@ void Scene::RemoveGameObject(GameObject* obj)
 
 
 void Scene::Update() noexcept {
+	//Empty asteroid vector:
+
 	//Update the player and all the game objects.
 	size_t num = m_gameObjects.size() - m_persistentObjEnd;
+
 	if (m_player.update(m_planets) &&  num < 60 && m_nextAstroSpawnTime < m_time.SinceStart())
 	{
 		//Generator and distributions used for generating planet values.
@@ -349,6 +352,7 @@ void Scene::Update() noexcept {
 			// Give asteroid a random velocity in the general direction of spaceship
 			velocity = (ship->GetCenter() - pos) * adjustVelocity(gen);
 			Asteroid* ast = new Asteroid();
+			m_Asteroids.push_back(ast);
 			ast->init(pos, velocity, ship);
 			m_gameObjects.push_back(ast);
 		}
@@ -376,6 +380,8 @@ void Scene::Update() noexcept {
 	DirectX::XMFLOAT4X4 vMatrix = m_perspectiveCamera.getVMatrix();
 	DirectX::XMFLOAT4X4 pMatrix = m_perspectiveCamera.getPMatrix();
 
+
+	CheckForCollisions();
 	GameObject* del = nullptr;
 	std::vector<GameObject*> remove;
 	for (GameObject* astr : this->m_gameObjects) {
@@ -401,7 +407,6 @@ void Scene::Update() noexcept {
 	m_RenderData.waterSpheres = &m_waterSpheres;
 
 	m_Picking.DisplayPickedObject();
-
 	
 	bool radioactiveUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::radProtect);
 	bool coldUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::cold);
@@ -438,8 +443,6 @@ void Scene::Update() noexcept {
 		}
 	}
 
-	CheckForCollisions();
-
 #if defined(DEBUG) | defined(_DEBUG)
 	int health = m_player.GetHealth();
 
@@ -456,6 +459,7 @@ void Scene::Update() noexcept {
 
 void Scene::CheckForCollisions() noexcept
 {
+	//Planets:
 	for (auto planets : m_planets)
 	{
 		if (length(m_player.getShip()->getCenter() - planets->GetCenter()) <= ((m_player.getShip()->GetBoundingSphere().Radius * 10) + planets->GetRadius()))
@@ -463,9 +467,24 @@ void Scene::CheckForCollisions() noexcept
 			m_player.Kill();
 		}
 	}
+	//Sun:
 	if (length(m_player.getShip()->GetCenter() - m_sun->GetCenter()) <= ((m_player.getShip()->GetBoundingSphere().Radius * 10) + m_sun->GetRadius()))
 	{
 		m_player.Kill();
+	}
+
+	//Asteroids
+	for (auto asteroid : m_Asteroids)
+	{
+		if (length(m_player.getShip()->getCenter() - asteroid->GetCenter()) <= (m_player.getShip()->GetBoundingSphere().Radius / 10) + asteroid->GetBoundingSphere().Radius)
+		{
+			//There is a hit:
+			m_player.UpdateHealth(-50);
+			m_player.getShip()->AddForce(asteroid->GetVelocity() * 100000);
+			asteroid->MarkAsDestroyed();
+			CameraShakeEvent csEvent(0.3f, 1.5f);
+			EventBuss::Get().Delegate(csEvent);
+		}
 	}
 }
 

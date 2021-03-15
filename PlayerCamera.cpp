@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "PlayerCamera.h"
 
-PlayerCamera::PlayerCamera() {
+PlayerCamera::PlayerCamera() 
+{
 	m_distanceFromShip = 60.0f;
 	m_maxScroll = 100.0f;
 	m_minScroll = 50.0f;
@@ -10,15 +11,22 @@ PlayerCamera::PlayerCamera() {
 	float alpha = 0.1f;
 	m_maxPitch = (float)M_PI - alpha;
 	m_minPitch = alpha;
+	m_HitByAsteroid = false;
+	m_ShakeDuration = -1.0;
+	m_ShakeMagnitude = -1.0;
+	m_ElapsedShakeTime = 0.0f;
+	m_YawPriorToHit = 0.0f;
+	m_PitchPriorToHit = 0.0f;
 }
 
 PlayerCamera::~PlayerCamera() {
 	EventBuss::Get().RemoveListener(this, EventType::MouseScrollEvent);
 	EventBuss::Get().RemoveListener(this, EventType::RequestCameraEvent);
+	EventBuss::Get().RemoveListener(this, EventType::CameraShakeEvent);
 }
 
 bool PlayerCamera::init(int screenWidth, int screenHeight) {
-	EventBuss::Get().AddListener(this, EventType::MouseScrollEvent, EventType::RequestCameraEvent);
+	EventBuss::Get().AddListener(this, EventType::MouseScrollEvent, EventType::RequestCameraEvent, EventType::CameraShakeEvent);
 	this->m_screenFar = 100000.0f;
 	float FOV = 3.141592654f / this->m_FOVvalue;
 	float screenAspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
@@ -48,6 +56,14 @@ void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
 
 	// Create the view matrix
 	DirectX::XMStoreFloat4x4(&m_vMatrix, DirectX::XMMatrixLookAtLH(m_posVector, focusPos, m_upVector));
+
+	if (m_HitByAsteroid == true)
+	{	//Do the shake on the orbit, follow up with a focus shake:
+		DirectX::XMFLOAT3 newFocus;
+		DirectX::XMStoreFloat3(&newFocus, focusPos);
+		newFocus = Shake(newFocus);
+		DirectX::XMStoreFloat4x4(&m_vMatrix, DirectX::XMMatrixLookAtLH(m_posVector, DirectX::XMLoadFloat3(&newFocus), m_upVector));
+	}
 }
 
 void PlayerCamera::OrbitRotation(float yaw, float pitch) {
@@ -79,6 +95,29 @@ DirectX::XMFLOAT3 PlayerCamera::GetForwardVector()
 	);
 }
 
+const DirectX::XMFLOAT3& PlayerCamera::Shake(DirectX::XMFLOAT3& focus)
+{
+	//Randomize shake for both orbit rotation and focus position:
+	using t_clock = std::chrono::high_resolution_clock;
+	std::default_random_engine gen(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
+	std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+
+	OrbitRotation(static_cast<float>(dist(gen)) * 0.02f , static_cast<float>(dist(gen)) * 0.02f);
+	
+	m_ElapsedShakeTime += static_cast<float>(m_time.DeltaTime());
+	if (m_ElapsedShakeTime > m_ShakeDuration)
+	{
+		m_HitByAsteroid = false;
+		m_ElapsedShakeTime = 0.0f;
+		m_yaw = m_YawPriorToHit;
+		m_pitch = m_PitchPriorToHit;
+	}
+	focus.x = focus.x + dist(gen) * m_ShakeMagnitude;
+	focus.y = focus.y + dist(gen) * m_ShakeMagnitude;
+	focus.z = focus.z + dist(gen) * m_ShakeMagnitude;
+	return focus;
+}
+
 void PlayerCamera::OnEvent(IEvent& event) noexcept {
 	switch (event.GetEventType()) {
 		case EventType::MouseScrollEvent:
@@ -91,6 +130,16 @@ void PlayerCamera::OnEvent(IEvent& event) noexcept {
 		{
 			DelegateCameraEvent event(this);
 			EventBuss::Get().Delegate(event);
+			break;
+		}
+		case EventType::CameraShakeEvent:
+		{
+			CameraShakeEvent& derivedEvent = static_cast<CameraShakeEvent&>(event);
+			m_HitByAsteroid = true;
+			m_ShakeDuration = derivedEvent.GetDuration();
+			m_ShakeMagnitude = derivedEvent.GetMagnitude();
+			m_YawPriorToHit = m_yaw;
+			m_PitchPriorToHit = m_pitch;
 			break;
 		}
 	}
