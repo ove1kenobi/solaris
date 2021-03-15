@@ -740,6 +740,12 @@ void PlanetInteractionUI::Render() {
 
 void PlanetInteractionUI::SetGameEvents(GameEvent gameEvents[3])
 {
+	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
+		m_pRandomEvents[i]->ToggleBitmaps();
+		m_pRandomEvents[i]->ClearIcons();
+		m_pRandomEvents[i]->ToggleBitmaps();
+	}
+
 	for (int i = 0; i < 3; i++) {
 		m_availableGameEvents[i] = gameEvents[i];
 		m_pRandomEvents[i]->SetText(gameEvents[i].prologue);
@@ -778,9 +784,14 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
 		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && m_pOnScreen) {
-			for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
-				m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY, m_availableGameEvents[i]);
-				SetIcons(i, m_availableGameEvents[i].reward);
+			bool gameEventSelected = false;
+
+			for (unsigned int i = 0; i < m_pRandomEvents.size() && !gameEventSelected; i++) {
+				gameEventSelected = m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY, m_availableGameEvents[i]);
+
+				if (gameEventSelected) {
+					SetIcons(i, m_availableGameEvents[i].reward);
+				}
 			}
 		}
 		break;
