@@ -16,6 +16,7 @@ Engine::~Engine()
 const bool Engine::Initialize()
 {
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
+	EventBuss::Get().AddListener(this, EventType::ToggleStartGame);
 
 	m_Render2D = new Render2D();
 	m_scene = new Scene();
@@ -122,10 +123,18 @@ void Engine::Run()
 
 void Engine::OnEvent(IEvent& event) noexcept
 {
-	switch (event.GetEventType())
-	{
+	switch (event.GetEventType()) {
 	case EventType::WindowCloseEvent:
+	{
 		m_Running = false;
+		break;
+	}
+	case EventType::ToggleStartGame: 
+	{
+		m_Render2D->ToggleMainMenu();
+		break;
+	}
+	default:
 		break;
 	}
 }

@@ -24,7 +24,8 @@ bool Render2D::AddFonts() {
 Render2D::Render2D() noexcept 
 	: m_pPlayerInfo{ nullptr },
 	  m_PlanetInteraction{ false },
-	  m_UpgradeScreen{ false }
+	  m_UpgradeScreen{ false },
+	  m_InGame{ false }
 {
 	//Make render2D able to UI handle events (for now, only keyboard ones)
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::DelegatePlayerInfoEvent);
@@ -39,9 +40,6 @@ Render2D::Render2D() noexcept
 		m_Modules.push_back(new CrosshairUI());
 		m_Modules.push_back(new UpgradeScreenUI());
 	}
-
-	//Need to be set to false once we have the main menu working correctly
-	m_InGame = true;
 }
 
 Render2D::~Render2D() {
@@ -83,9 +81,6 @@ std::wstring Render2D::GetFontFilePath(std::wstring fontFile) {
 	return FilePath;
 }
 
-//Here's where I would have put my finite state machine...
-//IF I HAD THE TIME TO MAKE ONE
-//(currently we use if statements to figure out what to render when)
 void Render2D::RenderUI() {
 	if (m_InGame) {
 		//Always render HUD while in game
@@ -178,4 +173,8 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 void Render2D::CleanUp() {
 	for (auto r : m_Modules)
 		r->CleanUp();
+}
+
+void Render2D::ToggleMainMenu() {
+	m_InGame = !m_InGame;
 }

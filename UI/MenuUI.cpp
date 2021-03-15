@@ -204,18 +204,18 @@ void MenuUI::OnEvent(IEvent& event) noexcept {
 		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
 		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && !m_pOnScreen) {
-			//something something, check where you clicked before doing stuff
+			//Start game
 			if (m_pMouseX > m_pStartTextBox.left && m_pMouseX < m_pStartTextBox.right &&
 				m_pMouseY > m_pStartTextBox.top && m_pMouseY < m_pStartTextBox.bottom) {
 				m_pStartText = L"Hello!";
-				//Create start game event here
+				ToggleStartGame sg;
+				EventBuss::Get().Delegate(sg);
 			}
-			//oh and that stuff renders
+			//Exit game
 			if (m_pMouseX > m_pExitTextBox.left && m_pMouseX < m_pExitTextBox.right &&
 				m_pMouseY > m_pExitTextBox.top && m_pMouseY < m_pExitTextBox.bottom) {
-				m_pExitText = L"I was clicked on!";
-				//Are we able to create and render a screen beforehand asking if you're sure?
-				//Create close window event here
+				WindowCloseEvent ce;
+				EventBuss::Get().Delegate(ce);
 			}
 		}
 		break;

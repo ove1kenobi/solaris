@@ -1,7 +1,8 @@
 #pragma once
 #include "..\EventSystem/IEventListener.h"
 #include "..\EventSystem/EventPublisher.h"
-#include "..\EventSystem\UtilityEvents.h"
+#include "..\EventSystem/UtilityEvents.h"
+#include "..\EventSystem/UIEvents.h"
 #include "..\EventSystem/InputEvents.h"
 #include "..\EventSystem/WindowEvents.h"
 
