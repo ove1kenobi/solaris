@@ -13,8 +13,8 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pRandomEvents.push_back(new RandomEventUI());
 	m_pRandomEvents.push_back(new RandomEventUI());
 
-	//Example text: should be removed once event system is in place.
-	m_pPlanetNameText = L"Place holder";
+	//Has to start on try to be able to enter planet interaction for the first time
+	m_gameEventSelected = true;
 
 	m_pPlanetFlavourText = L"Luke Skywalker has returned to his home planet of Tatooine in an attempt "
 		L"to rescue his friend Han Solo from the clutches of the vile gangster Jabba the Hutt."
@@ -22,21 +22,6 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 		L"armored space station even more powerful than the first dreaded Death Star."
 		L"When completed, this ultimate weapon will spell certain doom for the small band "
 		L"of rebels struggling to restore freedom to the galaxy...";
-
-	m_pRandomEvents.at(0)->SetText(L"It is a period of civil war. Rebel spaceships, striking from a hidden base, "
-		L"have won their first victory against the evil Galactic Empire. During the battle, "
-		L"Rebel spies managed to steal secret plans to the Empire?s ultimate weapon, the death star, "
-		L"an armored space station with enough power to destroy an entire planet. ");
-
-	m_pRandomEvents.at(1)->SetText(L"It is a dark time for the Rebellion.Although the Death Star has been destroyed, "
-		L"Imperial troops have driven the Rebel forces from their hidden baseand pursued them across the galaxy."
-		L"Evading the dreaded Imperial Starfleet, a group of freedom fighters led by Luke Skywalker has"
-		L" established a new secret base on the remote ice world of Hoth.");
-
-	m_pRandomEvents.at(2)->SetText(L"Turmoil has engulfed the Galactic Republic. "
-		L"The taxation of trade routes to outlying star systems is in dispute."
-		L"Hoping to resolve the matter with a blockade of deadly battleships, "
-		L"the greedy Trade Federation has stopped all shipping to the small planet of Naboo.");
 }
 
 bool PlanetInteractionUI::Initialize() {
@@ -738,18 +723,17 @@ void PlanetInteractionUI::Render() {
 	this->EndFrame();
 }
 
-void PlanetInteractionUI::SetGameEvents(GameEvent gameEvents[3])
-{
+void PlanetInteractionUI::SetGameEvents(GameEvent gameEvents[3]) {
 	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
-		m_pRandomEvents[i]->ToggleBitmaps();
 		m_pRandomEvents[i]->ClearIcons();
-		m_pRandomEvents[i]->ToggleBitmaps();
 	}
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < m_pRandomEvents.size(); i++) {
 		m_availableGameEvents[i] = gameEvents[i];
 		m_pRandomEvents[i]->SetText(gameEvents[i].prologue);
 	}
+
+	m_gameEventSelected = false;
 }
 
 //Event functions
@@ -783,14 +767,23 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		m_pMouseY = static_cast<MouseButtonEvent*>(&event)->GetYCoord();
 		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
-		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && m_pOnScreen) {
-			bool gameEventSelected = false;
-
-			for (unsigned int i = 0; i < m_pRandomEvents.size() && !gameEventSelected; i++) {
-				gameEventSelected = m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY, m_availableGameEvents[i]);
-
-				if (gameEventSelected) {
+		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && m_pOnScreen && !m_gameEventSelected) {
+			int selected = -1;
+			//if a left mouse button click was registered
+			//loop and look if an event was selected
+			for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
+				if (m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY, m_availableGameEvents[i])) {
 					SetIcons(i, m_availableGameEvents[i].reward);
+					m_gameEventSelected = true;
+					selected = i;
+				};
+			}
+			//If an event was selected clear all others
+			if (m_gameEventSelected) {
+				for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
+					if (selected != i) {
+						m_pRandomEvents.at(i)->ClearEvent();
+					}
 				}
 			}
 		}

@@ -86,5 +86,7 @@ public:
 	void OnEvent(IEvent& event) noexcept;
 
 	void CleanUp();
+
+	bool m_gameEventSelected;
 };
 

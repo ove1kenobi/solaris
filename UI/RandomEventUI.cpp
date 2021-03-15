@@ -2,7 +2,6 @@
 #include "RandomEventUI.h"
 
 RandomEventUI::RandomEventUI() {
-	m_toggleBitmaps = true;
 	m_pHoverTextBox = D2D1::RectF();
 	m_pHoverText = L"SELECT";
 }
@@ -182,7 +181,7 @@ void RandomEventUI::Render(int mouseX, int mouseY) {
 	m_pRenderTarget2D->FillRectangle(m_pHoverBox, m_pBrush.Get());
 
 	unsigned int i = 0;
-	if (!m_toggleBitmaps) {
+	if (true) {
 		for (auto const& bitmap : m_pIconBitmap) {
 			m_pRenderTarget2D->DrawBitmap(bitmap, m_pIconPosition.at(i));
 			this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
@@ -226,17 +225,15 @@ void RandomEventUI::Render(int mouseX, int mouseY) {
 
 //Event related functions
 bool RandomEventUI::OnClick(int mouseX, int mouseY, GameEvent gameEvent) {
-	bool wasClicked = false;
-
 	if (mouseX > m_pHoverBox.left && mouseX < m_pHoverBox.right &&
 		mouseY > m_pHoverBox.top && mouseY < m_pHoverBox.bottom) {
 		this->SetText(gameEvent.consequence);
 		GameEventSelectedEvent ev(gameEvent);
 		EventBuss::Get().Delegate(ev);
-		wasClicked = true;
+		return true;
 	}
 
-	return wasClicked;
+	return false;
 }
 
 void RandomEventUI::OnEvent(IEvent& event) noexcept {
@@ -258,20 +255,20 @@ void RandomEventUI::OnEvent(IEvent& event) noexcept {
 	}
 }
 
-void RandomEventUI::ClearIcons()
-{
-	//for (auto const& bitmap : m_pIconBitmap) {
-	//	bitmap->Release();
-	//}
-
-	//m_pIconPosition.clear();
-	//m_pIconTextbox.clear();
-	//m_pIconAmount.clear();
+void RandomEventUI::ClearEvent() {
+	m_pText = L"";
 }
 
-void RandomEventUI::ToggleBitmaps()
+void RandomEventUI::ClearIcons()
 {
-	m_toggleBitmaps = !m_toggleBitmaps;
+	for (auto const& bitmap : m_pIconBitmap) {
+		bitmap->Release();
+	}
+
+	m_pIconBitmap.clear();
+	m_pIconPosition.clear();
+	m_pIconTextbox.clear();
+	m_pIconAmount.clear();
 }
 
 //To add resources to the event

@@ -122,13 +122,23 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 			KeyState state = static_cast<KeyboardEvent*>(&event)->GetKeyState();
 			int virKey = static_cast<KeyboardEvent*>(&event)->GetVirtualKeyCode();
 
+			//An event has to have been selected before the player is allowed to press E again,
+			//Either during a previous run, or it starts on true by default
+			//As it get's set to false as soon as PlanetInteractionUI fetches random events
 			if (state == KeyState::KeyPress) {
-				if (virKey == 'E') 
+				/*
+				Requriements to enter and exit planetInteraction:
+				Player press "E"
+				They are close enough to the planet
+				They have an event picked (to prevent them from exiting)
+				*/
+				if (virKey == 'E')
 				{
 					if (m_pPlayerInfo)
 					{
 						if (m_pPlayerInfo->distanceToClosestPlanet <= DISTANCE_THRESHOLD
-							&& m_pPlayerInfo->closestPlanet->IsVisited() == false)
+							&& m_pPlayerInfo->closestPlanet->IsVisited() == false &&
+							static_cast<PlanetInteractionUI*>(m_Modules[(int)TypesUI::PlanetInteraction])->m_gameEventSelected == true)
 						{
 							//Planet interaction events
 							ToggleControlsEvent controlsEvent;
