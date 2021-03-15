@@ -69,5 +69,6 @@ public:
 	void UpdateHealth(int value);
 	int GetMaxHealth() noexcept;
 	void UpdateMaxHealth(int value);
+	void Kill() noexcept;
 };
 

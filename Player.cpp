@@ -369,3 +369,8 @@ void Player::DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcep
 	m_PlayerInfo.closestPlanet = contender;
 	m_PlayerInfo.distanceToClosestPlanet = closestDistance;
 }
+
+void Player::Kill() noexcept
+{
+	m_currentHealth = 0;
+}
