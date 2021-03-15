@@ -19,18 +19,27 @@ const bool Engine::Initialize()
 	ModelFactory::Get().setDeviceAndContext(m_DXCore.GetDevice(), m_DXCore.GetDeviceContext());
 	
 	/* Preload models */
-	
-	/*std::vector<std::string> models;
-	models.insert(models.end(), {
-		"models/Asteroid_1_LOW_MODEL_.obj",
-		"models/Asteroid_2_LOW_MODEL_.obj",
-		"models/Asteroid_3_LOW_MODEL_.obj",
-		"models/Asteroid_4_LOW_MODEL_.obj"
-		});
-	for (auto m : models)
-	{
-		ModelFactory::Get().GetModel(m);
-	}*/
+	//const std::string folder = "models/";
+
+	//std::vector<std::string> models;
+	//models.insert(models.end(), {
+	//	folder + "asteroid-1.obj",
+	//	folder + "asteroid-2.obj",
+	//	folder + "asteroid-3.obj",
+	//	folder + "spaceship_afterburner.obj",
+	//	folder + "spaceship_antenna.obj",
+	//	folder + "spaceship_cargo.obj",
+	//	folder + "spaceship_cold.obj",
+	//	folder + "spaceship_fuelcells.obj",
+	//	folder + "spaceship_livingquarters.obj",
+	//	folder + "spaceship_shield.obj",
+	//	folder + "spaceship_warm.obj",
+	//	folder + "spaceship_warpdrive.obj"
+	//});
+	//for (auto m : models)
+	//{
+	//	ModelFactory::Get().GetModel(m);
+	//}
 	
 	//2D Renderer
 	if (!m_Render2D.Initialize())
