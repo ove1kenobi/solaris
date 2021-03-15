@@ -526,6 +526,7 @@
     <Image Include="UI\Icons\Oxygen.png" />
     <Image Include="UI\Icons\plasma.png" />
     <Image Include="UI\Icons\radium.png" />
+    <Image Include="UI\Icons\Science.png" />
     <Image Include="UI\Icons\Scrap.png" />
     <Image Include="UI\Icons\Titanium.png" />
     <Image Include="UI\Icons\weight.png" />

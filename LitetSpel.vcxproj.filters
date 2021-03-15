@@ -198,5 +198,6 @@
     <Image Include="UI\Icons\weight.png" />
     <Image Include="UI\Icons\Titanium.png" />
     <Image Include="UI\Icons\Scrap.png" />
+    <Image Include="UI\Icons\Science.png" />
   </ItemGroup>
 </Project>
