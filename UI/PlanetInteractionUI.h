@@ -42,6 +42,7 @@ private:
 	float m_pBlockSize;
 	std::vector<RandomEventUI*> m_pRandomEvents;
 	GameEvent m_availableGameEvents[3];
+	void SetIcons(int randomEventIndex, Resources resources);
 
 	//Current mouse coords
 	unsigned int m_pMouseX;

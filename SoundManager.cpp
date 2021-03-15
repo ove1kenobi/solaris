@@ -34,6 +34,7 @@ bool SoundManager::Initialize(float musicVolume, float sfxVolumn)
 
 	m_music.openFromFile(m_songs[(int)MusicID::SpaceAmbience]);
 	m_music.setVolume(m_musicVolume);
+	m_music.setLoop(true);
 	m_music.play();
 
 	return true;
@@ -95,6 +96,7 @@ void SoundManager::OnEvent(IEvent& event) noexcept
 			}
 			else {
 				m_music.openFromFile(m_songs[(int)musicID]);
+				m_music.setLoop(true);
 				m_music.play();
 			}
 

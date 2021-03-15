@@ -62,6 +62,28 @@ PlanetInteractionUI::~PlanetInteractionUI() {
 	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
 }
 
+void PlanetInteractionUI::SetIcons(int randomEventIndex, Resources resources)
+{
+	if (resources.health != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"health.png", std::to_wstring(resources.health));
+	if (resources.fuel != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"Fuel.png", std::to_wstring(resources.fuel));
+	if (resources.oxygen != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"Oxygen.png", std::to_wstring(resources.oxygen));
+	if (resources.titanium != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"Titanium.png", std::to_wstring(resources.titanium));
+	if (resources.scrapMetal != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"Scrap.png", std::to_wstring(resources.scrapMetal));
+	if (resources.nanotech != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"nanotech.png", std::to_wstring(resources.nanotech));
+	if (resources.plasma != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"plasma.png", std::to_wstring(resources.plasma));
+	if (resources.radium != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"radium.png", std::to_wstring(resources.radium));
+	if (resources.khionerite != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"Khionerite.png", std::to_wstring(resources.khionerite));
+}
+
 //Creation functions
 bool PlanetInteractionUI::CreateScreen() {
 	//Main screen
@@ -758,6 +780,7 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && m_pOnScreen) {
 			for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
 				m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY, m_availableGameEvents[i]);
+				SetIcons(i, m_availableGameEvents[i].reward);
 			}
 		}
 		break;
