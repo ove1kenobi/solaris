@@ -87,6 +87,8 @@
     <ClCompile Include="UI\MenuUI.cpp" />
     <ClCompile Include="UI\PressInteractUI.cpp" />
     <ClCompile Include="UI\CrosshairUI.cpp" />
+    <ClCompile Include="UI\UpgradeScreenUI.cpp" />
+    <ClCompile Include="UI\UpgradeUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXCore.h" />
@@ -171,6 +173,8 @@
     <ClInclude Include="EventSystem\PlayerEvents.h" />
     <ClInclude Include="UI\ModuleUI.h" />
     <ClInclude Include="UI\CrosshairUI.h" />
+    <ClInclude Include="UI\UpgradeScreenUI.h" />
+    <ClInclude Include="UI\UpgradeUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

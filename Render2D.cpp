@@ -24,7 +24,7 @@ bool Render2D::AddFonts() {
 Render2D::Render2D() noexcept 
 	: m_pPlayerInfo{ nullptr },
 	  m_PlanetInteraction{ false },
-	  m_Render{ false }
+	  m_UpgradeScreen{ false }
 {
 	//Make render2D able to UI handle events (for now, only keyboard ones)
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::DelegatePlayerInfoEvent);
@@ -37,6 +37,7 @@ Render2D::Render2D() noexcept
 		m_Modules.push_back(new MenuUI());
 		m_Modules.push_back(new PressInteractUI());
 		m_Modules.push_back(new CrosshairUI());
+		m_Modules.push_back(new UpgradeScreenUI());
 	}
 
 	//Need to be set to false once we have the main menu working correctly
@@ -101,6 +102,10 @@ void Render2D::RenderUI() {
 		if (m_PlanetInteraction) {
 			m_Modules.at(static_cast<int>(TypesUI::PlanetInteraction))->Render();
 		}
+		//If player wants to upgrade, render it
+		if (m_UpgradeScreen) {
+			m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->Render();
+		}
 	}
 	//If not in game then render main menu
 	else {
@@ -150,6 +155,12 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 					m_Modules.at(static_cast<int>(TypesUI::MainMenu))->m_pOnScreen = m_InGame;
 				}
 				//If player goes in the upgrade screen we also do not want things to update
+				if (virKey == 'U' && !m_PlanetInteraction) {
+					ToggleControlsEvent controlsEvent;
+					EventBuss::Get().Delegate(controlsEvent);
+					m_UpgradeScreen = !m_UpgradeScreen;
+					m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->m_pOnScreen = m_InGame;
+				}
 			}
 			break;
 		}

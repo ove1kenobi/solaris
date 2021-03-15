@@ -6,6 +6,7 @@
 #include "UI/MenuUI.h"
 #include "UI/PressInteractUI.h"
 #include "UI/CrosshairUI.h"
+#include "UI/UpgradeScreenUI.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/InputEvents.h"
@@ -21,8 +22,8 @@ private:
 	PlayerInfo* m_pPlayerInfo;
 
 	bool m_PlanetInteraction;
+	bool m_UpgradeScreen;
 	bool m_InGame;
-	bool m_Render;
 	std::wstring GetFontFilePath(std::wstring fontFile);
 	bool AddFonts();
 public:
