@@ -45,6 +45,8 @@ SpaceShip::SpaceShip()
 		m_upgrades.push_back(nullptr);
 	}
 	m_Tag = "SpaceShip";
+
+	m_topSpeed = 300.0f;
 }
 
 SpaceShip::~SpaceShip()
