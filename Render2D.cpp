@@ -23,7 +23,8 @@ bool Render2D::AddFonts() {
 
 Render2D::Render2D() noexcept 
 	: m_pPlayerInfo{ nullptr },
-	  m_PlanetInteractionUIOpen{ false }
+	  m_PlanetInteraction{ false },
+	  m_UpgradeScreen{ false }
 {
 	//Make render2D able to UI handle events (for now, only keyboard ones)
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::DelegatePlayerInfoEvent);
@@ -35,9 +36,12 @@ Render2D::Render2D() noexcept
 		m_Modules.push_back(new HeadsUpDisplayUI());
 		m_Modules.push_back(new MenuUI());
 		m_Modules.push_back(new PressInteractUI());
+		m_Modules.push_back(new CrosshairUI());
+		m_Modules.push_back(new UpgradeScreenUI());
 	}
 
-	m_Render = false;
+	//Need to be set to false once we have the main menu working correctly
+	m_InGame = true;
 }
 
 Render2D::~Render2D() {
@@ -79,28 +83,38 @@ std::wstring Render2D::GetFontFilePath(std::wstring fontFile) {
 	return FilePath;
 }
 
+//Here's where I would have put my finite state machine...
+//IF I HAD THE TIME TO MAKE ONE
+//(currently we use if statements to figure out what to render when)
 void Render2D::RenderUI() {
-	//For now always render HUD
-	m_Modules.at(static_cast<int>(TypesUI::HUD))->BeginFrame();
-	m_Modules.at(static_cast<int>(TypesUI::HUD))->Render();
-	m_Modules.at(static_cast<int>(TypesUI::HUD))->EndFrame();
+	if (m_InGame) {
+		//Always render HUD while in game
+		m_Modules.at(static_cast<int>(TypesUI::HUD))->Render();
 
-	if (m_pPlayerInfo->distanceToClosestPlanet <= DISTANCE_THRESHOLD
-		&& m_pPlayerInfo->closestPlanet->IsVisited() == false 
-		&& !m_Render) {
-		m_Modules.at(static_cast<int>(TypesUI::PressInteract))->BeginFrame();
-		m_Modules.at(static_cast<int>(TypesUI::PressInteract))->Render();
-		m_Modules.at(static_cast<int>(TypesUI::PressInteract))->EndFrame();
-	}
+		//If close to planet render press interact
+		if (m_pPlayerInfo->distanceToClosestPlanet <= DISTANCE_THRESHOLD
+			&& m_pPlayerInfo->closestPlanet->IsVisited() == false
+			&& !m_PlanetInteraction) {
+			m_Modules.at(static_cast<int>(TypesUI::PressInteract))->Render();
+		}
 
-	if (m_Render) {
-		m_Modules.at(static_cast<int>(m_CurrentUI))->BeginFrame();
-		m_Modules.at(static_cast<int>(m_CurrentUI))->Render();
-		m_Modules.at(static_cast<int>(m_CurrentUI))->EndFrame();
+		//If player was able to interact with planet, render it
+		if (m_PlanetInteraction) {
+			m_Modules.at(static_cast<int>(TypesUI::PlanetInteraction))->Render();
+		}
+		//If player wants to upgrade, render it
+		if (m_UpgradeScreen) {
+			m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->Render();
+		}
 	}
+	//If not in game then render main menu
+	else {
+		m_Modules.at(static_cast<int>(TypesUI::MainMenu))->Render();
+	}
+	//And finally always render crosshair on top of everything
+	m_Modules.at(static_cast<int>(TypesUI::Crosshair))->Render();
 }
 
-//Will in the future take in UI events to know what to render when
 void Render2D::OnEvent(IEvent& event) noexcept {
 	switch (event.GetEventType()) {
 		case EventType::KeyboardEvent:
@@ -116,29 +130,36 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 						if (m_pPlayerInfo->distanceToClosestPlanet <= DISTANCE_THRESHOLD
 							&& m_pPlayerInfo->closestPlanet->IsVisited() == false)
 						{
+							//Planet interaction events
 							ToggleControlsEvent controlsEvent;
 							EventBuss::Get().Delegate(controlsEvent);
-							m_CurrentUI = TypesUI::PlanetInteraction;
 							ToggleTetheredEvent TTEvent;
 							EventBuss::Get().Delegate(TTEvent);
-							if (m_Render) {
-								m_Render = false;
+
+							//Render planet interaction
+							if (m_PlanetInteraction) {
+								m_PlanetInteraction = false;
 								m_pPlayerInfo->closestPlanet->MarkAsVisited();
 							}
 							else {
-								m_Render = true;
+								m_PlanetInteraction = true;
 							}
+							m_Modules.at(static_cast<int>(TypesUI::PlanetInteraction))->m_pOnScreen = m_PlanetInteraction;
 						}
 					}
 				}
+				//Just and example toggle for the menu
+				//To do it properly just change the bool of InGame
 				if (virKey == 'R') {
-					m_CurrentUI = TypesUI::MainMenu;
-					if (m_Render) {
-						m_Render = false;
-					}
-					else {
-						m_Render = true;
-					}
+					m_InGame = !m_InGame;
+					m_Modules.at(static_cast<int>(TypesUI::MainMenu))->m_pOnScreen = m_InGame;
+				}
+				//If player goes in the upgrade screen we also do not want things to update
+				if (virKey == 'U' && !m_PlanetInteraction) {
+					ToggleControlsEvent controlsEvent;
+					EventBuss::Get().Delegate(controlsEvent);
+					m_UpgradeScreen = !m_UpgradeScreen;
+					m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->m_pOnScreen = m_InGame;
 				}
 			}
 			break;

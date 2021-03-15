@@ -2,10 +2,8 @@
 #include "PlanetInteractionUI.h"
 
 //Initialize functions
-PlanetInteractionUI::PlanetInteractionUI() noexcept {
-	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);			
+PlanetInteractionUI::PlanetInteractionUI() noexcept {		
 	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
-	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent);
 	EventBuss::Get().AddListener(this, EventType::DelegatePlayerInfoEvent);
 	m_pMainRectangle = D2D1::RectF();
 	m_pPlanetNameTextBox = D2D1::RectF();
@@ -60,9 +58,7 @@ PlanetInteractionUI::~PlanetInteractionUI() {
 		delete m_pRandomEvents.at(i);
 	}
 
-	EventBuss::Get().RemoveListener(this, EventType::KeyboardEvent);
 	EventBuss::Get().RemoveListener(this, EventType::MouseButtonEvent);
-	EventBuss::Get().RemoveListener(this, EventType::DelegateMouseCoordsEvent);
 	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
 }
 
@@ -710,10 +706,14 @@ void PlanetInteractionUI::RenderRandomEvents() {
 }
 
 void PlanetInteractionUI::Render() {
+	this->BeginFrame();
+
 	this->RenderScreen();
 	this->RenderCorners();
 	this->RenderPlanetText();
 	this->RenderRandomEvents();
+
+	this->EndFrame();
 }
 
 //Event functions
@@ -747,7 +747,7 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		m_pMouseY = static_cast<MouseButtonEvent*>(&event)->GetYCoord();
 		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
-		if (virKey == VK_LBUTTON && state == KeyState::KeyPress) {
+		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && m_pOnScreen) {
 			for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
 				m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY);
 			}
@@ -774,5 +774,7 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 }
 
 void PlanetInteractionUI::CleanUp() {
-
+	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
+		m_pRandomEvents.at(i)->CleanUp();
+	}
 }

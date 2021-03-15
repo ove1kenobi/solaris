@@ -5,6 +5,8 @@
 #include "UI/HeadsUpDisplayUI.h"
 #include "UI/MenuUI.h"
 #include "UI/PressInteractUI.h"
+#include "UI/CrosshairUI.h"
+#include "UI/UpgradeScreenUI.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/InputEvents.h"
@@ -18,8 +20,10 @@ private:
 	TypesUI m_CurrentUI;
 	std::vector<ModuleUI*> m_Modules;
 	PlayerInfo* m_pPlayerInfo;
-	bool m_PlanetInteractionUIOpen;
-	bool m_Render;
+
+	bool m_PlanetInteraction;
+	bool m_UpgradeScreen;
+	bool m_InGame;
 	std::wstring GetFontFilePath(std::wstring fontFile);
 	bool AddFonts();
 public:

@@ -4,13 +4,19 @@
 ModuleUI::ModuleUI() noexcept {
 	EventBuss::Get().AddListener(this, EventType::DelegateDXEvent);
 	EventBuss::Get().AddListener(this, EventType::DelegateResolutionEvent);
+	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent);
+
 	m_pWindowWidth = 0.0f;
 	m_pWindowHeight = 0.0f;
+	m_pMouseX = 0u;
+	m_pMouseY = 0u;
+	m_pOnScreen = false;
 }
 
 ModuleUI::~ModuleUI() {
 	EventBuss::Get().RemoveListener(this, EventType::DelegateDXEvent);
 	EventBuss::Get().RemoveListener(this, EventType::DelegateResolutionEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateMouseCoordsEvent);
 }
 
 bool ModuleUI::CreateBrush() {
