@@ -27,9 +27,9 @@ SpaceShip::SpaceShip()
 		0.0f, 0.0f, 0.03f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
-	this->m_center = { 0.0f, 1000.0f, -10000.0f };
+	this->m_center = { 10000.0f, 1000.0f, 0.0f };
 	this->m_mass = 10000.0f;
-	m_scale = 0.5f;
+	m_scale = 0.01f;
 	m_yaw = (float)M_PI;
 	m_pitch = (float)M_PI / 8.0f;
 	m_pitchTilt = 0.0f;
@@ -45,6 +45,8 @@ SpaceShip::SpaceShip()
 		m_upgrades.push_back(nullptr);
 	}
 	m_Tag = "SpaceShip";
+
+	m_topSpeed = 300.0f;
 }
 
 SpaceShip::~SpaceShip()
