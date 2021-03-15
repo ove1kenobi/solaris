@@ -1,7 +1,9 @@
 #include "..\pch.h"
 #include "HeadsUpDisplayUI.h"
 
+
 HeadsUpDisplayUI::HeadsUpDisplayUI() {
+	EventBuss::Get().AddListener(this, EventType::DelegatePlayerInfoEvent);
 	EventBuss::Get().AddListener(this, EventType::DelegatePlanetDistanceEvent);
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
 
@@ -40,6 +42,7 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 }
 
 HeadsUpDisplayUI::~HeadsUpDisplayUI() {
+	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
 	EventBuss::Get().RemoveListener(this, EventType::DelegatePlanetDistanceEvent);
 	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 }
@@ -430,14 +433,14 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 		this->UpdateModules();
 		break;
 	}
-	//EXAMPLE: Only for showcasing dynamic change at the moment
-	case EventType::DelegateMouseCoordsEvent:
+	case EventType::DelegatePlayerInfoEvent:
 	{
-		m_pMouseX = static_cast<DelegateMouseCoordsEvent*>(&event)->GetXCoord();
-		m_pMouseY = static_cast<DelegateMouseCoordsEvent*>(&event)->GetYCoord();
-		m_pHealthBar.SetCurrentBar(static_cast<float>(m_pMouseX / m_pWindowWidth));
-		m_pOxygenBar.SetCurrentBar(static_cast<float>(m_pMouseY / m_pWindowHeight));
-		m_pFuelBar.SetCurrentBar(static_cast<float>(m_pMouseX / m_pWindowWidth));
+		DelegatePlayerInfoEvent& derivedEvent = static_cast<DelegatePlayerInfoEvent&>(event);
+		PlayerInfo* PlayerInfo = derivedEvent.GetPlayerInfo();
+		m_pHealthBar.SetCurrentBar(PlayerInfo->HealthPercentage);
+		m_pOxygenBar.SetCurrentBar(PlayerInfo->oxygenPercentage);
+		m_pFuelBar.SetCurrentBar(PlayerInfo->fuelPercentage);
+		SetCapacity(PlayerInfo->storageUsage, PlayerInfo->storageCapacity);
 		break;
 	}
 	case EventType::DelegatePlanetDistanceEvent:
@@ -472,12 +475,6 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 		}
 
 	}
-	/*
-	example case: EventType::DelegateCapacity:
-	{
-	SetCapacity(10, 100);
-	}
-	*/
 	default:
 		break;
 	}

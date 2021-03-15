@@ -340,6 +340,11 @@ void Player::OnEvent(IEvent& event) noexcept
 
 void Player::DelegatePlayerInfo() noexcept
 {
+	m_PlayerInfo.fuelPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Fuel)]) / static_cast<float>(m_fuelCapacity);
+	m_PlayerInfo.oxygenPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Oxygen)]) / static_cast<float>(m_oxygenCapacity);
+	m_PlayerInfo.HealthPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Health)]) / static_cast<float>(m_healthCapacity);
+	m_PlayerInfo.storageUsage = m_storageUsage;
+	m_PlayerInfo.storageCapacity = m_storageCapacity;
 	DelegatePlayerInfoEvent piEvent(&m_PlayerInfo);
 	EventBuss::Get().Delegate(piEvent);
 }

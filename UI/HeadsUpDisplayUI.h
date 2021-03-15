@@ -3,6 +3,7 @@
 #include "HeadsUpDisplayBar.h"
 #include "..\EventSystem\UIEvents.h"
 #include "..\EventSystem\WindowEvents.h"
+#include "../Player.h"
 
 class HeadsUpDisplayUI : public ModuleUI {
 private:
@@ -10,6 +11,7 @@ private:
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pHUDFormat;
 	D2D1_RECT_F m_pRightDisplayScreen;
 	D2D1_RECT_F m_pLeftDisplayScreen;
+	PlayerInfo* m_pPlayerInfo;
 	bool m_pRenderBitmaps;
 
 	//Colors

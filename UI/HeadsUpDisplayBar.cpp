@@ -129,19 +129,24 @@ bool HeadsUpDisplayBar::UpdateModules() {
 }
 
 void HeadsUpDisplayBar::ChangeBlockSize(unsigned int block, float amount) {
-	float currentBlock = m_left + (m_blockSize + m_blockPadding) * block;
-	m_pCurrentBar.at(block) = D2D1::RectF(
-		currentBlock + (m_blockSize * amount),
-		m_top,
-		currentBlock + m_blockSize,
-		m_bottom
-	);
+	if (block != 10) {
+		float currentBlock = m_left + (m_blockSize + m_blockPadding) * block;
+		m_pCurrentBar.at(block) = D2D1::RectF(
+			currentBlock + (m_blockSize * amount),
+			m_top,
+			currentBlock + m_blockSize,
+			m_bottom
+		);
+	}
 }
 
 void HeadsUpDisplayBar::Render() {
 	this->m_pBrush.Get()->SetColor(m_pMainColor);
 
 	//Calculate which block we need to edit based on player stats
+	if (m_pBarPercentage == 10.0f) {
+		m_pBarPercentage = m_pBarPercentage - 0.01f;
+	}
 	float block, amount;
 	amount = std::modf(m_pBarPercentage, &block);
 	amount = 1.0f - amount;
