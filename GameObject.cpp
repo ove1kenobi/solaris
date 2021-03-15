@@ -21,7 +21,8 @@ GameObject::GameObject() noexcept
 		m_model{ nullptr },
 	    m_HasBoundingVolume{ false },
 		m_sumForces{ 0.0f, 0.0f, 0.0f },
-		m_topSpeed{ 1000.0f }
+		m_topSpeed{ 1000.0f },
+		m_DistanceToCamera{ 0.0f }
 {
 
 }
