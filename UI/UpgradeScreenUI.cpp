@@ -99,48 +99,62 @@ bool UpgradeScreenUI::UpdateObjective() {
 }
 
 bool UpgradeScreenUI::UpdateUpgrades() {
+	//ScreenHeight - padding*2 - blockPadding*(m_pUpgrades.size() - 1) = blockSize
+	//padding, BLOCK1, blockPadding1, BLOCK2, blockPadding2, BLOCK3, blockPadding3, BLOCK4, blockPadding4, BLOCK5, blockPadding5, BLOCK6, padding
+	float ScreenPadding = 10.0f;
+	float blockPadding = 5.0f;
+	float blockSize = (m_pWindowHeight - ScreenPadding * 2 - blockPadding * (m_pUpgrades.size() - 1));
+	
+
 	//Upgrade 0
 	m_pUpgrades.at(0)->SetHoverBox(D2D1::RectF(
-		0.0f,
-		0.0f,
-		(m_pWindowWidth / 2.0f) - 50.0f,
-		150.0f));
+		ScreenPadding,
+		ScreenPadding,
+		(m_pWindowWidth / 2.0f) - ScreenPadding,
+		ScreenPadding + blockSize
+	));
 
 	//Upgrade 1
 	m_pUpgrades.at(1)->SetHoverBox(D2D1::RectF(
 		0.0f,
 		0.0f,
 		(m_pWindowWidth / 2.0f) - 50.0f,
-		150.0f));
+		150.0f
+	));
 
 	//Upgrade 2
+	/*
 	m_pUpgrades.at(2)->SetHoverBox(D2D1::RectF(
 		0.0f,
 		0.0f,
 		(m_pWindowWidth / 2.0f) - 50.0f,
-		150.0f));
+		150.0f
+	));
 
 	//Upgrade 3
 	m_pUpgrades.at(3)->SetHoverBox(D2D1::RectF(
 		0.0f,
 		0.0f,
 		(m_pWindowWidth / 2.0f) - 50.0f,
-		150.0f));
+		150.0f
+	));
 
 	//Upgrade 4
 	m_pUpgrades.at(4)->SetHoverBox(D2D1::RectF(
 		0.0f,
 		0.0f,
 		(m_pWindowWidth / 2.0f) - 50.0f,
-		150.0f));
+		150.0f
+	));
 
 	//Upgrade 5
 	m_pUpgrades.at(5)->SetHoverBox(D2D1::RectF(
 		0.0f,
 		0.0f,
 		(m_pWindowWidth / 2.0f) - 50.0f,
-		150.0f));
-
+		150.0f
+	));
+	*/
 	return true;
 }
 

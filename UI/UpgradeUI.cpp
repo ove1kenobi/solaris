@@ -49,7 +49,7 @@ bool UpgradeUI::UpdateModules() {
 }
 
 void UpgradeUI::RenderDescription() {
-	this->UpdateBrush(D2D1::ColorF::PowderBlue, 0.5f);
+	this->UpdateBrush(D2D1::ColorF::Aquamarine, 0.25f);
 	m_pRenderTarget2D->FillRectangle(m_pHoverBox, m_pBrush.Get());
 }
 
