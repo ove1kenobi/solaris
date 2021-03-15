@@ -5,12 +5,14 @@ class UpgradeUI : public ModuleUI {
 private:
 	//To identify which upgrade it currently holds
 	unsigned int m_pID;
+	bool m_pBought;
 
 	//Upgrade description
 	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pFont;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pUpgradeFormat;
 	D2D1_RECT_F m_pHoverBox;
 	D2D1_RECT_F m_pTextBox;
+	std::wstring m_pDescription;
 
 	//Upgrade cost
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pCostFormat;
@@ -24,9 +26,6 @@ private:
 	bool CreateCost();
 
 	//Update functions
-	bool UpdateDescription();
-	bool UpdateCost();
-
 	bool UpdateModules();
 
 	//Render functions

@@ -2,6 +2,8 @@
 #include "UpgradeScreenUI.h"
 
 UpgradeScreenUI::UpgradeScreenUI() noexcept {
+	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
+
 	m_pScreen = D2D1::RectF();
 	m_pObjectiveTextBox = D2D1::RectF();
 	m_pShipDisplay = D2D1::RectF();
@@ -12,7 +14,7 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 	m_pObjectiveText = L"Find a way to escape the solar system.";
 
 	//Create upgrade objects
-	for (unsigned int i = 0; i < 6; i++) {
+	for (unsigned int i = 0; i < 10; i++) {
 		m_pUpgrades.push_back(new UpgradeUI());
 	}
 
@@ -27,9 +29,15 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 }
 
 UpgradeScreenUI::~UpgradeScreenUI() {
+	EventBuss::Get().RemoveListener(this, EventType::MouseButtonEvent);
+
 	//Release memory
 	for (unsigned int i = 0; i < m_pUpgrades.size(); i++) {
 		delete m_pUpgrades.at(i);
+	}
+
+	for (auto const& bitmap : m_pResourceBitmap) {
+		bitmap->Release();
 	}
 }
 
@@ -86,7 +94,8 @@ bool UpgradeScreenUI::CreateUpgrades() {
 }
 
 bool UpgradeScreenUI::CreateShipDisplay() {
-	LoadBitmapFromFile(GetIconFilePath(L"Health.png").c_str(), &m_pShipBitmap);
+	//For now we do not need it, but later once I get to design
+	//LoadBitmapFromFile(GetIconFilePath(L"Health.png").c_str(), &m_pShipBitmap);
 	return true;
 }
 
@@ -135,6 +144,45 @@ bool UpgradeScreenUI::UpdateUpgrades() {
 		));
 	}
 
+	//Here's where upgrade description and costs get's set
+	//For now it's just examples to show it works 
+	//Each cost has to added seperatly
+
+	//TODO: create an enum(or find one) to figure out what upgrade goes to what ID
+	m_pUpgrades.at(0)->SetUpgrade(L"Warp drive!", 0);
+	m_pUpgrades.at(0)->AddCost(L"Fuel.png", L"10");
+	m_pUpgrades.at(0)->AddCost(L"Science.png", L"30");
+
+	m_pUpgrades.at(1)->SetUpgrade(L"Cold upgrade!", 1);
+	m_pUpgrades.at(1)->AddCost(L"Science.png", L"10");
+	m_pUpgrades.at(1)->AddCost(L"Health.png", L"20");
+
+	m_pUpgrades.at(2)->SetUpgrade(L"Warm upgrade!", 2);
+	m_pUpgrades.at(2)->AddCost(L"Health.png", L"20");
+	m_pUpgrades.at(2)->AddCost(L"Health.png", L"20");
+	m_pUpgrades.at(2)->AddCost(L"Health.png", L"20");
+	m_pUpgrades.at(2)->AddCost(L"Health.png", L"20");
+	m_pUpgrades.at(2)->AddCost(L"Health.png", L"20");
+	m_pUpgrades.at(2)->AddCost(L"Health.png", L"20");
+	m_pUpgrades.at(2)->AddCost(L"Health.png", L"20");
+
+	m_pUpgrades.at(3)->SetUpgrade(L"Radioactive upgrade!", 3);
+	m_pUpgrades.at(3)->AddCost(L"Health.png", L"20");
+
+	m_pUpgrades.at(4)->SetUpgrade(L"Living quarters!", 4);
+	m_pUpgrades.at(4)->AddCost(L"Health.png", L"20");
+
+	m_pUpgrades.at(5)->SetUpgrade(L"Extra space!", 5);
+	m_pUpgrades.at(5)->AddCost(L"Health.png", L"20");
+
+	m_pUpgrades.at(6)->SetUpgrade(L"Asteroid protection!", 6);
+	m_pUpgrades.at(6)->AddCost(L"Health.png", L"20");
+
+	m_pUpgrades.at(7)->SetUpgrade(L"Asteroid protection!", 7);
+
+	m_pUpgrades.at(8)->SetUpgrade(L"Asteroid protection!", 8);
+
+	m_pUpgrades.at(9)->SetUpgrade(L"Asteroid protection!", 9);
 	return true;
 }
 
@@ -263,8 +311,6 @@ void UpgradeScreenUI::Render() {
 	RenderShipDisplay();
 	RenderResourceList();
 
-	this->UpdateBrush(D2D1::ColorF::Snow, 0.5f);
-	RenderHelpGrid(10);
 	EndFrame();
 }
 
@@ -290,6 +336,20 @@ void UpgradeScreenUI::OnEvent(IEvent& event) noexcept {
 		m_pWindowWidth = static_cast<float>(static_cast<DelegateResolutionEvent*>(&event)->GetClientWindowWidth());
 		m_pWindowHeight = static_cast<float>(static_cast<DelegateResolutionEvent*>(&event)->GetClientWindowHeight());
 		this->UpdateModules();
+		break;
+	}
+	//For clicking on UI elements
+	case EventType::MouseButtonEvent:
+	{
+		m_pMouseX = static_cast<MouseButtonEvent*>(&event)->GetXCoord();
+		m_pMouseY = static_cast<MouseButtonEvent*>(&event)->GetYCoord();
+		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
+		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
+		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && m_pOnScreen) {
+			for (unsigned int i = 0; i < m_pUpgrades.size(); i++) {
+				m_pUpgrades.at(i)->OnClick(m_pMouseX, m_pMouseY);
+			}
+		}
 		break;
 	}
 	default:
