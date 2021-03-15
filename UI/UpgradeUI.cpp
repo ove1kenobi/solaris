@@ -6,7 +6,9 @@ UpgradeUI::UpgradeUI() noexcept {
 }
 
 UpgradeUI::~UpgradeUI() {
-
+	for (auto const& bitmap : m_pResourceBitmap) {
+		bitmap->Release();
+	}
 }
 
 bool UpgradeUI::Initialize() {
@@ -23,10 +25,32 @@ bool UpgradeUI::Initialize() {
 }
 
 bool UpgradeUI::CreateDescription() {
+	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pFont, false), "GetSystemFont");
+
+	ErrorCheck(m_pTextFactory->CreateTextFormat(
+		L"Tenika",
+		m_pFont.Get(),
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		18.0f,
+		L"en-us",
+		&m_pUpgradeFormat
+	), "TextFormat");
 	return true;
 }
 
 bool UpgradeUI::CreateCost() {
+	ErrorCheck(m_pTextFactory->CreateTextFormat(
+		L"Tenika",
+		m_pFont.Get(),
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		18.0f,
+		L"en-us",
+		&m_pCostFormat
+	), "TextFormat");
 	return true;
 }
 
@@ -54,14 +78,66 @@ void UpgradeUI::RenderDescription() {
 }
 
 void UpgradeUI::RenderCost() {
-
+	unsigned int i = 0;
+	for (auto const& bitmap : m_pResourceBitmap) {
+		m_pRenderTarget2D->DrawBitmap(bitmap, m_pResourcePosition.at(i));
+		this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+		m_pRenderTarget2D.Get()->DrawTextW(
+			m_pCost.at(i).c_str(),
+			(UINT32)m_pCost.at(i).length(),
+			m_pCostFormat.Get(),
+			m_pCostTextbox.at(i),
+			m_pBrush.Get()
+		);
+		i++;
+	}
 }
 
 void UpgradeUI::Render() {
 	RenderDescription();
 	RenderCost();
-	//RenderHover
+}
 
+void UpgradeUI::OnClick(int mouseX, int mouseY)
+{
+}
+
+void UpgradeUI::SetUpgrade(std::wstring description, unsigned int ID)
+{
+}
+
+void UpgradeUI::AddCost(std::wstring resource, std::wstring cost) {
+	ID2D1Bitmap* holder = NULL;
+
+	float iconSize = 25.0f;
+	float amountSize = 25.0f;
+	float padding = 10.0f;
+
+	float x = static_cast<float>(m_pResourcePosition.size() % 2);
+	float y = floor(static_cast<float>(m_pResourcePosition.size()) / 2.0f);
+
+	//Add picture
+	LoadBitmapFromFile(GetIconFilePath(resource).c_str(), &holder);
+	m_pResourceBitmap.push_back(holder);
+
+	//Add square for picture
+	m_pResourcePosition.push_back(D2D1::RectF(
+		m_pHoverBox.left + (iconSize + iconSize + padding) * x,
+		m_pHoverBox.top + (padding + iconSize) * y,
+		m_pHoverBox.left + iconSize + (iconSize + iconSize + padding) * x,
+		m_pHoverBox.top + iconSize + (padding + iconSize) * y
+	));
+
+	//Add square for text
+	m_pCostTextbox.push_back(D2D1::RectF(
+		m_pResourcePosition.at(m_pResourcePosition.size() - 1).right + 5.0f,
+		m_pResourcePosition.at(m_pResourcePosition.size() - 1).top,
+		m_pResourcePosition.at(m_pResourcePosition.size() - 1).right + iconSize + 5.0f,
+		m_pResourcePosition.at(m_pResourcePosition.size() - 1).bottom
+	));
+
+	//Add text
+	m_pCost.push_back(cost);
 }
 
 void UpgradeUI::SetHoverBox(D2D1_RECT_F hoverBox) {

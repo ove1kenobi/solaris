@@ -515,6 +515,7 @@
     <Font Include="UI\Fonts\AwareBold-qZo3x.ttf" />
     <Font Include="UI\Fonts\Neoterique-Y08L.ttf" />
     <Font Include="UI\Fonts\NeoteriqueItalic-rAVK.ttf" />
+    <Font Include="UI\Fonts\Netron-p7gq1.otf" />
     <Font Include="UI\Fonts\Tenika400Regular-Rpyql.ttf" />
   </ItemGroup>
   <ItemGroup>
