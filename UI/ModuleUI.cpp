@@ -94,9 +94,8 @@ bool ModuleUI::ErrorCheck(HRESULT handle, std::string type) {
 	return true;
 }
 
-void ModuleUI::UpdateBrush(D2D1::ColorF color, float opacity) {
-	this->m_pBrush.Get()->SetColor(color);
-	this->m_pBrush.Get()->SetOpacity(opacity);
+void ModuleUI::UpdateBrush(UINT32 hexColor, float opacity) {
+	this->m_pBrush.Get()->SetColor(D2D1::ColorF(hexColor, opacity));
 }
 
 void ModuleUI::BeginFrame() {

@@ -279,7 +279,7 @@ void UpgradeScreenUI::RenderUpgrades() {
 }
 
 void UpgradeScreenUI::RenderShipDisplay() {
-	this->UpdateBrush(D2D1::ColorF::LawnGreen, 0.5f);
+	this->UpdateBrush(0x991144, 1.0f);
 	m_pRenderTarget2D->FillRectangle(m_pShipDisplay, m_pBrush.Get());
 }
 
