@@ -9,7 +9,7 @@ private:
 	UINT m_Slot;
 public:
 	ModelTexture() = default;
-	~ModelTexture() = default;
+	virtual ~ModelTexture() = default;
 	void Bind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) override;
 	void Unbind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) override;
 	void LoadTexture(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, const LPCWSTR& file, UINT type) noexcept;

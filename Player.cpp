@@ -68,7 +68,10 @@ Player::Player()
 
 Player::~Player()
 {
-	
+	EventBuss::Get().RemoveListener(this, EventType::KeyboardEvent);
+	EventBuss::Get().RemoveListener(this, EventType::ToggleControlsEvent);
+	EventBuss::Get().RemoveListener(this, EventType::MouseMoveAbsoluteEvent);
+	EventBuss::Get().RemoveListener(this, EventType::ToggleTetheredEvent);
 }
 
 bool Player::Initialize(PlayerCamera* camera)
@@ -365,4 +368,9 @@ void Player::DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcep
 	}
 	m_PlayerInfo.closestPlanet = contender;
 	m_PlayerInfo.distanceToClosestPlanet = closestDistance;
+}
+
+void Player::Kill() noexcept
+{
+	m_currentHealth = 0;
 }

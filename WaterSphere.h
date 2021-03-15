@@ -7,7 +7,7 @@ private:
 	bool testForCulling;
 public:
 	WaterSphere() noexcept;
-	~WaterSphere() noexcept = default;
+	virtual ~WaterSphere() noexcept = default;
 
 	bool Initialize(float x, float y, float z, float r);
 	GameObject* update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext);

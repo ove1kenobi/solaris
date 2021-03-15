@@ -19,7 +19,7 @@ private:
 	DirectX::BoundingSphere* m_boundingSphere;
 public:
 	Model();
-	~Model();
+	virtual ~Model();
 	bool NotLoaded();
 	void Loaded();
 

@@ -8,7 +8,7 @@ GBuffer::GBuffer() noexcept
     m_background{ 0.5f, 0.5f, 0.5f, 0.5f },
     m_RTVArray{ nullptr }
 {
-
+    EventBuss::Get().AddListener(this, EventType::SendDSVEvent);
 }
 
 GBuffer::~GBuffer()
@@ -16,6 +16,7 @@ GBuffer::~GBuffer()
     for (int i = 0; i < m_Textures.size(); i++) {
         delete m_Textures[i];
     }
+    EventBuss::Get().RemoveListener(this, EventType::SendDSVEvent);
 }
 
 void GBuffer::Bind(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
@@ -77,8 +78,6 @@ const bool GBuffer::Create(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice, 
         m_RTVArray[i] = m_Textures[i]->getRTV();
     }
     m_isRenderTarget = true;
-
-    EventBuss::Get().AddListener(this, EventType::SendDSVEvent);
 
     RequestDSVEvent event;
     EventBuss::Get().Delegate(event);

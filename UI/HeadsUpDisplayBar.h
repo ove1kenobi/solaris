@@ -44,5 +44,7 @@ public:
 	bool UpdateModules();
 	void Render();
 	void OnEvent(IEvent& event) noexcept;
+
+	void CleanUp();
 };
 

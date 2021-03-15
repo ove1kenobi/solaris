@@ -9,7 +9,7 @@ private:
 public:
 	SpaceShipUpgrade();
 	SpaceShipUpgrade(std::string modelFile);
-	~SpaceShipUpgrade() = default;
+	virtual ~SpaceShipUpgrade() = default;
 	virtual GameObject* update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext);
 	virtual void bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext);
 	virtual [[nodiscard]] const bool IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept;

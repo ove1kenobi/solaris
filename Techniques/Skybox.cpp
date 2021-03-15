@@ -5,14 +5,17 @@ Skybox::Skybox() noexcept
 	: m_pCameraCBuffer{ nullptr },
 	  m_pCamera{ nullptr }
 {
+	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent);
+}
 
+Skybox::~Skybox() {
+	EventBuss::Get().RemoveListener(this, EventType::DelegateCameraEvent);
 }
 
 void Skybox::AssignCamera(IEvent& event) noexcept
 {
 	DelegateCameraEvent& derivedEvent = static_cast<DelegateCameraEvent&>(event);
 	m_pCamera = derivedEvent.GetCamera();
-	EventBuss::Get().RemoveListener(this, EventType::DelegateCameraEvent);
 }
 
 void Skybox::OnEvent(IEvent& event) noexcept
@@ -27,8 +30,6 @@ void Skybox::OnEvent(IEvent& event) noexcept
 
 const bool Skybox::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice) noexcept
 {
-	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent);
-
 	//Constant buffer for camera:
 	D3D11_BUFFER_DESC matrixBufferDesc = {};
 	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -40,14 +41,16 @@ const bool Skybox::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevic
 	HR(pDevice->CreateBuffer(&matrixBufferDesc,
 							 nullptr,
 							 &m_pCameraCBuffer), "CreateBuffer");
-	//Get the camera for its matrices
-	RequestCameraEvent requestCameraEvent;
-	EventBuss::Get().Delegate(requestCameraEvent);
+	
 	return true;
 }
 
 void Skybox::PreparePass(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept
 {
+	//Get the camera for its matrices
+	RequestCameraEvent requestCameraEvent;
+	EventBuss::Get().Delegate(requestCameraEvent);
+
 	//Unbind pipeline
 	UnbindPipelineEvent ubEvent;
 	EventBuss::Get().Delegate(ubEvent);

@@ -58,3 +58,7 @@ void Button::OnEvent(IEvent& event) noexcept {
 		break;
 	}
 }
+
+void Button::CleanUp() {
+
+}

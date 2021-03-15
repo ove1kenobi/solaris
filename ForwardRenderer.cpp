@@ -13,6 +13,12 @@ ForwardRenderer::ForwardRenderer() noexcept
 	EventBuss::Get().AddListener(this, EventType::SendRenderObjectsEvent, EventType::DelegateDXEvent, EventType::DelegateSunLightEvent);
 }
 
+ForwardRenderer::~ForwardRenderer() {
+	EventBuss::Get().RemoveListener(this, EventType::SendRenderObjectsEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateDXEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateSunLightEvent);
+}
+
 //Sets everything up for forward rendering, takes information from the event handler as input
 void ForwardRenderer::BeginFrame()
 {

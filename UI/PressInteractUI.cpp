@@ -49,6 +49,8 @@ bool PressInteractUI::UpdateModules() {
 }
 
 void PressInteractUI::Render() {
+	this->BeginFrame();
+
 	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pText.c_str(),
@@ -57,6 +59,8 @@ void PressInteractUI::Render() {
 		m_pTextBox,
 		m_pBrush.Get()
 	);
+
+	this->EndFrame();
 }
 
 void PressInteractUI::OnEvent(IEvent& event) noexcept {
@@ -76,4 +80,8 @@ void PressInteractUI::OnEvent(IEvent& event) noexcept {
 	default:
 		break;
 	}
+}
+
+void PressInteractUI::CleanUp() {
+	//No clean up needed here
 }
