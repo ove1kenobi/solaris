@@ -208,3 +208,7 @@ void HeadsUpDisplayBar::OnEvent(IEvent& event) noexcept {
 		break;
 	}
 }
+
+void HeadsUpDisplayBar::CleanUp() {
+
+}

@@ -23,6 +23,7 @@ protected:
 	DirectX::BoundingSphere m_boundingSphere;
 	DirectX::XMFLOAT3 m_sumForces;
 	float m_topSpeed;
+	std::string m_Tag;
 
 	//Where the buffers are stored
 	Model* m_model;
@@ -51,7 +52,7 @@ public:
 	void UpdatePhysics();
 	[[nodiscard]] Model* GetModel() const noexcept;
 	const DirectX::BoundingSphere& GetBoundingSphere() noexcept;
-	virtual [[nodiscard]] const std::string& GetTag() const noexcept = 0;
+	[[nodiscard]] const std::string& GetTag() const noexcept;
 	virtual [[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept = 0;
 	[[nodiscard]] const float& GetDistanceToCamera() const noexcept;
 	void SetDistanceToCamera(const float& distance) noexcept;

@@ -3,10 +3,9 @@
 
 WaterSphere::WaterSphere() noexcept :
 	m_radius{ 0 },
-	tag{ "WaterSphere" },
 	testForCulling{ false }
 {
-
+	m_Tag = "WaterSphere";
 }
 
 bool WaterSphere::Initialize(float x, float y, float z, float r) {
@@ -85,10 +84,6 @@ void WaterSphere::bindUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>&
 void WaterSphere::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext)
 {
 	//We simply return here...
-}
-
-[[nodiscard]] const std::string& WaterSphere::GetTag() const noexcept {
-	return tag;
 }
 
 [[nodiscard]] const bool& WaterSphere::ShallBeTestedForCulling() const noexcept {

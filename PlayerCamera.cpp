@@ -5,11 +5,16 @@ PlayerCamera::PlayerCamera() {
 	m_distanceFromShip = 60.0f;
 	m_maxScroll = 100.0f;
 	m_minScroll = 50.0f;
-	m_pitch = (float)M_PI_2; //* (2.0f / 3.0f);
+	m_pitch = (float)M_PI_2;
 
 	float alpha = 0.1f;
 	m_maxPitch = (float)M_PI - alpha;
 	m_minPitch = alpha;
+}
+
+PlayerCamera::~PlayerCamera() {
+	EventBuss::Get().RemoveListener(this, EventType::MouseScrollEvent);
+	EventBuss::Get().RemoveListener(this, EventType::RequestCameraEvent);
 }
 
 bool PlayerCamera::init(int screenWidth, int screenHeight) {
@@ -34,7 +39,7 @@ void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
 	m_posVector = DirectX::XMVectorSetZ(m_posVector, -sinf(m_pitch) * cosf(m_yaw) * m_distanceFromShip);
 	m_posVector = DirectX::XMVectorAdd(m_posVector, focusPos);
 
-	// Optional, offsets the ship from the camera center
+	// Offsets the ship from the camera center
 	focusPos = DirectX::XMVectorAdd(DirectX::operator*(m_upVector, 15.0f), focusPos);
 
 	// Create forward vector 

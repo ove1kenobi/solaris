@@ -6,7 +6,6 @@ ImGuiManager::ImGuiManager() noexcept
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
-	EventBuss::Get().AddListener(this, EventType::ToggleImGuiEvent);
 }
 
 ImGuiManager::~ImGuiManager() noexcept
@@ -34,14 +33,7 @@ void ImGuiManager::Render() noexcept
 
 void ImGuiManager::OnEvent(IEvent& event) noexcept
 {
-	switch (event.GetEventType())
-	{
-	case EventType::ToggleImGuiEvent :
-	{
-		m_ShowDemoWindow = !m_ShowDemoWindow;
-	}
-		break;
-	}
+
 }
 
 const std::string ImGuiManager::GetDebugName() const noexcept

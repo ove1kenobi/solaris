@@ -8,6 +8,13 @@ ResourceManager::ResourceManager() noexcept
 	EventBuss::Get().AddListener(this, EventType::DelegateResolutionEvent);
 }
 
+ResourceManager::~ResourceManager() {
+	EventBuss::Get().RemoveListener(this, EventType::UnbindPipelineEvent);
+	EventBuss::Get().RemoveListener(this, EventType::BindIDEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateDXEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateResolutionEvent);
+}
+
 const bool ResourceManager::Initialize() noexcept
 {
 	CreateCubeData();

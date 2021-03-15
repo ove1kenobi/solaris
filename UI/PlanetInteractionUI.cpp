@@ -2,21 +2,17 @@
 #include "PlanetInteractionUI.h"
 
 //Initialize functions
-PlanetInteractionUI::PlanetInteractionUI() noexcept {
-	EventBuss::Get().AddListener(this, EventType::KeyboardEvent);			
+PlanetInteractionUI::PlanetInteractionUI() noexcept {		
 	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
-	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent);
 	EventBuss::Get().AddListener(this, EventType::DelegatePlayerInfoEvent);
 	m_pMainRectangle = D2D1::RectF();
 	m_pPlanetNameTextBox = D2D1::RectF();
 	m_pPlanetFlavourTextBox = D2D1::RectF();
 
+	m_pRandomEvents.push_back(new RandomEventUI());
+	m_pRandomEvents.push_back(new RandomEventUI());
+	m_pRandomEvents.push_back(new RandomEventUI());
 
-	//AddFontResource(this->GetFontFilePath(L"AwareBold-qZo3x.ttf").c_str());
-
-	m_pRandomEvents.push_back(new RandomEventUI());
-	m_pRandomEvents.push_back(new RandomEventUI());
-	m_pRandomEvents.push_back(new RandomEventUI());
 	//Example text: should be removed once event system is in place.
 	m_pPlanetNameText = L"Place holder";
 
@@ -29,7 +25,7 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 
 	m_pRandomEvents.at(0)->SetText(L"It is a period of civil war. Rebel spaceships, striking from a hidden base, "
 		L"have won their first victory against the evil Galactic Empire. During the battle, "
-		L"Rebel spies managed to steal secret plans to the Empire’s ultimate weapon, the death star, "
+		L"Rebel spies managed to steal secret plans to the Empire?s ultimate weapon, the death star, "
 		L"an armored space station with enough power to destroy an entire planet. ");
 
 	m_pRandomEvents.at(1)->SetText(L"It is a dark time for the Rebellion.Although the Death Star has been destroyed, "
@@ -61,6 +57,9 @@ PlanetInteractionUI::~PlanetInteractionUI() {
 	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
 		delete m_pRandomEvents.at(i);
 	}
+
+	EventBuss::Get().RemoveListener(this, EventType::MouseButtonEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
 }
 
 //Creation functions
@@ -111,7 +110,7 @@ bool PlanetInteractionUI::CreateTextElements() {
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		16.0f,
+		18.0f,
 		L"en-us",
 		&m_pBodyFormat
 	), "TextFormat");
@@ -178,20 +177,11 @@ bool PlanetInteractionUI::CreateTools() {
 
 //Update functions
 bool PlanetInteractionUI::UpdateScreen() {
-	//In case we want to make it dynamic:
-	/*m_pMainRectangle = D2D1::RectF(
-		100.0f,
-		50.0f,
-		m_pWindowWidth - 100.0f,
-		m_pWindowHeight - 200.0f
-	);*/
-
-	//Locked UI size
 	m_pMainRectangle = D2D1::RectF(
-		(m_pWindowWidth/2.0f) - 500.0f,
-		(m_pWindowHeight / 2.0f) - 350.0f,
-		(m_pWindowWidth/2.0f) + 500.0f,
-		(m_pWindowHeight/2.0f) + 200.0f
+		(m_pWindowWidth/2.0f) - 650.0f,
+		(m_pWindowHeight / 2.0f) - 450.0f,
+		(m_pWindowWidth/2.0f) + 650.0f,
+		(m_pWindowHeight/2.0f) + 250.0f
 	);
 
 	//Module information
@@ -351,10 +341,11 @@ bool PlanetInteractionUI::UpdateTopCorners() {
 		);
 		D2D1_POINT_2F points[] = {
 			//Title area
-		   D2D1::Point2F(m_pMainRectangle.right - 280.0f, m_pMainRectangle.top - 10.0f),
-		   D2D1::Point2F(m_pMainRectangle.right - 300.0f, m_pMainRectangle.top - 30.0f),
-		   D2D1::Point2F(m_pMainRectangle.left + 300.0f, m_pMainRectangle.top - 30.0f),
-		   D2D1::Point2F(m_pMainRectangle.left + 280.0f, m_pMainRectangle.top - 10.0f),
+		   D2D1::Point2F(m_pMainRectangle.right - 380.0f, m_pMainRectangle.top - 10.0f),
+		   D2D1::Point2F(m_pMainRectangle.right - 400.0f, m_pMainRectangle.top - 30.0f),
+
+		   D2D1::Point2F(m_pMainRectangle.left + 400.0f, m_pMainRectangle.top - 30.0f),
+		   D2D1::Point2F(m_pMainRectangle.left + 380.0f, m_pMainRectangle.top - 10.0f),
 
 		   //Left corner
 		   D2D1::Point2F(m_pMainRectangle.left + 10.0f, m_pMainRectangle.top - 10.0f),
@@ -715,10 +706,14 @@ void PlanetInteractionUI::RenderRandomEvents() {
 }
 
 void PlanetInteractionUI::Render() {
+	this->BeginFrame();
+
 	this->RenderScreen();
 	this->RenderCorners();
 	this->RenderPlanetText();
 	this->RenderRandomEvents();
+
+	this->EndFrame();
 }
 
 void PlanetInteractionUI::SetGameEvents(GameEvent gameEvents[3])
@@ -760,7 +755,7 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		m_pMouseY = static_cast<MouseButtonEvent*>(&event)->GetYCoord();
 		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
-		if (virKey == VK_LBUTTON && state == KeyState::KeyPress) {
+		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && m_pOnScreen) {
 			for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
 				m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY, m_availableGameEvents[i]);
 			}
@@ -783,5 +778,11 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 	}
 	default:
 		break;
+	}
+}
+
+void PlanetInteractionUI::CleanUp() {
+	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
+		m_pRandomEvents.at(i)->CleanUp();
 	}
 }

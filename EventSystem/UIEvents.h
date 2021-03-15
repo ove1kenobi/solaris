@@ -13,6 +13,7 @@ public:
 		m_DistanceToObject = distanceToObject;
 		m_PlanetName = planetName;
 	}
+	virtual ~DelegatePlanetDistanceEvent() noexcept = default;
 	[[nodiscard]] const EventType GetEventType() const noexcept override
 	{
 		return EventType::DelegatePlanetDistanceEvent;

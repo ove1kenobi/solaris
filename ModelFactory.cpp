@@ -100,6 +100,8 @@ Model* ModelFactory::GetModel(std::string filePath)
 #endif
 					// Texture type is diffuse
 					LoadTexture(model, std::string(texFile.C_Str()), Model::diffuse);
+					if(filePath == "models/spaceship_basic.obj")
+						LoadTexture(model, "spaceship1_Dark Ship_BaseColor.png", Model::diffuse); // second diffuse texture
 				}
 
 				// Create bounding box

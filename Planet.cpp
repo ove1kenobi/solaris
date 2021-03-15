@@ -2,15 +2,14 @@
 #include "Planet.h"
 
 Planet::Planet(const std::wstring& name) noexcept
-	:m_Tag{ "Planet"},
-	 m_Name{ name },
+	:m_Name{ name },
 	 m_TestForCulling{ true },
 	 m_DistanceToCamera{ 0.0f },
 	 m_planetType{ 0 },
 	 m_WaterColor{ 0.0f, 0.0f, 1.0f, 1.0f },
 	 m_VisitedByPlayer{ false }
 {
-
+	m_Tag = "Planet";
 }
 
 bool Planet::Initialize(float x, float y, float z, float r, float xRot, float zRot, int rotDir, UINT type, GameObject* tetherTo, Orbit* orbit, WaterSphere* waterSphere) {
@@ -55,11 +54,6 @@ const bool Planet::IntersectRayObject(const DirectX::XMFLOAT3* origin, const Dir
 	DirectX::XMVECTOR Direction = DirectX::XMLoadFloat3(direction);
 
 	return m_model->GetBoundingSphere()->Intersects(Origin, Direction, distance);
-}
-
-const std::string& Planet::GetTag() const noexcept
-{
-	return m_Tag;
 }
 
 const bool& Planet::ShallBeTestedForCulling() const noexcept

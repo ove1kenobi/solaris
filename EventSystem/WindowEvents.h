@@ -17,22 +17,6 @@ public:
 	}
 };
 
-class ToggleImGuiEvent : public IEvent
-{
-private:
-public:
-	ToggleImGuiEvent() noexcept = default;
-	virtual ~ToggleImGuiEvent() noexcept = default;
-	[[nodiscard]] const EventType GetEventType() const noexcept override
-	{
-		return EventType::ToggleImGuiEvent;
-	}
-	[[nodiscard]] const std::string GetDebugName() const noexcept override
-	{
-		return "ToggleImGuiEvent";
-	}
-};
-
 class DelegateResolutionEvent : public IEvent 
 {
 private:
@@ -44,6 +28,7 @@ public:
 		m_ClientWindowWidth = clientWindowWidth;
 		m_ClientWindowHeight = clientWindowHeight;
 	}
+	virtual ~DelegateResolutionEvent() noexcept = default;
 	[[nodiscard]] const EventType GetEventType() const noexcept override
 	{
 		return EventType::DelegateResolutionEvent;

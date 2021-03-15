@@ -1,6 +1,5 @@
 #include "..\pch.h"
 #include "RandomEventUI.h"
-#include <atlstr.h>
 
 RandomEventUI::RandomEventUI() {
 	m_pHoverTextBox = D2D1::RectF();
@@ -21,7 +20,9 @@ bool RandomEventUI::Initialize() {
 }
 
 RandomEventUI::~RandomEventUI() {
-
+	for (auto const& bitmap : m_pIconBitmap) {
+		bitmap->Release();
+	}
 }
 
 //Create functions
@@ -35,7 +36,7 @@ bool RandomEventUI::CreateText() {
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		14.0f,
+		16.0f,
 		L"en-us",
 		&m_pTextFormat
 	), "TextFormat");
@@ -49,7 +50,7 @@ bool RandomEventUI::CreateText() {
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_ITALIC,
 		DWRITE_FONT_STRETCH_NORMAL,
-		20.0f,
+		22.0f,
 		L"en-us",
 		&m_pHoverTextFormat
 	), "TextFormat");
@@ -64,7 +65,7 @@ bool RandomEventUI::CreateText() {
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		8.0f,
+		14.0f,
 		L"en-us",
 		&m_pIconTextFormat
 	), "TextFormat");
@@ -150,7 +151,7 @@ bool RandomEventUI::UpdateTextBoxes() {
 	m_pTextBox = D2D1::RectF(
 		m_pHoverBox.left + m_pTextPadding,
 		m_pHoverBox.top + m_pTextPadding,
-		m_pHoverBox.right - m_pTextPadding,
+		m_pHoverBox.right - m_pTextPadding - 120.0f,
 		m_pHoverBox.bottom - m_pTextPadding
 	);
 
@@ -178,6 +179,20 @@ void RandomEventUI::Render(int mouseX, int mouseY) {
 	//What should always be rendered
 	this->UpdateBrush(D2D1::ColorF::Aqua, 0.05f);
 	m_pRenderTarget2D->FillRectangle(m_pHoverBox, m_pBrush.Get());
+
+	unsigned int i = 0;
+	for (auto const& bitmap : m_pIconBitmap) {
+		m_pRenderTarget2D->DrawBitmap(bitmap, m_pIconPosition.at(i));
+		this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+		m_pRenderTarget2D.Get()->DrawTextW(
+			m_pIconAmount.at(i).c_str(),
+			(UINT32)m_pIconAmount.at(i).length(),
+			m_pIconTextFormat.Get(),
+			m_pIconTextbox.at(i),
+			m_pBrush.Get()
+		);
+		i++;
+	}
 
 	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
 
@@ -213,12 +228,62 @@ void RandomEventUI::OnClick(int mouseX, int mouseY, GameEvent gameEvent) {
 		this->SetText(gameEvent.consequence);
 		GameEventSelectedEvent ev(gameEvent);
 		EventBuss::Get().Delegate(ev);
-		//Create event here to readjust the player inventory based on an random event ID
 	}
 }
 
-void RandomEventUI::AddIcon(std::wstring amount) {
-	/*Will in the future take in a picture and a string,
-	which will be stored in the icon vectors */
+void RandomEventUI::OnEvent(IEvent& event) noexcept {
+	switch (event.GetEventType()) {
+	case EventType::DelegateDXEvent:
+	{
+		UpdateDXHandlers(event);
+		break;
+	}
+	case EventType::DelegateResolutionEvent:
+	{
+		m_pWindowWidth = static_cast<float>(static_cast<DelegateResolutionEvent*>(&event)->GetClientWindowWidth());
+		m_pWindowHeight = static_cast<float>(static_cast<DelegateResolutionEvent*>(&event)->GetClientWindowHeight());
+		this->UpdateModules();
+		break;
+	}
+	default:
+		break;
+	}
 }
+
+//To add resources to the event
+void RandomEventUI::AddIcon(std::wstring resource, std::wstring amount) {
+	ID2D1Bitmap* holder = NULL;
+
+	float iconSize = 25.0f;
+	float amountSize = 25.0f;
+	float padding = 10.0f;
+
+	float x = static_cast<float>(m_pIconPosition.size() % 2);
+	float y = floor(static_cast<float>(m_pIconPosition.size()) / 2.0f);
+
+	//Add picture
+	LoadBitmapFromFile(GetIconFilePath(resource).c_str(), &holder);
+	m_pIconBitmap.push_back(holder);
+	
+	//Add square for picture
+	m_pIconPosition.push_back(D2D1::RectF(
+		m_pTextBox.right + (iconSize + iconSize + padding)*x,
+		m_pTextBox.top + (padding + iconSize)*y,
+		m_pTextBox.right + iconSize + (iconSize + iconSize + padding)*x,
+		m_pTextBox.top + iconSize + (padding + iconSize)*y
+	));
+
+	//Add square for text
+	m_pIconTextbox.push_back(D2D1::RectF(
+		m_pIconPosition.at(m_pIconPosition.size() - 1).right + 5.0f,
+		m_pIconPosition.at(m_pIconPosition.size() - 1).top,
+		m_pIconPosition.at(m_pIconPosition.size() - 1).right + iconSize + 5.0f,
+		m_pIconPosition.at(m_pIconPosition.size() - 1).bottom
+	));
+
+	//Add text
+	m_pIconAmount.push_back(amount);
+}
+
+
 
