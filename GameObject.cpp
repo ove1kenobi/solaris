@@ -21,7 +21,8 @@ GameObject::GameObject() noexcept
 		m_model{ nullptr },
 	    m_HasBoundingVolume{ false },
 		m_sumForces{ 0.0f, 0.0f, 0.0f },
-		m_topSpeed{ 1000.0f }
+		m_topSpeed{ 1000.0f },
+		m_DistanceToCamera{ 0.0f }
 {
 
 }
@@ -86,8 +87,14 @@ void GameObject::CalculateGravity(GameObject* other)
 	// ab = vector from a to b
 	DirectX::XMFLOAT3 ab = other->GetCenter() - m_center;
 
+	long double r;
 	// r = |ab| -> (distance between a and b)
-	long double r = length(ab);
+	if (GetTag() == "Sun" || other->GetTag() == "Sun") {
+		r = length(ab);
+	}
+	else {
+		r = length(ab) * 0.8f; // Increase gravity form planets, asteroids etc.
+	}
 
 	// Newton's general theory of gravity
 	float f = static_cast<float>(6.674e-11 * static_cast<long double>(m_mass) * other->GetMass() / (r * r));

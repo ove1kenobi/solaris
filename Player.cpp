@@ -60,7 +60,7 @@ Player::Player()
 
 	m_topSpeed = 0.0f;
 	m_desiredSpeed = 0.0f;
-	m_thrusterForce = 1000000.0f;
+	m_thrusterForce = 500000.0f;
 
 	m_maxHealth = 100;
 	m_currentHealth = 100;
