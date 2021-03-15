@@ -41,7 +41,7 @@ const bool Sun::Initialize() noexcept
 	m_PointLight.Initialize(DirectX::XMFLOAT3(1.0f, 0.95f, 0.93f), 1.0f, m_center);
 	m_HasBoundingVolume = true;
 	m_boundingSphere.Radius = radius;
-	m_mass *= 3.0f;
+	m_mass *= 0.5e2f;
 	return true;
 }
 
