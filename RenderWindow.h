@@ -6,9 +6,6 @@
 #include "EventSystem\RenderEvents.h"
 #include "ImGui\imgui_impl_win32.h"
 
-#include <iostream>			
-#pragma warning(disable : 4996)
-
 class RenderWindow : public EventPublisher
 {
 private:

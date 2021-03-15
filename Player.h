@@ -12,8 +12,6 @@
 #include "EventSystem/UIEvents.h"
 #include "GameEvent.h"
 
-#include <iostream>
-
 struct PlayerInfo
 {
 	Planet* closestPlanet;
@@ -30,7 +28,7 @@ private:
 	Time m_time;
 
 	// Resources
-	int m_maxHealth, m_currentHealth;
+	int m_maxHealth;
 	int m_fuelCapacity;
 	int m_oxygenCapacity;
 	int m_storageCapacity;
@@ -65,8 +63,8 @@ public:
 
 	void OnEvent(IEvent& event) noexcept;
 	void DelegatePlayerInfo() noexcept;
-	int GetHealth() noexcept;
 	void UpdateHealth(int value);
+	int GetHealth() noexcept;
 	int GetMaxHealth() noexcept;
 	void UpdateMaxHealth(int value);
 };

@@ -207,11 +207,11 @@ void RandomEventUI::Render(int mouseX, int mouseY) {
 }
 
 //Event related functions
-void RandomEventUI::OnClick(int mouseX, int mouseY, UINT gameEventID) {
+void RandomEventUI::OnClick(int mouseX, int mouseY, GameEvent gameEvent) {
 	if (mouseX > m_pHoverBox.left && mouseX < m_pHoverBox.right &&
 		mouseY > m_pHoverBox.top && mouseY < m_pHoverBox.bottom) {
-		this->SetText(GetGameEvent(gameEventID).consequence);
-		GameEventSelectedEvent ev(gameEventID);
+		this->SetText(gameEvent.consequence);
+		GameEventSelectedEvent ev(gameEvent);
 		EventBuss::Get().Delegate(ev);
 		//Create event here to readjust the player inventory based on an random event ID
 	}

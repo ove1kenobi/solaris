@@ -8,7 +8,6 @@
 #include "EventSystem/InputEvents.h"
 #include "EventSystem\UtilityEvents.h"
 #include "Player.h"
-
 #include "GameEventManager.h"
 
 //Direct2D will be used to render all of the graphics, and use XAML for everything else UI related (Layout, interactions).
@@ -17,9 +16,7 @@
 #define DISTANCE_THRESHOLD 800.0f
 class Render2D : public EventPublisher, IEventListener {
 private:
-
 	GameEventManager gameEventManager;
-
 	TypesUI m_CurrentUI;
 	std::vector<ModuleUI*> m_Modules;
 	PlayerInfo* m_pPlayerInfo;

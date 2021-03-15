@@ -3,8 +3,6 @@
 #include "ourMath.h"
 #include "SpaceShipUpgrade.h"
 
-#include <iostream>
-
 class SpaceShip : public GameObject
 {
 private:

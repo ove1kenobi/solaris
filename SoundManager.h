@@ -26,7 +26,7 @@ public:
 	SoundManager();
 	~SoundManager();
 
-	bool Initialize(float musicVolume = 0.0f, float sfxVolume = 0.0f);
+	bool Initialize(float musicVolume = 100.0f, float sfxVolume = 100.0f);
 	void Update();
 
 	void OnEvent(IEvent& event) noexcept;

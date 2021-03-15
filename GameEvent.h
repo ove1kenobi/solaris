@@ -1,14 +1,9 @@
 #pragma once
 #include "Resources.h"
+#include "pch.h"
 
 struct GameEvent {
 	std::wstring prologue;
 	std::wstring consequence;
-	Resources reward;
-	int health;
+	Resources reward = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 };
-
-extern std::vector< std::vector<GameEvent> > gameEvents;
-
-GameEvent GetGameEvent(UINT ID);
-UINT CreateID(UINT type, UINT index);

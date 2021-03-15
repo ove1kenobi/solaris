@@ -1,5 +1,6 @@
 #pragma once
 #include "IEvent.h"
+#include "../GameEvent.h"
 #include "../pch.h"
 
 class DelegatePlanetDistanceEvent : public IEvent {
@@ -32,11 +33,11 @@ public:
 
 class GameEventSelectedEvent : public IEvent {
 private:
-	UINT m_gameEventID;
+	GameEvent m_gameEvent;
 public:
-	GameEventSelectedEvent(UINT gameEventID) noexcept
+	GameEventSelectedEvent(GameEvent gameEvent) noexcept
 	{
-		m_gameEventID = gameEventID;
+		m_gameEvent = gameEvent;
 	}
 	[[nodiscard]] const EventType GetEventType() const noexcept override
 	{
@@ -46,9 +47,9 @@ public:
 	{
 		return "GameEventSelectedEvent";
 	}
-	[[nodiscard]] const UINT GetGameEventID() const noexcept
+	[[nodiscard]] const GameEvent GetGameEvent() const noexcept
 	{
-		return m_gameEventID;
+		return m_gameEvent;
 	}
 };
 

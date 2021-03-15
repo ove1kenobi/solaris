@@ -36,6 +36,6 @@ public:
 
 	//Should take in coord arguments to figure out what to render
 	void Render(int mouseX, int mouseY);
-	void OnClick(int mouseX, int mouseY, UINT gameEventID);
+	void OnClick(int mouseX, int mouseY, GameEvent gameEventID);
 };
 

@@ -41,7 +41,7 @@ private:
 	float m_pPadding;
 	float m_pBlockSize;
 	std::vector<RandomEventUI*> m_pRandomEvents;
-	UINT m_gameEventIDs[3];
+	GameEvent m_availableGameEvents[3];
 
 	//Current mouse coords
 	unsigned int m_pMouseX;
@@ -79,7 +79,7 @@ public:
 	void Render();
 
 	//Event functions
-	void SetGameEvents(UINT gameEventIDs[3]);
+	void SetGameEvents(GameEvent gameEvents[3]);
 	void SetPlanetName(std::wstring text);
 	void SetPlanetFlavourText(std::wstring text);
 	void OnEvent(IEvent& event) noexcept;

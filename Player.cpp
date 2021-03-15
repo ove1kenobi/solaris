@@ -57,9 +57,11 @@ int Player::AddToInventory(int currentResource, int resourceToAdd)
 Player::Player()
 	: m_PlayerInfo{ }
 {
-	m_fuelCapacity = 500;
-	m_oxygenCapacity = 500;
-	m_storageCapacity = 1000;
+	m_maxHealth = 100;
+	m_fuelCapacity = 100;
+	m_oxygenCapacity = 100;
+	m_storageCapacity = 500;
+	m_inventory.health = 100;
 	m_inventory.fuel = 0;
 	m_inventory.oxygen = 0;
 	m_inventory.titanium = 0;
@@ -85,9 +87,6 @@ Player::Player()
 	m_topSpeed = 0.0f;
 	m_desiredSpeed = 0.0f;
 	m_thrusterForce = 10000000.0f;
-
-	m_maxHealth = 100;
-	m_currentHealth = 100;
 }
 
 Player::~Player()
@@ -200,6 +199,8 @@ SpaceShip* Player::getShip() {
 
 void Player::AddResources(Resources resources)
 {
+	UpdateHealth(resources.health);
+
 	m_inventory.fuel += resources.fuel;
 	if (m_inventory.fuel > m_fuelCapacity) {
 		m_inventory.fuel = m_fuelCapacity;
@@ -285,10 +286,8 @@ void Player::OnEvent(IEvent& event) noexcept
 		}
 		case EventType::GameEventSelectedEvent:
 		{
-			UINT gameEventID = static_cast<GameEventSelectedEvent*>(&event)->GetGameEventID();
-			GameEvent gameEvent = GetGameEvent(gameEventID);
+			GameEvent gameEvent = static_cast<GameEventSelectedEvent*>(&event)->GetGameEvent();
 			AddResources(gameEvent.reward);
-			UpdateHealth(gameEvent.health);
 			break;
 		}
 		case EventType::ToggleImGuiEvent:
@@ -306,19 +305,19 @@ void Player::DelegatePlayerInfo() noexcept
 	EventBuss::Get().Delegate(piEvent);
 }
 
-int Player::GetHealth() noexcept {
-	return m_currentHealth;
+void Player::UpdateHealth(int value)
+{
+	m_inventory.health += value;
+	if (m_inventory.health > m_maxHealth) {
+		m_inventory.health = m_maxHealth;
+	}
+	else if (m_inventory.health < 0) {
+		m_inventory.health = 0;
+	}
 }
 
-void Player::UpdateHealth(int value) {
-	m_currentHealth += value;
-
-	if (m_currentHealth > m_maxHealth) {
-		m_currentHealth = m_maxHealth;
-	}
-	else if (m_currentHealth < 0) {
-		m_currentHealth = 0;
-	}
+int Player::GetHealth() noexcept {
+	return m_inventory.health;
 }
 
 int Player::GetMaxHealth() noexcept {
@@ -328,8 +327,8 @@ int Player::GetMaxHealth() noexcept {
 void Player::UpdateMaxHealth(int value) {
 	m_maxHealth += value;
 
-	if (m_currentHealth > m_maxHealth) {
-		m_currentHealth = m_maxHealth;
+	if (m_inventory.health > m_maxHealth) {
+		m_inventory.health = m_maxHealth;
 	}
 }
 
