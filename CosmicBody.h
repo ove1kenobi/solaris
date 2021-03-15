@@ -17,6 +17,7 @@ protected:
 	Time m_time;
 	Orbit* m_orbit;
 	WaterSphere* m_waterSphere;
+	float m_timeOffset;
 public:
 	CosmicBody() noexcept;
 	virtual ~CosmicBody();
