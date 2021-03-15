@@ -8,7 +8,6 @@
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem/InputEvents.h"
 #include "EventSystem/SoundEvents.h"
-#include "Resources.h"
 #include "EventSystem\UtilityEvents.h"
 #include "EventSystem/UIEvents.h"
 #include "GameEvent.h"
@@ -54,6 +53,7 @@ private:
 	// Updates the rotation for the camera and the ship
 	void UpdateRotation();
 	DirectX::XMFLOAT3 Stabilize();
+	int AddToInventory(int currentResource, int resourceToAdd);
 public:
 	Player();
 	~Player();

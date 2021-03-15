@@ -32,6 +32,28 @@ DirectX::XMFLOAT3 Player::Stabilize()
 	return stabilizingForce;
 }
 
+int Player::AddToInventory(int currentResource, int resourceToAdd)
+{
+	int amountToAdd = 0;
+	int storageLeft = m_storageCapacity - m_storageUsage;
+
+	if (storageLeft < resourceToAdd) {
+		amountToAdd = storageLeft;
+		m_storageUsage = m_storageCapacity;
+	}
+	else if (currentResource + resourceToAdd < 0) {
+		amountToAdd = -currentResource;
+		m_storageUsage -= currentResource;
+
+	}
+	else {
+		amountToAdd = resourceToAdd;
+		m_storageUsage += resourceToAdd;
+	}
+
+	return amountToAdd;
+}
+
 Player::Player()
 	: m_PlayerInfo{ }
 {
@@ -194,58 +216,12 @@ void Player::AddResources(Resources resources)
 		m_inventory.oxygen = 0;
 	}
 
-
-	//m_inventory.fuel += resources.fuel;
-	//m_inventory.oxygen += resources.oxygen;
-
-	m_inventory.titanium += resources.titanium;
-	m_inventory.scrapMetal += resources.scrapMetal;
-	m_inventory.nanotech += resources.nanotech;
-	m_inventory.plasma += resources.plasma;
-	m_inventory.radium += resources.radium;
-	m_inventory.khionerite += resources.khionerite;
-
-	//switch (resources)
-	//{
-
-	//	case Resource::Oxygen:
-	//	{
-	//		m_resources[index] += amount;
-	//		if (m_resources[index] > m_oxygenCapacity) {
-	//			m_resources[index] = m_oxygenCapacity;
-	//		}
-	//		break;
-	//	}
-	//	default:
-	//	{
-	//		int storageLeft = m_storageCapacity - m_storageUsage;
-
-	//		// Storage space have run out, add only as much as you can
-	//		if (storageLeft < amount) {
-	//			m_resources[index] += storageLeft;
-	//			m_storageUsage += storageLeft;
-	//		}
-
-	//		// We can't have less then 0 of a resource, only remove what we have
-	//		else if (m_resources[index] + amount < 0) {
-	//			int tempAmount = m_resources[index];
-	//			m_resources[index] = 0;
-	//			m_storageUsage -= tempAmount;
-	//		}
-
-	//		// Normal scenario
-	//		else {
-	//			m_resources[index] += amount;
-	//			m_storageUsage += amount;
-	//		}
-
-	//		break;
-	//	}
-	//}
-
-	//if (m_resources[index] < 0) {
-	//	m_resources[index] = 0;
-	//}
+	m_inventory.plasma += AddToInventory(m_inventory.plasma, resources.plasma);
+	m_inventory.radium += AddToInventory(m_inventory.radium, resources.radium);
+	m_inventory.khionerite += AddToInventory(m_inventory.khionerite, resources.khionerite);
+	m_inventory.nanotech += AddToInventory(m_inventory.nanotech, resources.nanotech);
+	m_inventory.titanium += AddToInventory(m_inventory.titanium, resources.titanium);
+	m_inventory.scrapMetal += AddToInventory(m_inventory.scrapMetal, resources.scrapMetal);
 }
 
 void Player::OnEvent(IEvent& event) noexcept
@@ -310,8 +286,9 @@ void Player::OnEvent(IEvent& event) noexcept
 		case EventType::GameEventSelectedEvent:
 		{
 			UINT gameEventID = static_cast<GameEventSelectedEvent*>(&event)->GetGameEventID();
-			Resources reward = GetGameEvent(gameEventID).reward;
-			AddResources(reward);
+			GameEvent gameEvent = GetGameEvent(gameEventID);
+			AddResources(gameEvent.reward);
+			UpdateHealth(gameEvent.health);
 			break;
 		}
 		case EventType::ToggleImGuiEvent:
@@ -335,6 +312,13 @@ int Player::GetHealth() noexcept {
 
 void Player::UpdateHealth(int value) {
 	m_currentHealth += value;
+
+	if (m_currentHealth > m_maxHealth) {
+		m_currentHealth = m_maxHealth;
+	}
+	else if (m_currentHealth < 0) {
+		m_currentHealth = 0;
+	}
 }
 
 int Player::GetMaxHealth() noexcept {
