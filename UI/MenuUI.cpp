@@ -3,6 +3,7 @@
 
 MenuUI::MenuUI() noexcept {
 	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
+	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
 
 	m_pTitleTextBox = D2D1::RectF();
 	m_pTitleText = L"SOLARIS";
@@ -11,9 +12,12 @@ MenuUI::MenuUI() noexcept {
 
 	m_pWhite = 0xFFFDF9;
 	m_pHighlight = 0xFFB724;
+
+	m_pRenderBitmaps = true;
 }
 
 MenuUI::~MenuUI() {
+	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 	EventBuss::Get().RemoveListener(this, EventType::MouseButtonEvent);
 }
 
@@ -26,6 +30,9 @@ bool MenuUI::Initialize() {
 		return false;
 	}
 	if (!CreateButtons()) {
+		return false;
+	}
+	if (!CreateScreen()) {
 		return false;
 	}
 	return true;
@@ -65,6 +72,11 @@ bool MenuUI::CreateButtons() {
 	return true;
 }
 
+bool MenuUI::CreateScreen() {
+	LoadBitmapFromFile(GetIconFilePath(L"mainMenuBackground.jpg").c_str(), &m_pBackgroundBitmap);
+	return true;
+}
+
 //Update functions
 bool MenuUI::UpdateTitle() {
 	float shadowOffset = 8.0f;
@@ -85,18 +97,30 @@ bool MenuUI::UpdateTitle() {
 }
 
 bool MenuUI::UpdateButtons() {
+	//Height 50
 	m_pStartTextBox = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) - 120.0f,
-		(m_pWindowHeight / 2.0f) - 50.0f,
+		(m_pWindowHeight / 2.0f) + 175.0f,
 		(m_pWindowWidth / 2.0f) + 120.0f,
-		(m_pWindowHeight / 2.0f)
+		(m_pWindowHeight / 2.0f) + 225.0f
 	);
 
+	//Height 50
 	m_pExitTextBox = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) - 180.0f,
-		(m_pWindowHeight / 2.0f) + 30.0f,
+		(m_pWindowHeight / 2.0f) + 275.0f,
 		(m_pWindowWidth / 2.0f) + 180.0f,
-		(m_pWindowHeight / 2.0f) + 80.0f
+		(m_pWindowHeight / 2.0f) + 325.0f
+	);
+	return true;
+}
+
+bool MenuUI::UpdateScreen() {
+	m_pScreen = D2D1::RectF(
+		0.0f,
+		0.0f,
+		m_pWindowWidth,
+		m_pWindowHeight
 	);
 	return true;
 }
@@ -106,6 +130,9 @@ bool MenuUI::UpdateModules() {
 		return false;
 	}
 	if (!UpdateButtons()) {
+		return false;
+	}
+	if (!UpdateScreen()) {
 		return false;
 	}
 	return true;
@@ -167,12 +194,21 @@ void MenuUI::RenderExit() {
 	);
 }
 
+void MenuUI::RenderScreen() {
+	if (m_pRenderBitmaps) {
+		m_pRenderTarget2D->DrawBitmap(m_pBackgroundBitmap, m_pScreen);
+	}
+}
+
 void MenuUI::Render() {
 	this->BeginFrame();
 
+	RenderScreen();
 	RenderTitle();
 	RenderStart();
 	RenderExit();
+
+	//RenderHelpGrid(50);
 
 	this->EndFrame();
 }
@@ -221,11 +257,18 @@ void MenuUI::OnEvent(IEvent& event) noexcept {
 		}
 		break;
 	}
+	case EventType::WindowCloseEvent:
+	{
+		this->CleanUp();
+	}
 	default:
 		break;
 	}
 }
 
 void MenuUI::CleanUp() {
-	//No clean up needed here
+	m_pRenderBitmaps = false;
+	if (m_pBackgroundBitmap) {
+		m_pBackgroundBitmap->Release();
+	}
 }
