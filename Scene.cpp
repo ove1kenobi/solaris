@@ -495,14 +495,14 @@ void Scene::CheckForCollisions() noexcept
 		for (size_t i = m_persistentObjEnd + 1; i < m_gameObjects.size(); i++)
 		{
 			Asteroid* pAsteroid = static_cast<Asteroid*>(m_gameObjects[i]);
-			if (length(m_player.getShip()->getCenter() - pAsteroid->GetCenter()) <= (m_player.getShip()->GetBoundingSphere().Radius) + pAsteroid->GetBoundingSphere().Radius - 150)
+			if (length(m_player.getShip()->getCenter() - pAsteroid->GetCenter()) <= (m_player.getShip()->GetBoundingSphere().Radius) + pAsteroid->GetBoundingSphere().Radius)
 			{
 				//There is a hit:
 				m_IsInvincible = true;
-				m_player.UpdateHealth(-20);
-				m_player.getShip()->AddForce(pAsteroid->GetVelocity() * 8000);
+				m_player.UpdateHealth(-30);
+				m_player.getShip()->AddForce(pAsteroid->GetVelocity() * 2000);
 				pAsteroid->MarkAsDestroyed();
-				CameraShakeEvent csEvent(0.3f, 2.5f);
+				CameraShakeEvent csEvent(0.3f, 0.1f);
 				EventBuss::Get().Delegate(csEvent);
 			}
 		}

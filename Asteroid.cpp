@@ -40,31 +40,31 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 	m_deltaYaw = distScale(gen);
 	m_model = ModelFactory::Get().GetModel(asteroids[distAst(gen)]);
 	// Stand-in for asteroids during testing - comment 'Preload models' in Engine::Initialize()
-	m_model = ModelFactory::Get().GetModel("models/cubemetal.obj");
+	//m_model = ModelFactory::Get().GetModel("models/cubemetal.obj");
 	m_scale = distScale(gen) * 10.0f;
 	if ((m_scale / 10) <= 0.2)
 	{
-		m_boundingSphere.Radius *= m_scale * 24;
+		m_boundingSphere.Radius *= m_scale * 14;
 	}
 	else if ((m_scale / 10) <= 0.4)
 	{
-		m_boundingSphere.Radius *= m_scale * 18;
+		m_boundingSphere.Radius *= m_scale * 6;
 	}
 	else if ((m_scale / 10) <= 0.6)
 	{
-		m_boundingSphere.Radius *= m_scale * 15;
+		m_boundingSphere.Radius *= m_scale * 5;
 	}
 	else if ((m_scale / 10) <= 0.7)
 	{
-		m_boundingSphere.Radius *= m_scale * 12;
+		m_boundingSphere.Radius *= m_scale * 4;
 	}
 	else if ((m_scale / 10) <= 0.85)
 	{
-		m_boundingSphere.Radius *= m_scale * 9;
+		m_boundingSphere.Radius *= m_scale * 3;
 	}
 	else
 	{
-		m_boundingSphere.Radius *= m_scale * 7;
+		m_boundingSphere.Radius *= m_scale * 2;
 	}
 	m_mass = m_model->GetBoundingSphere()->Radius * 50000.0f * m_scale;
 	ModelFactory::Get().CreateMatrixBuffer(m_AmatrixBuffer);
