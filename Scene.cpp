@@ -418,25 +418,9 @@ void Scene::Update() noexcept {
 		DirectX::XMFLOAT3 playerCenter = m_player.getShip()->getCenter();
 		DirectX::XMFLOAT3 sunCenter = m_sun->GetCenter();
 		float sunDist = distance(sunCenter, playerCenter);
-		if (sunDist < 6000.0f) {
+		if (!hotUpgrade && sunDist < 6000.0f) {
 			//Player is taking heat damage
 			heatDamage = true;
-			if (m_damageTimer > 1.0f) {
-				m_player.UpdateHealth(-5);
-				m_damageTimer = 0.0f;
-			}
-		}
-		if (sunDist > 15000.0f) {
-			//Player is taking cold damage
-			coldDamage = true;
-			if (m_damageTimer > 1.0f) {
-				m_player.UpdateHealth(-5);
-				m_damageTimer = 0.0f;
-			}
-		}
-	}
-
-		if (!hotUpgrade && sunDist < 6000.0f) {
 			m_damageTimer += m_time.DeltaTime();
 			if (m_damageTimer > 1.0f) {
 				m_player.UpdateHealth(-5);
@@ -444,12 +428,15 @@ void Scene::Update() noexcept {
 			}
 		}
 		if (!coldUpgrade && sunDist > 15000.0f) {
+			//Player is taking cold damage
+			coldDamage = true;
 			m_damageTimer += m_time.DeltaTime();
 			if (m_damageTimer > 1.0f) {
 				m_player.UpdateHealth(-5);
 				m_damageTimer = 0.0f;
 			}
 		}
+		
 	}
 	
 
@@ -461,13 +448,6 @@ void Scene::Update() noexcept {
 			if (planetDist < 1000.0f) {
 				//Player is taking radioactive damage
 				radioactiveDamage = true;
-				if(m_damageTimer > 1.0f)
-				m_player.UpdateHealth(-5);
-				m_damageTimer = 0.0f;
-			}
-		}
-	}
-			if (planetDist < 1000.0f) {
 				m_damageTimer += m_time.DeltaTime();
 				if (m_damageTimer > 1.0f) {
 					m_player.UpdateHealth(-5);
