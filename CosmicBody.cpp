@@ -4,7 +4,7 @@
 CosmicBody::CosmicBody() noexcept
 	: m_radius{ 0.0f }, m_yAxis{ 0.0f, 1.0f, 0.0f, 0.0f }, m_rotationDir{ 0 },
 	m_tetheredTo{ nullptr }, m_major_semi_axis{ 0 }, m_minor_semi_axis{ 0 }, m_orbital_speed{ 0 },
-	m_orbit{ nullptr }, m_waterSphere{ nullptr }
+	m_orbit{ nullptr }, m_waterSphere{ nullptr }, m_timeOffset{ 0.0 }
 {
 	
 }
@@ -14,35 +14,44 @@ CosmicBody::~CosmicBody()
 }
 
 bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot, int rotDir, GameObject* tetherTo, Orbit* orbit, WaterSphere* waterSphere) {
-	m_waterSphere = waterSphere;
-	if(m_waterSphere)
-		m_waterSphere->Initialize(x, y, z, r);
-
 	//Set initial values. All randomized.
 	this->m_radius = r;
-	this->m_mass = r * 1.0e10f;
+	this->m_mass = r * 4.68e11f;
 	this->m_center.x = x;
 	this->m_center.y = y;
 	this->m_center.z = z;
 	this->m_pitch = xRot;
 	this->m_roll = zRot;
 	this->m_rotationDir = rotDir;
+	//If the random value was 0, set it to -1.
+	if (this->m_rotationDir == 0) {
+		this->m_rotationDir--;
+	}
 	this->m_tetheredTo = tetherTo;
 	if(tetherTo)
 	{
+		using t_clock = std::chrono::high_resolution_clock;
+		std::default_random_engine generator(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
+		std::uniform_real_distribution<float> distributionTime(0, 10000);
+
+		this->m_timeOffset = distributionTime(generator);
 		this->m_major_semi_axis = length(m_center - tetherTo->GetCenter());
 		this->m_minor_semi_axis = this->m_major_semi_axis * 0.8f;
-		this->m_orbital_speed = (static_cast<float>(6.674e-11 * tetherTo->GetMass() / (m_major_semi_axis * m_major_semi_axis)) * 3);
+		this->m_orbital_speed = (static_cast<float>(6.674e-11 * tetherTo->GetMass() / (m_major_semi_axis * m_major_semi_axis)) * 3) * this->m_rotationDir;
+
+		DirectX::XMFLOAT3 tc = m_tetheredTo->GetCenter();
+		m_center.x = static_cast<float>(tc.x + m_major_semi_axis * cos((m_time.SinceStart() + m_timeOffset) * m_orbital_speed));
+		m_center.z = static_cast<float>(tc.z + m_minor_semi_axis * sin((m_time.SinceStart() + m_timeOffset) * m_orbital_speed));
 	}
 	if (orbit)
 	{
 		m_orbit = orbit;
 		m_orbit->init(m_major_semi_axis, m_minor_semi_axis);
 	}
-	//If the random value was 0, set it to -1.
-	if (this->m_rotationDir == 0) {
-		this->m_rotationDir--;
-	}
+
+	m_waterSphere = waterSphere;
+	if (m_waterSphere)
+		m_waterSphere->Initialize(m_center.x, m_center.y, m_center.z, r);
 
 	//Set up the planets randomized y-axis.
 	DirectX::XMMATRIX rotX = DirectX::XMMatrixRotationX(this->m_pitch);
@@ -54,7 +63,7 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 	
 	//Initialize the wMatrix.
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, DirectX::XMMatrixIdentity());
-	DirectX::XMMATRIX trans = DirectX::XMMatrixTranslation(x, y, z);
+	DirectX::XMMATRIX trans = DirectX::XMMatrixTranslation(m_center.x, m_center.y, m_center.z);
 	DirectX::XMMATRIX final = rotX * rotZ * trans;
 
 	DirectX::XMStoreFloat4x4(&this->m_wMatrix, final);
@@ -71,8 +80,8 @@ GameObject* CosmicBody::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 
 	if (m_tetheredTo)
 	{
 		DirectX::XMFLOAT3 tc = m_tetheredTo->GetCenter();
-		m_center.x = static_cast<float>(tc.x + m_major_semi_axis * cos(m_time.SinceStart() * m_orbital_speed));
-		m_center.z = static_cast<float>(tc.z + m_minor_semi_axis * sin(m_time.SinceStart() * m_orbital_speed));
+		m_center.x = static_cast<float>(tc.x + m_major_semi_axis * cos((m_time.SinceStart() + m_timeOffset) * m_orbital_speed));
+		m_center.z = static_cast<float>(tc.z + m_minor_semi_axis * sin((m_time.SinceStart() + m_timeOffset) * m_orbital_speed));
 	}
 	static float angle = 0.0f;
 

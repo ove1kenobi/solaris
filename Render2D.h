@@ -36,4 +36,5 @@ public:
 	void RenderUI();
 	void OnEvent(IEvent& event) noexcept;
 	void CleanUp();
+	void ToggleMainMenu();
 };

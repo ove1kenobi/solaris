@@ -88,7 +88,7 @@ Player::Player()
 
 	m_topSpeed = 0.0f;
 	m_desiredSpeed = 0.0f;
-	m_thrusterForce = 10000000.0f;
+	m_thrusterForce = 500000.0f;
 }
 
 Player::~Player()
@@ -207,7 +207,7 @@ bool Player::update(const std::vector<Planet*>& planets)
 	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
 	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
 
-	if (length(m_ship->GetVelocity()) < 500.0f) return false;
+	if (length(m_ship->GetVelocity()) < 200.0f) return false;
 	return true;
 }
 
@@ -336,6 +336,11 @@ void Player::OnEvent(IEvent& event) noexcept
 
 void Player::DelegatePlayerInfo() noexcept
 {
+	m_PlayerInfo.fuelPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Fuel)]) / static_cast<float>(m_fuelCapacity);
+	m_PlayerInfo.oxygenPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Oxygen)]) / static_cast<float>(m_oxygenCapacity);
+	m_PlayerInfo.HealthPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Health)]) / static_cast<float>(m_healthCapacity);
+	m_PlayerInfo.storageUsage = m_storageUsage;
+	m_PlayerInfo.storageCapacity = m_storageCapacity;
 	DelegatePlayerInfoEvent piEvent(&m_PlayerInfo);
 	EventBuss::Get().Delegate(piEvent);
 }

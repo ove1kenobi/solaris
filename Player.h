@@ -17,6 +17,11 @@ struct PlayerInfo
 	Planet* closestPlanet;
 	Planet* planetInteractedWith;
 	float distanceToClosestPlanet;
+	float fuelPercentage;
+	float oxygenPercentage;
+	float HealthPercentage;
+	int storageUsage;
+	int storageCapacity;
 };
 
 class Player : public IEventListener, public EventPublisher
@@ -32,6 +37,7 @@ private:
 	int m_maxHealth;
 	int m_fuelCapacity;
 	int m_oxygenCapacity;
+	int m_healthCapacity;
 	int m_storageCapacity;
 	int m_storageUsage;
 	Resources m_inventory;

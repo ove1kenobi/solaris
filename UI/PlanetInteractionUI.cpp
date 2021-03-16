@@ -22,6 +22,30 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 		L"armored space station even more powerful than the first dreaded Death Star."
 		L"When completed, this ultimate weapon will spell certain doom for the small band "
 		L"of rebels struggling to restore freedom to the galaxy...";
+
+	m_pRandomEvents.at(0)->SetText(L"It is a period of civil war. Rebel spaceships, striking from a hidden base, "
+		L"have won their first victory against the evil Galactic Empire. During the battle, "
+		L"Rebel spies managed to steal secret plans to the Empire?s ultimate weapon, the death star, "
+		L"an armored space station with enough power to destroy an entire planet. ");
+
+	m_pRandomEvents.at(1)->SetText(L"It is a dark time for the Rebellion.Although the Death Star has been destroyed, "
+		L"Imperial troops have driven the Rebel forces from their hidden baseand pursued them across the galaxy."
+		L"Evading the dreaded Imperial Starfleet, a group of freedom fighters led by Luke Skywalker has"
+		L" established a new secret base on the remote ice world of Hoth.");
+
+	m_pRandomEvents.at(2)->SetText(L"Turmoil has engulfed the Galactic Republic. "
+		L"The taxation of trade routes to outlying star systems is in dispute."
+		L"Hoping to resolve the matter with a blockade of deadly battleships, "
+		L"the greedy Trade Federation has stopped all shipping to the small planet of Naboo.");
+
+	m_pYellow = 0xFFB724;
+	m_pWhite = 0xFFFDF9;		
+	m_pCyan = 0x00ffff;		
+	m_pGray = 0x393b3d;		
+	m_pLightGray = 0x636363;	
+	m_pLightBlue = 0x0BA4CC;
+	m_pDarkblue = 0x2741b4;	
+
 }
 
 bool PlanetInteractionUI::Initialize() {
@@ -135,11 +159,11 @@ bool PlanetInteractionUI::CreateTools() {
 
 	//Main gradient
 	D2D1_GRADIENT_STOP gradientStops[3];
-	gradientStops[0].color = D2D1::ColorF(D2D1::ColorF::DarkSlateBlue, 0.25f);
+	gradientStops[0].color = D2D1::ColorF(m_pLightBlue, 0.25f);
 	gradientStops[0].position = 0.0f;
-	gradientStops[1].color = D2D1::ColorF(D2D1::ColorF::Aqua, 0.25f);
+	gradientStops[1].color = D2D1::ColorF(m_pCyan, 0.25f);
 	gradientStops[1].position = 0.5f;
-	gradientStops[2].color = D2D1::ColorF(D2D1::ColorF::DarkSlateBlue, 0.25f);
+	gradientStops[2].color = D2D1::ColorF(m_pLightBlue, 0.25f);
 	gradientStops[2].position = 1.0f;
 
 	ErrorCheck(m_pRenderTarget2D->CreateGradientStopCollection(
@@ -158,11 +182,11 @@ bool PlanetInteractionUI::CreateTools() {
 		&m_pMainGradientBrush),"GradientBrush");
 
 	//Corner gradient
-	gradientStops[0].color = D2D1::ColorF(D2D1::ColorF::Aqua, 0.25f);
+	gradientStops[0].color = D2D1::ColorF(m_pLightGray, 0.25f);
 	gradientStops[0].position = 0.0f;
-	gradientStops[1].color = D2D1::ColorF(D2D1::ColorF::DarkSlateBlue, 0.25f);
+	gradientStops[1].color = D2D1::ColorF(m_pGray, 0.75f);
 	gradientStops[1].position = 0.5f;
-	gradientStops[2].color = D2D1::ColorF(D2D1::ColorF::Aqua, 0.25f);
+	gradientStops[2].color = D2D1::ColorF(m_pLightGray, 0.25f);
 	gradientStops[2].position = 1.0f;
 
 	ErrorCheck(m_pRenderTarget2D->CreateGradientStopCollection(
@@ -493,12 +517,12 @@ bool PlanetInteractionUI::UpdateModules() {
 //Render functions
 void PlanetInteractionUI::RenderScreen() {
 	//Main square
-	this->UpdateBrush(D2D1::ColorF::Aqua, 0.05f);
+	this->UpdateBrush(m_pDarkblue, 0.05f);
 	m_pRenderTarget2D->FillRectangle(m_pMainRectangle, m_pBrush.Get());
 
 	//Grid for the square
 	unsigned int gridSize = 25;
-	this->UpdateBrush(D2D1::ColorF::Aqua, 0.25f);
+	this->UpdateBrush(m_pCyan, 0.25f);
 	for (float x = m_pMainRectangle.left; x < m_pMainRectangle.right; x += gridSize)
 	{
 		m_pRenderTarget2D->DrawLine(
@@ -523,7 +547,7 @@ void PlanetInteractionUI::RenderScreen() {
 	m_pRenderTarget2D->FillRectangle(&m_pMainRectangle, m_pMainGradientBrush.Get());
 
 	//Add outline to main square
-	UpdateBrush(D2D1::ColorF::White, 0.5f);
+	UpdateBrush(m_pWhite, 0.5f);
 	m_pRenderTarget2D->DrawRectangle(m_pMainRectangle, m_pBrush.Get());
 
 	m_pRenderTarget2D->DrawLine(
@@ -536,17 +560,17 @@ void PlanetInteractionUI::RenderScreen() {
 
 void PlanetInteractionUI::RenderCorners() {
 	//Left corner
-	this->UpdateBrush(D2D1::ColorF::Teal, 1.0f);
+	this->UpdateBrush(m_pLightGray, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pBottomLeft.Get(), m_pBrush.Get());
 	m_pRenderTarget2D->FillGeometry(m_pBottomLeft.Get(), m_pCornerGradientBrush.Get());
+	this->UpdateBrush(m_pGray, 1.0f);
 	m_pRenderTarget2D->DrawGeometry(m_pBottomLeft.Get(), m_pBrush.Get(), 2.0f);
 
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
-	this->UpdateBrush(D2D1::ColorF::Orange, 1.0f);
+	this->UpdateBrush(m_pYellow, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pBottomLeftDetailsOne.Get(), m_pBrush.Get());
 	m_pRenderTarget2D->FillGeometry(m_pBottomLeftDetailsTwo.Get(), m_pBrush.Get());
-	this->UpdateBrush(D2D1::ColorF::Orange, 1.0f);
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+
+	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D->DrawGeometry(m_pBottomLeftDetailsOne.Get(), m_pBrush.Get(), 2.0f);
 	m_pRenderTarget2D->DrawGeometry(m_pBottomLeftDetailsTwo.Get(), m_pBrush.Get(), 2.0f);
 
@@ -593,15 +617,16 @@ void PlanetInteractionUI::RenderCorners() {
 	);
 
 	//Right corner
-	this->UpdateBrush(D2D1::ColorF::Teal, 1.0f);
+	this->UpdateBrush(m_pLightGray, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pBottomRight.Get(), m_pBrush.Get());
 	m_pRenderTarget2D->FillGeometry(m_pBottomRight.Get(), m_pCornerGradientBrush.Get());
+	this->UpdateBrush(m_pGray, 1.0f);
 	m_pRenderTarget2D->DrawGeometry(m_pBottomRight.Get(), m_pBrush.Get(), 2.0f);
 
-	this->UpdateBrush(D2D1::ColorF::Orange, 1.0f);
+	this->UpdateBrush(m_pYellow, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pBottomRightDetailsOne.Get(), m_pBrush.Get());
 	m_pRenderTarget2D->FillGeometry(m_pBottomRightDetailsTwo.Get(), m_pBrush.Get());
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D->DrawGeometry(m_pBottomRightDetailsOne.Get(), m_pBrush.Get(), 2.0f);
 	m_pRenderTarget2D->DrawGeometry(m_pBottomRightDetailsTwo.Get(), m_pBrush.Get(), 2.0f);
 
@@ -648,15 +673,16 @@ void PlanetInteractionUI::RenderCorners() {
 	);
 
 	//Top corners
-	this->UpdateBrush(D2D1::ColorF::Teal, 1.0f);
+	this->UpdateBrush(m_pLightGray, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pTop.Get(), m_pBrush.Get());
 	m_pRenderTarget2D->FillGeometry(m_pTop.Get(), m_pCornerGradientBrush.Get());
+	this->UpdateBrush(m_pGray, 1.0f);
 	m_pRenderTarget2D->DrawGeometry(m_pTop.Get(), m_pBrush.Get(), 2.0f);
 
-	this->UpdateBrush(D2D1::ColorF::Orange, 1.0f);
+	this->UpdateBrush(m_pYellow, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pTopDetailsLeft.Get(), m_pBrush.Get());
 	m_pRenderTarget2D->FillGeometry(m_pTopDetailsRight.Get(), m_pBrush.Get());
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D->DrawGeometry(m_pTopDetailsLeft.Get(), m_pBrush.Get(), 2.0f);
 	m_pRenderTarget2D->DrawGeometry(m_pTopDetailsRight.Get(), m_pBrush.Get(), 2.0f);
 
@@ -683,11 +709,11 @@ void PlanetInteractionUI::RenderCorners() {
 }
 
 void PlanetInteractionUI::RenderPlanetText() {
-	this->UpdateBrush(D2D1::ColorF::Aqua, 0.05f);
+	this->UpdateBrush(m_pCyan, 0.05f);
 	m_pRenderTarget2D->FillRectangle(m_pPlanetFlavourTextBox, m_pBrush.Get());
 
 	//Planet name
-	UpdateBrush(D2D1::ColorF::White, 1.0f);
+	UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pPlanetNameText.c_str(),
 		(UINT32)m_pPlanetNameText.length(),

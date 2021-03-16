@@ -7,6 +7,7 @@
 #include "Scene.h"
 #include "Resources/ResourceManager.h" 
 #include "EventSystem\IEventListener.h"
+#include "EventSystem/UIEvents.h"
 #include "ImGui\ImGuiManager.h"
 #include "LayerStack.h"
 #include "Techniques/MousePicking.h"
@@ -26,9 +27,11 @@ private:
 	ImGuiManager m_imguiManager;
 	LayerStack m_LayerStack;
 	bool m_Running;
+	bool m_MainMenuNotRunning;
 	long double m_time;
 	int m_fps;
 private:
+	void RunMainMenu();
 	void Update() noexcept;
 	void Render();
 	void OnEvent(IEvent& event) noexcept override;
