@@ -57,13 +57,13 @@ void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
 	// Create the view matrix
 	DirectX::XMStoreFloat4x4(&m_vMatrix, DirectX::XMMatrixLookAtLH(m_posVector, focusPos, m_upVector));
 
-	//if (m_HitByAsteroid == true)
-	//{	//Do the shake on the orbit, follow up with a focus shake:
-	//	DirectX::XMFLOAT3 newFocus;
-	//	DirectX::XMStoreFloat3(&newFocus, focusPos);
-	//	newFocus = Shake(newFocus);
-	//	DirectX::XMStoreFloat4x4(&m_vMatrix, DirectX::XMMatrixLookAtLH(m_posVector, DirectX::XMLoadFloat3(&newFocus), m_upVector));
-	//}
+	if (m_HitByAsteroid == true)
+	{	//Do the shake on the orbit, follow up with a focus shake:
+		DirectX::XMFLOAT3 newFocus;
+		DirectX::XMStoreFloat3(&newFocus, focusPos);
+		newFocus = Shake(newFocus);
+		DirectX::XMStoreFloat4x4(&m_vMatrix, DirectX::XMMatrixLookAtLH(m_posVector, DirectX::XMLoadFloat3(&newFocus), m_upVector));
+	}
 }
 
 void PlayerCamera::OrbitRotation(float yaw, float pitch) {
@@ -101,16 +101,12 @@ const DirectX::XMFLOAT3& PlayerCamera::Shake(DirectX::XMFLOAT3& focus)
 	using t_clock = std::chrono::high_resolution_clock;
 	std::default_random_engine gen(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
 	std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
-
-	OrbitRotation(static_cast<float>(dist(gen)) * 0.02f , static_cast<float>(dist(gen)) * 0.02f);
 	
 	m_ElapsedShakeTime += static_cast<float>(m_time.DeltaTime());
 	if (m_ElapsedShakeTime > m_ShakeDuration)
 	{
 		m_HitByAsteroid = false;
 		m_ElapsedShakeTime = 0.0f;
-		m_yaw = m_YawPriorToHit;
-		m_pitch = m_PitchPriorToHit;
 	}
 	focus.x = focus.x + dist(gen) * m_ShakeMagnitude;
 	focus.y = focus.y + dist(gen) * m_ShakeMagnitude;

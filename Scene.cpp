@@ -67,7 +67,8 @@ const std::vector<std::wstring> Scene::RandomizePlanetNames(std::default_random_
 }
 
 Scene::Scene() noexcept
-	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }, m_RenderData{ }, m_sun{ nullptr }, m_damageTimer{ 0 }, m_persistentObjEnd{ 0u }
+	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }, m_RenderData{ }, m_sun{ nullptr }, m_damageTimer{ 0 }, m_persistentObjEnd{ 0u }, m_IsInvincible{ false },
+	   m_ElapsedTime{ 0.0f }
 {
 
 }
@@ -382,6 +383,16 @@ void Scene::Update() noexcept {
 	DirectX::XMFLOAT4X4 vMatrix = m_perspectiveCamera.getVMatrix();
 	DirectX::XMFLOAT4X4 pMatrix = m_perspectiveCamera.getPMatrix();
 
+	//Is Player invincible from asteroids?
+	if (m_IsInvincible)
+	{
+		m_ElapsedTime += static_cast<float>(m_time.DeltaTime());
+		if (m_ElapsedTime > m_InvincibilityDuration)
+		{
+			m_IsInvincible = false;
+			m_ElapsedTime = 0.0f;
+		}
+	}
 
 	CheckForCollisions();
 	GameObject* del = nullptr;
@@ -476,17 +487,21 @@ void Scene::CheckForCollisions() noexcept
 	}
 
 	//Asteroids
-	for (unsigned int i = m_persistentObjEnd + 1; i < m_gameObjects.size(); i++)
+	if (m_IsInvincible == false)
 	{
-		Asteroid* pAsteroid = static_cast<Asteroid*>(m_gameObjects[i]);
-		if (length(m_player.getShip()->getCenter() - pAsteroid->GetCenter()) <= (m_player.getShip()->GetBoundingSphere().Radius) + pAsteroid->GetBoundingSphere().Radius - 150)
+		for (size_t i = m_persistentObjEnd + 1; i < m_gameObjects.size(); i++)
 		{
-			//There is a hit:
-			m_player.UpdateHealth(-20);
-			m_player.getShip()->AddForce(pAsteroid->GetVelocity() * 10000);
-			pAsteroid->MarkAsDestroyed();
-			CameraShakeEvent csEvent(0.3f, 1.5f);
-			EventBuss::Get().Delegate(csEvent);
+			Asteroid* pAsteroid = static_cast<Asteroid*>(m_gameObjects[i]);
+			if (length(m_player.getShip()->getCenter() - pAsteroid->GetCenter()) <= (m_player.getShip()->GetBoundingSphere().Radius) + pAsteroid->GetBoundingSphere().Radius - 150)
+			{
+				//There is a hit:
+				m_IsInvincible = true;
+				m_player.UpdateHealth(-20);
+				m_player.getShip()->AddForce(pAsteroid->GetVelocity() * 8000);
+				pAsteroid->MarkAsDestroyed();
+				CameraShakeEvent csEvent(0.3f, 2.5f);
+				EventBuss::Get().Delegate(csEvent);
+			}
 		}
 	}
 }
