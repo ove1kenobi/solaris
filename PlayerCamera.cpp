@@ -57,13 +57,13 @@ void PlayerCamera::update(DirectX::XMVECTOR shipCoords) {
 	// Create the view matrix
 	DirectX::XMStoreFloat4x4(&m_vMatrix, DirectX::XMMatrixLookAtLH(m_posVector, focusPos, m_upVector));
 
-	if (m_HitByAsteroid == true)
-	{	//Do the shake on the orbit, follow up with a focus shake:
-		DirectX::XMFLOAT3 newFocus;
-		DirectX::XMStoreFloat3(&newFocus, focusPos);
-		newFocus = Shake(newFocus);
-		DirectX::XMStoreFloat4x4(&m_vMatrix, DirectX::XMMatrixLookAtLH(m_posVector, DirectX::XMLoadFloat3(&newFocus), m_upVector));
-	}
+	//if (m_HitByAsteroid == true)
+	//{	//Do the shake on the orbit, follow up with a focus shake:
+	//	DirectX::XMFLOAT3 newFocus;
+	//	DirectX::XMStoreFloat3(&newFocus, focusPos);
+	//	newFocus = Shake(newFocus);
+	//	DirectX::XMStoreFloat4x4(&m_vMatrix, DirectX::XMMatrixLookAtLH(m_posVector, DirectX::XMLoadFloat3(&newFocus), m_upVector));
+	//}
 }
 
 void PlayerCamera::OrbitRotation(float yaw, float pitch) {

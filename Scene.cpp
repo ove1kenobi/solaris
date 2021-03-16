@@ -315,8 +315,12 @@ void Scene::RemoveGameObject(GameObject* obj)
 	while (++i < m_gameObjects.end() && *i != obj);
 	if (i != m_gameObjects.end())
 	{
-		delete* i;
-		m_gameObjects.erase(i);
+		if (*i != nullptr)
+		{
+			delete* i;
+			*i = nullptr;
+			m_gameObjects.erase(i);
+		}
 	}
 }
 
@@ -424,7 +428,7 @@ void Scene::Update() noexcept {
 		DirectX::XMFLOAT3 sunCenter = m_sun->GetCenter();
 		float sunDist = distance(sunCenter, playerCenter);
 		if ((sunDist < 5000.0f || sunDist > 13000.0f) && m_damageTimer > 1.0f) {
-			m_player.UpdateHealth(-5);
+			//m_player.UpdateHealth(-5);
 			//Send event to UI so that we can tell the player that we are too far away / too close to the sun.
 			m_damageTimer = 0.0f;
 		}
@@ -436,7 +440,7 @@ void Scene::Update() noexcept {
 		for (auto r : m_radioactivePlanets) {
 			float planetDist = distance(r->GetCenter(), playerCenter);
 			if (planetDist < 1000.0f && m_damageTimer > 1.0f) {
-				m_player.UpdateHealth(-5);
+				//m_player.UpdateHealth(-5);
 				//Send event to UI so that we can tell the player that we are too close to the sun.
 				m_damageTimer = 0.0f;
 			}
@@ -476,14 +480,17 @@ void Scene::CheckForCollisions() noexcept
 	//Asteroids
 	for (auto asteroid : m_Asteroids)
 	{
-		if (length(m_player.getShip()->getCenter() - asteroid->GetCenter()) <= (m_player.getShip()->GetBoundingSphere().Radius / 10) + asteroid->GetBoundingSphere().Radius)
+		if (asteroid != nullptr)
 		{
-			//There is a hit:
-			m_player.UpdateHealth(-50);
-			m_player.getShip()->AddForce(asteroid->GetVelocity() * 100000);
-			asteroid->MarkAsDestroyed();
-			CameraShakeEvent csEvent(0.3f, 1.5f);
-			EventBuss::Get().Delegate(csEvent);
+			if (length(m_player.getShip()->getCenter() - asteroid->GetCenter()) <= (m_player.getShip()->GetBoundingSphere().Radius) + asteroid->GetBoundingSphere().Radius - 160)
+			{
+				//There is a hit:
+				m_player.UpdateHealth(-20);
+				m_player.getShip()->AddForce(asteroid->GetVelocity() * 100000);
+				asteroid->MarkAsDestroyed();
+				CameraShakeEvent csEvent(0.3f, 1.5f);
+				EventBuss::Get().Delegate(csEvent);
+			}
 		}
 	}
 }

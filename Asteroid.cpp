@@ -41,7 +41,7 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 	// Stand-in for asteroids during testing - comment 'Preload models' in Engine::Initialize()
 	m_model = ModelFactory::Get().GetModel("models/cubemetal.obj");
 	m_scale = distScale(gen) * 30.0f;
-	m_boundingSphere.Radius *= m_scale * 10;
+	m_boundingSphere.Radius *= m_scale * 9;
 	m_mass = m_model->GetBoundingSphere()->Radius * 50000.0f * m_scale;
 	ModelFactory::Get().CreateMatrixBuffer(m_AmatrixBuffer);
 	return true;
