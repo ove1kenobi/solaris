@@ -97,18 +97,20 @@ bool MenuUI::UpdateTitle() {
 }
 
 bool MenuUI::UpdateButtons() {
+	//Height 50
 	m_pStartTextBox = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) - 120.0f,
-		(m_pWindowHeight / 2.0f) - 50.0f,
+		(m_pWindowHeight / 2.0f) + 175.0f,
 		(m_pWindowWidth / 2.0f) + 120.0f,
-		(m_pWindowHeight / 2.0f)
+		(m_pWindowHeight / 2.0f) + 225.0f
 	);
 
+	//Height 50
 	m_pExitTextBox = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) - 180.0f,
-		(m_pWindowHeight / 2.0f) + 30.0f,
+		(m_pWindowHeight / 2.0f) + 275.0f,
 		(m_pWindowWidth / 2.0f) + 180.0f,
-		(m_pWindowHeight / 2.0f) + 80.0f
+		(m_pWindowHeight / 2.0f) + 325.0f
 	);
 	return true;
 }
@@ -206,6 +208,8 @@ void MenuUI::Render() {
 	RenderStart();
 	RenderExit();
 
+	//RenderHelpGrid(50);
+
 	this->EndFrame();
 }
 
@@ -263,6 +267,7 @@ void MenuUI::OnEvent(IEvent& event) noexcept {
 }
 
 void MenuUI::CleanUp() {
+	m_pRenderBitmaps = false;
 	if (m_pBackgroundBitmap) {
 		m_pBackgroundBitmap->Release();
 	}
