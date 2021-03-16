@@ -76,9 +76,10 @@ bool HeadsUpDisplayUI::Initialize() {
 	if (!CreateWarningModule()) {
 		return false;
 	}
+	/*
 	if (!CreateDamageModules()) {
 		return false;
-	}
+	}*/
 	return true;
 }
 
@@ -407,9 +408,10 @@ bool HeadsUpDisplayUI::UpdateModules() {
 	if (!UpdateWarningModule()) {
 		return false;
 	}
+	/*
 	if (!UpdateDamageModules()) {
 		return false;
-	}
+	}*/
 	if (!UpdateTools()) {
 		return false;
 	}
@@ -518,7 +520,7 @@ void HeadsUpDisplayUI::RenderDamageModule() {
 void HeadsUpDisplayUI::Render() {
 	BeginFrame();
 
-	RenderDamageModule();
+	//RenderDamageModule();
 
 	if (m_pRenderDistance) {
 		RenderPlanetDistanceModule();
