@@ -66,7 +66,7 @@ const std::vector<std::wstring> Scene::RandomizePlanetNames(std::default_random_
 }
 
 Scene::Scene() noexcept
-	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }, m_RenderData{ }, m_sun{ nullptr }, m_damageTimer{ 0 }, m_persistentObjEnd{ 0u }, m_nextAstroSpawnTime{ 0.0 }
+	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }, m_RenderData{ }, m_sun{ nullptr }, m_damageTimer{ 1.1f }, m_persistentObjEnd{ 0u }, m_nextAstroSpawnTime{ 0.0 }
 {
 
 }
@@ -409,11 +409,6 @@ void Scene::Update() noexcept {
 	bool radioactiveUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::radProtect);
 	bool coldUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::cold);
 	bool hotUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::hot);
-	//Only waste time on updating the damage timer if we do not have all of these upgrades.
-	//This is correct.
-	if (!coldUpgrade || !hotUpgrade || !radioactiveUpgrade) {
-		m_damageTimer += m_time.DeltaTime();
-	}
 
 	//Update player health
 	//Sun
@@ -421,22 +416,34 @@ void Scene::Update() noexcept {
 		DirectX::XMFLOAT3 playerCenter = m_player.getShip()->getCenter();
 		DirectX::XMFLOAT3 sunCenter = m_sun->GetCenter();
 		float sunDist = distance(sunCenter, playerCenter);
-		if ((sunDist < 6000.0f || sunDist > 15000.0f) && m_damageTimer > 1.0f) {
-			m_player.UpdateHealth(-5);
-			//Send event to UI so that we can tell the player that we are too far away / too close to the sun.
-			m_damageTimer = 0.0f;
+		if (!hotUpgrade && sunDist < 6000.0f) {
+			m_damageTimer += m_time.DeltaTime();
+			if (m_damageTimer > 1.0f) {
+				m_player.UpdateHealth(-5);
+				m_damageTimer = 0.0f;
+			}
+		}
+		if (!coldUpgrade && sunDist > 15000.0f) {
+			m_damageTimer += m_time.DeltaTime();
+			if (m_damageTimer > 1.0f) {
+				m_player.UpdateHealth(-5);
+				m_damageTimer = 0.0f;
+			}
 		}
 	}
+	
 
 	//Radioactive planets
 	if (!radioactiveUpgrade) {
 		DirectX::XMFLOAT3 playerCenter = m_player.getShip()->getCenter();
 		for (auto r : m_radioactivePlanets) {
 			float planetDist = distance(r->GetCenter(), playerCenter);
-			if (planetDist < 1000.0f && m_damageTimer > 1.0f) {
-				m_player.UpdateHealth(-5);
-				//Send event to UI so that we can tell the player that we are too close to the sun.
-				m_damageTimer = 0.0f;
+			if (planetDist < 1000.0f) {
+				m_damageTimer += m_time.DeltaTime();
+				if (m_damageTimer > 1.0f) {
+					m_player.UpdateHealth(-5);
+					m_damageTimer = 0.0f;
+				}
 			}
 		}
 	}
