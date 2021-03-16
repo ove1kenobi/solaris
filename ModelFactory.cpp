@@ -289,9 +289,9 @@ void ModelFactory::createSphere(float r, UINT setDivisions, std::vector<float> &
 	//Calculate the number of divisions that are to be made of each edge. 100 easily changable.
 	unsigned int divisions = 0;
 	if (setDivisions == 0) {
-		divisions = static_cast<int>(std::ceil(r));
-		if (divisions < 10) {
-			divisions = 10;
+		divisions = static_cast<int>(std::ceil(r * 2));
+		if (divisions < 20) {
+			divisions = 20;
 		}
 	}
 	else {
@@ -793,7 +793,7 @@ Model* ModelFactory::GenerateSun(float x, float y, float z, float r) {
 Model* ModelFactory::GenerateOrbit(float major_semi_axis, float minor_semi_axis)
 {
 	std::vector<DirectX::XMFLOAT3> vertices;
-	vertices.resize(static_cast<size_t>(major_semi_axis / 100));
+	vertices.resize(static_cast<size_t>(major_semi_axis / 60));
 	std::vector<UINT> indices;
 	float segment = 2 * 3.14159265f / (vertices.size() - 1);
 	for (size_t i = 0; i < vertices.size(); ++i)

@@ -2,8 +2,7 @@
 #include "ForwardRenderer.h"
 
 ForwardRenderer::ForwardRenderer() noexcept
-	: m_Background{ 0.0f, 0.0f, 0.0f, 1.0f },
-	  m_pRenderData{ nullptr },
+	: m_pRenderData{ nullptr },
 	  m_pDevice{ nullptr },
 	  m_pDeviceContext{ nullptr },
 	  m_pBackBuffer{ nullptr },
@@ -32,7 +31,8 @@ void ForwardRenderer::BeginFrame()
 	m_ShadowMapping.CleanUp(m_pDeviceContext);
 
 	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
-	m_pDeviceContext->ClearRenderTargetView(m_pBackBuffer.Get(), m_Background);
+	ClearBackBufferEvent cbbEvent;
+	EventBuss::Get().Delegate(cbbEvent);
 
 	//Start by unbinding pipeline:
 	UnbindPipelineEvent ubEvent;

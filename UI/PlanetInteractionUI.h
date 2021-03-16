@@ -13,6 +13,15 @@ private:
 	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pCornerGradientBrush;
 	Microsoft::WRL::ComPtr<ID2D1GradientStopCollection> m_pCornerGradientStops;
 
+	//Colors
+	UINT32 m_pGray;
+	UINT32 m_pLightGray;
+	UINT32 m_pYellow;
+	UINT32 m_pWhite;
+	UINT32 m_pLightBlue;
+	UINT32 m_pDarkblue;
+	UINT32 m_pCyan;
+
 	//Corners and details
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pBottomLeft;
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pBottomLeftDetailsOne;

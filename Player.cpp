@@ -40,8 +40,12 @@ Player::Player()
 {
 	m_fuelCapacity = 500;
 	m_oxygenCapacity = 500;
+	m_healthCapacity = 100;
 	m_storageCapacity = 1000;
-	for (unsigned int i = 0; i < numberOfResources; i++) {
+	m_resources[0] = m_fuelCapacity;
+	m_resources[1] = m_oxygenCapacity;
+	m_resources[2] = m_healthCapacity;
+	for (unsigned int i = 3; i < numberOfResources; i++) {
 		m_resources[i] = 0;
 	}
 	m_storageUsage = 0;
@@ -60,10 +64,7 @@ Player::Player()
 
 	m_topSpeed = 0.0f;
 	m_desiredSpeed = 0.0f;
-	m_thrusterForce = 10000000.0f;
-
-	m_maxHealth = 100;
-	m_currentHealth = 100;
+	m_thrusterForce = 500000.0f;
 }
 
 Player::~Player()
@@ -89,15 +90,17 @@ bool Player::Initialize(PlayerCamera* camera)
 bool Player::update(const std::vector<Planet*>& planets)
 {
 #if defined(DEBUG) | defined(_DEBUG)
-	ImGui::Begin("Inventiry");
+	ImGui::Begin("Inventory");
 	ImGui::Text("Fuel: %d", m_resources[0]);
 	ImGui::Text("Oxygen: %d", m_resources[1]);
-	ImGui::Text("Titanium: %d", m_resources[2]);
-	ImGui::Text("Scrap Metal: %d", m_resources[3]);
-	ImGui::Text("Nanotech: %d", m_resources[4]);
-	ImGui::Text("Plasma: %d", m_resources[5]);
-	ImGui::Text("Radium: %d", m_resources[6]);
-	ImGui::Text("Khionerite: %d", m_resources[7]);
+	ImGui::Text("Health: %d", m_resources[2]);
+	ImGui::Text("Titanium: %d", m_resources[3]);
+	ImGui::Text("Scrap Metal: %d", m_resources[4]);
+	ImGui::Text("Nanotech: %d", m_resources[5]);
+	ImGui::Text("Plasma: %d", m_resources[6]);
+	ImGui::Text("Radium: %d", m_resources[7]);
+	ImGui::Text("Khionerite: %d", m_resources[8]);
+	ImGui::Text("Science: %d", m_resources[9]);
 	ImGui::End();
 #endif
 
@@ -180,7 +183,7 @@ bool Player::update(const std::vector<Planet*>& planets)
 	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
 	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
 
-	if (length(m_ship->GetVelocity()) < 500.0f) return false;
+	if (length(m_ship->GetVelocity()) < 200.0f) return false;
 	return true;
 }
 
@@ -207,6 +210,14 @@ void Player::AddResource(int amount, Resource resource)
 			m_resources[index] += amount;
 			if (m_resources[index] > m_oxygenCapacity) {
 				m_resources[index] = m_oxygenCapacity;
+			}
+			break;
+		}
+		case Resource::Health:
+		{
+			m_resources[index] += amount;
+			if (m_resources[index] > m_healthCapacity) {
+				m_resources[index] = m_healthCapacity;
 			}
 			break;
 		}
@@ -329,27 +340,32 @@ void Player::OnEvent(IEvent& event) noexcept
 
 void Player::DelegatePlayerInfo() noexcept
 {
+	m_PlayerInfo.fuelPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Fuel)]) / static_cast<float>(m_fuelCapacity);
+	m_PlayerInfo.oxygenPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Oxygen)]) / static_cast<float>(m_oxygenCapacity);
+	m_PlayerInfo.HealthPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Health)]) / static_cast<float>(m_healthCapacity);
+	m_PlayerInfo.storageUsage = m_storageUsage;
+	m_PlayerInfo.storageCapacity = m_storageCapacity;
 	DelegatePlayerInfoEvent piEvent(&m_PlayerInfo);
 	EventBuss::Get().Delegate(piEvent);
 }
 
 int Player::GetHealth() noexcept {
-	return m_currentHealth;
+	return m_resources[static_cast<int>(Resource::Health)];
 }
 
 void Player::UpdateHealth(int value) {
-	m_currentHealth += value;
+	m_resources[static_cast<int>(Resource::Health)] += value;
 }
 
 int Player::GetMaxHealth() noexcept {
-	return m_maxHealth;
+	return m_healthCapacity;
 }
 
 void Player::UpdateMaxHealth(int value) {
-	m_maxHealth += value;
+	m_healthCapacity += value;
 
-	if (m_currentHealth > m_maxHealth) {
-		m_currentHealth = m_maxHealth;
+	if (m_resources[static_cast<int>(Resource::Health)] > m_healthCapacity) {
+		m_resources[static_cast<int>(Resource::Health)] = m_healthCapacity;
 	}
 }
 
@@ -372,5 +388,5 @@ void Player::DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcep
 
 void Player::Kill() noexcept
 {
-	m_currentHealth = 0;
+	m_resources[static_cast<int>(Resource::Health)] = 0;
 }

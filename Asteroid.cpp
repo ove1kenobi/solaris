@@ -1,6 +1,14 @@
 #include "pch.h"
 #include "Asteroid.h"
 
+const std::string folder = "models/";
+
+const std::vector<std::string> asteroids = {
+	folder + "asteroid-1.obj",
+	folder + "asteroid-2.obj",
+	folder + "asteroid-3.obj",
+};
+
 Asteroid::Asteroid() noexcept
 	: m_TestForCulling{ true }, m_deltaPitch{ 0.0f }, m_deltaRoll{ 0.0f }, m_deltaYaw{ 0.0f }, m_ship{ nullptr }, m_IsDestroyed{ false }
 {
@@ -16,17 +24,10 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 	//Generator and distributions used for generating planet values.
 	using t_clock = std::chrono::high_resolution_clock;
 	std::default_random_engine gen(static_cast<UINT>(t_clock::now().time_since_epoch().count()));
-	std::uniform_int_distribution<int> distAst(0, 3);
+	std::uniform_int_distribution<size_t> distAst(0, asteroids.size() - 1);
 	std::uniform_real_distribution<float> distScale(0.1f, 1.0f);
 	std::uniform_real_distribution<float> distRot(static_cast<float>(-M_PI_2), static_cast<float>(M_PI_2));
 
-	std::vector<std::string> asteroids;
-	asteroids.insert(asteroids.end(), {
-		"models/Asteroid_1_LOW_MODEL_.obj",
-		"models/Asteroid_2_LOW_MODEL_.obj",
-		"models/Asteroid_3_LOW_MODEL_.obj",
-		"models/Asteroid_4_LOW_MODEL_.obj"
-		});
 
 	m_ship = ship;
 	m_center = pos;
@@ -37,27 +38,27 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 	m_deltaRoll = distScale(gen);
 	m_yaw = distRot(gen);
 	m_deltaYaw = distScale(gen);
-	//m_model = ModelFactory::Get().GetModel(asteroids[distAst(gen)]);
+	m_model = ModelFactory::Get().GetModel(asteroids[distAst(gen)]);
 	// Stand-in for asteroids during testing - comment 'Preload models' in Engine::Initialize()
 	m_model = ModelFactory::Get().GetModel("models/cubemetal.obj");
-	m_scale = distScale(gen) * 30.0f;
-	if ((m_scale / 30) <= 0.2)
+	m_scale = distScale(gen) * 10.0f;
+	if ((m_scale / 10) <= 0.2)
 	{
 		m_boundingSphere.Radius *= m_scale * 24;
 	}
-	else if ((m_scale / 30) <= 0.4)
+	else if ((m_scale / 10) <= 0.4)
 	{
 		m_boundingSphere.Radius *= m_scale * 18;
 	}
-	else if ((m_scale / 30) <= 0.6)
+	else if ((m_scale / 10) <= 0.6)
 	{
 		m_boundingSphere.Radius *= m_scale * 15;
 	}
-	else if ((m_scale / 30) <= 0.7)
+	else if ((m_scale / 10) <= 0.7)
 	{
 		m_boundingSphere.Radius *= m_scale * 12;
 	}
-	else if ((m_scale / 30) <= 0.85)
+	else if ((m_scale / 10) <= 0.85)
 	{
 		m_boundingSphere.Radius *= m_scale * 9;
 	}

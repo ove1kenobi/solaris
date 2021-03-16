@@ -31,6 +31,24 @@ public:
 	}
 };
 
+class ToggleStartGame : public IEvent
+{
+private:
+
+public:
+	ToggleStartGame() noexcept = default;
+	virtual ~ToggleStartGame() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::ToggleStartGame;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "ToggleStartGame";
+	}
+};
+
 
 /*
 What the UI will need to listen after or send out requests for:

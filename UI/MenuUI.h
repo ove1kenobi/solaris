@@ -1,11 +1,16 @@
 #pragma once
+#include "..\EventSystem\WindowEvents.h"
 #include "ModuleUI.h"
 
-class MenuUI : public ModuleUI {
+class MenuUI : public ModuleUI, EventPublisher {
 private:
 	//General
 	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pTextFont;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pButtonFormat;
+
+	//Colors
+	UINT32 m_pWhite;
+	UINT32 m_pHighlight;
 
 	//Title
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTitleFormat;

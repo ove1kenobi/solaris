@@ -46,3 +46,19 @@ public:
 		return m_ClientWindowHeight;
 	}
 };
+
+class ClearBackBufferEvent : public IEvent
+{
+private:
+public:
+	ClearBackBufferEvent() noexcept = default;
+	virtual ~ClearBackBufferEvent() noexcept = default;
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::ClearBackBufferEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "ClearBackBufferEvent";
+	}
+};

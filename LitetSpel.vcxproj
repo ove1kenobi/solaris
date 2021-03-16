@@ -515,6 +515,7 @@
     <Font Include="UI\Fonts\AwareBold-qZo3x.ttf" />
     <Font Include="UI\Fonts\Neoterique-Y08L.ttf" />
     <Font Include="UI\Fonts\NeoteriqueItalic-rAVK.ttf" />
+    <Font Include="UI\Fonts\Netron-p7gq1.otf" />
     <Font Include="UI\Fonts\Tenika400Regular-Rpyql.ttf" />
   </ItemGroup>
   <ItemGroup>
@@ -525,6 +526,7 @@
     <Image Include="UI\Icons\Oxygen.png" />
     <Image Include="UI\Icons\plasma.png" />
     <Image Include="UI\Icons\radium.png" />
+    <Image Include="UI\Icons\Science.png" />
     <Image Include="UI\Icons\Scrap.png" />
     <Image Include="UI\Icons\Titanium.png" />
     <Image Include="UI\Icons\weight.png" />

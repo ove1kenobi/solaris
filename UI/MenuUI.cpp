@@ -8,6 +8,9 @@ MenuUI::MenuUI() noexcept {
 	m_pTitleText = L"SOLARIS";
 	m_pStartText = L"START";
 	m_pExitText = L"EXIT GAME";
+
+	m_pWhite = 0xFFFDF9;
+	m_pHighlight = 0xFFB724;
 }
 
 MenuUI::~MenuUI() {
@@ -109,7 +112,7 @@ bool MenuUI::UpdateModules() {
 }
 
 void MenuUI::RenderTitle() {
-	this->UpdateBrush(D2D1::ColorF::HotPink, 1.0f);
+	this->UpdateBrush(m_pHighlight, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pTitleText.c_str(),
 		(UINT32)m_pTitleText.length(),
@@ -118,7 +121,7 @@ void MenuUI::RenderTitle() {
 		m_pBrush.Get()
 	);
 
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pTitleText.c_str(),
 		(UINT32)m_pTitleText.length(),
@@ -132,10 +135,10 @@ void MenuUI::RenderStart() {
 	//if hover
 	if (m_pMouseX > m_pStartTextBox.left && m_pMouseX < m_pStartTextBox.right &&
 		m_pMouseY > m_pStartTextBox.top && m_pMouseY < m_pStartTextBox.bottom) {
-		this->UpdateBrush(D2D1::ColorF::HotPink, 1.0f);
+		this->UpdateBrush(m_pHighlight, 1.0f);
 	}
 	else {
-		this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+		this->UpdateBrush(m_pWhite, 1.0f);
 	}
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pStartText.c_str(),
@@ -150,10 +153,10 @@ void MenuUI::RenderExit() {
 	//if hover
 	if (m_pMouseX > m_pExitTextBox.left && m_pMouseX < m_pExitTextBox.right &&
 		m_pMouseY > m_pExitTextBox.top && m_pMouseY < m_pExitTextBox.bottom) {
-		this->UpdateBrush(D2D1::ColorF::HotPink, 1.0f);
+		this->UpdateBrush(m_pHighlight, 1.0f);
 	}
 	else {
-		this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+		this->UpdateBrush(m_pWhite, 1.0f);
 	}
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pExitText.c_str(),
@@ -166,11 +169,6 @@ void MenuUI::RenderExit() {
 
 void MenuUI::Render() {
 	this->BeginFrame();
-	//Helping code only, will be removed later
-	this->UpdateBrush(D2D1::ColorF::MediumPurple, 0.5f);
-	//m_pRenderTarget2D->FillRectangle(m_pTitleTextBox, m_pBrush.Get());
-	//m_pRenderTarget2D->FillRectangle(m_pStartTextBox, m_pBrush.Get());
-	//m_pRenderTarget2D->FillRectangle(m_pExitTextBox, m_pBrush.Get());
 
 	RenderTitle();
 	RenderStart();
@@ -205,19 +203,20 @@ void MenuUI::OnEvent(IEvent& event) noexcept {
 		m_pMouseY = static_cast<MouseButtonEvent*>(&event)->GetYCoord();
 		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
-		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && !m_pOnScreen) {
-			//something something, check where you clicked before doing stuff
+		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && m_pOnScreen) {
+			//Start game
 			if (m_pMouseX > m_pStartTextBox.left && m_pMouseX < m_pStartTextBox.right &&
 				m_pMouseY > m_pStartTextBox.top && m_pMouseY < m_pStartTextBox.bottom) {
-				m_pStartText = L"Hello!";
-				//Create start game event here
+				m_pOnScreen = false;
+				ToggleStartGame sg;
+				EventBuss::Get().Delegate(sg);
 			}
-			//oh and that stuff renders
+			//Exit game
 			if (m_pMouseX > m_pExitTextBox.left && m_pMouseX < m_pExitTextBox.right &&
 				m_pMouseY > m_pExitTextBox.top && m_pMouseY < m_pExitTextBox.bottom) {
-				m_pExitText = L"I was clicked on!";
-				//Are we able to create and render a screen beforehand asking if you're sure?
-				//Create close window event here
+				m_pOnScreen = false;
+				WindowCloseEvent ce;
+				EventBuss::Get().Delegate(ce);
 			}
 		}
 		break;
