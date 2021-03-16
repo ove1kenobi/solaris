@@ -5,6 +5,7 @@
 HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	EventBuss::Get().AddListener(this, EventType::DelegatePlayerInfoEvent);
 	EventBuss::Get().AddListener(this, EventType::DelegatePlanetDistanceEvent);
+	EventBuss::Get().AddListener(this, EventType::ToggleDamageHUD);
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
 
 	m_pHealthBitmap = NULL;
@@ -31,6 +32,11 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pWarningTextBox = D2D1::RectF();
 	m_pWarningText = L"!";
 
+	m_pRadiationIcon = D2D1::RectF();
+	m_pRadiationScreen = D2D1::RectF();
+	m_pRadiationTextBox = D2D1::RectF();
+	m_pRadiationText = L"RADIATION AREA";
+
 	m_pWhite = 0xFFFDF9;
 	m_pYellow = 0xFFB724;
 	m_pBlue = 0x0BA4CC;
@@ -47,6 +53,7 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 HeadsUpDisplayUI::~HeadsUpDisplayUI() {
 	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
 	EventBuss::Get().RemoveListener(this, EventType::DelegatePlanetDistanceEvent);
+	EventBuss::Get().RemoveListener(this, EventType::ToggleDamageHUD);
 	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 }
 
@@ -150,9 +157,44 @@ bool HeadsUpDisplayUI::CreateDamageModules() {
 	LoadBitmapFromFile(GetIconFilePath(L"FrostEffect.png").c_str(), &m_pFrostBitmap);
 
 	//Warm damage
+	//According to microsoft own example I'm suppose to do it like this
+	D2D1_GRADIENT_STOP gradientStops[2];
+	gradientStops[0].color = D2D1::ColorF(m_pYellow, 0.0f);
+	gradientStops[0].position = 0.0f;
+	gradientStops[1].color = D2D1::ColorF(m_pRed, 1.0f);
+	gradientStops[1].position = 1.0f;
 
+	ErrorCheck(m_pRenderTarget2D->CreateGradientStopCollection(
+		gradientStops,
+		2,
+		D2D1_GAMMA_2_2,
+		D2D1_EXTEND_MODE_CLAMP,
+		&m_pHeatGradientStops
+	), "GradientStops");
+
+	ErrorCheck(m_pRenderTarget2D->CreateRadialGradientBrush(
+		D2D1::RadialGradientBrushProperties(
+			D2D1::Point2F(m_pWindowWidth / 2.0f, m_pWindowHeight /2.0f),
+			D2D1::Point2F(0.0f, 0.0f),
+			m_pWindowWidth,
+			m_pWindowHeight),
+		m_pHeatGradientStops.Get(),
+		&m_pHeatRadialGradientBrush),
+		"GradientBrush");
+	
 	//Radiation damage
-	//LoadBitmapFromFile(GetIconFilePath(L"Health.png").c_str(), &m_pRadiationBitmap);
+	LoadBitmapFromFile(GetIconFilePath(L"Radioactive.png").c_str(), &m_pRadiationBitmap);
+
+	ErrorCheck(m_pTextFactory->CreateTextFormat(
+		L"Tenika",
+		NULL,
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		40.0f,
+		L"en-us",
+		&m_pRadiationFormat
+	), "TextFormat");
 	return true;
 }
 
@@ -316,6 +358,31 @@ bool HeadsUpDisplayUI::UpdateDamageModules() {
 		m_pWindowWidth,
 		m_pWindowHeight
 	);
+
+	m_pRadiationScreen = D2D1::RectF(
+		(m_pWindowWidth/2.0f) - 180.0f,
+		100.0f,
+		(m_pWindowWidth / 2.0f) + 180.0f,
+		200.0f
+	);
+
+	m_pRadiationIcon = D2D1::RectF(
+		m_pRadiationScreen.left + 10.0f,
+		m_pRadiationScreen.top + 10.0f,
+		m_pRadiationScreen.left + 90.0f,
+		m_pRadiationScreen.bottom - 10.0f
+	);
+
+	m_pRadiationTextBox = D2D1::RectF(
+		m_pRadiationIcon.right,
+		m_pRadiationScreen.top + 5.0f,
+		m_pRadiationScreen.right,
+		m_pRadiationScreen.bottom
+	);
+
+	m_pHeatRadialGradientBrush.Get()->SetCenter(D2D1::Point2F((m_pWindowWidth / 2.0f), (m_pWindowHeight /2.0f)));
+	m_pHeatRadialGradientBrush.Get()->SetRadiusX(m_pWindowWidth);
+	m_pHeatRadialGradientBrush.Get()->SetRadiusY(m_pWindowHeight);
 	return true;
 }
 
@@ -419,12 +486,28 @@ void HeadsUpDisplayUI::RenderDamageModule() {
 
 	//Warm damage
 	if (m_pRenderHeat) {
-
+		m_pRenderTarget2D->FillRectangle(m_pScreen, m_pHeatRadialGradientBrush.Get());
 	}
 
 	//Radiation damage
 	if (m_pRenderRadiation) {
+		UpdateBrush(m_pYellow, 1.0f);
+		m_pRenderTarget2D->FillRectangle(m_pRadiationScreen, m_pBrush.Get());
+		if (m_pRenderBitmaps) {
+			m_pRenderTarget2D->DrawBitmap(m_pRadiationBitmap, m_pRadiationIcon);
+		}
 
+		ErrorCheck(m_pRadiationFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
+
+		this->UpdateBrush(D2D1::ColorF::Black, 1.0f);
+		m_pRenderTarget2D.Get()->DrawTextW(
+			m_pRadiationText.c_str(),
+			(UINT32)m_pRadiationText.length(),
+			m_pRadiationFormat.Get(),
+			m_pRadiationTextBox,
+			m_pBrush.Get()
+		);
+		m_pRenderTarget2D->DrawRectangle(m_pRadiationScreen, m_pBrush.Get(), 10.0f);
 	}
 }
 
@@ -443,7 +526,6 @@ void HeadsUpDisplayUI::Render() {
    if (m_pCapacityWarning) {
 	   RenderWarningModule();
    }
-
    EndFrame();
 }
 
@@ -506,6 +588,12 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 			m_pRenderDistance = false;
 		}
 		break;
+	}case EventType::ToggleDamageHUD:
+	{
+		m_pRenderCold = static_cast<ToggleDamageHUD*>(&event)->GetCold();
+		m_pRenderHeat = static_cast<ToggleDamageHUD*>(&event)->GetHeat();
+		m_pRenderRadiation = static_cast<ToggleDamageHUD*>(&event)->GetRadiation();
+		break;
 	}
 	case EventType::WindowCloseEvent:
 	{
@@ -532,5 +620,8 @@ void HeadsUpDisplayUI::CleanUp() {
 	}
 	if (m_pFrostBitmap) {
 		m_pFrostBitmap->Release();
+	}
+	if (m_pRadiationBitmap) {
+		m_pRadiationBitmap->Release();
 	}
 }

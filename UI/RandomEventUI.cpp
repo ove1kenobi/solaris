@@ -222,13 +222,16 @@ void RandomEventUI::Render(int mouseX, int mouseY) {
 }
 
 //Event related functions
-void RandomEventUI::OnClick(int mouseX, int mouseY) {
+bool RandomEventUI::OnClick(int mouseX, int mouseY, GameEvent gameEvent) {
 	if (mouseX > m_pHoverBox.left && mouseX < m_pHoverBox.right &&
 		mouseY > m_pHoverBox.top && mouseY < m_pHoverBox.bottom) {
-		this->SetText(L"This event was clicked on! Time to edit player inventory.");
-		//Create event here to readjust the player inventory based on an random event, 
-		//(the information stored in vectors OR an ID that is tied to each event)
+		this->SetText(gameEvent.consequence);
+		GameEventSelectedEvent ev(gameEvent);
+		EventBuss::Get().Delegate(ev);
+		return true;
 	}
+
+	return false;
 }
 
 void RandomEventUI::OnEvent(IEvent& event) noexcept {
@@ -250,12 +253,28 @@ void RandomEventUI::OnEvent(IEvent& event) noexcept {
 	}
 }
 
+void RandomEventUI::ClearEvent() {
+	m_pText = L"";
+}
+
+void RandomEventUI::ClearIcons()
+{
+	for (auto const& bitmap : m_pIconBitmap) {
+		bitmap->Release();
+	}
+
+	m_pIconBitmap.clear();
+	m_pIconPosition.clear();
+	m_pIconTextbox.clear();
+	m_pIconAmount.clear();
+}
+
 //To add resources to the event
 void RandomEventUI::AddIcon(std::wstring resource, std::wstring amount) {
 	ID2D1Bitmap* holder = NULL;
 
 	float iconSize = 25.0f;
-	float amountSize = 25.0f;
+	float amountSize = 50.0f;
 	float padding = 10.0f;
 
 	float x = static_cast<float>(m_pIconPosition.size() % 2);
@@ -277,7 +296,7 @@ void RandomEventUI::AddIcon(std::wstring resource, std::wstring amount) {
 	m_pIconTextbox.push_back(D2D1::RectF(
 		m_pIconPosition.at(m_pIconPosition.size() - 1).right + 5.0f,
 		m_pIconPosition.at(m_pIconPosition.size() - 1).top,
-		m_pIconPosition.at(m_pIconPosition.size() - 1).right + iconSize + 5.0f,
+		m_pIconPosition.at(m_pIconPosition.size() - 1).right + amountSize + 5.0f,
 		m_pIconPosition.at(m_pIconPosition.size() - 1).bottom
 	));
 

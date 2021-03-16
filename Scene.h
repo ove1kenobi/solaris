@@ -7,6 +7,7 @@
 #include "EventSystem/EventPublisher.h"
 #include "Layer.h"
 #include "EventSystem/RenderEvents.h"
+#include "EventSystem/UIEvents.h"
 #include "Techniques/MousePicking.h"
 #include "Techniques/FrustumCulling.h"
 #include "ourMath.h"

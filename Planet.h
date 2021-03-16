@@ -21,6 +21,7 @@ public:
 	[[nodiscard]] std::wstring& GetName() noexcept;
 	[[nodiscard]] const bool& IsVisited() const noexcept;
 	void MarkAsVisited() noexcept;
+	UINT GetPlanetType() const noexcept;
 };
 
 /*

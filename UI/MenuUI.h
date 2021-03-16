@@ -26,13 +26,20 @@ private:
 	D2D1_RECT_F m_pExitTextBox;
 	std::wstring m_pExitText;
 
+	//Background
+	ID2D1Bitmap* m_pBackgroundBitmap;
+	D2D1_RECT_F m_pScreen;
+	bool m_pRenderBitmaps;
+
 	//Create functions
 	bool CreateTitle();
 	bool CreateButtons();
+	bool CreateScreen();
 
 	//Update functions
 	bool UpdateTitle();
 	bool UpdateButtons();
+	bool UpdateScreen();
 
 	bool UpdateModules();
 
@@ -40,6 +47,7 @@ private:
 	void RenderTitle();
 	void RenderStart();
 	void RenderExit();
+	void RenderScreen();
 protected:
 public:
 	MenuUI() noexcept;

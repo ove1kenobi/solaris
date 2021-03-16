@@ -1,8 +1,10 @@
 #pragma once
 #include "Button.h"
 #include "..\EventSystem\WindowEvents.h"
+#include "../GameEvent.h"
+#include "../EventSystem/UIEvents.h"
 
-class RandomEventUI : public Button {
+class RandomEventUI : public Button, public EventPublisher {
 private:
 	//Hovering details
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> m_pLeftHover;
@@ -34,11 +36,11 @@ public:
 	void AddIcon(std::wstring resource, std::wstring amount);
 
 	bool UpdateModules();
-
-	//Should take in coord arguments to figure out what to render
+	
 	void Render(int mouseX, int mouseY);
-	void OnClick(int mouseX, int mouseY);
-
+	bool OnClick(int mouseX, int mouseY, GameEvent gameEventID);
 	void OnEvent(IEvent& event) noexcept;
+	void ClearEvent();
+	void ClearIcons();
 };
 
