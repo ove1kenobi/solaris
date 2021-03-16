@@ -3,6 +3,7 @@
 
 MenuUI::MenuUI() noexcept {
 	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
+	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
 
 	m_pTitleTextBox = D2D1::RectF();
 	m_pTitleText = L"SOLARIS";
@@ -11,9 +12,12 @@ MenuUI::MenuUI() noexcept {
 
 	m_pWhite = 0xFFFDF9;
 	m_pHighlight = 0xFFB724;
+
+	m_pRenderBitmaps = true;
 }
 
 MenuUI::~MenuUI() {
+	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 	EventBuss::Get().RemoveListener(this, EventType::MouseButtonEvent);
 }
 
@@ -26,6 +30,9 @@ bool MenuUI::Initialize() {
 		return false;
 	}
 	if (!CreateButtons()) {
+		return false;
+	}
+	if (!CreateScreen()) {
 		return false;
 	}
 	return true;
@@ -65,6 +72,11 @@ bool MenuUI::CreateButtons() {
 	return true;
 }
 
+bool MenuUI::CreateScreen() {
+	LoadBitmapFromFile(GetIconFilePath(L"mainMenuBackground.jpg").c_str(), &m_pBackgroundBitmap);
+	return true;
+}
+
 //Update functions
 bool MenuUI::UpdateTitle() {
 	float shadowOffset = 8.0f;
@@ -101,11 +113,24 @@ bool MenuUI::UpdateButtons() {
 	return true;
 }
 
+bool MenuUI::UpdateScreen() {
+	m_pScreen = D2D1::RectF(
+		0.0f,
+		0.0f,
+		m_pWindowWidth,
+		m_pWindowHeight
+	);
+	return true;
+}
+
 bool MenuUI::UpdateModules() {
 	if (!UpdateTitle()) {
 		return false;
 	}
 	if (!UpdateButtons()) {
+		return false;
+	}
+	if (!UpdateScreen()) {
 		return false;
 	}
 	return true;
@@ -167,9 +192,16 @@ void MenuUI::RenderExit() {
 	);
 }
 
+void MenuUI::RenderScreen() {
+	if (m_pRenderBitmaps) {
+		m_pRenderTarget2D->DrawBitmap(m_pBackgroundBitmap, m_pScreen);
+	}
+}
+
 void MenuUI::Render() {
 	this->BeginFrame();
 
+	RenderScreen();
 	RenderTitle();
 	RenderStart();
 	RenderExit();
@@ -221,11 +253,17 @@ void MenuUI::OnEvent(IEvent& event) noexcept {
 		}
 		break;
 	}
+	case EventType::WindowCloseEvent:
+	{
+		this->CleanUp();
+	}
 	default:
 		break;
 	}
 }
 
 void MenuUI::CleanUp() {
-	//No clean up needed here
+	if (m_pBackgroundBitmap) {
+		m_pBackgroundBitmap->Release();
+	}
 }
