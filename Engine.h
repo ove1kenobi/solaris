@@ -27,9 +27,11 @@ private:
 	ImGuiManager m_imguiManager;
 	LayerStack m_LayerStack;
 	bool m_Running;
+	bool m_MainMenuNotRunning;
 	long double m_time;
 	int m_fps;
 private:
+	void RunMainMenu();
 	void Update() noexcept;
 	void Render();
 	void OnEvent(IEvent& event) noexcept override;

@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 Engine::Engine() noexcept
-	: m_Running{ true }, m_time{ 0.0 }, m_fps{ 0 }, m_Render2D{ nullptr }, m_scene{ nullptr }
+	: m_Running{ true }, m_time{ 0.0 }, m_fps{ 0 }, m_Render2D{ nullptr }, m_scene{ nullptr }, m_MainMenuNotRunning{ false }
 {
 	m_gameTime.Update();
 }
@@ -76,6 +76,10 @@ const bool Engine::Initialize()
 
 	m_LayerStack.Push(m_scene);
 	m_LayerStack.PushOverlay(&m_imguiManager);
+
+	//Runs until the game is started.
+	RunMainMenu();
+
 	return true;
 }
 
@@ -117,6 +121,8 @@ void Engine::Run()
 				assert(false);
 
 			m_Window.DelegateResolution();
+
+			RunMainMenu();
 		}
 	}
 }
@@ -127,11 +133,12 @@ void Engine::OnEvent(IEvent& event) noexcept
 	case EventType::WindowCloseEvent:
 	{
 		m_Running = false;
+		m_MainMenuNotRunning = true;
 		break;
 	}
 	case EventType::ToggleStartGame: 
 	{
-		m_Render2D->ToggleMainMenu();
+		m_MainMenuNotRunning = true;
 		break;
 	}
 	default:
@@ -152,7 +159,9 @@ void Engine::Update() noexcept
 		m_fps = 0;
 	}
 	//Should RenderWindow be a layer...? (Emil F)
-	m_LayerStack.Update();
+	if (m_MainMenuNotRunning) {
+		m_LayerStack.Update();
+	}
 	m_Window.Update();
 	m_SoundManager.Update();
 }
@@ -164,4 +173,25 @@ void Engine::Render()
 
 	m_imguiManager.Render();
 	HR_A(m_DXCore.GetSwapChain()->Present(0u, 0u), "Present");
+}
+
+void Engine::RunMainMenu() {
+	m_MainMenuNotRunning = false;
+	
+	while (!m_MainMenuNotRunning) {
+		m_imguiManager.BeginFrame();
+		MSG message = {};
+		while (PeekMessageA(&message, nullptr, 0u, 0u, PM_REMOVE))
+		{
+			TranslateMessage(&message);
+			DispatchMessageA(&message);
+		}
+		
+		Update();
+		m_Render2D->RenderUI();
+		m_imguiManager.Render();
+		HR_A(m_DXCore.GetSwapChain()->Present(0u, 0u), "Present");
+	}
+
+	m_Render2D->ToggleMainMenu();
 }

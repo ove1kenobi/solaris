@@ -106,6 +106,8 @@ void Render2D::RenderUI() {
 	}
 	//If not in game then render main menu
 	else {
+		ClearBackBufferEvent cbbEvent;
+		EventBuss::Get().Delegate(cbbEvent);
 		m_Modules.at(static_cast<int>(TypesUI::MainMenu))->Render();
 	}
 	//And finally always render crosshair on top of everything

@@ -12,7 +12,6 @@
 class ForwardRenderer : public EventPublisher, public IEventListener 
 {
 private:
-	FLOAT m_Background[4];
 	RenderData* m_pRenderData;
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
