@@ -326,7 +326,6 @@ void Scene::RemoveGameObject(GameObject* obj)
 
 
 void Scene::Update() noexcept {
-	//Empty asteroid vector:
 
 	//Update the player and all the game objects.
 	size_t num = m_gameObjects.size() - m_persistentObjEnd;
@@ -356,7 +355,6 @@ void Scene::Update() noexcept {
 			// Give asteroid a random velocity in the general direction of spaceship
 			velocity = (ship->GetCenter() - pos) * adjustVelocity(gen);
 			Asteroid* ast = new Asteroid();
-			m_Asteroids.push_back(ast);
 			ast->init(pos, velocity, ship);
 			m_gameObjects.push_back(ast);
 		}
@@ -478,19 +476,17 @@ void Scene::CheckForCollisions() noexcept
 	}
 
 	//Asteroids
-	for (auto asteroid : m_Asteroids)
+	for (unsigned int i = m_persistentObjEnd + 1; i < m_gameObjects.size(); i++)
 	{
-		if (asteroid != nullptr)
+		Asteroid* pAsteroid = static_cast<Asteroid*>(m_gameObjects[i]);
+		if (length(m_player.getShip()->getCenter() - pAsteroid->GetCenter()) <= (m_player.getShip()->GetBoundingSphere().Radius) + pAsteroid->GetBoundingSphere().Radius - 150)
 		{
-			if (length(m_player.getShip()->getCenter() - asteroid->GetCenter()) <= (m_player.getShip()->GetBoundingSphere().Radius) + asteroid->GetBoundingSphere().Radius - 160)
-			{
-				//There is a hit:
-				m_player.UpdateHealth(-20);
-				m_player.getShip()->AddForce(asteroid->GetVelocity() * 100000);
-				asteroid->MarkAsDestroyed();
-				CameraShakeEvent csEvent(0.3f, 1.5f);
-				EventBuss::Get().Delegate(csEvent);
-			}
+			//There is a hit:
+			m_player.UpdateHealth(-20);
+			m_player.getShip()->AddForce(pAsteroid->GetVelocity() * 10000);
+			pAsteroid->MarkAsDestroyed();
+			CameraShakeEvent csEvent(0.3f, 1.5f);
+			EventBuss::Get().Delegate(csEvent);
 		}
 	}
 }

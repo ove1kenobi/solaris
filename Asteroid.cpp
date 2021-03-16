@@ -2,7 +2,7 @@
 #include "Asteroid.h"
 
 Asteroid::Asteroid() noexcept
-	: m_TestForCulling{true}, m_deltaPitch{ 0.0f }, m_deltaRoll{ 0.0f }, m_deltaYaw{ 0.0f }, m_ship{ nullptr }, m_IsDestroyed{ false }
+	: m_TestForCulling{ true }, m_deltaPitch{ 0.0f }, m_deltaRoll{ 0.0f }, m_deltaYaw{ 0.0f }, m_ship{ nullptr }, m_IsDestroyed{ false }
 {
 	m_Tag = "Asteroid";
 }
@@ -41,7 +41,30 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 	// Stand-in for asteroids during testing - comment 'Preload models' in Engine::Initialize()
 	m_model = ModelFactory::Get().GetModel("models/cubemetal.obj");
 	m_scale = distScale(gen) * 30.0f;
-	m_boundingSphere.Radius *= m_scale * 9;
+	if ((m_scale / 30) <= 0.2)
+	{
+		m_boundingSphere.Radius *= m_scale * 24;
+	}
+	else if ((m_scale / 30) <= 0.4)
+	{
+		m_boundingSphere.Radius *= m_scale * 18;
+	}
+	else if ((m_scale / 30) <= 0.6)
+	{
+		m_boundingSphere.Radius *= m_scale * 15;
+	}
+	else if ((m_scale / 30) <= 0.7)
+	{
+		m_boundingSphere.Radius *= m_scale * 12;
+	}
+	else if ((m_scale / 30) <= 0.85)
+	{
+		m_boundingSphere.Radius *= m_scale * 9;
+	}
+	else
+	{
+		m_boundingSphere.Radius *= m_scale * 7;
+	}
 	m_mass = m_model->GetBoundingSphere()->Radius * 50000.0f * m_scale;
 	ModelFactory::Get().CreateMatrixBuffer(m_AmatrixBuffer);
 	return true;
