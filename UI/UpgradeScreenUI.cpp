@@ -184,10 +184,10 @@ bool UpgradeScreenUI::UpdateUpgrades() {
 
 	//Warm shield
 	m_pUpgrades.at(4)->SetUpgrade(L"Warm shield", L"Allows the ship to travel very close to the sun, without succumbing to the heat.", 7);
-	m_pUpgrades.at(4)->AddCost(L"Science.png", L"5");
 	m_pUpgrades.at(4)->AddCost(L"Titanium.png", L"20");
 	m_pUpgrades.at(4)->AddCost(L"Nanotech.png", L"20");
 	m_pUpgrades.at(4)->AddCost(L"Scrap.png", L"20");
+	m_pUpgrades.at(4)->SetScience(5);
 
 	//Radioactive shield
 	m_pUpgrades.at(5)->SetUpgrade(L"Radioactive shield", L"Allows the ship to approach radioactive planets without being exposed to the radioactivity.", 9);

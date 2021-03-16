@@ -7,7 +7,7 @@ UpgradeUI::UpgradeUI() noexcept {
 
 	m_pID = 0;
 	m_pBought = false;
-	m_pRenderBitmaps = true;
+	m_pRenderBitmaps = false;
 }
 
 UpgradeUI::~UpgradeUI() {
@@ -204,6 +204,7 @@ void UpgradeUI::SetScience(unsigned int science) {
 
 	//Load in text
 	m_pRequirement = std::to_wstring(science);
+	m_pRenderBitmaps = true;
 }
 
 void UpgradeUI::AddCost(std::wstring resource, std::wstring cost) {
