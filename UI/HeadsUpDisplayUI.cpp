@@ -39,6 +39,9 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pRenderBitmaps = true;
 	m_pCapacityWarning = false;
 	m_pRenderDistance = false;
+	m_pRenderCold = false;
+	m_pRenderHeat = false;
+	m_pRenderRadiation = false;
 }
 
 HeadsUpDisplayUI::~HeadsUpDisplayUI() {
@@ -410,13 +413,19 @@ void HeadsUpDisplayUI::RenderPlanetDistanceModule() {
 
 void HeadsUpDisplayUI::RenderDamageModule() {
 	//Cold damage
-	if (m_pRenderBitmaps) {
+	if (m_pRenderBitmaps && m_pRenderCold) {
 		m_pRenderTarget2D->DrawBitmap(m_pFrostBitmap, m_pScreen);
 	}
 
 	//Warm damage
+	if (m_pRenderHeat) {
+
+	}
 
 	//Radiation damage
+	if (m_pRenderRadiation) {
+
+	}
 }
 
 void HeadsUpDisplayUI::Render() {
@@ -500,23 +509,7 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 	}
 	case EventType::WindowCloseEvent:
 	{
-		m_pRenderBitmaps = false;
-		if (m_pHealthBitmap) {
-			m_pHealthBitmap->Release();
-		}
-		if (m_pOxygenBitmap) {
-			m_pOxygenBitmap->Release();
-		}
-		if (m_pFuelBitmap) {
-			m_pFuelBitmap->Release();
-		}
-		if (m_pCapacityBitmap) {
-			m_pCapacityBitmap->Release();
-		}
-		if (m_pFrostBitmap) {
-			m_pFrostBitmap->Release();
-		}
-
+		this->CleanUp();
 	}
 	default:
 		break;
@@ -536,5 +529,8 @@ void HeadsUpDisplayUI::CleanUp() {
 	}
 	if (m_pCapacityBitmap) {
 		m_pCapacityBitmap->Release();
+	}
+	if (m_pFrostBitmap) {
+		m_pFrostBitmap->Release();
 	}
 }

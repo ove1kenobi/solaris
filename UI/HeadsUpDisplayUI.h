@@ -58,6 +58,7 @@ private:
 	bool m_pCapacityWarning;
 
 	//Damage warning
+	Microsoft::WRL::ComPtr<ID2D1RadialGradientBrush> m_pHeatRadialGradientBrush;
 	ID2D1Bitmap* m_pFrostBitmap;
 	D2D1_RECT_F m_pScreen;
 
@@ -67,6 +68,10 @@ private:
 	D2D1_RECT_F m_pRadiationScreen;
 	D2D1_RECT_F m_pRadiationTextBox;
 	std::wstring m_pRadiationText;
+
+	bool m_pRenderCold;
+	bool m_pRenderHeat;
+	bool m_pRenderRadiation;
 
 	//Resources
 	std::vector<D2D1_RECT_F> m_pIconPicture;
