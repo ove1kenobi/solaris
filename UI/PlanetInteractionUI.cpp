@@ -91,6 +91,8 @@ void PlanetInteractionUI::SetIcons(int randomEventIndex, Resources resources)
 		m_pRandomEvents[randomEventIndex]->AddIcon(L"radium.png", std::to_wstring(resources.radium));
 	if (resources.khionerite != 0)
 		m_pRandomEvents[randomEventIndex]->AddIcon(L"Khionerite.png", std::to_wstring(resources.khionerite));
+	if (resources.science != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"Science.png", std::to_wstring(resources.science));
 }
 
 //Creation functions

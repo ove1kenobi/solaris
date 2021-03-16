@@ -104,7 +104,7 @@ void GameEventManager::CreateGameEvents()
 			L"something about a new type of propellant. You do not pay much attention to it though and just "
 			L"grab a few cans of old fashioned fuel.",
 
-			Resources{0, 30, 0, 0, 0, 0, 0, 0, 0}
+			Resources{0, 30, 0, 0, 0, 0, 0, 0, 0, 1}
 		},
 
 		{
@@ -114,7 +114,7 @@ void GameEventManager::CreateGameEvents()
 			L"Within the camp you find a tribe of steampunk nomads, who have made it their lifestyle to endlessly "
 			L"travel this landscape. You spend some time there, exchanging stories and provisions and exotic materials.",
 
-			Resources{20, 0, -20, 0, 10, 10, 0, 0, 0}
+			Resources{20, 0, -20, 0, 10, 10, 0, 0, 0, 1}
 		},
 
 		{
@@ -123,7 +123,7 @@ void GameEventManager::CreateGameEvents()
 			L"Investigating it further you see that the vessel is still intact and inside it you find some sort of propellant "
 			L"that you have never seen before! Maybe it could be useful for something?",
 
-			Resources{0, 0, 0, 0, 0, 0, 1, 0, 0}
+			Resources{0, 0, 0, 0, 0, 0, 1, 0, 0, 1}
 		},
 
 		{
@@ -134,7 +134,7 @@ void GameEventManager::CreateGameEvents()
 			L"After giving it a few cranks a purple-ish goo starts to flood out of the pump! Quickly you grab the sample canister "
 			L"you brought with you to scoop up a good amount of the liquid before the pump is destroyed by the pressure.",
 
-			Resources{-20, 0, 0, 0, 0, 0, 1, 0, 0}
+			Resources{-20, 0, 0, 0, 0, 0, 1, 0, 0, 1}
 		}
 	};
 
@@ -147,7 +147,7 @@ void GameEventManager::CreateGameEvents()
 			L"horrified expressions on their faces, within this everlasting tomb. Within their grasp you also notice some "
 			L"weird glow coming from the rocks the miners seemed to be excavating. What could have created this tragedy?",
 
-			Resources{0, 0, -30, 10, 0, 0, 0, 0, 0}
+			Resources{0, 0, -30, 10, 0, 0, 0, 0, 0, 1}
 		},
 
 		{
@@ -158,7 +158,7 @@ void GameEventManager::CreateGameEvents()
 			L"gets higher and higher. Before you know it you are in a blooming forest greeted by a small man, seemingly older than "
 			L"the forest itself. He helps you restock on supplies.",
 
-			Resources{40, 20, 20, 0, 0, 0, 0, 0, 0}
+			Resources{40, 20, 20, 0, 0, 0, 0, 0, 0, 1}
 		},
 
 		{
@@ -167,7 +167,7 @@ void GameEventManager::CreateGameEvents()
 			L"When trying to remove it it explodes! The explosion adds another layer of ice to these already frozen caverns and to "
 			L"your suit, luckily the ice shield that was crafted earlier for you and your ship protected you from an icy doom. ",
 
-			Resources{0, 0, 0, 0, 0, 0, 0, 0, 1}
+			Resources{0, 0, 0, 0, 0, 0, 0, 0, 1, 1}
 		},
 
 		{
@@ -178,7 +178,7 @@ void GameEventManager::CreateGameEvents()
 			L"how it made its way into the solar system as an asteroid and how many mining companies met their demise trying to extract "
 			L"the rock. With your newfound knowledge they wave you goodbye after giving you a sample of their findings.",
 
-			Resources{0, 0, 20, 0, 0, 0, 0, 0, 1}
+			Resources{0, 0, 20, 0, 0, 0, 0, 0, 1, 1}
 		}
 	};
 
@@ -190,7 +190,7 @@ void GameEventManager::CreateGameEvents()
 			L"After slipping when trying to take a closer look your suit rips below your elbow, the poisonous water starts pouring into "
 			L"the suit. You grab a piece of the skeleton’s armor before hurrying back to the shuttle.",
 
-			Resources{-50, 0, 0, 20, 10, 0, 0, 0, 0}
+			Resources{-50, 0, 0, 20, 10, 0, 0, 0, 0, 1}
 		},
 
 		{
@@ -203,7 +203,7 @@ void GameEventManager::CreateGameEvents()
 			L"the cause of this. On the side you see a name in big green letters, “Shiro Hime”. You extract the powerful core of the nuke "
 			L"that is still partially intact.",
 
-			Resources{0, 0, 0, 0, 0, 10, 0, 1, 0}
+			Resources{0, 0, 0, 0, 0, 10, 0, 1, 0, 1}
 		},
 
 		{
@@ -216,7 +216,7 @@ void GameEventManager::CreateGameEvents()
 			L"and a piece of the glowing spots stuck in a sharp tree-branch. You grab the glowing hide which feels more like a rock and "
 			L"make your way out of the forest.",
 
-			Resources{0, 15, -20, 0, 0, 0, 0, 1, 0}
+			Resources{0, 15, -20, 0, 0, 0, 0, 1, 0, 1}
 		},
 
 		{
@@ -226,7 +226,7 @@ void GameEventManager::CreateGameEvents()
 			L"either keep radioactivity from getting in, or from getting out. Everywhere around you there are smashed vials, it looks like "
 			L"whatever they were working on here was sabotaged. You manage to at least salvage some materials from the destroyed lab.",
 
-			Resources{0, 0, 0, 10, 10, 10, 0, 0, 0}
+			Resources{0, 0, 0, 10, 10, 10, 0, 0, 0, 1}
 		}
 	};
 
@@ -241,7 +241,7 @@ void GameEventManager::CreateGameEvents()
 			L"on metal seems to go on forever. Your ship takes some serious damage but luckily nothing critical. A part from the ship "
 			L"‘The Anvil’ hit you. You salvage what you can and get out of the field of debris.",
 
-			Resources{-40, 5, 0, 10, 15, 0, 0, 0, 0}
+			Resources{-40, 5, 0, 10, 15, 0, 0, 0, 0, 1}
 		},
 
 		{
@@ -253,7 +253,7 @@ void GameEventManager::CreateGameEvents()
 			L"the ground like a gigantic spear skewering the earth. As you get closer you see it used to be a part of a spaceship, ‘The Anvil’. "
 			L"It really was worth the effort.",
 
-			Resources{-5, 0, -5, 15, 5, 0, 0, 0, 0}
+			Resources{-5, 0, -5, 15, 5, 0, 0, 0, 0, 1}
 		},
 
 		{
@@ -266,7 +266,7 @@ void GameEventManager::CreateGameEvents()
 			L"make the peace sign they relax visibly. Soon you are laughing and dining together. When you tell them of your quest several of "
 			L"the younger ones ask to join you. They bring some nice equipment along.",
 
-			Resources{40, 0, 0, 0, 0, 5, 0, 0, 0}
+			Resources{40, 0, 0, 0, 0, 5, 0, 0, 0, 1}
 		},
 
 		{
@@ -277,7 +277,7 @@ void GameEventManager::CreateGameEvents()
 			L"you suddenly realise that you are not alone. Mermaids! You stare at each other in wonder and spend the rest of the day "
 			L"playing around. When time comes to leave the lake they give you many strange gifts from the deep. A few even turn out to "
 			L"be useful. A refreshing adventure, indeed.",
-			Resources{25, 0, 0, 0, 5, 10, 0, 0, 0}
+			Resources{25, 0, 0, 0, 5, 10, 0, 0, 0, 1}
 		},
 
 		{
@@ -287,7 +287,7 @@ void GameEventManager::CreateGameEvents()
 			L"Walking around in this futuristic junkyard you see a metal plate stating: “PROPERTY OF THE SOLAR UNION - UNIT BABEL IX”. "
 			L"You grab a few plates for the raw materials and hope that no one will miss them.",
 
-			Resources{0, 0, 0, 10, 10, 0, 0, 0, 0}
+			Resources{0, 0, 0, 10, 10, 0, 0, 0, 0, 1}
 		},
 
 		{
@@ -299,7 +299,7 @@ void GameEventManager::CreateGameEvents()
 			L"crashed with this ship and that it was a part of the renowned space station Babel IX. They let you have the fuel that "
 			L"is still left in the vessel as they do not have any use for it.",
 
-			Resources{30, 100, 0, 0, 0, 0, 0, 0, 0}
+			Resources{30, 100, 0, 0, 0, 0, 0, 0, 0, 1}
 		},
 
 		{
@@ -311,7 +311,7 @@ void GameEventManager::CreateGameEvents()
 			L"as clear as day. He quickly snatches the metal from your hands and throws you some other materials, undoubtedly in his mind "
 			L"worth less than the Nanotech, before scurrying off.",
 
-			Resources{0, 0, 0, 10, 10, -10, 0, 0, 0}
+			Resources{0, 0, 0, 10, 10, -10, 0, 0, 0, 1}
 		},
 
 		{
@@ -322,7 +322,7 @@ void GameEventManager::CreateGameEvents()
 			L"some materials you found earlier and left you bound to a pole and waved you goodbye saying “Viva la revolución!”. After a few "
 			L"hours of struggle you manage to break loose and make it back to the shuttle. At least you got a few hours of rest while bound.",
 
-			Resources{30, 0, 30, -5, -5, -5, 0, 0, 0}
+			Resources{30, 0, 30, -5, -5, -5, 0, 0, 0, 1}
 		}
 	};
 

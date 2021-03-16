@@ -37,7 +37,6 @@ private:
 	int m_maxHealth;
 	int m_fuelCapacity;
 	int m_oxygenCapacity;
-	int m_healthCapacity;
 	int m_storageCapacity;
 	int m_storageUsage;
 	Resources m_inventory;

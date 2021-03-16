@@ -1,6 +1,6 @@
 #pragma once
 
-const unsigned int numberOfResources = 9;
+const unsigned int numberOfResources = 10;
 struct Resources {
 	int health;
 	int fuel;
@@ -11,4 +11,5 @@ struct Resources {
 	int plasma;
 	int radium;
 	int khionerite;
+	int science;
 };

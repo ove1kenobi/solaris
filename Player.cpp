@@ -64,14 +64,15 @@ Player::Player()
 	m_oxygenCapacity = 100;
 	m_storageCapacity = 500;
 	m_inventory.health = 100;
-	m_inventory.fuel = 0;
-	m_inventory.oxygen = 0;
+	m_inventory.fuel = 100;
+	m_inventory.oxygen = 100;
 	m_inventory.titanium = 0;
 	m_inventory.scrapMetal = 0;
 	m_inventory.nanotech = 0;
 	m_inventory.plasma = 0;
 	m_inventory.radium = 0;
 	m_inventory.khionerite = 0;
+	m_inventory.science = 0;
 	m_storageUsage = 0;
 
 	m_moveForwards = false;
@@ -124,6 +125,7 @@ bool Player::update(const std::vector<Planet*>& planets)
 	ImGui::Text("Plasma: %d", m_inventory.plasma);
 	ImGui::Text("Radium: %d", m_inventory.radium);
 	ImGui::Text("Khionerite: %d", m_inventory.khionerite);
+	ImGui::Text("Science: %d", m_inventory.science);
 	ImGui::Text("Storage Usage %d/%d", m_storageUsage, m_storageCapacity);
 	ImGui::End();
 #endif
@@ -241,6 +243,8 @@ void Player::AddResources(Resources resources)
 	m_inventory.nanotech += AddToInventory(m_inventory.nanotech, resources.nanotech);
 	m_inventory.titanium += AddToInventory(m_inventory.titanium, resources.titanium);
 	m_inventory.scrapMetal += AddToInventory(m_inventory.scrapMetal, resources.scrapMetal);
+
+	m_inventory.science += resources.science;
 }
 
 void Player::OnEvent(IEvent& event) noexcept
@@ -336,9 +340,9 @@ void Player::OnEvent(IEvent& event) noexcept
 
 void Player::DelegatePlayerInfo() noexcept
 {
-	m_PlayerInfo.fuelPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Fuel)]) / static_cast<float>(m_fuelCapacity);
-	m_PlayerInfo.oxygenPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Oxygen)]) / static_cast<float>(m_oxygenCapacity);
-	m_PlayerInfo.HealthPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Health)]) / static_cast<float>(m_healthCapacity);
+	m_PlayerInfo.fuelPercentage = static_cast<float>(m_inventory.fuel) / static_cast<float>(m_fuelCapacity);
+	m_PlayerInfo.oxygenPercentage = static_cast<float>(m_inventory.oxygen) / static_cast<float>(m_oxygenCapacity);
+	m_PlayerInfo.HealthPercentage = static_cast<float>(m_inventory.health) / static_cast<float>(m_maxHealth);
 	m_PlayerInfo.storageUsage = m_storageUsage;
 	m_PlayerInfo.storageCapacity = m_storageCapacity;
 	DelegatePlayerInfoEvent piEvent(&m_PlayerInfo);
