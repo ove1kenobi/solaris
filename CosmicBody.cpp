@@ -36,8 +36,8 @@ bool CosmicBody::init(float x, float y, float z, float r, float xRot, float zRot
 
 		this->m_timeOffset = distributionTime(generator);
 		this->m_major_semi_axis = length(m_center - tetherTo->GetCenter());
-		this->m_minor_semi_axis = this->m_major_semi_axis * 0.8f;
-		this->m_orbital_speed = (static_cast<float>(6.674e-11 * tetherTo->GetMass() / (m_major_semi_axis * m_major_semi_axis)) * 3) * this->m_rotationDir;
+		this->m_minor_semi_axis = this->m_major_semi_axis;
+		this->m_orbital_speed = (static_cast<float>(6.674e-11 * tetherTo->GetMass() / (m_major_semi_axis * m_major_semi_axis))) * this->m_rotationDir;
 
 		DirectX::XMFLOAT3 tc = m_tetheredTo->GetCenter();
 		m_center.x = static_cast<float>(tc.x + m_major_semi_axis * cos((m_time.SinceStart() + m_timeOffset) * m_orbital_speed));
