@@ -10,6 +10,7 @@ private:
 	bool m_TestForCulling;
 	GameObject* m_ship;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_AmatrixBuffer;
+	bool m_IsDestroyed;
 public:
 	Asteroid() noexcept;
 	virtual ~Asteroid();
@@ -20,4 +21,6 @@ public:
 	[[nodiscard]] const bool IntersectRayObject(const DirectX::XMFLOAT3* origin, const DirectX::XMFLOAT3* direction, float& distance) noexcept override;
 	virtual [[nodiscard]] const bool& ShallBeTestedForCulling() const noexcept;
 	virtual void BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext);
+	void SetVelocity(const DirectX::XMFLOAT3& velocity) noexcept;
+	void MarkAsDestroyed() noexcept;
 };

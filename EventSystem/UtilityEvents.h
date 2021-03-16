@@ -243,3 +243,34 @@ public:
 		return m_pPlayerInfo;
 	}
 };
+
+class CameraShakeEvent: public IEvent
+{
+private:
+	float m_Duration;
+	float m_Magnitude;
+public:
+	CameraShakeEvent(const float& duration, const float& magnitude) noexcept
+	{
+		m_Duration = duration;
+		m_Magnitude = magnitude;
+	}
+	virtual ~CameraShakeEvent() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::CameraShakeEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "CameraShakeEvent";
+	}
+	[[nodiscard]] const float& GetDuration() const noexcept
+	{
+		return m_Duration;
+	}
+	[[nodiscard]] const float& GetMagnitude() const noexcept
+	{
+		return m_Magnitude;
+	}
+};

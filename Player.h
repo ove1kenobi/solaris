@@ -11,6 +11,7 @@
 #include "EventSystem/UIEvents.h"
 #include "Resources.h"
 #include "EventSystem\UtilityEvents.h"
+#include "GameEvent.h"
 
 struct PlayerInfo
 {
@@ -34,12 +35,12 @@ private:
 	Time m_time;
 
 	// Resources
+	int m_maxHealth;
 	int m_fuelCapacity;
 	int m_oxygenCapacity;
-	int m_healthCapacity;
 	int m_storageCapacity;
 	int m_storageUsage;
-	int m_resources[numberOfResources];
+	Resources m_inventory;
 
 	// Movement
 	PlayerInfo m_PlayerInfo;
@@ -59,6 +60,7 @@ private:
 	// Updates the rotation for the camera and the ship
 	void UpdateRotation();
 	DirectX::XMFLOAT3 Stabilize();
+	int AddToInventory(int currentResource, int resourceToAdd);
 public:
 	Player();
 	virtual ~Player();
@@ -66,12 +68,12 @@ public:
 	bool Initialize(PlayerCamera* camera);
 	bool update(const std::vector<Planet*>& planets);
 	SpaceShip* getShip();
-	void AddResource(int amount, Resource resource);
+	void AddResources(Resources resources);
 
 	void OnEvent(IEvent& event) noexcept;
 	void DelegatePlayerInfo() noexcept;
-	int GetHealth() noexcept;
 	void UpdateHealth(int value);
+	int GetHealth() noexcept;
 	int GetMaxHealth() noexcept;
 	void UpdateMaxHealth(int value);
 	void Kill() noexcept;

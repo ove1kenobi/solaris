@@ -80,3 +80,8 @@ void Planet::MarkAsVisited() noexcept
 {
 	m_VisitedByPlayer = true;
 }
+
+UINT Planet::GetPlanetType() const noexcept
+{
+	return m_planetType;
+}

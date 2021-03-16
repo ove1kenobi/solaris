@@ -1,5 +1,6 @@
 #pragma once
 #include "IEvent.h"
+#include "../GameEvent.h"
 #include "../pch.h"
 
 class DelegatePlanetDistanceEvent : public IEvent {
@@ -84,6 +85,29 @@ public:
 	{
 		return m_radioactiveDamage;
 	}
+};
+
+class GameEventSelectedEvent : public IEvent{
+private:
+	GameEvent m_gameEvent;
+public:
+	GameEventSelectedEvent(GameEvent gameEvent) noexcept
+	{
+		m_gameEvent = gameEvent;
+	}
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::GameEventSelectedEvent;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "GameEventSelectedEvent";
+	}
+	[[nodiscard]] const GameEvent GetGameEvent() const noexcept
+	{
+		return m_gameEvent;
+	}
+};
 };
 
 class DelegateUpgradeID : public IEvent

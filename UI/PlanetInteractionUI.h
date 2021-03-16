@@ -3,6 +3,7 @@
 #include "RandomEventUI.h"
 #include "../EventSystem/UtilityEvents.h"
 #include "../Player.h"
+#include "../GameEvent.h"
 //Module handeling everything related to planet interaction UI
 class PlanetInteractionUI : public ModuleUI {
 private:
@@ -49,6 +50,8 @@ private:
 	float m_pPadding;
 	float m_pBlockSize;
 	std::vector<RandomEventUI*> m_pRandomEvents;
+	GameEvent m_availableGameEvents[3];
+	void SetIcons(int randomEventIndex, Resources resources);
 
 	//Current mouse coords
 	unsigned int m_pMouseX;
@@ -86,10 +89,13 @@ public:
 	void Render();
 
 	//Event functions
+	void SetGameEvents(GameEvent gameEvents[3]);
 	void SetPlanetName(std::wstring text);
 	void SetPlanetFlavourText(std::wstring text);
 	void OnEvent(IEvent& event) noexcept;
 
 	void CleanUp();
+
+	bool m_gameEventSelected;
 };
 

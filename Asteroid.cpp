@@ -10,7 +10,7 @@ const std::vector<std::string> asteroids = {
 };
 
 Asteroid::Asteroid() noexcept
-	: m_TestForCulling{true}, m_deltaPitch{ 0.0f }, m_deltaRoll{ 0.0f }, m_deltaYaw{ 0.0f }, m_ship{ nullptr }
+	: m_TestForCulling{ true }, m_deltaPitch{ 0.0f }, m_deltaRoll{ 0.0f }, m_deltaYaw{ 0.0f }, m_ship{ nullptr }, m_IsDestroyed{ false }
 {
 	m_Tag = "Asteroid";
 }
@@ -42,7 +42,30 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 	// Stand-in for asteroids during testing - comment 'Preload models' in Engine::Initialize()
 	//m_model = ModelFactory::Get().GetModel("models/cubemetal.obj");
 	m_scale = distScale(gen) * 10.0f;
-	m_boundingSphere.Radius *= m_scale;
+	if ((m_scale / 10) <= 0.2)
+	{
+		m_boundingSphere.Radius *= m_scale * 14;
+	}
+	else if ((m_scale / 10) <= 0.4)
+	{
+		m_boundingSphere.Radius *= m_scale * 6;
+	}
+	else if ((m_scale / 10) <= 0.6)
+	{
+		m_boundingSphere.Radius *= m_scale * 5;
+	}
+	else if ((m_scale / 10) <= 0.7)
+	{
+		m_boundingSphere.Radius *= m_scale * 4;
+	}
+	else if ((m_scale / 10) <= 0.85)
+	{
+		m_boundingSphere.Radius *= m_scale * 3;
+	}
+	else
+	{
+		m_boundingSphere.Radius *= m_scale * 2;
+	}
 	m_mass = m_model->GetBoundingSphere()->Radius * 50000.0f * m_scale;
 	ModelFactory::Get().CreateMatrixBuffer(m_AmatrixBuffer);
 	return true;
@@ -50,6 +73,10 @@ bool Asteroid::init(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 velocity, GameObjec
 
 GameObject* Asteroid::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
+	if (m_IsDestroyed)
+	{
+		return this;
+	}
 	float distShip = length(m_center - m_ship->GetCenter());
 	float distSun = length(m_center);
 	if (distShip > 20000 || distSun < 500.0f) return this;
@@ -65,6 +92,8 @@ GameObject* Asteroid::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PM
 	DirectX::XMMATRIX result = scale * rot * trans;
 	DirectX::XMStoreFloat4x4(&m_wMatrix, DirectX::XMMatrixTranspose(result));
 
+	m_boundingSphere.Center = m_center;
+
 	//Update the matrixBuffer.
 
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
@@ -75,13 +104,12 @@ GameObject* Asteroid::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PM
 
 	DirectX::XMStoreFloat4x4(&wvpMatrix, DirectX::XMMatrixTranspose(result * vMatrix * pMatrix));
 
-	deviceContext->Map(
+	HR_X(deviceContext->Map(
 		m_AmatrixBuffer.Get(),
 		0,
 		D3D11_MAP_WRITE_DISCARD,
 		0,
-		&mappedSubresource
-	);
+		&mappedSubresource), "Map");
 
 	memcpy(mappedSubresource.pData, &m_wMatrix, sizeof(DirectX::XMFLOAT4X4));
 	memcpy(((char*)mappedSubresource.pData)+ sizeof(DirectX::XMFLOAT4X4), &wvpMatrix, sizeof(DirectX::XMFLOAT4X4));
@@ -123,4 +151,14 @@ void Asteroid::BindShadowUniques(const Microsoft::WRL::ComPtr<ID3D11DeviceContex
 		&this->m_model->getStride(),
 		&this->m_model->getOffset());
 	pDeviceContext->IASetIndexBuffer(this->m_model->getIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+}
+
+void Asteroid::MarkAsDestroyed() noexcept
+{
+	m_IsDestroyed = true;
+}
+
+void Asteroid::SetVelocity(const DirectX::XMFLOAT3& velocity) noexcept
+{
+	m_velocity = velocity;
 }

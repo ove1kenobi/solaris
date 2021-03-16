@@ -66,7 +66,8 @@ const std::vector<std::wstring> Scene::RandomizePlanetNames(std::default_random_
 }
 
 Scene::Scene() noexcept
-	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }, m_RenderData{ }, m_sun{ nullptr }, m_damageTimer{ 1.1f }, m_persistentObjEnd{ 0u }, m_nextAstroSpawnTime{ 0.0 }
+	:	m_numPlanets{ 0 }, m_pDeviceContext{ nullptr }, m_RenderData{ }, m_sun{ nullptr }, m_damageTimer{ 1.1f }, m_persistentObjEnd{ 0u }, m_nextAstroSpawnTime{ 0.0 }, m_IsInvincible{ false },
+	m_ElapsedTime{ 0.0f }
 {
 
 }
@@ -318,15 +319,21 @@ void Scene::RemoveGameObject(GameObject* obj)
 	while (++i < m_gameObjects.end() && *i != obj);
 	if (i != m_gameObjects.end())
 	{
-		delete* i;
-		m_gameObjects.erase(i);
+		if (*i != nullptr)
+		{
+			delete* i;
+			*i = nullptr;
+			m_gameObjects.erase(i);
+		}
 	}
 }
 
 
 void Scene::Update() noexcept {
+
 	//Update the player and all the game objects.
 	size_t num = m_gameObjects.size() - m_persistentObjEnd;
+
 	if (m_player.update(m_planets) &&  num < 60 && m_nextAstroSpawnTime < m_time.SinceStart())
 	{
 		//Generator and distributions used for generating planet values.
@@ -379,6 +386,18 @@ void Scene::Update() noexcept {
 	DirectX::XMFLOAT4X4 vMatrix = m_perspectiveCamera.getVMatrix();
 	DirectX::XMFLOAT4X4 pMatrix = m_perspectiveCamera.getPMatrix();
 
+	//Is Player invincible from asteroids?
+	if (m_IsInvincible)
+	{
+		m_ElapsedTime += static_cast<float>(m_time.DeltaTime());
+		if (m_ElapsedTime > m_InvincibilityDuration)
+		{
+			m_IsInvincible = false;
+			m_ElapsedTime = 0.0f;
+		}
+	}
+
+	CheckForCollisions();
 	GameObject* del = nullptr;
 	std::vector<GameObject*> remove;
 	for (GameObject* astr : this->m_gameObjects) {
@@ -461,8 +480,6 @@ void Scene::Update() noexcept {
 	ToggleDamageHUD dH(coldDamage, heatDamage, radioactiveDamage);
 	EventBuss::Get().Delegate(dH);
 
-	CheckForCollisions();
-
 #if defined(DEBUG) | defined(_DEBUG)
 	int health = m_player.GetHealth();
 
@@ -479,6 +496,7 @@ void Scene::Update() noexcept {
 
 void Scene::CheckForCollisions() noexcept
 {
+	//Planets:
 	for (auto planets : m_planets)
 	{
 		if (length(m_player.getShip()->getCenter() - planets->GetCenter()) <= ((m_player.getShip()->GetBoundingSphere().Radius * 10) + planets->GetRadius()))
@@ -486,9 +504,29 @@ void Scene::CheckForCollisions() noexcept
 			m_player.Kill();
 		}
 	}
+	//Sun:
 	if (length(m_player.getShip()->GetCenter() - m_sun->GetCenter()) <= ((m_player.getShip()->GetBoundingSphere().Radius * 10) + m_sun->GetRadius()))
 	{
 		m_player.Kill();
+	}
+
+	//Asteroids
+	if (m_IsInvincible == false)
+	{
+		for (size_t i = m_persistentObjEnd + 1; i < m_gameObjects.size(); i++)
+		{
+			Asteroid* pAsteroid = static_cast<Asteroid*>(m_gameObjects[i]);
+			if (length(m_player.getShip()->getCenter() - pAsteroid->GetCenter()) <= (m_player.getShip()->GetBoundingSphere().Radius) + pAsteroid->GetBoundingSphere().Radius)
+			{
+				//There is a hit:
+				m_IsInvincible = true;
+				m_player.UpdateHealth(-30);
+				m_player.getShip()->AddForce(pAsteroid->GetVelocity() * 2000);
+				pAsteroid->MarkAsDestroyed();
+				CameraShakeEvent csEvent(0.3f, 0.1f);
+				EventBuss::Get().Delegate(csEvent);
+			}
+		}
 	}
 }
 
