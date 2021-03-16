@@ -289,9 +289,9 @@ void ModelFactory::createSphere(float r, UINT setDivisions, std::vector<float> &
 	//Calculate the number of divisions that are to be made of each edge. 100 easily changable.
 	unsigned int divisions = 0;
 	if (setDivisions == 0) {
-		divisions = static_cast<int>(std::ceil(r));
-		if (divisions < 10) {
-			divisions = 10;
+		divisions = static_cast<int>(std::ceil(r * 2));
+		if (divisions < 20) {
+			divisions = 20;
 		}
 	}
 	else {
