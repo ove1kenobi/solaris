@@ -87,7 +87,7 @@ public:
 	}
 };
 
-class GameEventSelectedEvent : public IEvent{
+class GameEventSelectedEvent : public IEvent {
 private:
 	GameEvent m_gameEvent;
 public:
@@ -107,7 +107,6 @@ public:
 	{
 		return m_gameEvent;
 	}
-};
 };
 
 class DelegateUpgradeID : public IEvent
