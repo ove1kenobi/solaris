@@ -26,7 +26,7 @@ private:
 	D2D1_RECT_F m_pObjectiveTextBox;
 	std::wstring m_pObjectiveText;
 
-	//Bitmap of ship
+	//Controllers
 	ID2D1Bitmap* m_pShipBitmap;
 	D2D1_RECT_F m_pShipDisplay;
 

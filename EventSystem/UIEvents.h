@@ -85,3 +85,27 @@ public:
 		return m_radioactiveDamage;
 	}
 };
+
+class DelegateUpgradeID : public IEvent
+{
+private:
+	unsigned int upgradeID;
+public:
+	DelegateUpgradeID(unsigned int ID) noexcept {
+		upgradeID = ID;
+	};
+	virtual ~DelegateUpgradeID() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::DelegateUpgradeID;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "DelegateUpgradeID";
+	}
+	[[nodiscard]] const int GetID() const noexcept
+	{
+		return upgradeID;
+	}
+};
