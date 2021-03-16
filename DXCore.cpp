@@ -37,7 +37,8 @@ const bool DXCore::Initialize(const unsigned int& clientWindowWidth,
 										  EventType::SetShadowBlendStateEvent,
 										  EventType::ResetDefaultBlendStateEvent,
 	                                      EventType::BindBackBufferEvent,
-	                                      EventType::RequestDSVEvent};
+	                                      EventType::RequestDSVEvent,
+										  EventType::ClearBackBufferEvent};
 	EventBuss::Get().AddListener(this, eventTypes);
 
 	UINT flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
@@ -289,9 +290,16 @@ void DXCore::OnEvent(IEvent& event) noexcept
 		break;
 	}
 	case EventType::BindBackBufferEvent:
+	{
 		ID3D11DepthStencilView* nullDSV = nullptr;
 		m_pDeviceContext->OMSetRenderTargets(1, m_pBackBuffer.GetAddressOf(), nullDSV);
 		break;
+	}
+	case EventType::ClearBackBufferEvent:
+	{
+		FLOAT background[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		m_pDeviceContext->ClearRenderTargetView(m_pBackBuffer.Get(), background);
+	}
 	}
 }
 

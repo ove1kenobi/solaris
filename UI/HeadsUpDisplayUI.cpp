@@ -1,12 +1,11 @@
 #include "..\pch.h"
 #include "HeadsUpDisplayUI.h"
 
+
 HeadsUpDisplayUI::HeadsUpDisplayUI() {
-	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent, EventType::DelegatePlanetDistanceEvent, EventType::WindowCloseEvent);
-	drawBitMaps = true;
-	m_pCrosshairDistance = 12.0f;
-	m_pCrosshairLength = 2.5f;
-	m_pCrosshairSize = 2.5f;
+	EventBuss::Get().AddListener(this, EventType::DelegatePlayerInfoEvent);
+	EventBuss::Get().AddListener(this, EventType::DelegatePlanetDistanceEvent);
+	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
 
 	m_pHealthBitmap = NULL;
 	m_pOxygenBitmap = NULL;
@@ -31,16 +30,22 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 
 	m_pWarningTextBox = D2D1::RectF();
 	m_pWarningText = L"!";
+
+	m_pWhite = 0xFFFDF9;
+	m_pYellow = 0xFFB724;
+	m_pBlue = 0x0BA4CC;
+	m_pRed = 0xff4a24;
+
+	m_pRenderBitmaps = true;
 	m_pCapacityWarning = false;
-
 	m_pRenderDistance = false;
-
-	m_pMouseX = 10;
-	m_pMouseY = 10;
+	m_pRenderCold = false;
+	m_pRenderHeat = false;
+	m_pRenderRadiation = false;
 }
 
 HeadsUpDisplayUI::~HeadsUpDisplayUI() {
-	EventBuss::Get().RemoveListener(this, EventType::DelegateMouseCoordsEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
 	EventBuss::Get().RemoveListener(this, EventType::DelegatePlanetDistanceEvent);
 	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 }
@@ -62,6 +67,9 @@ bool HeadsUpDisplayUI::Initialize() {
 		return false;
 	}
 	if (!CreateWarningModule()) {
+		return false;
+	}
+	if (!CreateDamageModules()) {
 		return false;
 	}
 	return true;
@@ -137,6 +145,17 @@ bool HeadsUpDisplayUI::CreatePlanetDistanceModule() {
 	return true;
 }
 
+bool HeadsUpDisplayUI::CreateDamageModules() {
+	//Cold damage
+	LoadBitmapFromFile(GetIconFilePath(L"FrostEffect.png").c_str(), &m_pFrostBitmap);
+
+	//Warm damage
+
+	//Radiation damage
+	//LoadBitmapFromFile(GetIconFilePath(L"Health.png").c_str(), &m_pRadiationBitmap);
+	return true;
+}
+
 bool HeadsUpDisplayUI::CreateTools() {
 	return this->CreateBrush();
 }
@@ -170,9 +189,9 @@ bool HeadsUpDisplayUI::UpdateBars() {
 	float barSize = 25.0f;
 
 	//Health bar
-	m_pHealthBar.SetTools(D2D1::ColorF(1.0f, 0.0f, 0.0f, 1.0f),
-		D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.5f),
-		D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.5f));
+	m_pHealthBar.SetTools(D2D1::ColorF(m_pRed, 1.0f),
+		D2D1::ColorF(0xffb824, 0.5f),
+		D2D1::ColorF(0xff246c, 0.5f));
 
 	m_pHealthIcon = D2D1::RectF(
 		iconLeft,
@@ -189,9 +208,9 @@ bool HeadsUpDisplayUI::UpdateBars() {
 		5.0f);
 
 	//Oxygen bar
-	m_pOxygenBar.SetTools(D2D1::ColorF(0.0f, 0.0f, 1.0f, 1.0f),
-		D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.5f),
-		D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.5f));
+	m_pOxygenBar.SetTools(D2D1::ColorF(m_pBlue, 1.0f),
+		D2D1::ColorF(0x0bcc94, 0.5f),
+		D2D1::ColorF(0x0b44cc, 0.5f));
 
 	m_pOxygenIcon = D2D1::RectF(
 		iconLeft,
@@ -208,9 +227,9 @@ bool HeadsUpDisplayUI::UpdateBars() {
 		5.0f);
 
 	//Fuel bar
-	m_pFuelBar.SetTools(D2D1::ColorF(0.0f, 1.0f, 0.0f, 1.0f),
-		D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.5f),
-		D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.5f));
+	m_pFuelBar.SetTools(D2D1::ColorF(m_pYellow, 1.0f),
+		D2D1::ColorF(0xdaff24, 0.5f),
+		D2D1::ColorF(0xff4a24, 0.5f));
 
 	m_pFuelIcon = D2D1::RectF(
 		iconLeft,
@@ -290,6 +309,16 @@ bool HeadsUpDisplayUI::UpdatePlanetDistanceModule() {
 	return true;
 }
 
+bool HeadsUpDisplayUI::UpdateDamageModules() {
+	m_pScreen = D2D1::RectF(
+		0.0f,
+		0.0f,
+		m_pWindowWidth,
+		m_pWindowHeight
+	);
+	return true;
+}
+
 bool HeadsUpDisplayUI::UpdateTools() {
 	return true;
 }
@@ -307,6 +336,9 @@ bool HeadsUpDisplayUI::UpdateModules() {
 	if (!UpdateWarningModule()) {
 		return false;
 	}
+	if (!UpdateDamageModules()) {
+		return false;
+	}
 	if (!UpdateTools()) {
 		return false;
 	}
@@ -319,49 +351,17 @@ void HeadsUpDisplayUI::RenderBars() {
 	m_pOxygenBar.Render();
 	m_pFuelBar.Render();
 
-	if (drawBitMaps) {
+	if (m_pRenderBitmaps) {
 		m_pRenderTarget2D->DrawBitmap(m_pHealthBitmap, m_pHealthIcon);
 		m_pRenderTarget2D->DrawBitmap(m_pOxygenBitmap, m_pOxygenIcon);
 		m_pRenderTarget2D->DrawBitmap(m_pFuelBitmap, m_pFuelIcon);
 	}
 }
 
-void HeadsUpDisplayUI::RenderCrosshair() {
-	this->UpdateBrush(D2D1::ColorF::Snow, 0.75f);
-	m_pRenderTarget2D->DrawLine(
-		D2D1::Point2F(m_pMouseX - m_pCrosshairLength, m_pMouseY - m_pCrosshairDistance),
-		D2D1::Point2F(m_pMouseX + m_pCrosshairLength, m_pMouseY - m_pCrosshairDistance),
-		m_pBrush.Get(),
-		m_pCrosshairSize
-	);
-
-
-	m_pRenderTarget2D->DrawLine(
-		D2D1::Point2F(m_pMouseX + m_pCrosshairDistance, m_pMouseY - m_pCrosshairLength),
-		D2D1::Point2F(m_pMouseX + m_pCrosshairDistance, m_pMouseY + m_pCrosshairLength),
-		m_pBrush.Get(),
-		m_pCrosshairSize
-	);
-
-	m_pRenderTarget2D->DrawLine(
-		D2D1::Point2F(m_pMouseX - m_pCrosshairLength, m_pMouseY + m_pCrosshairDistance),
-		D2D1::Point2F(m_pMouseX + m_pCrosshairLength, m_pMouseY + m_pCrosshairDistance),
-		m_pBrush.Get(),
-		m_pCrosshairSize
-	);
-
-	m_pRenderTarget2D->DrawLine(
-		D2D1::Point2F(m_pMouseX - m_pCrosshairDistance, m_pMouseY - m_pCrosshairLength),
-		D2D1::Point2F(m_pMouseX - m_pCrosshairDistance, m_pMouseY + m_pCrosshairLength),
-		m_pBrush.Get(),
-		m_pCrosshairSize
-	);
-}
-
 void HeadsUpDisplayUI::RenderCapacity() {
 	ErrorCheck(m_pHUDFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING), "TextAlignment");
 
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pCapacityText.c_str(),
 		(UINT32)m_pCapacityText.length(),
@@ -369,15 +369,15 @@ void HeadsUpDisplayUI::RenderCapacity() {
 		m_pCapacityTextBox,
 		m_pBrush.Get()
 	);
-	if (drawBitMaps) {
+	if (m_pRenderBitmaps) {
 		m_pRenderTarget2D->DrawBitmap(m_pCapacityBitmap, m_pCapacityIcon);
 	}
 }
 
 void HeadsUpDisplayUI::RenderWarningModule() {
-	this->UpdateBrush(D2D1::ColorF::OrangeRed, 1.0f);
+	this->UpdateBrush(m_pRed, 1.0f);
 	m_pRenderTarget2D->FillGeometry(m_pWarningTriangle.Get(), m_pBrush.Get());
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D->DrawGeometry(m_pWarningTriangle.Get(), m_pBrush.Get(), 2.0f);
 
 	ErrorCheck(m_pHUDFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
@@ -393,7 +393,7 @@ void HeadsUpDisplayUI::RenderWarningModule() {
 
 void HeadsUpDisplayUI::RenderPlanetDistanceModule() {
 	//Render the text
-	UpdateBrush(D2D1::ColorF::White, 1.0f);
+	UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pPlanetText.c_str(),
 		(UINT32)m_pPlanetText.length(),
@@ -411,7 +411,28 @@ void HeadsUpDisplayUI::RenderPlanetDistanceModule() {
 	);
 }
 
+void HeadsUpDisplayUI::RenderDamageModule() {
+	//Cold damage
+	if (m_pRenderBitmaps && m_pRenderCold) {
+		m_pRenderTarget2D->DrawBitmap(m_pFrostBitmap, m_pScreen);
+	}
+
+	//Warm damage
+	if (m_pRenderHeat) {
+
+	}
+
+	//Radiation damage
+	if (m_pRenderRadiation) {
+
+	}
+}
+
 void HeadsUpDisplayUI::Render() {
+	BeginFrame();
+
+	RenderDamageModule();
+
 	if (m_pRenderDistance) {
 		RenderPlanetDistanceModule();
 	}
@@ -422,7 +443,8 @@ void HeadsUpDisplayUI::Render() {
    if (m_pCapacityWarning) {
 	   RenderWarningModule();
    }
-   RenderCrosshair();
+
+   EndFrame();
 }
 
 //Event functions
@@ -460,14 +482,14 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 		this->UpdateModules();
 		break;
 	}
-	//EXAMPLE: Only for showcasing dynamic change at the moment
-	case EventType::DelegateMouseCoordsEvent:
+	case EventType::DelegatePlayerInfoEvent:
 	{
-		m_pMouseX = static_cast<DelegateMouseCoordsEvent*>(&event)->GetXCoord();
-		m_pMouseY = static_cast<DelegateMouseCoordsEvent*>(&event)->GetYCoord();
-		m_pHealthBar.SetCurrentBar(static_cast<float>(m_pMouseX / m_pWindowWidth));
-		m_pOxygenBar.SetCurrentBar(static_cast<float>(m_pMouseY / m_pWindowHeight));
-		m_pFuelBar.SetCurrentBar(static_cast<float>(m_pMouseX / m_pWindowWidth));
+		DelegatePlayerInfoEvent& derivedEvent = static_cast<DelegatePlayerInfoEvent&>(event);
+		PlayerInfo* PlayerInfo = derivedEvent.GetPlayerInfo();
+		m_pHealthBar.SetCurrentBar(PlayerInfo->HealthPercentage);
+		m_pOxygenBar.SetCurrentBar(PlayerInfo->oxygenPercentage);
+		m_pFuelBar.SetCurrentBar(PlayerInfo->fuelPercentage);
+		SetCapacity(PlayerInfo->storageUsage, PlayerInfo->storageCapacity);
 		break;
 	}
 	case EventType::DelegatePlanetDistanceEvent:
@@ -487,34 +509,15 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 	}
 	case EventType::WindowCloseEvent:
 	{
-		drawBitMaps = false;
-		if (m_pHealthBitmap) {
-			m_pHealthBitmap->Release();
-		}
-		if (m_pOxygenBitmap) {
-			m_pOxygenBitmap->Release();
-		}
-		if (m_pFuelBitmap) {
-			m_pFuelBitmap->Release();
-		}
-		if (m_pCapacityBitmap) {
-			m_pCapacityBitmap->Release();
-		}
-
+		this->CleanUp();
 	}
-	/*
-	example case: EventType::DelegateCapacity:
-	{
-	SetCapacity(10, 100);
-	}
-	*/
 	default:
 		break;
 	}
 }
 
 void HeadsUpDisplayUI::CleanUp() {
-	drawBitMaps = false;
+	m_pRenderBitmaps = false;
 	if (m_pHealthBitmap) {
 		m_pHealthBitmap->Release();
 	}
@@ -526,5 +529,8 @@ void HeadsUpDisplayUI::CleanUp() {
 	}
 	if (m_pCapacityBitmap) {
 		m_pCapacityBitmap->Release();
+	}
+	if (m_pFrostBitmap) {
+		m_pFrostBitmap->Release();
 	}
 }

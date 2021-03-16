@@ -7,6 +7,7 @@
 #include "Scene.h"
 #include "Resources/ResourceManager.h" 
 #include "EventSystem\IEventListener.h"
+#include "EventSystem/UIEvents.h"
 #include "ImGui\ImGuiManager.h"
 #include "LayerStack.h"
 #include "Techniques/MousePicking.h"
@@ -25,9 +26,8 @@ private:
 	Scene* m_scene;
 	ImGuiManager m_imguiManager;
 	LayerStack m_LayerStack;
-	std::vector<std::thread> m_MainMenuThread;
 	bool m_Running;
-	bool m_MainMenuRunning;
+	bool m_MainMenuNotRunning;
 	long double m_time;
 	int m_fps;
 private:

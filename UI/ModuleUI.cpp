@@ -4,13 +4,19 @@
 ModuleUI::ModuleUI() noexcept {
 	EventBuss::Get().AddListener(this, EventType::DelegateDXEvent);
 	EventBuss::Get().AddListener(this, EventType::DelegateResolutionEvent);
+	EventBuss::Get().AddListener(this, EventType::DelegateMouseCoordsEvent);
+
 	m_pWindowWidth = 0.0f;
 	m_pWindowHeight = 0.0f;
+	m_pMouseX = 0u;
+	m_pMouseY = 0u;
+	m_pOnScreen = false;
 }
 
 ModuleUI::~ModuleUI() {
 	EventBuss::Get().RemoveListener(this, EventType::DelegateDXEvent);
 	EventBuss::Get().RemoveListener(this, EventType::DelegateResolutionEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateMouseCoordsEvent);
 }
 
 bool ModuleUI::CreateBrush() {
@@ -88,9 +94,8 @@ bool ModuleUI::ErrorCheck(HRESULT handle, std::string type) {
 	return true;
 }
 
-void ModuleUI::UpdateBrush(D2D1::ColorF color, float opacity) {
-	this->m_pBrush.Get()->SetColor(color);
-	this->m_pBrush.Get()->SetOpacity(opacity);
+void ModuleUI::UpdateBrush(UINT32 hexColor, float opacity) {
+	this->m_pBrush.Get()->SetColor(D2D1::ColorF(hexColor, opacity));
 }
 
 void ModuleUI::BeginFrame() {

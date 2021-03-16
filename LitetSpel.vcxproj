@@ -98,6 +98,10 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="UI\CrosshairUI.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="UI\HeadsUpDisplayBar.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
@@ -252,12 +256,21 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="UI\UpgradeScreenUI.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="UI\UpgradeUI.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="WaterSphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventSystem\PlayerEvents.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="SpaceShipUpgrade.h" />
+    <ClInclude Include="UI\CrosshairUI.h" />
     <ClInclude Include="UI\HeadsUpDisplayBar.h" />
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="Techniques\Bloom.h" />
@@ -334,6 +347,8 @@
     <ClInclude Include="Resources\ResourceManager.h" />
     <ClInclude Include="Resources\VertexShader.h" />
     <ClInclude Include="UI\TypesUI.h" />
+    <ClInclude Include="UI\UpgradeScreenUI.h" />
+    <ClInclude Include="UI\UpgradeUI.h" />
     <ClInclude Include="vertex.h" />
     <ClInclude Include="WaterSphere.h" />
   </ItemGroup>
@@ -500,6 +515,7 @@
     <Font Include="UI\Fonts\AwareBold-qZo3x.ttf" />
     <Font Include="UI\Fonts\Neoterique-Y08L.ttf" />
     <Font Include="UI\Fonts\NeoteriqueItalic-rAVK.ttf" />
+    <Font Include="UI\Fonts\Netron-p7gq1.otf" />
     <Font Include="UI\Fonts\Tenika400Regular-Rpyql.ttf" />
   </ItemGroup>
   <ItemGroup>
@@ -510,6 +526,7 @@
     <Image Include="UI\Icons\Oxygen.png" />
     <Image Include="UI\Icons\plasma.png" />
     <Image Include="UI\Icons\radium.png" />
+    <Image Include="UI\Icons\Science.png" />
     <Image Include="UI\Icons\Scrap.png" />
     <Image Include="UI\Icons\Titanium.png" />
     <Image Include="UI\Icons\weight.png" />
