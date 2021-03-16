@@ -5,6 +5,7 @@
 #include "EventSystem/InputEvents.h"
 #include "EventSystem\UtilityEvents.h"
 
+
 class PlayerCamera : public IEventListener, public EventPublisher, public Camera {
 private:
 	float m_maxPitch, m_minPitch;
@@ -12,7 +13,12 @@ private:
 	float m_FOVvalue = 4.0f;
 	float m_distanceFromShip;
 	void OnEvent(IEvent& event) noexcept;
-
+	bool m_HitByAsteroid;
+	float m_ShakeDuration;
+	float m_ShakeMagnitude;
+	float m_ElapsedShakeTime;
+	float m_YawPriorToHit;
+	float m_PitchPriorToHit;
 public:
 	PlayerCamera();
 	virtual ~PlayerCamera();
@@ -26,4 +32,5 @@ public:
 	//Zoom
 	void mouseScroll(int scroll);
 	DirectX::XMFLOAT3 GetForwardVector();
+	[[nodiscard]] const DirectX::XMFLOAT3& Shake(DirectX::XMFLOAT3& focus);
 };

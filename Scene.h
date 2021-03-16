@@ -7,6 +7,7 @@
 #include "EventSystem/EventPublisher.h"
 #include "Layer.h"
 #include "EventSystem/RenderEvents.h"
+#include "EventSystem/UIEvents.h"
 #include "Techniques/MousePicking.h"
 #include "Techniques/FrustumCulling.h"
 #include "ourMath.h"
@@ -34,6 +35,12 @@ private:
 	long double m_damageTimer;
 
 	size_t m_persistentObjEnd;
+
+	//Invincibility data:
+	float m_ElapsedTime;
+	static constexpr float m_InvincibilityDuration = 0.5f;
+	bool m_IsInvincible;
+
 private:
 	[[nodiscard]] const std::vector<std::wstring> RandomizePlanetNames(std::default_random_engine generator) noexcept;
 public:

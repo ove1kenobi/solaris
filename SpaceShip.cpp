@@ -90,11 +90,11 @@ GameObject* SpaceShip::update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 P
 
 	DirectX::XMStoreFloat4x4(&wvpMatrix, DirectX::XMMatrixTranspose(final * vMatrix * pMatrix));
 
-	deviceContext->Map(this->m_model->getMatrixBuffer().Get(),
+	HR_X(deviceContext->Map(this->m_model->getMatrixBuffer().Get(),
 			           0,
 		               D3D11_MAP_WRITE_DISCARD,
 		               0,
-		               &mappedSubresource);
+		               &mappedSubresource), "Map");
 
 	memcpy(mappedSubresource.pData, &m_wMatrix, sizeof(DirectX::XMFLOAT4X4));
 	memcpy(((char*)mappedSubresource.pData) + sizeof(DirectX::XMFLOAT4X4), &wvpMatrix, sizeof(DirectX::XMFLOAT4X4));
