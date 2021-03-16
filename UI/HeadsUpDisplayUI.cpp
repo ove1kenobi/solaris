@@ -76,10 +76,9 @@ bool HeadsUpDisplayUI::Initialize() {
 	if (!CreateWarningModule()) {
 		return false;
 	}
-	/*
 	if (!CreateDamageModules()) {
 		return false;
-	}*/
+	}
 	return true;
 }
 
@@ -159,8 +158,6 @@ bool HeadsUpDisplayUI::CreateDamageModules() {
 
 	//Warm damage
 	//According to microsoft own example I'm suppose to do it like this
-	ID2D1GradientStopCollection* pGradientStops = NULL;
-
 	D2D1_GRADIENT_STOP gradientStops[2];
 	gradientStops[0].color = D2D1::ColorF(m_pYellow, 0.0f);
 	gradientStops[0].position = 0.0f;
@@ -172,7 +169,7 @@ bool HeadsUpDisplayUI::CreateDamageModules() {
 		2,
 		D2D1_GAMMA_2_2,
 		D2D1_EXTEND_MODE_CLAMP,
-		&pGradientStops
+		&m_pHeatGradientStops
 	), "GradientStops");
 
 	ErrorCheck(m_pRenderTarget2D->CreateRadialGradientBrush(
@@ -181,11 +178,9 @@ bool HeadsUpDisplayUI::CreateDamageModules() {
 			D2D1::Point2F(0.0f, 0.0f),
 			m_pWindowWidth,
 			m_pWindowHeight),
-		pGradientStops,
+		m_pHeatGradientStops.Get(),
 		&m_pHeatRadialGradientBrush),
 		"GradientBrush");
-
-	//m_pHeatRadialGradientBrush.Get()->SetOpacity(0.0f);
 	
 	//Radiation damage
 	LoadBitmapFromFile(GetIconFilePath(L"Radioactive.png").c_str(), &m_pRadiationBitmap);
@@ -408,10 +403,9 @@ bool HeadsUpDisplayUI::UpdateModules() {
 	if (!UpdateWarningModule()) {
 		return false;
 	}
-	/*
 	if (!UpdateDamageModules()) {
 		return false;
-	}*/
+	}
 	if (!UpdateTools()) {
 		return false;
 	}
@@ -520,7 +514,7 @@ void HeadsUpDisplayUI::RenderDamageModule() {
 void HeadsUpDisplayUI::Render() {
 	BeginFrame();
 
-	//RenderDamageModule();
+	RenderDamageModule();
 
 	if (m_pRenderDistance) {
 		RenderPlanetDistanceModule();

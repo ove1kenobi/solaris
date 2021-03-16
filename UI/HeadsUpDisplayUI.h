@@ -59,6 +59,7 @@ private:
 	bool m_pCapacityWarning;
 
 	//Damage warning
+	Microsoft::WRL::ComPtr<ID2D1GradientStopCollection> m_pHeatGradientStops;
 	Microsoft::WRL::ComPtr<ID2D1RadialGradientBrush> m_pHeatRadialGradientBrush;
 	ID2D1Bitmap* m_pFrostBitmap;
 	D2D1_RECT_F m_pScreen;
