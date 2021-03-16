@@ -89,6 +89,7 @@
     <ClCompile Include="UI\CrosshairUI.cpp" />
     <ClCompile Include="UI\UpgradeScreenUI.cpp" />
     <ClCompile Include="UI\UpgradeUI.cpp" />
+    <ClCompile Include="GameEventManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXCore.h" />
@@ -164,7 +165,6 @@
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="EventSystem\SoundEvents.h" />
     <ClInclude Include="Resources.h" />
-    <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="SpaceShipUpgrade.h" />
     <ClInclude Include="UI\MenuUI.h" />
     <ClInclude Include="UI\PressInteractUI.h" />
@@ -175,6 +175,8 @@
     <ClInclude Include="UI\CrosshairUI.h" />
     <ClInclude Include="UI\UpgradeScreenUI.h" />
     <ClInclude Include="UI\UpgradeUI.h" />
+    <ClInclude Include="GameEventManager.h" />
+    <ClInclude Include="GameEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

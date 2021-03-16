@@ -13,8 +13,8 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pRandomEvents.push_back(new RandomEventUI());
 	m_pRandomEvents.push_back(new RandomEventUI());
 
-	//Example text: should be removed once event system is in place.
-	m_pPlanetNameText = L"Place holder";
+	//Has to start on try to be able to enter planet interaction for the first time
+	m_gameEventSelected = true;
 
 	m_pPlanetFlavourText = L"Luke Skywalker has returned to his home planet of Tatooine in an attempt "
 		L"to rescue his friend Han Solo from the clutches of the vile gangster Jabba the Hutt."
@@ -69,6 +69,30 @@ PlanetInteractionUI::~PlanetInteractionUI() {
 
 	EventBuss::Get().RemoveListener(this, EventType::MouseButtonEvent);
 	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
+}
+
+void PlanetInteractionUI::SetIcons(int randomEventIndex, Resources resources)
+{
+	if (resources.health != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"health.png", std::to_wstring(resources.health));
+	if (resources.fuel != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"Fuel.png", std::to_wstring(resources.fuel));
+	if (resources.oxygen != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"Oxygen.png", std::to_wstring(resources.oxygen));
+	if (resources.titanium != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"Titanium.png", std::to_wstring(resources.titanium));
+	if (resources.scrapMetal != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"Scrap.png", std::to_wstring(resources.scrapMetal));
+	if (resources.nanotech != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"nanotech.png", std::to_wstring(resources.nanotech));
+	if (resources.plasma != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"plasma.png", std::to_wstring(resources.plasma));
+	if (resources.radium != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"radium.png", std::to_wstring(resources.radium));
+	if (resources.khionerite != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"Khionerite.png", std::to_wstring(resources.khionerite));
+	if (resources.science != 0)
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"Science.png", std::to_wstring(resources.science));
 }
 
 //Creation functions
@@ -727,6 +751,19 @@ void PlanetInteractionUI::Render() {
 	this->EndFrame();
 }
 
+void PlanetInteractionUI::SetGameEvents(GameEvent gameEvents[3]) {
+	for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
+		m_pRandomEvents[i]->ClearIcons();
+	}
+
+	for (int i = 0; i < m_pRandomEvents.size(); i++) {
+		m_availableGameEvents[i] = gameEvents[i];
+		m_pRandomEvents[i]->SetText(gameEvents[i].prologue);
+	}
+
+	m_gameEventSelected = false;
+}
+
 //Event functions
 void PlanetInteractionUI::SetPlanetName(std::wstring text) {
 	std::transform(text.begin(), text.end(), text.begin(), ::toupper);
@@ -758,9 +795,24 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 		m_pMouseY = static_cast<MouseButtonEvent*>(&event)->GetYCoord();
 		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
-		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && m_pOnScreen) {
+		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && m_pOnScreen && !m_gameEventSelected) {
+			int selected = -1;
+			//if a left mouse button click was registered
+			//loop and look if an event was selected
 			for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
-				m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY);
+				if (m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY, m_availableGameEvents[i])) {
+					SetIcons(i, m_availableGameEvents[i].reward);
+					m_gameEventSelected = true;
+					selected = i;
+				};
+			}
+			//If an event was selected clear all others
+			if (m_gameEventSelected) {
+				for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
+					if (selected != i) {
+						m_pRandomEvents.at(i)->ClearEvent();
+					}
+				}
 			}
 		}
 		break;

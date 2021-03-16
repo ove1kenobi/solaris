@@ -32,22 +32,47 @@ DirectX::XMFLOAT3 Player::Stabilize()
 	return stabilizingForce;
 }
 
+int Player::AddToInventory(int currentResource, int resourceToAdd)
+{
+	int amountToAdd = 0;
+	int storageLeft = m_storageCapacity - m_storageUsage;
+
+	if (storageLeft < resourceToAdd) {
+		amountToAdd = storageLeft;
+		m_storageUsage = m_storageCapacity;
+	}
+	else if (currentResource + resourceToAdd < 0) {
+		amountToAdd = -currentResource;
+		m_storageUsage -= currentResource;
+
+	}
+	else {
+		amountToAdd = resourceToAdd;
+		m_storageUsage += resourceToAdd;
+	}
+
+	return amountToAdd;
+}
 
 Player::Player()
 	: m_PlayerInfo{ },
 	  m_TetheredToClosestPlanet{ false },
 	  m_TetheredDistanceToUphold{ -1.0f, -1.0f, -1.0f }
 {
-	m_fuelCapacity = 500;
-	m_oxygenCapacity = 500;
-	m_healthCapacity = 100;
-	m_storageCapacity = 1000;
-	m_resources[0] = m_fuelCapacity;
-	m_resources[1] = m_oxygenCapacity;
-	m_resources[2] = m_healthCapacity;
-	for (unsigned int i = 3; i < numberOfResources; i++) {
-		m_resources[i] = 0;
-	}
+	m_maxHealth = 100;
+	m_fuelCapacity = 100;
+	m_oxygenCapacity = 100;
+	m_storageCapacity = 500;
+	m_inventory.health = 100;
+	m_inventory.fuel = 100;
+	m_inventory.oxygen = 100;
+	m_inventory.titanium = 0;
+	m_inventory.scrapMetal = 0;
+	m_inventory.nanotech = 0;
+	m_inventory.plasma = 0;
+	m_inventory.radium = 0;
+	m_inventory.khionerite = 0;
+	m_inventory.science = 0;
 	m_storageUsage = 0;
 
 	m_moveForwards = false;
@@ -73,12 +98,13 @@ Player::~Player()
 	EventBuss::Get().RemoveListener(this, EventType::ToggleControlsEvent);
 	EventBuss::Get().RemoveListener(this, EventType::MouseMoveAbsoluteEvent);
 	EventBuss::Get().RemoveListener(this, EventType::ToggleTetheredEvent);
+	EventBuss::Get().RemoveListener(this, EventType::GameEventSelectedEvent);
 }
 
 bool Player::Initialize(PlayerCamera* camera)
 {
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::ToggleControlsEvent, EventType::MouseMoveAbsoluteEvent);
-	EventBuss::Get().AddListener(this, EventType::ToggleTetheredEvent);
+	EventBuss::Get().AddListener(this, EventType::ToggleTetheredEvent, EventType::GameEventSelectedEvent);
 
 	m_camera = camera;
 	m_ship = new SpaceShip();
@@ -90,17 +116,17 @@ bool Player::Initialize(PlayerCamera* camera)
 bool Player::update(const std::vector<Planet*>& planets)
 {
 #if defined(DEBUG) | defined(_DEBUG)
-	ImGui::Begin("Inventory");
-	ImGui::Text("Fuel: %d", m_resources[0]);
-	ImGui::Text("Oxygen: %d", m_resources[1]);
-	ImGui::Text("Health: %d", m_resources[2]);
-	ImGui::Text("Titanium: %d", m_resources[3]);
-	ImGui::Text("Scrap Metal: %d", m_resources[4]);
-	ImGui::Text("Nanotech: %d", m_resources[5]);
-	ImGui::Text("Plasma: %d", m_resources[6]);
-	ImGui::Text("Radium: %d", m_resources[7]);
-	ImGui::Text("Khionerite: %d", m_resources[8]);
-	ImGui::Text("Science: %d", m_resources[9]);
+	ImGui::Begin("Inventiry");
+	ImGui::Text("Fuel: %d", m_inventory.fuel);
+	ImGui::Text("Oxygen: %d", m_inventory.oxygen);
+	ImGui::Text("Titanium: %d", m_inventory.titanium);
+	ImGui::Text("Scrap Metal: %d", m_inventory.scrapMetal);
+	ImGui::Text("Nanotech: %d", m_inventory.nanotech);
+	ImGui::Text("Plasma: %d", m_inventory.plasma);
+	ImGui::Text("Radium: %d", m_inventory.radium);
+	ImGui::Text("Khionerite: %d", m_inventory.khionerite);
+	ImGui::Text("Science: %d", m_inventory.science);
+	ImGui::Text("Storage Usage %d/%d", m_storageUsage, m_storageCapacity);
 	ImGui::End();
 #endif
 
@@ -191,66 +217,34 @@ SpaceShip* Player::getShip() {
 	return this->m_ship;
 }
 
-void Player::AddResource(int amount, Resource resource)
+void Player::AddResources(Resources resources)
 {
-	int index = static_cast<int>(resource);
+	UpdateHealth(resources.health);
 
-	switch (resource)
-	{
-		case Resource::Fuel:
-		{
-			m_resources[index] += amount;
-			if (m_resources[index] > m_fuelCapacity) {
-				m_resources[index] = m_fuelCapacity;
-			}
-			break;
-		}
-		case Resource::Oxygen:
-		{
-			m_resources[index] += amount;
-			if (m_resources[index] > m_oxygenCapacity) {
-				m_resources[index] = m_oxygenCapacity;
-			}
-			break;
-		}
-		case Resource::Health:
-		{
-			m_resources[index] += amount;
-			if (m_resources[index] > m_healthCapacity) {
-				m_resources[index] = m_healthCapacity;
-			}
-			break;
-		}
-		default:
-		{
-			int storageLeft = m_storageCapacity - m_storageUsage;
-
-			// Storage space have run out, add only as much as you can
-			if (storageLeft < amount) {
-				m_resources[index] += storageLeft;
-				m_storageUsage += storageLeft;
-			}
-
-			// We can't have less then 0 of a resource, only remove what we have
-			else if (m_resources[index] + amount < 0) {
-				int tempAmount = m_resources[index];
-				m_resources[index] = 0;
-				m_storageUsage -= tempAmount;
-			}
-
-			// Normal scenario
-			else {
-				m_resources[index] += amount;
-				m_storageUsage += amount;
-			}
-
-			break;
-		}
+	m_inventory.fuel += resources.fuel;
+	if (m_inventory.fuel > m_fuelCapacity) {
+		m_inventory.fuel = m_fuelCapacity;
+	}
+	else if (m_inventory.fuel < 0) {
+		m_inventory.fuel = 0;
 	}
 
-	if (m_resources[index] < 0) {
-		m_resources[index] = 0;
+	m_inventory.oxygen += resources.oxygen;
+	if (m_inventory.oxygen > m_oxygenCapacity) {
+		m_inventory.oxygen = m_oxygenCapacity;
 	}
+	else if (m_inventory.oxygen < 0) {
+		m_inventory.oxygen = 0;
+	}
+
+	m_inventory.plasma += AddToInventory(m_inventory.plasma, resources.plasma);
+	m_inventory.radium += AddToInventory(m_inventory.radium, resources.radium);
+	m_inventory.khionerite += AddToInventory(m_inventory.khionerite, resources.khionerite);
+	m_inventory.nanotech += AddToInventory(m_inventory.nanotech, resources.nanotech);
+	m_inventory.titanium += AddToInventory(m_inventory.titanium, resources.titanium);
+	m_inventory.scrapMetal += AddToInventory(m_inventory.scrapMetal, resources.scrapMetal);
+
+	m_inventory.science += resources.science;
 }
 
 void Player::OnEvent(IEvent& event) noexcept
@@ -310,6 +304,12 @@ void Player::OnEvent(IEvent& event) noexcept
 			}
 			break;
 		}
+		case EventType::GameEventSelectedEvent:
+		{
+			GameEvent gameEvent = static_cast<GameEventSelectedEvent*>(&event)->GetGameEvent();
+			AddResources(gameEvent.reward);
+			break;
+		}
 		case EventType::ToggleControlsEvent:
 		{
 			if (m_playerControlsActive) m_playerControlsActive = false;
@@ -340,32 +340,39 @@ void Player::OnEvent(IEvent& event) noexcept
 
 void Player::DelegatePlayerInfo() noexcept
 {
-	m_PlayerInfo.fuelPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Fuel)]) / static_cast<float>(m_fuelCapacity);
-	m_PlayerInfo.oxygenPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Oxygen)]) / static_cast<float>(m_oxygenCapacity);
-	m_PlayerInfo.HealthPercentage = static_cast<float>(m_resources[static_cast<int>(Resource::Health)]) / static_cast<float>(m_healthCapacity);
+	m_PlayerInfo.fuelPercentage = static_cast<float>(m_inventory.fuel) / static_cast<float>(m_fuelCapacity);
+	m_PlayerInfo.oxygenPercentage = static_cast<float>(m_inventory.oxygen) / static_cast<float>(m_oxygenCapacity);
+	m_PlayerInfo.HealthPercentage = static_cast<float>(m_inventory.health) / static_cast<float>(m_maxHealth);
 	m_PlayerInfo.storageUsage = m_storageUsage;
 	m_PlayerInfo.storageCapacity = m_storageCapacity;
 	DelegatePlayerInfoEvent piEvent(&m_PlayerInfo);
 	EventBuss::Get().Delegate(piEvent);
 }
 
-int Player::GetHealth() noexcept {
-	return m_resources[static_cast<int>(Resource::Health)];
+void Player::UpdateHealth(int value)
+{
+	m_inventory.health += value;
+	if (m_inventory.health > m_maxHealth) {
+		m_inventory.health = m_maxHealth;
+	}
+	else if (m_inventory.health < 0) {
+		m_inventory.health = 0;
+	}
 }
 
-void Player::UpdateHealth(int value) {
-	m_resources[static_cast<int>(Resource::Health)] += value;
+int Player::GetHealth() noexcept {
+	return m_inventory.health;
 }
 
 int Player::GetMaxHealth() noexcept {
-	return m_healthCapacity;
+	return m_maxHealth;
 }
 
 void Player::UpdateMaxHealth(int value) {
-	m_healthCapacity += value;
+	m_maxHealth += value;
 
-	if (m_resources[static_cast<int>(Resource::Health)] > m_healthCapacity) {
-		m_resources[static_cast<int>(Resource::Health)] = m_healthCapacity;
+	if (m_inventory.health > m_maxHealth) {
+		m_inventory.health = m_maxHealth;
 	}
 }
 
@@ -388,5 +395,5 @@ void Player::DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcep
 
 void Player::Kill() noexcept
 {
-	m_resources[static_cast<int>(Resource::Health)] = 0;
+	m_inventory.health = 0;
 }
