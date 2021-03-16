@@ -405,7 +405,9 @@ void Scene::Update() noexcept {
 
 	m_Picking.DisplayPickedObject();
 
-	
+	bool coldDamage = false;
+	bool heatDamage = false;
+	bool radioactiveDamage = false;
 	bool radioactiveUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::radProtect);
 	bool coldUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::cold);
 	bool hotUpgrade = m_player.getShip()->IsUpgraded(SpaceShip::hot);
@@ -421,10 +423,21 @@ void Scene::Update() noexcept {
 		DirectX::XMFLOAT3 playerCenter = m_player.getShip()->getCenter();
 		DirectX::XMFLOAT3 sunCenter = m_sun->GetCenter();
 		float sunDist = distance(sunCenter, playerCenter);
-		if ((sunDist < 6000.0f || sunDist > 15000.0f) && m_damageTimer > 1.0f) {
-			m_player.UpdateHealth(-5);
-			//Send event to UI so that we can tell the player that we are too far away / too close to the sun.
-			m_damageTimer = 0.0f;
+		if (sunDist < 6000.0f) {
+			//Player is taking heat damage
+			heatDamage = true;
+			if (m_damageTimer > 1.0f) {
+				m_player.UpdateHealth(-5);
+				m_damageTimer = 0.0f;
+			}
+		}
+		if (sunDist > 15000.0f) {
+			//Player is taking cold damage
+			coldDamage = true;
+			if (m_damageTimer > 1.0f) {
+				m_player.UpdateHealth(-5);
+				m_damageTimer = 0.0f;
+			}
 		}
 	}
 
@@ -433,13 +446,19 @@ void Scene::Update() noexcept {
 		DirectX::XMFLOAT3 playerCenter = m_player.getShip()->getCenter();
 		for (auto r : m_radioactivePlanets) {
 			float planetDist = distance(r->GetCenter(), playerCenter);
-			if (planetDist < 1000.0f && m_damageTimer > 1.0f) {
+			if (planetDist < 1000.0f) {
+				//Player is taking radioactive damage
+				radioactiveDamage = true;
+				if(m_damageTimer > 1.0f)
 				m_player.UpdateHealth(-5);
-				//Send event to UI so that we can tell the player that we are too close to the sun.
 				m_damageTimer = 0.0f;
 			}
 		}
 	}
+
+	//Forward what type of damage the player is taking to the HUD so it knows what to render
+	ToggleDamageHUD dH(coldDamage, heatDamage, radioactiveDamage);
+	EventBuss::Get().Delegate(dH);
 
 	CheckForCollisions();
 

@@ -5,6 +5,7 @@
 HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	EventBuss::Get().AddListener(this, EventType::DelegatePlayerInfoEvent);
 	EventBuss::Get().AddListener(this, EventType::DelegatePlanetDistanceEvent);
+	EventBuss::Get().AddListener(this, EventType::ToggleDamageHUD);
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
 
 	m_pHealthBitmap = NULL;
@@ -52,6 +53,7 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 HeadsUpDisplayUI::~HeadsUpDisplayUI() {
 	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
 	EventBuss::Get().RemoveListener(this, EventType::DelegatePlanetDistanceEvent);
+	EventBuss::Get().RemoveListener(this, EventType::ToggleDamageHUD);
 	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 }
 
@@ -182,6 +184,8 @@ bool HeadsUpDisplayUI::CreateDamageModules() {
 		&m_pHeatRadialGradientBrush),
 		"GradientBrush");
 
+	//m_pHeatRadialGradientBrush.Get()->SetOpacity(0.0f);
+	
 	//Radiation damage
 	LoadBitmapFromFile(GetIconFilePath(L"Radioactive.png").c_str(), &m_pRadiationBitmap);
 
@@ -587,6 +591,12 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 		else {
 			m_pRenderDistance = false;
 		}
+		break;
+	}case EventType::ToggleDamageHUD:
+	{
+		m_pRenderCold = static_cast<ToggleDamageHUD*>(&event)->GetCold();
+		m_pRenderHeat = static_cast<ToggleDamageHUD*>(&event)->GetHeat();
+		m_pRenderRadiation = static_cast<ToggleDamageHUD*>(&event)->GetRadiation();
 		break;
 	}
 	case EventType::WindowCloseEvent:
