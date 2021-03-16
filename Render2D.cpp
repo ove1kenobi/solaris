@@ -39,6 +39,8 @@ Render2D::Render2D() noexcept
 		m_Modules.push_back(new PressInteractUI());
 		m_Modules.push_back(new CrosshairUI());
 		m_Modules.push_back(new UpgradeScreenUI());
+
+		m_Modules.at(static_cast<int>(TypesUI::MainMenu))->m_pOnScreen = true;
 	}
 }
 
@@ -142,12 +144,6 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 							m_Modules.at(static_cast<int>(TypesUI::PlanetInteraction))->m_pOnScreen = m_PlanetInteraction;
 						}
 					}
-				}
-				//Just and example toggle for the menu
-				//To do it properly just change the bool of InGame
-				if (virKey == 'R') {
-					m_InGame = !m_InGame;
-					m_Modules.at(static_cast<int>(TypesUI::MainMenu))->m_pOnScreen = m_InGame;
 				}
 				//If player goes in the upgrade screen we also do not want things to update
 				if (virKey == 'U' && !m_PlanetInteraction) {

@@ -66,6 +66,9 @@ bool HeadsUpDisplayUI::Initialize() {
 	if (!CreateWarningModule()) {
 		return false;
 	}
+	if (!CreateDamageModules()) {
+		return false;
+	}
 	return true;
 }
 
@@ -136,6 +139,17 @@ bool HeadsUpDisplayUI::CreatePlanetDistanceModule() {
 		&m_pPlanetNameFormat
 	), "TextFormat");
 	ErrorCheck(m_pPlanetNameFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER), "TextAlignment");
+	return true;
+}
+
+bool HeadsUpDisplayUI::CreateDamageModules() {
+	//Cold damage
+	LoadBitmapFromFile(GetIconFilePath(L"FrostEffect.png").c_str(), &m_pFrostBitmap);
+
+	//Warm damage
+
+	//Radiation damage
+	//LoadBitmapFromFile(GetIconFilePath(L"Health.png").c_str(), &m_pRadiationBitmap);
 	return true;
 }
 
@@ -292,6 +306,16 @@ bool HeadsUpDisplayUI::UpdatePlanetDistanceModule() {
 	return true;
 }
 
+bool HeadsUpDisplayUI::UpdateDamageModules() {
+	m_pScreen = D2D1::RectF(
+		0.0f,
+		0.0f,
+		m_pWindowWidth,
+		m_pWindowHeight
+	);
+	return true;
+}
+
 bool HeadsUpDisplayUI::UpdateTools() {
 	return true;
 }
@@ -307,6 +331,9 @@ bool HeadsUpDisplayUI::UpdateModules() {
 		return false;
 	}
 	if (!UpdateWarningModule()) {
+		return false;
+	}
+	if (!UpdateDamageModules()) {
 		return false;
 	}
 	if (!UpdateTools()) {
@@ -381,8 +408,21 @@ void HeadsUpDisplayUI::RenderPlanetDistanceModule() {
 	);
 }
 
+void HeadsUpDisplayUI::RenderDamageModule() {
+	//Cold damage
+	if (m_pRenderBitmaps) {
+		m_pRenderTarget2D->DrawBitmap(m_pFrostBitmap, m_pScreen);
+	}
+
+	//Warm damage
+
+	//Radiation damage
+}
+
 void HeadsUpDisplayUI::Render() {
 	BeginFrame();
+
+	RenderDamageModule();
 
 	if (m_pRenderDistance) {
 		RenderPlanetDistanceModule();
@@ -472,6 +512,9 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 		}
 		if (m_pCapacityBitmap) {
 			m_pCapacityBitmap->Release();
+		}
+		if (m_pFrostBitmap) {
+			m_pFrostBitmap->Release();
 		}
 
 	}

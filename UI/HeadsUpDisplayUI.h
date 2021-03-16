@@ -57,6 +57,17 @@ private:
 	std::wstring m_pWarningText;
 	bool m_pCapacityWarning;
 
+	//Damage warning
+	ID2D1Bitmap* m_pFrostBitmap;
+	D2D1_RECT_F m_pScreen;
+
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pRadiationFormat;
+	ID2D1Bitmap* m_pRadiationBitmap;
+	D2D1_RECT_F m_pRadiationIcon;
+	D2D1_RECT_F m_pRadiationScreen;
+	D2D1_RECT_F m_pRadiationTextBox;
+	std::wstring m_pRadiationText;
+
 	//Resources
 	std::vector<D2D1_RECT_F> m_pIconPicture;
 	std::vector<std::wstring> m_pIconText;
@@ -67,6 +78,7 @@ private:
 	bool CreateCapacity();
 	bool CreateWarningModule();
 	bool CreatePlanetDistanceModule();
+	bool CreateDamageModules();
 	bool CreateTools();
 
 	//Update modules if screen size changes
@@ -74,6 +86,7 @@ private:
 	bool UpdateBars();
 	bool UpdateWarningModule();
 	bool UpdatePlanetDistanceModule();
+	bool UpdateDamageModules();
 	bool UpdateTools();
 
 	bool UpdateModules();
@@ -83,6 +96,7 @@ private:
 	void RenderCapacity();
 	void RenderWarningModule();
 	void RenderPlanetDistanceModule();
+	void RenderDamageModule();
 
 	//For updating things based on information from the event handler
 	void SetPlanetDistance(float distanceToPlanet, std::wstring planetName);
