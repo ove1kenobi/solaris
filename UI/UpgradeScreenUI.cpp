@@ -156,31 +156,31 @@ bool UpgradeScreenUI::UpdateUpgrades() {
 
 	//Afterburner
 	m_pUpgrades.at(0)->SetUpgrade(L"AfterBurner",L"Raises your ships maximum speed by 40%.", 0);
-	m_pUpgrades.at(0)->AddCost(L"Science.png", L"1");
 	m_pUpgrades.at(0)->AddCost(L"Scrap.png", L"10");
 	m_pUpgrades.at(0)->AddCost(L"Titanium.png", L"10");
 	m_pUpgrades.at(0)->AddCost(L"Nanotech.png", L"10");
+	m_pUpgrades.at(0)->SetScience(1);
 
 	//Antenna
 	m_pUpgrades.at(1)->SetUpgrade(L"Antenna", L"Allows you to see a planet’s name from any distance.", 1);
-	m_pUpgrades.at(1)->AddCost(L"Science.png", L"1");
 	m_pUpgrades.at(1)->AddCost(L"Titanium.png", L"10");
 	m_pUpgrades.at(1)->AddCost(L"Nanotech.png", L"10");
 	m_pUpgrades.at(1)->AddCost(L"Scrap.png", L"10");
+	m_pUpgrades.at(1)->SetScience(1);
 
 	//Cargo
 	m_pUpgrades.at(2)->SetUpgrade(L"Cargo", L"Doubles your max-weight, allowing you to carry more materials", 2);
-	m_pUpgrades.at(2)->AddCost(L"Science.png", L"1");
 	m_pUpgrades.at(2)->AddCost(L"Titanium.png", L"10");
 	m_pUpgrades.at(2)->AddCost(L"Nanotech.png", L"10");
 	m_pUpgrades.at(2)->AddCost(L"Scrap.png", L"10");
+	m_pUpgrades.at(2)->SetScience(1);
 
 	//Cold shield
 	m_pUpgrades.at(3)->SetUpgrade(L"Cold shield", L"Allows the ship to travel to the colder parts of the solar system without freezing.", 3);
-	m_pUpgrades.at(3)->AddCost(L"Science.png", L"5");
 	m_pUpgrades.at(3)->AddCost(L"Titanium.png", L"20");
 	m_pUpgrades.at(3)->AddCost(L"Nanotech.png", L"20");
 	m_pUpgrades.at(3)->AddCost(L"Scrap.png", L"20");
+	m_pUpgrades.at(3)->SetScience(5);
 
 	//Warm shield
 	m_pUpgrades.at(4)->SetUpgrade(L"Warm shield", L"Allows the ship to travel very close to the sun, without succumbing to the heat.", 7);
@@ -191,38 +191,38 @@ bool UpgradeScreenUI::UpdateUpgrades() {
 
 	//Radioactive shield
 	m_pUpgrades.at(5)->SetUpgrade(L"Radioactive shield", L"Allows the ship to approach radioactive planets without being exposed to the radioactivity.", 9);
-	m_pUpgrades.at(5)->AddCost(L"Science.png", L"5");
 	m_pUpgrades.at(5)->AddCost(L"Titanium.png", L"20");
 	m_pUpgrades.at(5)->AddCost(L"Nanotech.png", L"20");
 	m_pUpgrades.at(5)->AddCost(L"Scrap.png", L"20");
+	m_pUpgrades.at(5)->SetScience(5);
 
 	//Fuel cells
 	m_pUpgrades.at(6)->SetUpgrade(L"Fuel cells", L"Increases max fuel by 100%, also gives fuel equal to the max fuel before this upgrade.", 4);
-	m_pUpgrades.at(6)->AddCost(L"Science.png", L"8");
 	m_pUpgrades.at(6)->AddCost(L"Titanium.png", L"50");
 	m_pUpgrades.at(6)->AddCost(L"Nanotech.png", L"5");
 	m_pUpgrades.at(6)->AddCost(L"Scrap.png", L"5");
+	m_pUpgrades.at(6)->SetScience(8);
 
 	//Living quarters
 	m_pUpgrades.at(7)->SetUpgrade(L"Living quarters", L"Increases max Oxygen by 100%, also gives Oxygen equal to the max oxygen before this upgrade.", 5);
-	m_pUpgrades.at(7)->AddCost(L"Science.png", L"8");
 	m_pUpgrades.at(7)->AddCost(L"Titanium.png", L"5");
 	m_pUpgrades.at(7)->AddCost(L"Nanotech.png", L"50");
 	m_pUpgrades.at(7)->AddCost(L"Scrap.png", L"5");
+	m_pUpgrades.at(7)->SetScience(8);
 
 	//Shield
 	m_pUpgrades.at(8)->SetUpgrade(L"Shield", L"Increases max Health by 100%, also restores Health equal to the max health before this upgrade. Also takes half damage from asteroids.", 6);
-	m_pUpgrades.at(8)->AddCost(L"Science.png", L"8");
 	m_pUpgrades.at(8)->AddCost(L"Titanium.png", L"5");
 	m_pUpgrades.at(8)->AddCost(L"Nanotech.png", L"5");
 	m_pUpgrades.at(8)->AddCost(L"Scrap.png", L"50");
+	m_pUpgrades.at(8)->SetScience(8);
 
 	//Warpdrive
 	m_pUpgrades.at(9)->SetUpgrade(L"Warpdrive", L"Allows for interstellar travel, giving you an opportunity to escape from the solar system.", 8);
-	m_pUpgrades.at(9)->AddCost(L"Science.png", L"12");
 	m_pUpgrades.at(9)->AddCost(L"Plasma.png", L"1");
 	m_pUpgrades.at(9)->AddCost(L"Khionerite.png", L"1");
 	m_pUpgrades.at(9)->AddCost(L"Radium.png", L"1");
+	m_pUpgrades.at(9)->SetScience(12);
 	return true;
 }
 
@@ -399,4 +399,7 @@ void UpgradeScreenUI::OnEvent(IEvent& event) noexcept {
 
 void UpgradeScreenUI::CleanUp() {
     //Will need bitmap clean up later
+	for (unsigned int i = 0; i < m_pUpgrades.size(); i++) {
+		m_pUpgrades.at(i)->CleanUp();
+	}
 }

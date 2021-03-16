@@ -6,7 +6,7 @@ private:
 	//To identify which upgrade it currently holds
 	unsigned int m_pID;
 	bool m_pBought;
-	unsigned int m_science;
+	bool m_pRenderBitmaps;
 
 	//Upgrade title
 	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pFont;
@@ -28,11 +28,11 @@ private:
 	std::vector<std::wstring> m_pCost;
 
 	//Science requriement
-	//Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pCostFormat;
-	//std::list<ID2D1Bitmap*> m_pResourceBitmap;
-	//std::vector<D2D1_RECT_F> m_pResourcePosition;
-	//std::vector<D2D1_RECT_F> m_pCostTextbox;
-	//std::vector<std::wstring> m_pCost;
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pScienceFormat;
+	ID2D1Bitmap* m_pScienceBitmap;
+	D2D1_RECT_F m_pSciencePosition;
+	D2D1_RECT_F m_pRequirementTextbox;
+	std::wstring m_pRequirement;
 
 	//Create functions
 	bool CreateTitle();

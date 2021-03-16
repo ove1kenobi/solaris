@@ -7,6 +7,7 @@ UpgradeUI::UpgradeUI() noexcept {
 
 	m_pID = 0;
 	m_pBought = false;
+	m_pRenderBitmaps = true;
 }
 
 UpgradeUI::~UpgradeUI() {
@@ -74,6 +75,17 @@ bool UpgradeUI::CreateCost() {
 		L"en-us",
 		&m_pCostFormat
 	), "TextFormat");
+
+	ErrorCheck(m_pTextFactory->CreateTextFormat(
+		L"Tenika",
+		m_pFont.Get(),
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		20.0f,
+		L"en-us",
+		&m_pScienceFormat
+	), "TextFormat");
 	return true;
 }
 
@@ -128,6 +140,19 @@ void UpgradeUI::RenderCost() {
 		);
 		i++;
 	}
+
+	if (m_pRenderBitmaps) {
+		m_pRenderTarget2D->DrawBitmap(m_pScienceBitmap, m_pSciencePosition);
+	}
+
+	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pRequirement.c_str(),
+		(UINT32)m_pRequirement.length(),
+		m_pScienceFormat.Get(),
+		m_pRequirementTextbox,
+		m_pBrush.Get()
+	);
 }
 
 void UpgradeUI::Render() {
@@ -159,12 +184,26 @@ void UpgradeUI::SetUpgrade(std::wstring upgrade, std::wstring description, unsig
 }
 
 void UpgradeUI::SetScience(unsigned int science) {
-	m_science = science;
-
 	//Create science icon
+	m_pSciencePosition = D2D1::RectF(
+		m_pHoverBox.right - 50.0f,
+		m_pHoverBox.top,
+		m_pHoverBox.right,
+		m_pHoverBox.top + 50.0f
+	);
 	//Create science bitmap
+	LoadBitmapFromFile(GetIconFilePath(L"Science.png").c_str(), &m_pScienceBitmap);
+
 	//Create text box
+	m_pRequirementTextbox = D2D1::RectF(
+		m_pSciencePosition.left,
+		m_pSciencePosition.top,
+		m_pSciencePosition.right,
+		m_pSciencePosition.bottom
+	);
+
 	//Load in text
+	m_pRequirement = std::to_wstring(science);
 }
 
 void UpgradeUI::AddCost(std::wstring resource, std::wstring cost) {
@@ -247,5 +286,9 @@ void UpgradeUI::OnEvent(IEvent& event) noexcept {
 }
 
 void UpgradeUI::CleanUp() {
+	m_pRenderBitmaps = false;
+	if (m_pScienceBitmap) {
+		m_pScienceBitmap->Release();
+	}
     //Will need bitmap clean up
 }
