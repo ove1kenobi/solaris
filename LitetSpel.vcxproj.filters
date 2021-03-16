@@ -185,6 +185,7 @@
     <Font Include="UI\Fonts\Neoterique-Y08L.ttf" />
     <Font Include="UI\Fonts\Tenika400Regular-Rpyql.ttf" />
     <Font Include="UI\Fonts\AwareBold-qZo3x.ttf" />
+    <Font Include="UI\Fonts\Netron-p7gq1.otf" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="UI\Icons\Fuel.png" />
@@ -197,5 +198,6 @@
     <Image Include="UI\Icons\weight.png" />
     <Image Include="UI\Icons\Titanium.png" />
     <Image Include="UI\Icons\Scrap.png" />
+    <Image Include="UI\Icons\Science.png" />
   </ItemGroup>
 </Project>
