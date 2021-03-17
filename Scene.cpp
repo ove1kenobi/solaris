@@ -538,8 +538,16 @@ void Scene::CheckForCollisions() noexcept
 			{
 				//There is a hit:
 				m_IsInvincible = true;
-				m_player.UpdateHealth(-30);
-				m_player.getShip()->AddForce(pAsteroid->GetVelocity() * 2000);
+				if (!m_player.HasShieldUpgrade())
+				{
+					m_player.UpdateHealth(-30);
+					m_player.getShip()->AddForce(pAsteroid->GetVelocity() * 2000);
+				}
+				else
+				{
+					m_player.UpdateHealth(-15);
+					m_player.getShip()->AddForce(pAsteroid->GetVelocity());
+				}
 				pAsteroid->MarkAsDestroyed();
 				CameraShakeEvent csEvent(0.3f, 0.1f);
 				EventBuss::Get().Delegate(csEvent);

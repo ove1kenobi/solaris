@@ -207,3 +207,8 @@ void SpaceShip::NullifyForces() noexcept
 {
 	m_sumForces = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 }
+
+void SpaceShip::UpgradeToAfterburner() noexcept
+{
+	m_topSpeed = 420.0f;
+}

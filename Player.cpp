@@ -57,7 +57,9 @@ int Player::AddToInventory(int currentResource, int resourceToAdd)
 Player::Player()
 	: m_PlayerInfo{ },
 	  m_TetheredToClosestPlanet{ false },
-	  m_TetheredDistanceToUphold{ -1.0f, -1.0f, -1.0f }
+	  m_TetheredDistanceToUphold{ -1.0f, -1.0f, -1.0f },
+	  m_HasShieldUpgrade{ false },
+	  m_HasAntennaUpgrade{ false }
 {
 	m_maxHealth = 100;
 	m_fuelCapacity = 100;
@@ -345,16 +347,19 @@ void Player::OnEvent(IEvent& event) noexcept
 			case SpaceShip::afterburner: 
 			{
 				m_ship->Activate(upgrade);
+				m_ship->UpgradeToAfterburner();
 				break;
 			}
 			case SpaceShip::antenna:
 			{
 				m_ship->Activate(upgrade);
+				m_HasAntennaUpgrade = true;
 				break;
 			}
 			case SpaceShip::cargo:
 			{
 				m_ship->Activate(upgrade);
+				m_storageCapacity *= 2;
 				break;
 			}
 			case SpaceShip::cold:
@@ -365,11 +370,15 @@ void Player::OnEvent(IEvent& event) noexcept
 			case SpaceShip::fuelcells:
 			{
 				m_ship->Activate(upgrade);
+				m_fuelCapacity *= 2;
+				m_inventory.fuel += 100;
 				break;
 			}
 			case SpaceShip::livingquarters:
 			{
 				m_ship->Activate(upgrade);
+				m_oxygenCapacity *= 2;
+				m_inventory.oxygen += 100;
 				break;
 			}
 			case SpaceShip::hot:
@@ -385,6 +394,9 @@ void Player::OnEvent(IEvent& event) noexcept
 			case SpaceShip::shield:
 			{
 				m_ship->Activate(upgrade);
+				m_HasShieldUpgrade = true;
+				m_maxHealth *= 2;
+				m_inventory.health += 100;
 				break;
 			}
 			case SpaceShip::warpdrive:
@@ -458,4 +470,14 @@ void Player::DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcep
 void Player::Kill() noexcept
 {
 	m_inventory.health = 0;
+}
+
+const bool& Player::HasShieldUpgrade() const noexcept
+{
+	return m_HasShieldUpgrade;
+}
+
+const bool& Player::HasAntennaUpgrade() const noexcept
+{
+	return m_HasAntennaUpgrade;
 }

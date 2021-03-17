@@ -37,6 +37,7 @@ public:
 	std::vector<GameObject*>& GetUpgrades();
 	void SetVelocity(const DirectX::XMFLOAT3& velocity) noexcept;
 	void NullifyForces() noexcept;
+	void UpgradeToAfterburner() noexcept;
 
 	enum UpgradeTypes {
 		afterburner = 0, antenna, cargo, cold, fuelcells, livingquarters, shield, hot, warpdrive, numUpgrades, radProtect = numUpgrades

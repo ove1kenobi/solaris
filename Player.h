@@ -55,6 +55,10 @@ private:
 	bool m_playerControlsActive, m_stabilizerActive;
 	float m_rotationSpeed;
 	bool m_TetheredToClosestPlanet;
+
+	//Upgrade data:
+	bool m_HasShieldUpgrade;
+	bool m_HasAntennaUpgrade;
 private:
 	void DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcept;
 	// Updates the rotation for the camera and the ship
@@ -77,5 +81,7 @@ public:
 	int GetMaxHealth() noexcept;
 	void UpdateMaxHealth(int value);
 	void Kill() noexcept;
+	[[nodiscard]] const bool& HasShieldUpgrade() const noexcept;
+	[[nodiscard]] const bool& HasAntennaUpgrade() const noexcept;
 };
 
