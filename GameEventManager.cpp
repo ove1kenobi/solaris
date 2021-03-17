@@ -173,10 +173,10 @@ void GameEventManager::CreateGameEvents()
 		{
 			L"On the planet’s surface you see a sign indicating some kind of settlement. Follow the sign?",
 
-			L"After having made your way there you find out that it is a research station! Inside are a couple of friendly researchers, "
+			L"You find out that it is a research station! Inside are a couple of friendly researchers, "
 			L"telling you that they are here to extract the renown mineral Khionerite. They tell you all about the story of the mineral, "
 			L"how it made its way into the solar system as an asteroid and how many mining companies met their demise trying to extract "
-			L"the rock. With your newfound knowledge they wave you goodbye after giving you a sample of their findings.",
+			L"the rock. They wave you goodbye after giving you a sample of their findings.",
 
 			Resources{0, 0, 20, 0, 0, 0, 0, 0, 1, 1}
 		}
@@ -197,11 +197,10 @@ void GameEventManager::CreateGameEvents()
 			L"A specific spot on the surface of this mountainous planet catches your eye, a perfectly circular open field that would be "
 			L"a perfect spot to land. Change course and land there?",
 
-			L"After landing you walk out of the shuttle into a barren landscape. Compared to the rest of this green and purple planet "
-			L"this outcrop is all black, like it was burned. It appears to be the remnants of a battlefield, with the two factions being "
-			L"mid-battle when this catastrophe struck. At the center is a crater, within is the remains of the nuke that must have been "
-			L"the cause of this. On the side you see a name in big green letters, “Shiro Hime”. You extract the powerful core of the nuke "
-			L"that is still partially intact.",
+			L"After landing you walk out of the shuttle into a barren landscape. Compared to the rest of this planet the outcrop is all black, "
+			L"like it was burned. It’s the remnants of a battlefield, with the two factions being "
+			L"mid-battle when this catastrophe struck. At the center is a crater, within is the remains of the nuke. "
+			L"On the side you see a name in big green letters, “Shiro Hime”. You extract the powerful core of the nuke that is still partially intact.",
 
 			Resources{0, 0, 0, 0, 0, 10, 0, 1, 0, 1}
 		},
@@ -209,12 +208,11 @@ void GameEventManager::CreateGameEvents()
 		{
 			L"When excavating the lush green radioactive forests you hear a deafening sound in the distance. Find out what made the noise?",
 
-			L"After struggling through thick vines you find yourself face to face with a 3 meter tall green boar, having weird purple "
-			L"glowing spots all over its body. You must have stumbled into its territory, you decide that you have the best chance of "
-			L"survival if you try to escape. You start running and zig-zag between the trees to try and escape the large beast. You hear "
-			L"a scream behind you and then the sound of the boar retreating. Turning around you see a pool of green blood on the ground "
-			L"and a piece of the glowing spots stuck in a sharp tree-branch. You grab the glowing hide which feels more like a rock and "
-			L"make your way out of the forest.",
+			L"You find yourself face to face with a green boar, having weird purple glowing spots all over its body. "
+			L"You start running and zig-zag between the trees to try and escape the large beast. "
+			L"You hear a scream behind you and then the sound of the boar retreating. "
+			L"Turning around you see a piece of the glowing spots from the boar stuck in a sharp tree-branch. "
+			L"You grab the glowing hide and make your way out of the forest.",
 
 			Resources{0, 15, -20, 0, 0, 0, 0, 1, 0, 1}
 		},
@@ -235,11 +233,10 @@ void GameEventManager::CreateGameEvents()
 			L"As you approach the planet you notice lots of debris in orbit. There is a lot of it so sifting through it will take hours but "
 			L"you just might find something interesting. Explore?",
 
-			L"Entering the field of debris you carefully navigate between meteorites, small and large. You also see metallic shrapnel among "
-			L"the debris. This was probably the result of an impact between a spaceship and an asteroid. Coming around a huge meteorite you "
-			L"suddenly get rammed by a massive metallic structure. For a moment you freeze in your chair while the screeching sound of metal "
-			L"on metal seems to go on forever. Your ship takes some serious damage but luckily nothing critical. A part from the ship "
-			L"‘The Anvil’ hit you. You salvage what you can and get out of the field of debris.",
+			L"You carefully navigate between meteorites. You see metallic shrapnel among the debris. "
+			L"Suddenly you get rammed by a massive metallic structure. You freeze for a moment while the screeching sound of metal on metal seems to go on forever. "
+			L"Your ship takes some serious damage. A part from the ship ‘The Anvil’ hit you. "
+			L"You salvage what you can and get out of the field of debris.",
 
 			Resources{-40, 5, 0, 10, 15, 0, 0, 0, 0, 1}
 		},
@@ -260,11 +257,11 @@ void GameEventManager::CreateGameEvents()
 			L"Flying toward the surface of the planet you see an old and broken city. These places are often full of useful stuff. "
 			L"Do you want to go there?",
 
-			L"Your shuttle touches down in what used to be city downtown square. Now the tall buildings are broken structures covered "
-			L"in plants and the asphalt underneath your feet is broken and pierced by trees and their roots. As soon as you step outside "
-			L"you notice people eying you suspiciously from windows and doorways. A group of obvius warriors approach. However, when you "
-			L"make the peace sign they relax visibly. Soon you are laughing and dining together. When you tell them of your quest several of "
-			L"the younger ones ask to join you. They bring some nice equipment along.",
+			L"Your shuttle touches down in what used to be city downtown square. "
+			L"Now the tall buildings are broken structures covered in plants. "
+			L"As soon as you step outside you notice people eyeing you from windows and doorways. "
+			L"A group of obvius warriors approach. When you tell them of your quest several of the younger ones ask to join you. "
+			L"They bring some nice equipment along.",
 
 			Resources{40, 0, 0, 0, 0, 5, 0, 0, 0, 1}
 		},
@@ -323,6 +320,108 @@ void GameEventManager::CreateGameEvents()
 			L"hours of struggle you manage to break loose and make it back to the shuttle. At least you got a few hours of rest while bound.",
 
 			Resources{30, 0, 30, -5, -5, -5, 0, 0, 0, 1}
+		},
+
+		{
+			L"On your way down to the planet’s surface you see a few red flashing lights on your control panel. Do you want to try and find the problem when you land?",
+
+			L"It turns out the shuttle’s motor was malfunctioning and required repairs, meanwhile it exposed you to extreme heat for a few minutes. "
+			L"After having made the repairs you notice a hidden compartment in the back of the shuttle stashed with provisions!",
+
+			Resources{-30, 50, 50, 0, -10, 20, 0, 0, 0, 1}
+		},
+			
+		{
+			L"Moments after having been launched from the ship you notice something odd about the asteroid belt that surrounds the planet. "
+			L"Bathed in the light of the dying sun it sometimes seems to flicker and shine in odd ways. Explore the asteroid belt?",
+
+			L"You engage manual controls and steer the probe off from it’s programmed path, towards the asteroid belt instead. "
+			L"Small thuds against the hull of the probe tells you you’ve arrived at the belt, and that you must proceed with caution. "
+			L"A quick scan of the asteroids shows you that they’re mixed with Nanotech. "
+			L"The extraction part, while fruitful, takes a painstakingly long time.",
+
+			Resources{0, 0, -50, 0, 0, 30, 0, 0, 0, 1}
+		},
+
+		{
+			L"Having arrived at the planet, you notice that it is orbited by not one, but two moons. "
+			L"Your approach vector to the planet is aligned with the bigger of the two moons as well, and you wonder what discoveries could be made on its surface. Explore the moon?",
+
+			L"You touch down on the moon and begin the exploration. The white surface shines bright in your eyes as you gaze about the surroundings. "
+			L"You decide to step into a cave not far from your original position, where you stumble upon a hastily abandoned small camp. "
+			L"As you gather what materials you can find you wonder what made the owners leave in such a hurry…",
+
+			Resources{0, 0, 0, 1, 10, 1, 0, 0, 0, 1}
+		},
+
+		{
+			L"As you round a bend you suddenly find yourself face to face with a massive stone formation, with two stone statues placed on either side of its narrow entrance. "
+			L"The statues have the form of cloaked shadow figures, their silhouettes shrouded but for their hands, stretched outwards towards you with open palms. "
+			L"The whole scene feels like a display of discouragement. Enter?",
+
+			L"You quickly realize entering the stone formation was a bad idea. " 
+			L"It is a maze, twisting and turning about every direction, with every new location feeling both familiar and foreign at the same time. "
+			L"You also come to feel the ominous feeling of being watched, eyes prying as soon as you turn your back. "
+			L"You make it out after what feels like a lifetime, and with little to show for it.",
+
+			Resources{0, 0, -40, 2, 10, 0, 0, 0, 0, 1}
+		},
+
+		{
+			L"As you make camp for the night you are disrupted by the sound of a soft voice from a woman, singing a sad tune. "
+			L"You can barely make it out over the sounds of the wind, but you are sure it is there. "
+			L"You also notice something else, the faint smell of smoke. Make your way towards the source of the singing?",
+
+			L"You enter a large glade in a forest area, the singing voice is now as clear as the overgrown ruins of the small town that stands before you. "
+			L"When you reach the center of the town you see the source of the singing before you, a woman in rough garbs holding her small baby in her arms. "
+			L"She looks up towards you with a sad expression. Painted on a wall of a building are the crossed out letters “SU”.",
+
+			Resources{0, 20, 0, 0, 20, 5, 0, 0, 0, 1}
+		},
+
+		{
+			L"As you make your way through a dale you spot a trading caravan in the distance, a combination of humanoids and their pack beasts preparing to set up camp for the day. "
+			L"One of the members notices you and signals for you to join them. "
+			L"You wonder what goods they might offer, as you ponder on whether to accept the invitation. Join the caravan?",
+
+			L"As you spend the evening with the caravan they tell you they are the remnants of a trading empire belonging to the so called “Solar Union”, a vast network of planets united under a common banner in order to uphold peace in the solar system. "
+			L"Yet it had inevitably failed, and war had ensued. "
+			L"What remains are scattered political units all vying for control of the SU, and the bloody battles that follow.",
+
+			Resources{0, 30, 0, 5, 10, 5, 0, 0, 0, 1}
+		},
+
+		{
+			L"While exploring the planet you chance upon a small fort of some kind. "
+			L"You spot fuel cells but there are a lot of guards. Wait for an opportunity to snatch some?",
+
+			L"At sunset something happens in the encampment and the opportunity you’ve been waiting for presents itself. "
+			L"Crouching low, you dash from cover to cover. By the fuel cells there is what seems like an advanced radar and it has an important component you need. "
+			L"You take it and grab some fuel cells and run.",
+
+			Resources{0, 25, 0, 0, 0, 5, 0, 0, 0, 1}
+		},
+
+		{
+			L"A line of soldiers trail out of the forest ahead. You swiftly duck into cover but, alas, too late. "
+			L"While running toward your shuttle you spot a mysterious cave. Hide there instead?",
+
+			L"Wrong choice! There is military equipment all over the place. The soldiers enter and capture you. "
+			L"After interrogation and a solid beating they throw you in prison. Another prisoner, the scientist Irma Govnorova, tends to your wounds. "
+			L"During that night you find a way to escape together. For good measure you steal some advanced equipment on your way out.",
+
+			Resources{-25, 0, -5, 0, 0, 5, 0, 0, 0, 1}
+		},
+
+		{
+			L"As you come to the top of the hill you hear the sounds of fighting. Soldiers are raiding a village ahead. "
+			L"You see a way to intervene and help the villagers. Meddle in the violence unfolding?",
+
+			L"Sneaking around you take out the soldiers in the armored vehicle with your can of sleeping gas. "
+			L"You drive ahead and after a few warning shots the rest of the soldiers surrender. "
+			L"The villagers are overjoyed but fear the return of more soldiers. You have room on the ship and take them with you.",
+
+			Resources{25, 0, 0, 5, 15, 0, 0, 0, 0, 1}
 		}
 	};
 
