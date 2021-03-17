@@ -23,12 +23,12 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 	}
 
 	//List pictures we will need
-	resources.push_back(L"Khionerite.png");
-	resources.push_back(L"Nanotech.png");
-	resources.push_back(L"Plasma.png");
-	resources.push_back(L"Radium.png");
-	resources.push_back(L"Scrap.png");
-	resources.push_back(L"Titanium.png");
+	resources.push_back(L"Khionerite");
+	resources.push_back(L"Nanotech");
+	resources.push_back(L"Plasma");
+	resources.push_back(L"Radium");
+	resources.push_back(L"Scrap");
+	resources.push_back(L"Titanium");
 
 	m_pYellow = 0xFFB724;
 	m_pWhite = 0xFFFDF9;
@@ -115,7 +115,7 @@ bool UpgradeScreenUI::CreateResourceList() {
 
 	//Create resource bitmaps
 	for (unsigned int i = 0; i < resources.size(); i++) {
-		LoadBitmapFromFile(GetIconFilePath(resources.at(i)).c_str(), &holder);
+		LoadBitmapFromFile(GetIconFilePath((resources.at(i)) + L".png").c_str(), &holder);
 		m_pResourceBitmap.push_back(holder);
 	}
 
@@ -256,7 +256,7 @@ bool UpgradeScreenUI::UpdateControllerDisplay() {
 bool UpgradeScreenUI::UpdateResourceList() {
 	float iconSize = 50.0f;
 	float amountSize = 50.0f;
-	float padding = 10.0f;
+	float padding = 50.0f;
 
 	m_pResourceDisplay = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) + m_pDisplayPadding,
@@ -266,8 +266,8 @@ bool UpgradeScreenUI::UpdateResourceList() {
 	);
 
 	for (unsigned int i = 0; i < resources.size(); i++) {
-		float x = static_cast<float>(m_pResourcePosition.size() % 2);
-		float y = floor(static_cast<float>(m_pResourcePosition.size()) / 2.0f);
+		float y = static_cast<float>(m_pResourcePosition.size() % 2);
+		float x = floor(static_cast<float>(m_pResourcePosition.size()) / 2.0f);
 
 		//Create square for picture
 		m_pResourcePosition.push_back(D2D1::RectF(
@@ -283,6 +283,13 @@ bool UpgradeScreenUI::UpdateResourceList() {
 			m_pResourcePosition.at(m_pResourcePosition.size() - 1).top,
 			m_pResourcePosition.at(m_pResourcePosition.size() - 1).right + iconSize + 5.0f,
 			m_pResourcePosition.at(m_pResourcePosition.size() - 1).bottom
+		));
+
+		m_pDescriptionTextbox.push_back(D2D1::RectF(
+			m_pResourcePosition.at(m_pResourcePosition.size() - 1).left - 20.0f,
+			m_pResourcePosition.at(m_pResourcePosition.size() - 1).top - 25.0f,
+			m_pResourcePosition.at(m_pResourcePosition.size() - 1).right + iconSize + 20.0f,
+			m_pResourcePosition.at(m_pResourcePosition.size() - 1).top + 5.0f
 		));
 
 		//Add text
@@ -366,6 +373,7 @@ void UpgradeScreenUI::RenderResourceList() {
 	for (auto const& bitmap : m_pResourceBitmap) {
 		m_pRenderTarget2D->DrawBitmap(bitmap, m_pResourcePosition.at(i));
 		this->UpdateBrush(m_pWhite, 1.0f);
+		m_pFormat.Get()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 		m_pRenderTarget2D.Get()->DrawTextW(
 			m_pAmount.at(i).c_str(),
 			(UINT32)m_pAmount.at(i).length(),
@@ -373,6 +381,18 @@ void UpgradeScreenUI::RenderResourceList() {
 			m_pAmountTextbox.at(i),
 			m_pBrush.Get()
 		);
+
+		m_pFormat.Get()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+		m_pRenderTarget2D.Get()->DrawTextW(
+			resources.at(i).c_str(),
+			(UINT32)resources.at(i).length(),
+			m_pFormat.Get(),
+			m_pDescriptionTextbox.at(i),
+			m_pBrush.Get()
+		);
+
+		this->UpdateBrush(D2D1::ColorF::Red, 0.25f);
+		m_pRenderTarget2D->FillRectangle(m_pDescriptionTextbox.at(i), m_pBrush.Get());
 		i++;
 	}
 

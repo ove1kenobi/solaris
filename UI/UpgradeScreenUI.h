@@ -36,6 +36,7 @@ private:
 	std::list<ID2D1Bitmap*> m_pResourceBitmap;
 	std::vector<D2D1_RECT_F> m_pResourcePosition;
 	std::vector<D2D1_RECT_F> m_pAmountTextbox;
+	std::vector<D2D1_RECT_F> m_pDescriptionTextbox;
 	std::vector<std::wstring> m_pAmount;
 
 	//Current Science
