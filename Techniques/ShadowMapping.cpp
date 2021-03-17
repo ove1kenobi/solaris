@@ -13,8 +13,8 @@ ShadowMapping::ShadowMapping() noexcept
       m_CameraDirections{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
       m_CameraUpVectors{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
       m_SunPosition{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
-      m_TextureWidth{ 5120.0f },
-      m_TextureHeight{ 5120.0f },
+      m_TextureWidth{ 4096.0f },
+      m_TextureHeight{ 4096.0f },
       m_ClearColor{ 1.0f, 0.0f, 0.0f, 1.0f },
       m_ShadowBias{ 50.0f }
 {
