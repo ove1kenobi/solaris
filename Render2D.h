@@ -15,7 +15,7 @@
 #include "GameEventManager.h"
 #include "Player.h"
 
-#define DISTANCE_THRESHOLD 800.0f
+#define DISTANCE_THRESHOLD 250.0f
 class Render2D : public EventPublisher, IEventListener {
 private:
 	GameEventManager gameEventManager;

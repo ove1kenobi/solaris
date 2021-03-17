@@ -15,21 +15,19 @@ void Player::UpdateRotation()
 	m_ship->SetForwardVector(m_camera->GetForwardVector());
 }
 
-DirectX::XMFLOAT3 Player::Stabilize()
+DirectX::XMFLOAT3 Player::CalculateNeededForce(DirectX::XMFLOAT3 desierdVelocity)
 {
 	// Get the current velocity vector
 	DirectX::XMFLOAT3 velocity = m_ship->GetVelocity();
-	// Get the velocity vector the player wants based on there direction and given speed
-	DirectX::XMFLOAT3 desierdVelocity = m_camera->GetForwardVector() * m_desiredSpeed;
 	// Calculate how much force would be required to redirect the ships velocity to the desierd velocity
-	DirectX::XMFLOAT3 stabilizingForce = (desierdVelocity - velocity) * m_ship->GetMass();
+	DirectX::XMFLOAT3 neededForce = (desierdVelocity - velocity) * m_ship->GetMass();
 	// Check if the trusters have enouth power to produce that force
-	if (length(stabilizingForce) > m_thrusterForce * (float)m_time.DeltaTime()) {
-		stabilizingForce = normalize(stabilizingForce);
-		stabilizingForce = stabilizingForce * m_thrusterForce * (float)m_time.DeltaTime();
+	if (length(neededForce) > m_thrusterForce * (float)m_time.DeltaTime()) {
+		neededForce = normalize(neededForce);
+		neededForce = neededForce * m_thrusterForce * (float)m_time.DeltaTime();
 	}
 
-	return stabilizingForce;
+	return neededForce;
 }
 
 int Player::AddToInventory(int currentResource, int resourceToAdd)
@@ -54,6 +52,28 @@ int Player::AddToInventory(int currentResource, int resourceToAdd)
 	return amountToAdd;
 }
 
+DirectX::XMFLOAT3 Player::ConsumeFuel(DirectX::XMFLOAT3 GeneratedPower)
+{
+	float engineUse = length(GeneratedPower) / m_thrusterForce;
+	float storageUse = (float)m_storageUsage / (float)m_storageCapacity;
+	m_inventory.fuel -= engineUse * m_engineEfficiency * (1.0f + storageUse);
+	if (m_inventory.fuel < 0.0f) {
+		m_inventory.fuel = 0.0f;
+		GeneratedPower = GeneratedPower * 0.0f;
+	}
+
+	return GeneratedPower;
+}
+
+void Player::ConsumeOxygen()
+{
+	m_inventory.oxygen -= m_oxygenConsumption * (float)m_time.DeltaTime();
+	if (m_inventory.oxygen < 0.0f) {
+		m_inventory.oxygen = 0.0f;
+		Kill();
+	}
+}
+
 Player::Player()
 	: m_PlayerInfo{ },
 	  m_TetheredToClosestPlanet{ false },
@@ -62,12 +82,12 @@ Player::Player()
 	  m_HasAntennaUpgrade{ false }
 {
 	m_maxHealth = 100;
-	m_fuelCapacity = 100;
-	m_oxygenCapacity = 100;
+	m_fuelCapacity = 100.0f;
+	m_oxygenCapacity = 100.0f;
 	m_storageCapacity = 500;
 	m_inventory.health = 100;
-	m_inventory.fuel = 100;
-	m_inventory.oxygen = 100;
+	m_inventory.fuel = 100.0f;
+	m_inventory.oxygen = 100.0f;
 	m_inventory.titanium = 0;
 	m_inventory.scrapMetal = 0;
 	m_inventory.nanotech = 0;
@@ -76,6 +96,8 @@ Player::Player()
 	m_inventory.khionerite = 0;
 	m_inventory.science = 0;
 	m_storageUsage = 0;
+	m_oxygenConsumption = 0.17f;
+	m_engineEfficiency = 1.0f;
 
 	m_moveForwards = false;
 	m_moveBackwards = false;
@@ -121,8 +143,8 @@ bool Player::update(const std::vector<Planet*>& planets)
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	ImGui::Begin("Inventory");
-	ImGui::Text("Fuel: %d", m_inventory.fuel);
-	ImGui::Text("Oxygen: %d", m_inventory.oxygen);
+	ImGui::Text("Fuel: %f", m_inventory.fuel);
+	ImGui::Text("Oxygen: %f", m_inventory.oxygen);
 	ImGui::Text("Titanium: %d", m_inventory.titanium);
 	ImGui::Text("Scrap Metal: %d", m_inventory.scrapMetal);
 	ImGui::Text("NanoTech: %d", m_inventory.nanotech);
@@ -146,9 +168,8 @@ bool Player::update(const std::vector<Planet*>& planets)
 				if (m_desiredSpeed > *m_topSpeed) m_desiredSpeed = *m_topSpeed;
 			}
 			else {
-				float step = m_thrusterForce * (float)m_time.DeltaTime();
-				DirectX::XMFLOAT3 direction = m_camera->GetForwardVector();
-				shipForce = shipForce + direction * step;
+				DirectX::XMFLOAT3 desierdVelocity = m_camera->GetForwardVector() * *m_topSpeed;
+				shipForce = shipForce + CalculateNeededForce(desierdVelocity);
 			}
 		}
 		if (m_moveBackwards) {
@@ -157,9 +178,8 @@ bool Player::update(const std::vector<Planet*>& planets)
 				if (m_desiredSpeed < -*m_topSpeed) m_desiredSpeed = -*m_topSpeed;
 			}
 			else {
-				float step = -1.0f * m_thrusterForce * (float)m_time.DeltaTime();
-				DirectX::XMFLOAT3 direction = m_camera->GetForwardVector();
-				shipForce = shipForce + direction * step;
+				DirectX::XMFLOAT3 desierdVelocity = -1.0f * m_camera->GetForwardVector() * *m_topSpeed;
+				shipForce = shipForce + CalculateNeededForce(desierdVelocity);
 			}
 		}
 		if (m_stopMovement) {
@@ -201,9 +221,12 @@ bool Player::update(const std::vector<Planet*>& planets)
 	else
 	{
 		if (m_stabilizerActive) {
-			DirectX::XMFLOAT3 stabilizingForce = Stabilize();
-			shipForce = shipForce + stabilizingForce;
+			DirectX::XMFLOAT3 desierdVelocity = m_camera->GetForwardVector() * m_desiredSpeed;
+			shipForce = shipForce + CalculateNeededForce(desierdVelocity);
 		}
+
+		shipForce = ConsumeFuel(shipForce);
+		ConsumeOxygen();
 
 		m_ship->AddForce(shipForce);
 		m_ship->UpdatePhysics();
@@ -229,16 +252,16 @@ void Player::AddResources(Resources resources)
 	if (m_inventory.fuel > m_fuelCapacity) {
 		m_inventory.fuel = m_fuelCapacity;
 	}
-	else if (m_inventory.fuel < 0) {
-		m_inventory.fuel = 0;
+	else if (m_inventory.fuel < 0.0f) {
+		m_inventory.fuel = 0.0f;
 	}
 
 	m_inventory.oxygen += resources.oxygen;
 	if (m_inventory.oxygen > m_oxygenCapacity) {
 		m_inventory.oxygen = m_oxygenCapacity;
 	}
-	else if (m_inventory.oxygen < 0) {
-		m_inventory.oxygen = 0;
+	else if (m_inventory.oxygen < 0.0f) {
+		m_inventory.oxygen = 0.0f;
 	}
 
 	m_inventory.plasma += AddToInventory(m_inventory.plasma, resources.plasma);
@@ -249,6 +272,9 @@ void Player::AddResources(Resources resources)
 	m_inventory.scrapMetal += AddToInventory(m_inventory.scrapMetal, resources.scrapMetal);
 
 	m_inventory.science += resources.science;
+	if (m_inventory.science < 0) {
+		m_inventory.science = 0;
+	}
 }
 
 void Player::OnEvent(IEvent& event) noexcept
@@ -370,15 +396,15 @@ void Player::OnEvent(IEvent& event) noexcept
 			case SpaceShip::fuelcells:
 			{
 				m_ship->Activate(upgrade);
-				m_fuelCapacity *= 2;
-				m_inventory.fuel += 100;
+				m_fuelCapacity *= 2.0f;
+				m_inventory.fuel += 100.0f;
 				break;
 			}
 			case SpaceShip::livingquarters:
 			{
 				m_ship->Activate(upgrade);
-				m_oxygenCapacity *= 2;
-				m_inventory.oxygen += 100;
+				m_oxygenCapacity *= 2.0f;
+				m_inventory.oxygen += 100.0f;
 				break;
 			}
 			case SpaceShip::hot:
@@ -414,8 +440,8 @@ void Player::OnEvent(IEvent& event) noexcept
 
 void Player::DelegatePlayerInfo() noexcept
 {
-	m_PlayerInfo.fuelPercentage = static_cast<float>(m_inventory.fuel) / static_cast<float>(m_fuelCapacity);
-	m_PlayerInfo.oxygenPercentage = static_cast<float>(m_inventory.oxygen) / static_cast<float>(m_oxygenCapacity);
+	m_PlayerInfo.fuelPercentage = m_inventory.fuel / m_fuelCapacity;
+	m_PlayerInfo.oxygenPercentage = m_inventory.oxygen / m_oxygenCapacity;
 	m_PlayerInfo.HealthPercentage = static_cast<float>(m_inventory.health) / static_cast<float>(m_maxHealth);
 	m_PlayerInfo.storageUsage = m_storageUsage;
 	m_PlayerInfo.storageCapacity = m_storageCapacity;

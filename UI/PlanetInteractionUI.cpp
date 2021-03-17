@@ -76,9 +76,9 @@ void PlanetInteractionUI::SetIcons(int randomEventIndex, Resources resources)
 	if (resources.health != 0)
 		m_pRandomEvents[randomEventIndex]->AddIcon(L"health.png", std::to_wstring(resources.health));
 	if (resources.fuel != 0)
-		m_pRandomEvents[randomEventIndex]->AddIcon(L"Fuel.png", std::to_wstring(resources.fuel));
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"Fuel.png", std::to_wstring((int)resources.fuel));
 	if (resources.oxygen != 0)
-		m_pRandomEvents[randomEventIndex]->AddIcon(L"Oxygen.png", std::to_wstring(resources.oxygen));
+		m_pRandomEvents[randomEventIndex]->AddIcon(L"Oxygen.png", std::to_wstring((int)resources.oxygen));
 	if (resources.titanium != 0)
 		m_pRandomEvents[randomEventIndex]->AddIcon(L"Titanium.png", std::to_wstring(resources.titanium));
 	if (resources.scrapMetal != 0)
