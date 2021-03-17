@@ -311,14 +311,26 @@ void Player::OnEvent(IEvent& event) noexcept
 					m_stopMovement = true;
 				}
 				if (virKey == 'Q') {
-					if (m_stabilizerActive) m_stabilizerActive = false;
-					else m_stabilizerActive = true;
+					if (m_stabilizerActive)
+					{
+						StopLoopingSoundEvent stopPlaySoundEvent(SoundID::Stabilizers); 
+						EventBuss::Get().Delegate(stopPlaySoundEvent);
+						m_stabilizerActive = false;
+					}
+					else
+					{
+						PlaySoundEvent playSoundEvent(SoundID::Stabilizers, true);
+						EventBuss::Get().Delegate(playSoundEvent);
+						m_stabilizerActive = true;
+					}
 				}
 			}
 			if (state == KeyState::KeyRelease && m_playerControlsActive) {
 				if (virKey == 'W') {
 					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
 					EventBuss::Get().Delegate(thrusterSound);
+					PlaySoundEvent thrustersEndSound(SoundID::ThrustersEnd, false);
+					EventBuss::Get().Delegate(thrustersEndSound);
 					m_moveForwards = false;
 				}
 				if (virKey == 'S') {

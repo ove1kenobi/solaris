@@ -4,7 +4,13 @@
 enum class SoundID {
 	Thrusters = 0,
 	ShipExplosion,
-	AsteroidCollision
+	AsteroidCollision,
+	ThrustersEnd,
+	Stabilizers,
+	//Beep,
+	EventScreen,
+	Hover,
+	PayUpgrade
 };
 
 enum class MusicID {

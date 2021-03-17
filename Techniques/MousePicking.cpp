@@ -6,7 +6,8 @@ MousePicking::MousePicking() noexcept
 	  m_ClientWidth{ 0u },
 	  m_ClientHeight{ 0u },
 	  m_pPickedObject{ nullptr },
-	  m_DistanceToObject{ 0.0f }
+	  m_DistanceToObject{ 0.0f },
+	  m_IsCurrentlyPicking{ false }
 {
 	EventBuss::Get().AddListener(this, EventType::DelegateCameraEvent, EventType::DelegateResolutionEvent);
 }
@@ -139,10 +140,17 @@ void MousePicking::DisplayPickedObject(const bool& hasAntenna) noexcept
 				EventBuss::Get().Delegate(pde);
 			}
 		}
+		//if (m_IsCurrentlyPicking == false)
+		//{
+		//	PlaySoundEvent playSoundEvent(SoundID::Beep, false);
+		//	EventBuss::Get().Delegate(playSoundEvent);
+		//	m_IsCurrentlyPicking = true;
+		//}
 	}
 	else
 	{
 		DelegatePlanetDistanceEvent pde(0.0f, L"");
 		EventBuss::Get().Delegate(pde);
+		//m_IsCurrentlyPicking = false;
 	}
 }

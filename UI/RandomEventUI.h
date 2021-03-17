@@ -3,6 +3,7 @@
 #include "..\EventSystem\WindowEvents.h"
 #include "../GameEvent.h"
 #include "../EventSystem/UIEvents.h"
+#include "../EventSystem/SoundEvents.h"
 
 class RandomEventUI : public Button, public EventPublisher {
 private:
@@ -22,6 +23,9 @@ private:
 	std::vector<std::wstring> m_pIconAmount;
 
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pIconTextFormat;
+
+	//Sound logic:
+	bool m_IsHovering;
 
 	bool CreateText();
 	bool CreateDetails();

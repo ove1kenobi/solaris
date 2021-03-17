@@ -218,6 +218,16 @@ void RandomEventUI::Render(int mouseX, int mouseY) {
 			m_pHoverTextBox,
 			m_pBrush.Get()
 		);
+		if (m_IsHovering == false)
+		{
+			PlaySoundEvent playSoundEvent(SoundID::Hover, false);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsHovering = true;
+		}
+	}
+	else
+	{
+		m_IsHovering = false;
 	}
 }
 

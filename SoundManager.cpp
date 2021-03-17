@@ -37,6 +37,36 @@ bool SoundManager::Initialize(float musicVolume, float sfxVolumn)
 	else
 		m_sounds.push_back(buffer);
 
+	if (!buffer.loadFromFile("Sounds/trusters2_end.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/stabilizers.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	//	if (!buffer.loadFromFile("Sounds/beep.wav"))
+	//		return false;
+	//	else
+	//		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/event_screen.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/hover.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/pay_upgrade.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
 	for (unsigned int i = 0; i < m_sounds.size(); i++) {
 		m_loopingSounds.push_back(sf::Sound(m_sounds[i]));
 		m_loopingSounds[i].setLoop(true);

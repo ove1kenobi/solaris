@@ -1,5 +1,6 @@
 #pragma once
 #include "ModuleUI.h"
+#include "../EventSystem/SoundEvents.h"
 
 class UpgradeUI : public ModuleUI, public EventPublisher {
 private:
@@ -33,6 +34,9 @@ private:
 	D2D1_RECT_F m_pSciencePosition;
 	D2D1_RECT_F m_pRequirementTextbox;
 	std::wstring m_pRequirement;
+
+	//Sound logic:
+	bool m_IsHovering;
 
 	//Create functions
 	bool CreateTitle();

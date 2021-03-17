@@ -8,6 +8,7 @@ UpgradeUI::UpgradeUI() noexcept {
 	m_pID = 0;
 	m_pBought = false;
 	m_pRenderBitmaps = false;
+	m_IsHovering = false;
 }
 
 UpgradeUI::~UpgradeUI() {
@@ -108,9 +109,16 @@ void UpgradeUI::RenderDescription() {
 		m_pMouseY > m_pHoverBox.top && m_pMouseY < m_pHoverBox.bottom &&
 		!m_pBought) {
 		this->UpdateBrush(D2D1::ColorF::Aquamarine, 0.5f);
+		if (m_IsHovering == false)
+		{
+			PlaySoundEvent playSoundEvent(SoundID::Hover, false);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsHovering = true;
+		}
 	}
 	else {
 		this->UpdateBrush(D2D1::ColorF::Aquamarine, 0.25f);
+		m_IsHovering = false;
 	}
 	m_pRenderTarget2D->FillRectangle(m_pHoverBox, m_pBrush.Get());
 

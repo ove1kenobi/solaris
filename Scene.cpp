@@ -342,6 +342,8 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 
 	m_nextAstroSpawnTime = m_time.SinceStart() + 5.0;
 
+	PlaySoundEvent playSoundEvent(SoundID::Stabilizers, true);
+	EventBuss::Get().Delegate(playSoundEvent);
 	return true;
 }
 
@@ -566,25 +568,35 @@ void Scene::CheckForCollisions() noexcept
 				{
 					m_player.UpdateHealth(-30);
 					m_player.getShip()->AddForce(pAsteroid->GetVelocity() * 2000);
+					if (m_player.GetHealth() - 30 <= 0)
+					{
+						PlaySoundEvent soundEvent(SoundID::ShipExplosion, false);
+						EventBuss::Get().Delegate(soundEvent);
+					}
+					else
+					{
+						PlaySoundEvent soundEvent(SoundID::AsteroidCollision, false);
+						EventBuss::Get().Delegate(soundEvent);
+					}
 				}
 				else
 				{
 					m_player.UpdateHealth(-15);
 					m_player.getShip()->AddForce(pAsteroid->GetVelocity());
+					if (m_player.GetHealth() - 15 <= 0)
+					{
+						PlaySoundEvent soundEvent(SoundID::ShipExplosion, false);
+						EventBuss::Get().Delegate(soundEvent);
+					}
+					else
+					{
+						PlaySoundEvent soundEvent(SoundID::AsteroidCollision, false);
+						EventBuss::Get().Delegate(soundEvent);
+					}
 				}
 				pAsteroid->MarkAsDestroyed();
 				CameraShakeEvent csEvent(0.3f, 0.1f);
 				EventBuss::Get().Delegate(csEvent);
-				if (m_player.GetHealth() - 30 <= 0)
-				{
-					PlaySoundEvent soundEvent(SoundID::ShipExplosion, false);
-					EventBuss::Get().Delegate(soundEvent);
-				}
-				else
-				{
-					PlaySoundEvent soundEvent(SoundID::AsteroidCollision, false);
-					EventBuss::Get().Delegate(soundEvent);
-				}
 			}
 		}
 	}

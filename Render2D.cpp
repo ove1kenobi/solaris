@@ -144,6 +144,8 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 							EventBuss::Get().Delegate(controlsEvent);
 							ToggleTetheredEvent TTEvent;
 							EventBuss::Get().Delegate(TTEvent);
+							PlaySoundEvent playSoundEvent(SoundID::EventScreen, false);
+							EventBuss::Get().Delegate(playSoundEvent);
 
 							//Render planet interaction
 							if (m_PlanetInteraction) {

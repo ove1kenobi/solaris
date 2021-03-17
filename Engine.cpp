@@ -59,16 +59,16 @@ const bool Engine::Initialize()
 	if (!m_ResourceManager.Initialize())
 		return false;
 
+	// Sound Manager
+	if (!m_SoundManager.Initialize(100.0f, 35.0f))
+		return false;
+
 	//Scene
 	if (!this->m_scene->init(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT, m_DXCore.GetDeviceContext()))
 		return false;
 
 	//Forward Renderer:
 	if (!m_ForwardRenderer.Initialize(RenderWindow::DEFAULT_WIN_WIDTH, RenderWindow::DEFAULT_WIN_HEIGHT))
-		return false;
-
-	// Sound Manager
-	if (!m_SoundManager.Initialize(100.0f, 35.0f))
 		return false;
 
 	//All components must have the correct monitor resolution: (Emil F)
