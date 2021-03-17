@@ -11,7 +11,6 @@ private:
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pHUDFormat;
 	D2D1_RECT_F m_pRightDisplayScreen;
 	D2D1_RECT_F m_pLeftDisplayScreen;
-	PlayerInfo* m_pPlayerInfo;
 	bool m_pRenderBitmaps;
 	Time m_time;
 

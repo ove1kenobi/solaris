@@ -25,7 +25,8 @@ private:
 	std::list<ID2D1Bitmap*> m_pResourceBitmap;
 	std::vector<D2D1_RECT_F> m_pResourcePosition;
 	std::vector<D2D1_RECT_F> m_pCostTextbox;
-	std::vector<std::wstring> m_pCost;
+	std::vector<std::wstring> m_pCostText;
+	Resources m_pCost;
 
 	//Science requriement
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pScienceFormat;
@@ -46,6 +47,9 @@ private:
 	void RenderTitle();
 	void RenderDescription();
 	void RenderCost();
+
+	void InvertCost();
+	bool CanAfford(Resources inventory);
 public:
 	UpgradeUI() noexcept;
 	virtual ~UpgradeUI();
@@ -58,7 +62,7 @@ public:
 
 	//Main render function
 	void Render();
-	void OnClick(int mouseX, int mouseY);
+	void OnClick(int mouseX, int mouseY, Resources inventory);
 
 	//Event functions
 	void OnEvent(IEvent& event) noexcept;

@@ -25,6 +25,7 @@ struct PlayerInfo
 	float HealthPercentage;
 	int storageUsage;
 	int storageCapacity;
+	Resources inventory;
 };
 
 class Player : public IEventListener, public EventPublisher

@@ -1,6 +1,7 @@
 #pragma once
 #include "ModuleUI.h"
 #include "UpgradeUI.h"
+#include "../Player.h"
 
 class UpgradeScreenUI : public ModuleUI {
 private:
@@ -9,6 +10,7 @@ private:
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pFormat;
 	float m_pDisplayPadding;
 	D2D1_RECT_F m_pScreen;
+	Resources m_inventory;
 
 	//Colors
 	UINT32 m_pYellow;
@@ -75,7 +77,6 @@ public:
 	void Render();
 
 	//Event functions
-	void UpdateAmount();
 	void OnEvent(IEvent& event) noexcept;
 
 	void CleanUp();

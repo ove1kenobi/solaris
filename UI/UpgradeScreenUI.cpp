@@ -2,6 +2,7 @@
 #include "UpgradeScreenUI.h"
 
 UpgradeScreenUI::UpgradeScreenUI() noexcept {
+	EventBuss::Get().AddListener(this, EventType::DelegatePlayerInfoEvent);
 	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
 
@@ -40,9 +41,9 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 }
 
 UpgradeScreenUI::~UpgradeScreenUI() {
+	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
 	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 	EventBuss::Get().RemoveListener(this, EventType::MouseButtonEvent);
-	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 
 	//Release memory
 	for (unsigned int i = 0; i < m_pUpgrades.size(); i++) {
@@ -255,9 +256,11 @@ bool UpgradeScreenUI::UpdateControllerDisplay() {
 }
 
 bool UpgradeScreenUI::UpdateResourceList() {
-	float iconSize = 50.0f;
+	float iconSize = 70.0f;
 	float amountSize = 50.0f;
-	float padding = 50.0f;
+	float padding = 20.0f;
+	float offsetX = 65.0f;
+	float offsetY = 50.0f;
 
 	m_pResourceDisplay = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) + m_pDisplayPadding,
@@ -272,10 +275,10 @@ bool UpgradeScreenUI::UpdateResourceList() {
 
 		//Create square for picture
 		m_pResourcePosition.push_back(D2D1::RectF(
-			m_pResourceDisplay.left + (iconSize + iconSize + padding) * x,
-			m_pResourceDisplay.top + (padding + iconSize) * y,
-			m_pResourceDisplay.left + iconSize + (iconSize + iconSize + padding) * x,
-			m_pResourceDisplay.top + iconSize + (padding + iconSize) * y
+			m_pResourceDisplay.left + offsetX +(iconSize + iconSize + padding + offsetX) * x,
+			m_pResourceDisplay.top + offsetY +(padding + iconSize + 10.0f) * y,
+			m_pResourceDisplay.left + offsetX + iconSize + (iconSize + iconSize + padding + offsetX) * x,
+			m_pResourceDisplay.top + offsetY + iconSize + (padding + iconSize + 10.0f) * y
 		));
 
 		//Create square for text
@@ -298,12 +301,12 @@ bool UpgradeScreenUI::UpdateResourceList() {
 	}
 
 	//Create science icon
-	float offset = 50.0f;
+	float scienceOffset = 50.0f;
 	float scienceSize = 125.0f;
 	m_pSciencePosition = D2D1::RectF(
-		m_pResourceDisplay.right - scienceSize - offset,
+		m_pResourceDisplay.right - scienceSize - scienceOffset,
 		((m_pResourceDisplay.bottom - m_pResourceDisplay.top) / 2.0f) + m_pResourceDisplay.top - (scienceSize/2.0f),
-		m_pResourceDisplay.right - offset,
+		m_pResourceDisplay.right - scienceOffset,
 		((m_pResourceDisplay.bottom - m_pResourceDisplay.top) / 2.0f) + m_pResourceDisplay.top + (scienceSize / 2.0f)
 	);
 
@@ -423,10 +426,6 @@ void UpgradeScreenUI::Render() {
 	EndFrame();
 }
 
-void UpgradeScreenUI::UpdateAmount() {
-
-}
-
 void UpgradeScreenUI::OnEvent(IEvent& event) noexcept {
 	switch (event.GetEventType()) {
 	case EventType::DelegateDXEvent:
@@ -447,7 +446,20 @@ void UpgradeScreenUI::OnEvent(IEvent& event) noexcept {
 		this->UpdateModules();
 		break;
 	}
-	//For clicking on UI elements
+	case EventType::DelegatePlayerInfoEvent:
+	{
+		DelegatePlayerInfoEvent& derivedEvent = static_cast<DelegatePlayerInfoEvent&>(event);
+		PlayerInfo* PlayerInfo = derivedEvent.GetPlayerInfo();
+		m_inventory = PlayerInfo->inventory;
+		m_pAmount.at(0) = std::to_wstring(PlayerInfo->inventory.khionerite);
+		m_pAmount.at(1) = std::to_wstring(PlayerInfo->inventory.nanotech);
+		m_pAmount.at(2) = std::to_wstring(PlayerInfo->inventory.plasma);
+		m_pAmount.at(3) = std::to_wstring(PlayerInfo->inventory.radium);
+		m_pAmount.at(4) = std::to_wstring(PlayerInfo->inventory.scrapMetal);
+		m_pAmount.at(5) = std::to_wstring(PlayerInfo->inventory.titanium);
+		m_pRequirement = std::to_wstring(PlayerInfo->inventory.science);
+		break;
+	}
 	case EventType::MouseButtonEvent:
 	{
 		m_pMouseX = static_cast<MouseButtonEvent*>(&event)->GetXCoord();
@@ -456,7 +468,7 @@ void UpgradeScreenUI::OnEvent(IEvent& event) noexcept {
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
 		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && m_pOnScreen) {
 			for (unsigned int i = 0; i < m_pUpgrades.size(); i++) {
-				m_pUpgrades.at(i)->OnClick(m_pMouseX, m_pMouseY);
+				m_pUpgrades.at(i)->OnClick(m_pMouseX, m_pMouseY, m_inventory);
 			}
 		}
 		break;
