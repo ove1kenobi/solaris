@@ -19,6 +19,17 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 	m_pObjectiveText = L"Find a way to escape the solar system.";
 	m_pRequirement = L"0";
 
+	m_pButtonTextE = L"E";
+	m_pButtonTextDescriptionE = L"Send probe down to planet.";
+	m_pButtonTextQ = L"Q";
+	m_pButtonTextDescriptionQ = L"Toggle ship stabilizer.";
+	m_pButtonTextW = L"W";
+	m_pButtonTextDescriptionW = L"Accelerate forward.";
+	m_pButtonTextS = L"S";
+	m_pButtonTextDescriptionS = L"Accelerate backwards";
+	m_pButtonTextU = L"U";
+	m_pButtonTextDescriptionU = L"Toggle upgrade menu.";
+
 	m_pRenderBitmaps = true;
 
 	//Create upgrade objects
@@ -121,8 +132,6 @@ bool UpgradeScreenUI::CreateUpgrades() {
 }
 
 bool UpgradeScreenUI::CreateControllerDisplay() {
-	//For now we do not need it, but later once I get to design
-	//LoadBitmapFromFile(GetIconFilePath(L"Health.png").c_str(), &m_pShipBitmap);
 	return true;
 }
 
@@ -280,6 +289,19 @@ bool UpgradeScreenUI::UpdateControllerDisplay() {
 		m_pControllerDisplay.right,
 		m_pControllerDisplay.top + 20.0f
 	);
+
+	m_pButtonE = D2D1::RoundedRect(
+		D2D1::RectF(20.f, 20.f, 150.f, 100.f),
+		10.f,
+		10.f
+	);
+
+	m_pButtonBoxDescriptionE = D2D1::RectF(
+		m_pControllerDisplay.left,
+		m_pControllerDisplay.top,
+		m_pControllerDisplay.left + 50.0f,
+		m_pControllerDisplay.top - 50.0f
+	);
 	return true;
 }
 
@@ -417,6 +439,19 @@ void UpgradeScreenUI::RenderControllerDisplay() {
 		(UINT32)m_pControllerTitle.length(),
 		m_pTitleFormat.Get(),
 		m_pControllerTitleBox,
+		m_pBrush.Get()
+	);
+
+	this->UpdateBrush(m_pDarkblue, 0.5f);
+	m_pRenderTarget2D->FillRoundedRectangle(m_pButtonE, m_pBrush.Get());
+	m_pRenderTarget2D->FillRectangle(m_pButtonBoxE, m_pBrush.Get());
+
+	this->UpdateBrush(m_pWhite, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pButtonTextE.c_str(),
+		(UINT32)m_pButtonTextE.length(),
+		m_pFormat.Get(),
+		m_pButtonBoxE,
 		m_pBrush.Get()
 	);
 }
