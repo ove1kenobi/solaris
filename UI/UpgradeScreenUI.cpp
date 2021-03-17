@@ -30,6 +30,9 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 	m_pButtonTextU = L"U";
 	m_pButtonTextDescriptionU = L"Toggle upgrade menu.";
 
+	m_pButtonTextDescriptionLeft = L"Left click to select events.";
+	m_pMouseTextDescription = L"Use mouse to move.";
+
 	m_pRenderBitmaps = true;
 
 	//Create upgrade objects
@@ -132,6 +135,7 @@ bool UpgradeScreenUI::CreateUpgrades() {
 }
 
 bool UpgradeScreenUI::CreateControllerDisplay() {
+	LoadBitmapFromFile(GetIconFilePath(L"Mouse.png").c_str(), &m_pMouseBitmap);
 	return true;
 }
 
@@ -276,6 +280,7 @@ bool UpgradeScreenUI::UpdateUpgrades() {
 }
 
 bool UpgradeScreenUI::UpdateControllerDisplay() {
+	//Screen and title
 	m_pControllerDisplay = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) + m_pDisplayPadding,
 		m_pObjectiveTextBox.bottom + m_pDisplayPadding,
@@ -290,17 +295,161 @@ bool UpgradeScreenUI::UpdateControllerDisplay() {
 		m_pControllerDisplay.top + 20.0f
 	);
 
+	float offset = 20.0f;
+	float buttonSize = 75.0f;
+	//Button E
 	m_pButtonE = D2D1::RoundedRect(
-		D2D1::RectF(20.f, 20.f, 150.f, 100.f),
+		D2D1::RectF(
+			m_pControllerDisplay.left + offset,
+			m_pControllerDisplay.top + offset,
+			m_pControllerDisplay.left + buttonSize + offset,
+			m_pControllerDisplay.top + buttonSize + offset
+		),
 		10.f,
 		10.f
 	);
 
+	m_pButtonBoxE = D2D1::RectF(
+		m_pControllerDisplay.left + offset,
+		m_pControllerDisplay.top + offset,
+		m_pControllerDisplay.left + buttonSize + offset,
+		m_pControllerDisplay.top + buttonSize + offset
+	);
+
 	m_pButtonBoxDescriptionE = D2D1::RectF(
-		m_pControllerDisplay.left,
-		m_pControllerDisplay.top,
-		m_pControllerDisplay.left + 50.0f,
-		m_pControllerDisplay.top - 50.0f
+		m_pButtonBoxE.right,
+		m_pButtonBoxE.top,
+		m_pButtonBoxE.right + 400.0f,
+		m_pButtonBoxE.bottom
+	);
+
+	//Button Q
+	m_pButtonQ = D2D1::RoundedRect(
+		D2D1::RectF(
+			m_pControllerDisplay.left + offset,
+			m_pControllerDisplay.top + offset + buttonSize + 10.0f,
+			m_pControllerDisplay.left + buttonSize + offset,
+			m_pControllerDisplay.top + buttonSize*2 + offset + 10.0f
+		),
+		10.f,
+		10.f
+	);
+
+	m_pButtonBoxQ = D2D1::RectF(
+			m_pControllerDisplay.left + offset,
+			m_pControllerDisplay.top + offset + buttonSize + 10.0f,
+			m_pControllerDisplay.left + buttonSize + offset,
+			m_pControllerDisplay.top + buttonSize * 2 + offset + 10.0f
+	);
+
+	m_pButtonBoxDescriptionQ = D2D1::RectF(
+		m_pButtonBoxQ.right,
+		m_pButtonBoxQ.top,
+		m_pButtonBoxQ.right + 400.0f,
+		m_pButtonBoxQ.bottom
+	);
+
+
+	//Button W
+	m_pButtonW = D2D1::RoundedRect(
+		D2D1::RectF(
+			m_pControllerDisplay.left + offset,
+			m_pControllerDisplay.bottom - offset - buttonSize - 10.0f,
+			m_pControllerDisplay.left + buttonSize + offset,
+			m_pControllerDisplay.bottom - buttonSize*2.0f - offset - 10.0f
+		),
+		10.f,
+		10.f
+	);
+
+	m_pButtonBoxW = D2D1::RectF(
+		m_pControllerDisplay.left + offset,
+		m_pControllerDisplay.bottom - offset - buttonSize - 10.0f,
+		m_pControllerDisplay.left + buttonSize + offset,
+		m_pControllerDisplay.bottom - buttonSize * 2.0f - offset - 10.0f
+	);
+
+	m_pButtonBoxDescriptionW = D2D1::RectF(
+		m_pButtonBoxW.right,
+		m_pButtonBoxW.top,
+		m_pButtonBoxW.right + 400.0f,
+		m_pButtonBoxW.bottom
+	);
+
+
+	//Button S
+	m_pButtonS = D2D1::RoundedRect(
+		D2D1::RectF(
+			m_pControllerDisplay.left + offset,
+			m_pControllerDisplay.bottom - offset,
+			m_pControllerDisplay.left + buttonSize + offset,
+			m_pControllerDisplay.bottom - buttonSize - offset
+		),
+		10.f,
+		10.f
+	);
+
+	m_pButtonBoxS = D2D1::RectF(
+		m_pControllerDisplay.left + offset,
+		m_pControllerDisplay.bottom - offset,
+		m_pControllerDisplay.left + buttonSize + offset,
+		m_pControllerDisplay.bottom - buttonSize - offset
+	);
+
+	m_pButtonBoxDescriptionS = D2D1::RectF(
+		m_pButtonBoxS.right,
+		m_pButtonBoxS.top,
+		m_pButtonBoxS.right + 400.0f,
+		m_pButtonBoxS.bottom
+	);
+
+
+	//Button U
+	m_pButtonU = D2D1::RoundedRect(
+		D2D1::RectF(
+			m_pControllerDisplay.left + offset,
+			m_pControllerDisplay.top + offset + buttonSize*2.0f + 10.0f*2.0f,
+			m_pControllerDisplay.left + buttonSize + offset,
+			m_pControllerDisplay.top + buttonSize * 3.0f + offset + 10.0f*2.0f
+		),
+		10.f,
+		10.f
+	);
+
+	m_pButtonBoxU = D2D1::RectF(
+		m_pControllerDisplay.left + offset,
+		m_pControllerDisplay.top + offset + buttonSize * 2.0f + 10.0f * 2.0f,
+		m_pControllerDisplay.left + buttonSize + offset,
+		m_pControllerDisplay.top + buttonSize * 3.0f + offset + 10.0f * 2.0f
+	);
+
+	m_pButtonBoxDescriptionU = D2D1::RectF(
+		m_pButtonBoxU.right,
+		m_pButtonBoxU.top,
+		m_pButtonBoxU.right + 400.0f,
+		m_pButtonBoxU.bottom
+	);
+
+	//Mouse
+	m_pMousePosition = D2D1::RectF(
+		m_pControllerDisplay.right - offset,
+		m_pControllerDisplay.top + offset,
+		m_pControllerDisplay.right - 450.0f - offset,
+		m_pControllerDisplay.top + 450.0f + offset
+	);
+
+	m_pButtonBoxDescriptionLeft = D2D1::RectF(
+		m_pControllerDisplay.right - offset,
+		m_pControllerDisplay.top + offset,
+		m_pControllerDisplay.right - 450.0f - offset,
+		m_pMousePosition.top
+	);
+
+	m_pMouseBoxDescription = D2D1::RectF(
+		m_pControllerDisplay.right - offset,
+		m_pMousePosition.bottom,
+		m_pControllerDisplay.right - 450.0f - offset,
+		m_pControllerDisplay.bottom - offset
 	);
 	return true;
 }
@@ -442,9 +591,17 @@ void UpgradeScreenUI::RenderControllerDisplay() {
 		m_pBrush.Get()
 	);
 
-	this->UpdateBrush(m_pDarkblue, 0.5f);
+	this->UpdateBrush(m_pYellow, 0.5f);
 	m_pRenderTarget2D->FillRoundedRectangle(m_pButtonE, m_pBrush.Get());
+	m_pRenderTarget2D->FillRoundedRectangle(m_pButtonQ, m_pBrush.Get());
+	m_pRenderTarget2D->FillRoundedRectangle(m_pButtonW, m_pBrush.Get());
+	m_pRenderTarget2D->FillRoundedRectangle(m_pButtonS, m_pBrush.Get());
+	m_pRenderTarget2D->FillRoundedRectangle(m_pButtonU, m_pBrush.Get());
+
+	//Button E
+	this->UpdateBrush(m_pWhite, 0.25f);
 	m_pRenderTarget2D->FillRectangle(m_pButtonBoxE, m_pBrush.Get());
+	m_pRenderTarget2D->FillRectangle(m_pButtonBoxDescriptionE, m_pBrush.Get());
 
 	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
@@ -452,6 +609,123 @@ void UpgradeScreenUI::RenderControllerDisplay() {
 		(UINT32)m_pButtonTextE.length(),
 		m_pFormat.Get(),
 		m_pButtonBoxE,
+		m_pBrush.Get()
+	);
+
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pButtonTextDescriptionE.c_str(),
+		(UINT32)m_pButtonTextDescriptionE.length(),
+		m_pFormat.Get(),
+		m_pButtonBoxDescriptionE,
+		m_pBrush.Get()
+	);
+
+	//Button Q
+	this->UpdateBrush(m_pWhite, 0.25f);
+	m_pRenderTarget2D->FillRectangle(m_pButtonBoxQ, m_pBrush.Get());
+	m_pRenderTarget2D->FillRectangle(m_pButtonBoxDescriptionQ, m_pBrush.Get());
+
+	this->UpdateBrush(m_pWhite, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pButtonTextQ.c_str(),
+		(UINT32)m_pButtonTextQ.length(),
+		m_pFormat.Get(),
+		m_pButtonBoxQ,
+		m_pBrush.Get()
+	);
+
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pButtonTextDescriptionQ.c_str(),
+		(UINT32)m_pButtonTextDescriptionQ.length(),
+		m_pFormat.Get(),
+		m_pButtonBoxDescriptionQ,
+		m_pBrush.Get()
+	);
+
+	//Button W
+	this->UpdateBrush(m_pWhite, 0.25f);
+	m_pRenderTarget2D->FillRectangle(m_pButtonBoxW, m_pBrush.Get());
+	m_pRenderTarget2D->FillRectangle(m_pButtonBoxDescriptionW, m_pBrush.Get());
+
+	this->UpdateBrush(m_pWhite, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pButtonTextW.c_str(),
+		(UINT32)m_pButtonTextW.length(),
+		m_pFormat.Get(),
+		m_pButtonBoxW,
+		m_pBrush.Get()
+	);
+
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pButtonTextDescriptionW.c_str(),
+		(UINT32)m_pButtonTextDescriptionW.length(),
+		m_pFormat.Get(),
+		m_pButtonBoxDescriptionW,
+		m_pBrush.Get()
+	);
+
+	//Button S
+	this->UpdateBrush(m_pWhite, 0.25f);
+	m_pRenderTarget2D->FillRectangle(m_pButtonBoxS, m_pBrush.Get());
+	m_pRenderTarget2D->FillRectangle(m_pButtonBoxDescriptionS, m_pBrush.Get());
+
+	this->UpdateBrush(m_pWhite, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pButtonTextS.c_str(),
+		(UINT32)m_pButtonTextS.length(),
+		m_pFormat.Get(),
+		m_pButtonBoxS,
+		m_pBrush.Get()
+	);
+
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pButtonTextDescriptionS.c_str(),
+		(UINT32)m_pButtonTextDescriptionS.length(),
+		m_pFormat.Get(),
+		m_pButtonBoxDescriptionS,
+		m_pBrush.Get()
+	);
+
+	//Button U
+	this->UpdateBrush(m_pWhite, 0.25f);
+	m_pRenderTarget2D->FillRectangle(m_pButtonBoxU, m_pBrush.Get());
+	m_pRenderTarget2D->FillRectangle(m_pButtonBoxDescriptionU, m_pBrush.Get());
+
+	this->UpdateBrush(m_pWhite, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pButtonTextU.c_str(),
+		(UINT32)m_pButtonTextU.length(),
+		m_pFormat.Get(),
+		m_pButtonBoxU,
+		m_pBrush.Get()
+	);
+
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pButtonTextDescriptionU.c_str(),
+		(UINT32)m_pButtonTextDescriptionU.length(),
+		m_pFormat.Get(),
+		m_pButtonBoxDescriptionU,
+		m_pBrush.Get()
+	);
+
+	//Mouse
+	if (m_pRenderBitmaps) {
+		m_pRenderTarget2D->DrawBitmap(m_pMouseBitmap, m_pMousePosition);
+	}
+
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pButtonTextDescriptionLeft.c_str(),
+		(UINT32)m_pButtonTextDescriptionLeft.length(),
+		m_pFormat.Get(),
+		m_pButtonBoxDescriptionLeft,
+		m_pBrush.Get()
+	);
+
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pMouseTextDescription.c_str(),
+		(UINT32)m_pMouseTextDescription.length(),
+		m_pFormat.Get(),
+		m_pMouseBoxDescription,
 		m_pBrush.Get()
 	);
 }
@@ -581,6 +855,9 @@ void UpgradeScreenUI::CleanUp() {
 	m_pRenderBitmaps = false;
 	if (m_pScienceBitmap) {
 		m_pScienceBitmap->Release();
+	}
+	if (m_pMouseBitmap) {
+		m_pMouseBitmap->Release();
 	}
 	for (unsigned int i = 0; i < m_pUpgrades.size(); i++) {
 		m_pUpgrades.at(i)->CleanUp();

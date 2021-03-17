@@ -72,7 +72,12 @@ private:
 	std::wstring m_pButtonTextDescriptionU;
 
 	//Press "Left mouse" select event
-	//Use "Mouse" movement
+	ID2D1Bitmap* m_pMouseBitmap;
+	D2D1_RECT_F m_pMousePosition;
+	D2D1_RECT_F m_pButtonBoxDescriptionLeft;
+	std::wstring m_pButtonTextDescriptionLeft;
+	D2D1_RECT_F m_pMouseBoxDescription;
+	std::wstring m_pMouseTextDescription;
 
 	//Vector of Resources
 	D2D1_RECT_F m_pInventoryTitleBox;
