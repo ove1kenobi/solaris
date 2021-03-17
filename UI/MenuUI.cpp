@@ -208,8 +208,6 @@ void MenuUI::Render() {
 	RenderStart();
 	RenderExit();
 
-	//RenderHelpGrid(50);
-
 	this->EndFrame();
 }
 

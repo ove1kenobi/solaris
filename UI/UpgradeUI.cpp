@@ -76,6 +76,7 @@ bool UpgradeUI::CreateCost() {
 		&m_pCostFormat
 	), "TextFormat");
 
+
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
 		L"Tenika",
 		m_pFont.Get(),
@@ -86,6 +87,8 @@ bool UpgradeUI::CreateCost() {
 		L"en-us",
 		&m_pScienceFormat
 	), "TextFormat");
+
+	m_pScienceFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
 	return true;
 }
 
@@ -142,7 +145,7 @@ void UpgradeUI::RenderCost() {
 	}
 
 	if (m_pRenderBitmaps) {
-		//m_pRenderTarget2D->DrawBitmap(m_pScienceBitmap, m_pSciencePosition);
+		m_pRenderTarget2D->DrawBitmap(m_pScienceBitmap, m_pSciencePosition);
 	}
 
 	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
@@ -185,20 +188,24 @@ void UpgradeUI::SetUpgrade(std::wstring upgrade, std::wstring description, unsig
 
 void UpgradeUI::SetScience(unsigned int science) {
 	//Create science icon
+	float offsetX = 10.0f;
+	float offsetY = 15.0f;
+	float scienceSize = 50.0f;
+	
 	m_pSciencePosition = D2D1::RectF(
-		m_pHoverBox.right - 50.0f,
-		m_pHoverBox.top,
-		m_pHoverBox.right,
-		m_pHoverBox.top + 50.0f
+		m_pHoverBox.right - scienceSize - offsetX,
+		((m_pHoverBox.bottom - m_pHoverBox.top) / 2.0f) + m_pHoverBox.top - (scienceSize / 2.0f) - offsetY,
+		m_pHoverBox.right - offsetX,
+		((m_pHoverBox.bottom - m_pHoverBox.top) / 2.0f) + m_pHoverBox.top + (scienceSize / 2.0f) - offsetY
 	);
 	//Create science bitmap
-	//LoadBitmapFromFile(GetIconFilePath(L"Science.png").c_str(), &m_pScienceBitmap);
+	LoadBitmapFromFile(GetIconFilePath(L"Science.png").c_str(), &m_pScienceBitmap);
 
 	//Create text box
 	m_pRequirementTextbox = D2D1::RectF(
-		m_pSciencePosition.left,
-		m_pSciencePosition.top,
-		m_pSciencePosition.right,
+		m_pSciencePosition.left - 50.0f,
+		m_pSciencePosition.top + 12.0f,
+		m_pSciencePosition.left - 2.5f,
 		m_pSciencePosition.bottom
 	);
 
@@ -213,9 +220,8 @@ void UpgradeUI::AddCost(std::wstring resource, std::wstring cost) {
 	float iconSize = 25.0f;
 	float amountSize = 25.0f;
 	float padding = 10.0f;
-
-	float x = static_cast<float>(m_pResourcePosition.size() % 2);
-	float y = floor(static_cast<float>(m_pResourcePosition.size()) / 2.0f);
+	float offset = 5.0f;
+	float pushIn = 180.0f;
 
 	//Add picture
 	LoadBitmapFromFile(GetIconFilePath(resource).c_str(), &holder);
@@ -223,17 +229,17 @@ void UpgradeUI::AddCost(std::wstring resource, std::wstring cost) {
 
 	//Add square for picture
 	m_pResourcePosition.push_back(D2D1::RectF(
-		(m_pHoverBox.right/2.0f) + (iconSize + iconSize + padding) * m_pResourcePosition.size(),
-		m_pHoverBox.bottom - iconSize - 5.0f,
-		(m_pHoverBox.right / 2.0f) + iconSize + (iconSize + iconSize + padding) * m_pResourcePosition.size(),
-		m_pHoverBox.bottom - 5.0f
+		m_pHoverBox.right + (amountSize + iconSize + padding) * m_pResourcePosition.size() - pushIn,
+		m_pHoverBox.bottom - iconSize - offset,
+		m_pHoverBox.right + iconSize + (amountSize + iconSize + padding) * m_pResourcePosition.size() - pushIn,
+		m_pHoverBox.bottom - offset
 	));
 
 	//Add square for text
 	m_pCostTextbox.push_back(D2D1::RectF(
-		m_pResourcePosition.at(m_pResourcePosition.size() - 1).right + 5.0f,
-		m_pResourcePosition.at(m_pResourcePosition.size() - 1).top,
-		m_pResourcePosition.at(m_pResourcePosition.size() - 1).right + iconSize + 5.0f,
+		m_pResourcePosition.at(m_pResourcePosition.size() - 1).right + offset,
+		m_pResourcePosition.at(m_pResourcePosition.size() - 1).top + 7.5f,
+		m_pResourcePosition.at(m_pResourcePosition.size() - 1).right + amountSize + offset,
 		m_pResourcePosition.at(m_pResourcePosition.size() - 1).bottom
 	));
 
@@ -289,9 +295,6 @@ void UpgradeUI::OnEvent(IEvent& event) noexcept {
 void UpgradeUI::CleanUp() {
 	m_pRenderBitmaps = false;
 	if (m_pScienceBitmap) {
-		//m_pScienceBitmap->Release();
-	}
-	for (auto const& bitmap : m_pResourceBitmap) {
-		bitmap->Release();
+		m_pScienceBitmap->Release();
 	}
 }

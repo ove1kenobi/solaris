@@ -3,6 +3,7 @@
 
 UpgradeScreenUI::UpgradeScreenUI() noexcept {
 	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
+	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
 
 	m_pScreen = D2D1::RectF();
 	m_pObjectiveTextBox = D2D1::RectF();
@@ -12,6 +13,9 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 	m_pDisplayPadding = 20.0f;
 
 	m_pObjectiveText = L"Find a way to escape the solar system.";
+	m_pRequirement = L"0";
+
+	m_pRenderBitmaps = true;
 
 	//Create upgrade objects
 	for (unsigned int i = 0; i < 10; i++) {
@@ -25,7 +29,6 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 	resources.push_back(L"Radium.png");
 	resources.push_back(L"Scrap.png");
 	resources.push_back(L"Titanium.png");
-	resources.push_back(L"Science.png");
 
 	m_pYellow = 0xFFB724;
 	m_pWhite = 0xFFFDF9;
@@ -38,6 +41,7 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 
 UpgradeScreenUI::~UpgradeScreenUI() {
 	EventBuss::Get().RemoveListener(this, EventType::MouseButtonEvent);
+	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 
 	//Release memory
 	for (unsigned int i = 0; i < m_pUpgrades.size(); i++) {
@@ -62,7 +66,7 @@ bool UpgradeScreenUI::Initialize() {
 	if (!CreateUpgrades()) {
 		return false;
 	}
-	if (!CreateShipDisplay()) {
+	if (!CreateControllerDisplay()) {
 		return false;
 	}
 	if (!CreateResourceList()) {
@@ -88,7 +92,6 @@ bool UpgradeScreenUI::CreateScreen() {
 }
 
 bool UpgradeScreenUI::CreateObjective() {
-
 	return true;
 }
 
@@ -101,7 +104,7 @@ bool UpgradeScreenUI::CreateUpgrades() {
 	return true;
 }
 
-bool UpgradeScreenUI::CreateShipDisplay() {
+bool UpgradeScreenUI::CreateControllerDisplay() {
 	//For now we do not need it, but later once I get to design
 	//LoadBitmapFromFile(GetIconFilePath(L"Health.png").c_str(), &m_pShipBitmap);
 	return true;
@@ -115,6 +118,21 @@ bool UpgradeScreenUI::CreateResourceList() {
 		LoadBitmapFromFile(GetIconFilePath(resources.at(i)).c_str(), &holder);
 		m_pResourceBitmap.push_back(holder);
 	}
+
+	//Create format
+	ErrorCheck(m_pTextFactory->CreateTextFormat(
+		L"Tenika",
+		m_pFont.Get(),
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		20.0f,
+		L"en-us",
+		&m_pScienceFormat
+	), "TextFormat");
+
+	//Create science bitmap
+	LoadBitmapFromFile(GetIconFilePath(L"Science.png").c_str(), &m_pScienceBitmap);
 	return true;
 }
 
@@ -152,8 +170,7 @@ bool UpgradeScreenUI::UpdateUpgrades() {
 		));
 	}
 
-	//TODO: create an enum(or find one) to figure out what upgrade goes to what ID
-
+	
 	//Afterburner
 	m_pUpgrades.at(0)->SetUpgrade(L"AfterBurner",L"Raises your ships maximum speed by 40%.", 0);
 	m_pUpgrades.at(0)->AddCost(L"Scrap.png", L"10");
@@ -226,7 +243,7 @@ bool UpgradeScreenUI::UpdateUpgrades() {
 	return true;
 }
 
-bool UpgradeScreenUI::UpdateShipDisplay() {
+bool UpgradeScreenUI::UpdateControllerDisplay() {
 	m_pShipDisplay = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) + m_pDisplayPadding,
 		m_pObjectiveTextBox.bottom + m_pDisplayPadding,
@@ -271,6 +288,24 @@ bool UpgradeScreenUI::UpdateResourceList() {
 		//Add text
 		m_pAmount.push_back(L"0");
 	}
+
+	//Create science icon
+	float offset = 50.0f;
+	float scienceSize = 125.0f;
+	m_pSciencePosition = D2D1::RectF(
+		m_pResourceDisplay.right - scienceSize - offset,
+		((m_pResourceDisplay.bottom - m_pResourceDisplay.top) / 2.0f) + m_pResourceDisplay.top - (scienceSize/2.0f),
+		m_pResourceDisplay.right - offset,
+		((m_pResourceDisplay.bottom - m_pResourceDisplay.top) / 2.0f) + m_pResourceDisplay.top + (scienceSize / 2.0f)
+	);
+
+	//Create text box
+	m_pRequirementTextbox = D2D1::RectF(
+		m_pSciencePosition.left,
+		m_pSciencePosition.top,
+		m_pSciencePosition.right,
+		m_pSciencePosition.bottom
+	);
 	return true;
 }
 
@@ -284,7 +319,7 @@ bool UpgradeScreenUI::UpdateModules() {
 	if (!UpdateUpgrades()) {
 		return false;
 	}
-	if (!UpdateShipDisplay()) {
+	if (!UpdateControllerDisplay()) {
 		return false;
 	}
 	if (!UpdateResourceList()) {
@@ -318,7 +353,7 @@ void UpgradeScreenUI::RenderUpgrades() {
 	}
 }
 
-void UpgradeScreenUI::RenderShipDisplay() {
+void UpgradeScreenUI::RenderControllerDisplay() {
 	this->UpdateBrush(m_pDarkblue, 0.5f);
 	m_pRenderTarget2D->FillRectangle(m_pShipDisplay, m_pBrush.Get());
 }
@@ -340,6 +375,19 @@ void UpgradeScreenUI::RenderResourceList() {
 		);
 		i++;
 	}
+
+	if (m_pRenderBitmaps) {
+		m_pRenderTarget2D->DrawBitmap(m_pScienceBitmap, m_pSciencePosition);
+	}
+
+	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pRequirement.c_str(),
+		(UINT32)m_pRequirement.length(),
+		m_pScienceFormat.Get(),
+		m_pRequirementTextbox,
+		m_pBrush.Get()
+	);
 }
 
 void UpgradeScreenUI::Render() {
@@ -348,7 +396,7 @@ void UpgradeScreenUI::Render() {
 	RenderScreen();
 	RenderObjective();
 	RenderUpgrades();
-	RenderShipDisplay();
+	RenderControllerDisplay();
 	RenderResourceList();
 
 	EndFrame();
@@ -392,13 +440,20 @@ void UpgradeScreenUI::OnEvent(IEvent& event) noexcept {
 		}
 		break;
 	}
+	case EventType::WindowCloseEvent:
+	{
+		this->CleanUp();
+	}
 	default:
 		break;
 	}
 }
 
 void UpgradeScreenUI::CleanUp() {
-    //Will need bitmap clean up later
+	m_pRenderBitmaps = false;
+	if (m_pScienceBitmap) {
+		m_pScienceBitmap->Release();
+	}
 	for (unsigned int i = 0; i < m_pUpgrades.size(); i++) {
 		m_pUpgrades.at(i)->CleanUp();
 	}

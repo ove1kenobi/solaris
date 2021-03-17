@@ -38,16 +38,24 @@ private:
 	std::vector<D2D1_RECT_F> m_pAmountTextbox;
 	std::vector<std::wstring> m_pAmount;
 
+	//Current Science
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pScienceFormat;
+	ID2D1Bitmap* m_pScienceBitmap;
+	D2D1_RECT_F m_pSciencePosition;
+	D2D1_RECT_F m_pRequirementTextbox;
+	std::wstring m_pRequirement;
+	bool m_pRenderBitmaps;
+
 	bool CreateScreen();
 	bool CreateObjective();
 	bool CreateUpgrades();
-	bool CreateShipDisplay();
+	bool CreateControllerDisplay();
 	bool CreateResourceList();
 
 	bool UpdateScreen();
 	bool UpdateObjective();
 	bool UpdateUpgrades();
-	bool UpdateShipDisplay();
+	bool UpdateControllerDisplay();
 	bool UpdateResourceList();
 
 	bool UpdateModules();
@@ -55,7 +63,7 @@ private:
 	void RenderScreen();
 	void RenderObjective();
 	void RenderUpgrades();
-	void RenderShipDisplay();
+	void RenderControllerDisplay();
 	void RenderResourceList();
 public:
 	UpgradeScreenUI() noexcept;
