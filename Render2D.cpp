@@ -165,7 +165,7 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 					ToggleControlsEvent controlsEvent;
 					EventBuss::Get().Delegate(controlsEvent);
 					m_UpgradeScreen = !m_UpgradeScreen;
-					m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->m_pOnScreen = m_InGame;
+					m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->m_pOnScreen = m_UpgradeScreen;
 				}
 			}
 			break;

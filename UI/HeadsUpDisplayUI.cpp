@@ -296,7 +296,7 @@ bool HeadsUpDisplayUI::UpdateBars() {
 	);
 
 	m_pCapacityTextBox = D2D1::RectF(
-		m_pRightDisplayScreen.left + ((m_pRightDisplayScreen.right - m_pRightDisplayScreen.left) / 2.0f),
+		m_pRightDisplayScreen.left + 300.0f,
 		m_pCapacityIcon.top,
 		barRight,
 		m_pCapacityIcon.bottom
@@ -308,9 +308,9 @@ bool HeadsUpDisplayUI::UpdateWarningModule() {
 	bool updated = false;
 
 	m_pWarningTextBox = D2D1::RectF(
-		m_pCapacityTextBox.left - 50.0f,
+		m_pCapacityTextBox.left - 30.0f,
 		m_pCapacityTextBox.bottom,
-		m_pCapacityTextBox.left - 20.0f,
+		m_pCapacityTextBox.left - 0.0f,
 		m_pCapacityTextBox.bottom - 22.0f
 	);
 
@@ -318,12 +318,12 @@ bool HeadsUpDisplayUI::UpdateWarningModule() {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
-			D2D1::Point2F(m_pCapacityTextBox.left - 50.0f, m_pCapacityTextBox.bottom),
+			D2D1::Point2F(m_pCapacityTextBox.left - 30.0f, m_pCapacityTextBox.bottom),
 			D2D1_FIGURE_BEGIN_FILLED
 		);
 		D2D1_POINT_2F points[] = {
-			D2D1::Point2F(m_pCapacityTextBox.left - 20.0f, m_pCapacityTextBox.bottom),
-			D2D1::Point2F(m_pCapacityTextBox.left - 35.0f, m_pCapacityTextBox.bottom - 26.0f)
+			D2D1::Point2F(m_pCapacityTextBox.left - 0.0f, m_pCapacityTextBox.bottom),
+			D2D1::Point2F(m_pCapacityTextBox.left - 15.0f, m_pCapacityTextBox.bottom - 26.0f)
 		};
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);

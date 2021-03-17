@@ -22,6 +22,7 @@ private:
 	std::vector<std::wstring> m_pIconAmount;
 
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pIconTextFormat;
+	bool m_pSelected;
 
 	bool CreateText();
 	bool CreateDetails();
