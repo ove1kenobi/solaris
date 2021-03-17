@@ -13,8 +13,6 @@
 #include "EventSystem\UtilityEvents.h"
 #include "GameEvent.h"
 
-#include <iostream>
-
 struct PlayerInfo
 {
 	Planet* closestPlanet;
