@@ -70,6 +70,20 @@ private:
 	D2D1_RECT_F m_pRadiationTextBox;
 	std::wstring m_pRadiationText;
 
+	//Stabilizer
+	D2D1_ELLIPSE m_pStabilizerMode;
+	D2D1_RECT_F m_pStabilizerTextBox;
+	std::wstring m_pStabilizerText;
+	bool m_pStabilizer;
+
+	//Velocity
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pVelocityFormat;
+	D2D1_RECT_F m_pVelocityTextBox;
+	std::wstring m_pVelocityText;
+	D2D1_RECT_F m_pUnitTextBox;
+	std::wstring m_pUnitText;
+	bool m_pMaxVelocity;
+
 	bool m_pRenderCold;
 	bool m_pRenderHeat;
 	bool m_pRenderRadiation;
@@ -85,6 +99,8 @@ private:
 	bool CreateWarningModule();
 	bool CreatePlanetDistanceModule();
 	bool CreateDamageModules();
+	bool CreateStabilizer();
+	bool CreateVelocity();
 	bool CreateTools();
 
 	//Update modules if screen size changes
@@ -93,6 +109,8 @@ private:
 	bool UpdateWarningModule();
 	bool UpdatePlanetDistanceModule();
 	bool UpdateDamageModules();
+	bool UpdateStabilizer();
+	bool UpdateVelocity();
 	bool UpdateTools();
 
 	bool UpdateModules();
@@ -103,8 +121,11 @@ private:
 	void RenderWarningModule();
 	void RenderPlanetDistanceModule();
 	void RenderDamageModule();
+	void RenderStabilizer();
+	void RenderVelocity();
 
 	//For updating things based on information from the event handler
+	void SetVelocity();
 	void SetPlanetDistance(float distanceToPlanet, std::wstring planetName);
 	void SetCapacity(unsigned int currentAmount, unsigned int maximumAmount);
 public:

@@ -8,7 +8,7 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 
 	m_pScreen = D2D1::RectF();
 	m_pObjectiveTextBox = D2D1::RectF();
-	m_pShipDisplay = D2D1::RectF();
+	m_pControllerDisplay = D2D1::RectF();
 	m_pResourceDisplay = D2D1::RectF();
 
 	m_pDisplayPadding = 20.0f;
@@ -246,7 +246,7 @@ bool UpgradeScreenUI::UpdateUpgrades() {
 }
 
 bool UpgradeScreenUI::UpdateControllerDisplay() {
-	m_pShipDisplay = D2D1::RectF(
+	m_pControllerDisplay = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) + m_pDisplayPadding,
 		m_pObjectiveTextBox.bottom + m_pDisplayPadding,
 		m_pWindowWidth - m_pDisplayPadding,
@@ -264,7 +264,7 @@ bool UpgradeScreenUI::UpdateResourceList() {
 
 	m_pResourceDisplay = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) + m_pDisplayPadding,
-		m_pShipDisplay.bottom + m_pDisplayPadding,
+		m_pControllerDisplay.bottom + m_pDisplayPadding,
 		m_pWindowWidth - m_pDisplayPadding,
 		m_pWindowHeight - m_pDisplayPadding
 	);
@@ -366,7 +366,7 @@ void UpgradeScreenUI::RenderUpgrades() {
 
 void UpgradeScreenUI::RenderControllerDisplay() {
 	this->UpdateBrush(m_pDarkblue, 0.5f);
-	m_pRenderTarget2D->FillRectangle(m_pShipDisplay, m_pBrush.Get());
+	m_pRenderTarget2D->FillRectangle(m_pControllerDisplay, m_pBrush.Get());
 }
 
 void UpgradeScreenUI::RenderResourceList() {

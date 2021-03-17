@@ -29,8 +29,15 @@ private:
 	std::wstring m_pObjectiveText;
 
 	//Controllers
-	ID2D1Bitmap* m_pShipBitmap;
-	D2D1_RECT_F m_pShipDisplay;
+	D2D1_RECT_F m_pControllerDisplay;
+	//Press "E" send down probe to planet
+	//Press "Q" ship stabilizer
+	//Press "W" accelerate forward
+	//Press "S" accelerate backwards
+	//Press "U" upgrade menu
+
+	//Press "Left mouse" select event
+	//Use "Mouse" movement
 
 	//Vector of Resources
 	D2D1_RECT_F m_pResourceDisplay;

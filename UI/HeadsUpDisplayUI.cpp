@@ -37,6 +37,9 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pRadiationTextBox = D2D1::RectF();
 	m_pRadiationText = L"RADIATION AREA";
 
+	m_pStabilizerText = L"Stabilizer";
+	m_pStabilizer = true;
+
 	m_pWhite = 0xFFFDF9;
 	m_pYellow = 0xFFB724;
 	m_pBlue = 0x0BA4CC;
@@ -77,6 +80,9 @@ bool HeadsUpDisplayUI::Initialize() {
 		return false;
 	}
 	if (!CreateDamageModules()) {
+		return false;
+	}
+	if (!CreateStabilizer()) {
 		return false;
 	}
 	return true;
@@ -196,6 +202,16 @@ bool HeadsUpDisplayUI::CreateDamageModules() {
 		&m_pRadiationFormat
 	), "TextFormat");
 	return true;
+}
+
+bool HeadsUpDisplayUI::CreateStabilizer() {
+	//Format only
+	return true;
+}
+
+bool HeadsUpDisplayUI::CreateVelocity()
+{
+	return false;
 }
 
 bool HeadsUpDisplayUI::CreateTools() {
@@ -386,6 +402,27 @@ bool HeadsUpDisplayUI::UpdateDamageModules() {
 	return true;
 }
 
+bool HeadsUpDisplayUI::UpdateStabilizer() {
+	m_pStabilizerMode = D2D1::Ellipse(
+		D2D1::Point2F(40.0f, m_pWindowHeight - 50.0f),
+		10.0f,
+		10.0f
+	);
+
+	m_pStabilizerTextBox = D2D1::RectF(
+		60.0f,
+		m_pWindowHeight - 60.0f,
+		m_pWindowWidth / 2.0f,
+		m_pWindowHeight - 40.0f
+	);
+	return true;
+}
+
+bool HeadsUpDisplayUI::UpdateVelocity()
+{
+	return false;
+}
+
 bool HeadsUpDisplayUI::UpdateTools() {
 	return true;
 }
@@ -407,6 +444,9 @@ bool HeadsUpDisplayUI::UpdateModules() {
 		return false;
 	}
 	if (!UpdateTools()) {
+		return false;
+	}
+	if (!UpdateStabilizer()) {
 		return false;
 	}
 	return true;
@@ -511,6 +551,34 @@ void HeadsUpDisplayUI::RenderDamageModule() {
 	}
 }
 
+void HeadsUpDisplayUI::RenderStabilizer() {
+	if (m_pStabilizer) {
+		UpdateBrush(m_pRed, 1.0f);
+		m_pRenderTarget2D->FillEllipse(m_pStabilizerMode, m_pBrush.Get());
+		m_pStabilizerText = L"Stabilizer ON";
+	}
+	else {
+		m_pStabilizerText = L"Stabilizer OFF";
+	}
+	UpdateBrush(m_pWhite, 1.0f);
+	m_pRenderTarget2D->DrawEllipse(m_pStabilizerMode, m_pBrush.Get(), 2.0f);
+
+	ErrorCheck(m_pHUDFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING), "TextAlignment");
+
+	this->UpdateBrush(m_pWhite, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pStabilizerText.c_str(),
+		(UINT32)m_pStabilizerText.length(),
+		m_pHUDFormat.Get(),
+		m_pStabilizerTextBox,
+		m_pBrush.Get()
+	);
+}
+
+void HeadsUpDisplayUI::RenderVelocity()
+{
+}
+
 void HeadsUpDisplayUI::Render() {
 	BeginFrame();
 
@@ -522,11 +590,16 @@ void HeadsUpDisplayUI::Render() {
 
    RenderBars();
    RenderCapacity();
+   RenderStabilizer();
 
    if (m_pCapacityWarning) {
 	   RenderWarningModule();
    }
    EndFrame();
+}
+
+void HeadsUpDisplayUI::SetVelocity()
+{
 }
 
 //Event functions
