@@ -3,6 +3,7 @@
 
 UpgradeScreenUI::UpgradeScreenUI() noexcept {
 	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
+	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
 
 	m_pScreen = D2D1::RectF();
 	m_pObjectiveTextBox = D2D1::RectF();
@@ -37,6 +38,7 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 }
 
 UpgradeScreenUI::~UpgradeScreenUI() {
+	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 	EventBuss::Get().RemoveListener(this, EventType::MouseButtonEvent);
 
 	//Release memory
@@ -391,6 +393,10 @@ void UpgradeScreenUI::OnEvent(IEvent& event) noexcept {
 			}
 		}
 		break;
+	}
+	case EventType::WindowCloseEvent:
+	{
+		this->CleanUp();
 	}
 	default:
 		break;

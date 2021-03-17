@@ -11,9 +11,7 @@ UpgradeUI::UpgradeUI() noexcept {
 }
 
 UpgradeUI::~UpgradeUI() {
-	for (auto const& bitmap : m_pResourceBitmap) {
-		bitmap->Release();
-	}
+
 }
 
 bool UpgradeUI::Initialize() {
@@ -142,7 +140,7 @@ void UpgradeUI::RenderCost() {
 	}
 
 	if (m_pRenderBitmaps) {
-		//m_pRenderTarget2D->DrawBitmap(m_pScienceBitmap, m_pSciencePosition);
+		m_pRenderTarget2D->DrawBitmap(m_pScienceBitmap, m_pSciencePosition);
 	}
 
 	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
@@ -192,7 +190,7 @@ void UpgradeUI::SetScience(unsigned int science) {
 		m_pHoverBox.top + 50.0f
 	);
 	//Create science bitmap
-	//LoadBitmapFromFile(GetIconFilePath(L"Science.png").c_str(), &m_pScienceBitmap);
+	LoadBitmapFromFile(GetIconFilePath(L"Science.png").c_str(), &m_pScienceBitmap);
 
 	//Create text box
 	m_pRequirementTextbox = D2D1::RectF(
@@ -289,7 +287,7 @@ void UpgradeUI::OnEvent(IEvent& event) noexcept {
 void UpgradeUI::CleanUp() {
 	m_pRenderBitmaps = false;
 	if (m_pScienceBitmap) {
-		//m_pScienceBitmap->Release();
+		m_pScienceBitmap->Release();
 	}
 	for (auto const& bitmap : m_pResourceBitmap) {
 		bitmap->Release();
