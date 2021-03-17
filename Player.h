@@ -13,6 +13,8 @@
 #include "EventSystem\UtilityEvents.h"
 #include "GameEvent.h"
 
+#include <iostream>
+
 struct PlayerInfo
 {
 	Planet* closestPlanet;
@@ -36,11 +38,13 @@ private:
 
 	// Resources
 	int m_maxHealth;
-	int m_fuelCapacity;
-	int m_oxygenCapacity;
+	float m_fuelCapacity;
+	float m_oxygenCapacity;
 	int m_storageCapacity;
 	int m_storageUsage;
 	Resources m_inventory;
+	float m_oxygenConsumption;
+	float m_engineEfficiency;
 
 	// Movement
 	PlayerInfo m_PlayerInfo;
@@ -59,8 +63,10 @@ private:
 	void DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcept;
 	// Updates the rotation for the camera and the ship
 	void UpdateRotation();
-	DirectX::XMFLOAT3 Stabilize();
+	DirectX::XMFLOAT3 CalculateNeededForce(DirectX::XMFLOAT3 desierdVelocity);
 	int AddToInventory(int currentResource, int resourceToAdd);
+	DirectX::XMFLOAT3 ConsumeFuel(DirectX::XMFLOAT3 GeneratedPower);
+	void ConsumeOxygen();
 public:
 	Player();
 	virtual ~Player();
