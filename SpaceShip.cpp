@@ -125,9 +125,9 @@ void SpaceShip::SetForwardVector(DirectX::XMFLOAT3 forwardVector)
 	m_forwardVector = forwardVector;
 }
 
-float SpaceShip::GetTopSpeed()
+float* SpaceShip::GetTopSpeed()
 {
-	return m_topSpeed;
+	return &m_topSpeed;
 }
 
 DirectX::XMFLOAT3 SpaceShip::GetVelocity()
@@ -206,4 +206,9 @@ void SpaceShip::SetVelocity(const DirectX::XMFLOAT3& velocity) noexcept
 void SpaceShip::NullifyForces() noexcept
 {
 	m_sumForces = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+}
+
+void SpaceShip::UpgradeToAfterburner() noexcept
+{
+	m_topSpeed = 420.0f;
 }

@@ -154,6 +154,7 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 								m_PlanetInteraction = true;
 								GameEvent gameEvents[3];
 								gameEventManager.RequestGameEvents(gameEvents, m_pPlayerInfo->closestPlanet->GetPlanetType());
+								static_cast<PlanetInteractionUI*>(m_Modules[(int)TypesUI::PlanetInteraction])->SetPlanetFlavourText(m_pPlayerInfo->planetInteractedWith->GetPlanetFlavourText());
 								static_cast<PlanetInteractionUI*>(m_Modules[(int)TypesUI::PlanetInteraction])->SetGameEvents(gameEvents);
 							}
 							m_Modules.at(static_cast<int>(TypesUI::PlanetInteraction))->m_pOnScreen = m_PlanetInteraction;

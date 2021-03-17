@@ -6,6 +6,7 @@ class Orbit;
 class Planet : public CosmicBody{
 private:
 	std::wstring m_Name;
+	std::wstring m_FlavourText;
 	bool m_TestForCulling;
 	float m_DistanceToCamera;
 	UINT m_planetType;
@@ -20,6 +21,8 @@ public:
 	DirectX::XMFLOAT4 GetWaterColor() noexcept;
 	[[nodiscard]] std::wstring& GetName() noexcept;
 	[[nodiscard]] const bool& IsVisited() const noexcept;
+	void SetPlanetFlavourText(std::wstring text);
+	std::wstring GetPlanetFlavourText() const noexcept;
 	void MarkAsVisited() noexcept;
 	UINT GetPlanetType() const noexcept;
 };

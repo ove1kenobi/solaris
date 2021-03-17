@@ -97,25 +97,47 @@ void MousePicking::DoIntersectionTests(const unsigned int& x, const unsigned int
 	}
 }
 
-void MousePicking::DisplayPickedObject() noexcept
+void MousePicking::DisplayPickedObject(const bool& hasAntenna) noexcept
 {
-	//Will now display the distance to the picked object from the ORIGIN, which is NOT
-	//the center of the ship. However, note that this can be correctly tweaked once the 
-	//ship movement is finalized, so a minor revisit is necessary. Also, it doesn't actually
-	//differ much as it is, and we are never supposed to be able to get THAT close to a planet! 
-	//(Emil F)
 	if (m_pPickedObject != nullptr)
 	{
 		Planet* planet = static_cast<Planet*>(m_pPickedObject);
-		if (planet->IsVisited())
+		if (hasAntenna == true)
 		{
-			DelegatePlanetDistanceEvent pde(m_DistanceToObject, planet->GetName());
-			EventBuss::Get().Delegate(pde);
+			if (planet->IsVisited())
+			{
+				DelegatePlanetDistanceEvent pde(m_DistanceToObject, planet->GetName());
+				EventBuss::Get().Delegate(pde);
+			}
+			else
+			{
+				DelegatePlanetDistanceEvent pde(m_DistanceToObject, L"Unknown Planet");
+				EventBuss::Get().Delegate(pde);
+			}
 		}
 		else
 		{
-			DelegatePlanetDistanceEvent pde(m_DistanceToObject, L"Unknown Planet");
-			EventBuss::Get().Delegate(pde);
+			//This distance is of course subjective and should probably be revisited.
+			if (m_DistanceToObject < 9000)
+			{
+				if (planet->IsVisited())
+				{
+					DelegatePlanetDistanceEvent pde(m_DistanceToObject, planet->GetName());
+					EventBuss::Get().Delegate(pde);
+				}
+				else
+				{
+					DelegatePlanetDistanceEvent pde(m_DistanceToObject, L"Unknown Planet");
+					EventBuss::Get().Delegate(pde);
+				}
+			}
+			else
+			{
+				//The 0.1f distance is used by the UI to indicate that the scan distance is too far.
+				//A small hack, sure, but it gets the job done.
+				DelegatePlanetDistanceEvent pde(0.1f, L"Scan Distance Too Far");
+				EventBuss::Get().Delegate(pde);
+			}
 		}
 	}
 	else
