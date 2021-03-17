@@ -11,9 +11,7 @@ UpgradeUI::UpgradeUI() noexcept {
 }
 
 UpgradeUI::~UpgradeUI() {
-	for (auto const& bitmap : m_pResourceBitmap) {
-		bitmap->Release();
-	}
+
 }
 
 bool UpgradeUI::Initialize() {
@@ -296,5 +294,8 @@ void UpgradeUI::CleanUp() {
 	m_pRenderBitmaps = false;
 	if (m_pScienceBitmap) {
 		m_pScienceBitmap->Release();
+	}
+	for (auto const& bitmap : m_pResourceBitmap) {
+		bitmap->Release();
 	}
 }

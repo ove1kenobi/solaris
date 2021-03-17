@@ -40,6 +40,7 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 }
 
 UpgradeScreenUI::~UpgradeScreenUI() {
+	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 	EventBuss::Get().RemoveListener(this, EventType::MouseButtonEvent);
 	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 
