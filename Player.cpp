@@ -93,7 +93,7 @@ void Player::ActivateWarpDrive()
 		m_playerControlsActive = false;
 
 		m_ship->SetTilt(0.0f, 0.0f);
-		DirectX::XMFLOAT3 warpSpeed = m_camera->GetForwardVector() * 1000000.0f * m_time.DeltaTime();
+		DirectX::XMFLOAT3 warpSpeed = m_camera->GetForwardVector() * 1000000.0f * (float)m_time.DeltaTime();
 		m_ship->AddForce(warpSpeed);
 
 		// Display "You Won" text?
@@ -358,7 +358,7 @@ void Player::OnEvent(IEvent& event) noexcept
 					if (m_stabilizerActive) m_stabilizerActive = false;
 					else m_stabilizerActive = true;
 				}
-				if (virKey == 'R' /*&& m_ship->IsUpgraded( (size_t)9 )*/) {
+				if (virKey == 'R' && m_ship->IsUpgraded( (size_t)8 )) {
 					m_initiateWarp = true;
 				}
 			}
