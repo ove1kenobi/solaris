@@ -13,6 +13,9 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 
 	m_pDisplayPadding = 20.0f;
 
+	m_pObjectiveTitle = L"Objective";
+	m_pControllerTitle = L"Controls";
+	m_pInventoryTitle = L"Inventory";
 	m_pObjectiveText = L"Find a way to escape the solar system.";
 	m_pRequirement = L"0";
 
@@ -90,6 +93,17 @@ bool UpgradeScreenUI::CreateScreen() {
 		L"en-us",
 		&m_pFormat
 	), "TextFormat");
+
+	ErrorCheck(m_pTextFactory->CreateTextFormat(
+		L"Tenika",
+		m_pFont.Get(),
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		24.0f,
+		L"en-us",
+		&m_pTitleFormat
+	), "TextFormat");
     return true;
 }
 
@@ -155,6 +169,13 @@ bool UpgradeScreenUI::UpdateObjective() {
 		0.0f + m_pDisplayPadding,
 		m_pWindowWidth - m_pDisplayPadding,
 		200.0f - m_pDisplayPadding
+	);
+
+	m_pObjectiveTitleBox = D2D1::RectF(
+		m_pObjectiveTextBox.left,
+		m_pObjectiveTextBox.top - 20.0f,
+		m_pObjectiveTextBox.right,
+		m_pObjectiveTextBox.top + 20.0f
 	);
 	return true;
 }
@@ -252,6 +273,13 @@ bool UpgradeScreenUI::UpdateControllerDisplay() {
 		m_pWindowWidth - m_pDisplayPadding,
 		m_pObjectiveTextBox.bottom + 600.0f - m_pDisplayPadding
 	);
+
+	m_pControllerTitleBox = D2D1::RectF(
+		m_pControllerDisplay.left,
+		m_pControllerDisplay.top - 20.0f,
+		m_pControllerDisplay.right,
+		m_pControllerDisplay.top + 20.0f
+	);
 	return true;
 }
 
@@ -267,6 +295,13 @@ bool UpgradeScreenUI::UpdateResourceList() {
 		m_pControllerDisplay.bottom + m_pDisplayPadding,
 		m_pWindowWidth - m_pDisplayPadding,
 		m_pWindowHeight - m_pDisplayPadding
+	);
+
+	m_pInventoryTitleBox = D2D1::RectF(
+		m_pResourceDisplay.left,
+		m_pResourceDisplay.top - 20.0f,
+		m_pResourceDisplay.right,
+		m_pResourceDisplay.top + 20.0f
 	);
 
 	for (unsigned int i = 0; i < resources.size(); i++) {
@@ -356,6 +391,14 @@ void UpgradeScreenUI::RenderObjective() {
 		m_pObjectiveTextBox,
 		m_pBrush.Get()
 	);
+
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pObjectiveTitle.c_str(),
+		(UINT32)m_pObjectiveTitle.length(),
+		m_pTitleFormat.Get(),
+		m_pObjectiveTitleBox,
+		m_pBrush.Get()
+	);
 }
 
 void UpgradeScreenUI::RenderUpgrades() {
@@ -367,6 +410,15 @@ void UpgradeScreenUI::RenderUpgrades() {
 void UpgradeScreenUI::RenderControllerDisplay() {
 	this->UpdateBrush(m_pDarkblue, 0.5f);
 	m_pRenderTarget2D->FillRectangle(m_pControllerDisplay, m_pBrush.Get());
+
+	this->UpdateBrush(m_pWhite, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pControllerTitle.c_str(),
+		(UINT32)m_pControllerTitle.length(),
+		m_pTitleFormat.Get(),
+		m_pControllerTitleBox,
+		m_pBrush.Get()
+	);
 }
 
 void UpgradeScreenUI::RenderResourceList() {
@@ -410,6 +462,14 @@ void UpgradeScreenUI::RenderResourceList() {
 		(UINT32)m_pRequirement.length(),
 		m_pScienceFormat.Get(),
 		m_pRequirementTextbox,
+		m_pBrush.Get()
+	);
+
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pInventoryTitle.c_str(),
+		(UINT32)m_pInventoryTitle.length(),
+		m_pTitleFormat.Get(),
+		m_pInventoryTitleBox,
 		m_pBrush.Get()
 	);
 }

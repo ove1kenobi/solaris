@@ -7,6 +7,7 @@ class UpgradeScreenUI : public ModuleUI {
 private:
 	//Main screen
 	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pFont;
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTitleFormat;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pFormat;
 	float m_pDisplayPadding;
 	D2D1_RECT_F m_pScreen;
@@ -25,11 +26,15 @@ private:
 	std::vector<UpgradeUI*> m_pUpgrades;
 
 	//Objective description
+	D2D1_RECT_F m_pObjectiveTitleBox;
+	std::wstring m_pObjectiveTitle;
 	D2D1_RECT_F m_pObjectiveTextBox;
 	std::wstring m_pObjectiveText;
 
 	//Controllers
 	D2D1_RECT_F m_pControllerDisplay;
+	D2D1_RECT_F m_pControllerTitleBox;
+	std::wstring m_pControllerTitle;
 	//Press "E" send down probe to planet
 	//Press "Q" ship stabilizer
 	//Press "W" accelerate forward
@@ -40,6 +45,8 @@ private:
 	//Use "Mouse" movement
 
 	//Vector of Resources
+	D2D1_RECT_F m_pInventoryTitleBox;
+	std::wstring m_pInventoryTitle;
 	D2D1_RECT_F m_pResourceDisplay;
 	std::vector<std::wstring> resources;
 	std::list<ID2D1Bitmap*> m_pResourceBitmap;
