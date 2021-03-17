@@ -263,6 +263,7 @@ void RandomEventUI::ClearEvent() {
 
 void RandomEventUI::ClearIcons()
 {
+	m_pSelected = false;
 	for (auto const& bitmap : m_pIconBitmap) {
 		bitmap->Release();
 	}

@@ -57,9 +57,6 @@ private:
 	unsigned int m_pMouseX;
 	unsigned int m_pMouseY;
 
-	//PlayerData:
-	PlayerInfo* m_pPlayerInfo;
-
 	//Creation functions
 	bool CreateScreen();
 	bool CreateTextElements();

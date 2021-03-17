@@ -4,6 +4,9 @@
 UpgradeUI::UpgradeUI() noexcept {
 	m_pHoverBox = D2D1::RectF();
 	m_pTextBox = D2D1::RectF();
+	m_pRequirementTextbox = D2D1::RectF();
+	m_pSciencePosition = D2D1::RectF();
+	m_pTitleBox = D2D1::RectF();
 
 	m_pID = 0;
 	m_pBought = false;
@@ -299,17 +302,17 @@ void UpgradeUI::AddCost(std::wstring resource, std::wstring cost) {
 	m_pCostText.push_back(cost);
 
 	if (resource == L"Khionerite.png")
-		m_pCost.khionerite = std::stof(cost);
+		m_pCost.khionerite = std::stoi(cost);
 	if (resource == L"Nanotech.png")
-		m_pCost.nanotech = std::stof(cost);
+		m_pCost.nanotech = std::stoi(cost);
 	if (resource == L"Plasma.png")
-		m_pCost.plasma = std::stof(cost);
+		m_pCost.plasma = std::stoi(cost);
 	if (resource == L"Radium.png")
-		m_pCost.radium = std::stof(cost);
+		m_pCost.radium = std::stoi(cost);
 	if (resource == L"Scrap.png")
-		m_pCost.scrapMetal = std::stof(cost);
+		m_pCost.scrapMetal = std::stoi(cost);
 	if (resource == L"Titanium.png")
-		m_pCost.titanium = std::stof(cost);
+		m_pCost.titanium = std::stoi(cost);
 }
 
 void UpgradeUI::SetHoverBox(D2D1_RECT_F hoverBox) {

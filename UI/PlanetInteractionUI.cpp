@@ -9,6 +9,9 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pPlanetNameTextBox = D2D1::RectF();
 	m_pPlanetFlavourTextBox = D2D1::RectF();
 
+	m_pMouseX = 0u;
+	m_pMouseY = 0u;
+
 	m_pRandomEvents.push_back(new RandomEventUI());
 	m_pRandomEvents.push_back(new RandomEventUI());
 	m_pRandomEvents.push_back(new RandomEventUI());
@@ -23,6 +26,10 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pLightGray = 0x636363;	
 	m_pLightBlue = 0x0BA4CC;
 	m_pDarkblue = 0x2741b4;	
+
+	m_pScreenOffset = 0.0f;
+	m_pPadding = 0.0f;
+	m_pBlockSize = 0.0f;
 
 }
 
@@ -805,8 +812,7 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 	case EventType::DelegatePlayerInfoEvent:
 	{
 		DelegatePlayerInfoEvent& derivedEvent = static_cast<DelegatePlayerInfoEvent&>(event);
-		m_pPlayerInfo = derivedEvent.GetPlayerInfo();
-		SetPlanetName(m_pPlayerInfo->closestPlanet->GetName());
+		SetPlanetName(derivedEvent.GetPlayerInfo()->closestPlanet->GetName());
 		break;
 	}
 	default:
