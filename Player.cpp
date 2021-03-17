@@ -54,6 +54,20 @@ int Player::AddToInventory(int currentResource, int resourceToAdd)
 	return amountToAdd;
 }
 
+void Player::ActivateWarpDrive()
+{
+	m_startWarp = true;
+	m_currentChargeTime += (float)m_time.DeltaTime();
+
+	// Add camera shake
+
+	if (m_currentChargeTime > m_chargeTime) {
+		// Lock camera
+		DirectX::XMFLOAT3 warpSpeed = m_camera->GetForwardVector(); // Multiply with some big value
+		m_ship->AddForce(warpSpeed);
+	}
+}
+
 Player::Player()
 	: m_PlayerInfo{ },
 	  m_TetheredToClosestPlanet{ false },
@@ -82,6 +96,10 @@ Player::Player()
 	m_stabilizerActive = true;
 	m_mousePosX = 0.0f;
 	m_mousePosY = 0.0f;
+
+	m_startWarp = false;
+	m_chargeTime = 5.0f;
+	m_currentChargeTime = 0.0f;
 
 	m_ship = nullptr;
 	m_camera = nullptr;

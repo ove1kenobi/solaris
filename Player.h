@@ -55,12 +55,19 @@ private:
 	bool m_playerControlsActive, m_stabilizerActive;
 	float m_rotationSpeed;
 	bool m_TetheredToClosestPlanet;
+
+	// Warp
+	bool m_startWarp;
+	float m_chargeTime;
+	float m_currentChargeTime;
+
 private:
 	void DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcept;
 	// Updates the rotation for the camera and the ship
 	void UpdateRotation();
 	DirectX::XMFLOAT3 Stabilize();
 	int AddToInventory(int currentResource, int resourceToAdd);
+	void ActivateWarpDrive();
 public:
 	Player();
 	virtual ~Player();
