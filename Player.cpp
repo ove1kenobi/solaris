@@ -532,7 +532,7 @@ void Player::DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcep
 
 void Player::Kill() noexcept
 {
-	if (m_immortal) {
+	if (!m_immortal) {
 		m_inventory.health = 0;
 	}
 }
