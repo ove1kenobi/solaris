@@ -89,7 +89,7 @@ Player::Player()
 	m_camera = nullptr;
 	m_rotationSpeed = 1.0f;
 
-	m_topSpeed = 0.0f;
+	m_topSpeed = nullptr;
 	m_desiredSpeed = 0.0f;
 	m_thrusterForce = 500000.0f;
 }
@@ -120,12 +120,12 @@ bool Player::Initialize(PlayerCamera* camera)
 bool Player::update(const std::vector<Planet*>& planets)
 {
 #if defined(DEBUG) | defined(_DEBUG)
-	ImGui::Begin("Inventiry");
+	ImGui::Begin("Inventory");
 	ImGui::Text("Fuel: %d", m_inventory.fuel);
 	ImGui::Text("Oxygen: %d", m_inventory.oxygen);
 	ImGui::Text("Titanium: %d", m_inventory.titanium);
 	ImGui::Text("Scrap Metal: %d", m_inventory.scrapMetal);
-	ImGui::Text("Nanotech: %d", m_inventory.nanotech);
+	ImGui::Text("NanoTech: %d", m_inventory.nanotech);
 	ImGui::Text("Plasma: %d", m_inventory.plasma);
 	ImGui::Text("Radium: %d", m_inventory.radium);
 	ImGui::Text("Khionerite: %d", m_inventory.khionerite);
@@ -143,7 +143,7 @@ bool Player::update(const std::vector<Planet*>& planets)
 		if (m_moveForwards) {
 			if (m_stabilizerActive) {
 				m_desiredSpeed += m_thrusterForce / m_ship->GetMass() * (float)m_time.DeltaTime();
-				if (m_desiredSpeed > m_topSpeed) m_desiredSpeed = m_topSpeed;
+				if (m_desiredSpeed > *m_topSpeed) m_desiredSpeed = *m_topSpeed;
 			}
 			else {
 				float step = m_thrusterForce * (float)m_time.DeltaTime();
@@ -154,7 +154,7 @@ bool Player::update(const std::vector<Planet*>& planets)
 		if (m_moveBackwards) {
 			if (m_stabilizerActive) {
 				m_desiredSpeed -= m_thrusterForce / m_ship->GetMass() * (float)m_time.DeltaTime();
-				if (m_desiredSpeed < -m_topSpeed) m_desiredSpeed = -m_topSpeed;
+				if (m_desiredSpeed < -*m_topSpeed) m_desiredSpeed = -*m_topSpeed;
 			}
 			else {
 				float step = -1.0f * m_thrusterForce * (float)m_time.DeltaTime();

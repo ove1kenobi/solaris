@@ -125,9 +125,9 @@ void SpaceShip::SetForwardVector(DirectX::XMFLOAT3 forwardVector)
 	m_forwardVector = forwardVector;
 }
 
-float SpaceShip::GetTopSpeed()
+float* SpaceShip::GetTopSpeed()
 {
-	return m_topSpeed;
+	return &m_topSpeed;
 }
 
 DirectX::XMFLOAT3 SpaceShip::GetVelocity()

@@ -440,7 +440,7 @@ void Scene::Update() noexcept {
 	m_RenderData.totalNrOfPlanets = m_numPlanets;
 	m_RenderData.waterSpheres = &m_waterSpheres;
 
-	m_Picking.DisplayPickedObject();
+	m_Picking.DisplayPickedObject(m_player.HasAntennaUpgrade());
 
 	bool coldDamage = false;
 	bool heatDamage = false;

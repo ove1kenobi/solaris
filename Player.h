@@ -44,7 +44,8 @@ private:
 
 	// Movement
 	PlayerInfo m_PlayerInfo;
-	float m_thrusterForce, m_desiredSpeed, m_topSpeed;
+	float m_thrusterForce, m_desiredSpeed;
+	float* m_topSpeed;
 	DirectX::XMFLOAT3 m_TetheredDistanceToUphold;
 	DirectX::XMFLOAT3 m_PreviousCenterPosition;
 
