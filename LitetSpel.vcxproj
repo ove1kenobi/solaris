@@ -271,6 +271,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventSystem\PlayerEvents.h" />
+    <ClInclude Include="PlanetFlavourText.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="SpaceShipUpgrade.h" />
     <ClInclude Include="UI\CrosshairUI.h" />

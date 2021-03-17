@@ -288,6 +288,26 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 		}
 	}
 	
+	//Add flavour text.
+	for (size_t i = 0; i < m_planets.size(); i++) {
+		UINT type = m_planets[i]->GetPlanetType();
+		if (type != 0 && type != 1 && type != 2) {
+			m_planets[i]->SetPlanetFlavourText(m_flavourTexts.GetText(planetType::normal));
+		}
+		else {
+			switch (type) {
+			case 0:
+				m_planets[i]->SetPlanetFlavourText(m_flavourTexts.GetText(planetType::warm));
+				break;
+			case 1:
+				m_planets[i]->SetPlanetFlavourText(m_flavourTexts.GetText(planetType::cold));
+				break;
+			case 2:
+				m_planets[i]->SetPlanetFlavourText(m_flavourTexts.GetText(planetType::radio));
+			}
+		}
+	}
+
 	//Go through the planets and find a suitable one to start at.
 	std::uniform_int_distribution<int> distributionStartPosition(2, 5);
 	UINT counter = 0;

@@ -11,6 +11,8 @@
 #include "Techniques/MousePicking.h"
 #include "Techniques/FrustumCulling.h"
 #include "ourMath.h"
+#include "PlanetFlavourText.h"
+
 class fstream;
 class Scene : public EventPublisher, public Layer
 {
@@ -29,6 +31,7 @@ private:
 	MousePicking m_Picking;
 	FrustumCulling m_FrustumCulling;
 	RenderData m_RenderData;
+	FlavourTextManager m_flavourTexts;
 
 	Time m_time;
 	long double m_nextAstroSpawnTime;
