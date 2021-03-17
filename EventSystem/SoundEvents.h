@@ -3,6 +3,8 @@
 
 enum class SoundID {
 	Thrusters = 0,
+	ShipExplosion,
+	AsteroidCollision
 };
 
 enum class MusicID {

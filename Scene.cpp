@@ -519,12 +519,16 @@ void Scene::CheckForCollisions() noexcept
 	{
 		if (length(m_player.getShip()->getCenter() - planets->GetCenter()) <= ((m_player.getShip()->GetBoundingSphere().Radius * 10) + planets->GetRadius()))
 		{
+			PlaySoundEvent soundEvent(SoundID::ShipExplosion, false);
+			EventBuss::Get().Delegate(soundEvent);
 			m_player.Kill();
 		}
 	}
 	//Sun:
 	if (length(m_player.getShip()->GetCenter() - m_sun->GetCenter()) <= ((m_player.getShip()->GetBoundingSphere().Radius * 10) + m_sun->GetRadius()))
 	{
+		PlaySoundEvent soundEvent(SoundID::ShipExplosion, false);
+		EventBuss::Get().Delegate(soundEvent);
 		m_player.Kill();
 	}
 
@@ -543,6 +547,16 @@ void Scene::CheckForCollisions() noexcept
 				pAsteroid->MarkAsDestroyed();
 				CameraShakeEvent csEvent(0.3f, 0.1f);
 				EventBuss::Get().Delegate(csEvent);
+				if (m_player.GetHealth() - 30 <= 0)
+				{
+					PlaySoundEvent soundEvent(SoundID::ShipExplosion, false);
+					EventBuss::Get().Delegate(soundEvent);
+				}
+				else
+				{
+					PlaySoundEvent soundEvent(SoundID::AsteroidCollision, false);
+					EventBuss::Get().Delegate(soundEvent);
+				}
 			}
 		}
 	}

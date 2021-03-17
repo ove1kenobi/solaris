@@ -68,7 +68,7 @@ const bool Engine::Initialize()
 		return false;
 
 	// Sound Manager
-	if (!m_SoundManager.Initialize())
+	if (!m_SoundManager.Initialize(100.0f, 35.0f))
 		return false;
 
 	//All components must have the correct monitor resolution: (Emil F)
