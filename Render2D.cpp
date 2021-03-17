@@ -39,6 +39,7 @@ Render2D::Render2D() noexcept
 		m_Modules.push_back(new PressInteractUI());
 		m_Modules.push_back(new CrosshairUI());
 		m_Modules.push_back(new UpgradeScreenUI());
+		m_Modules.push_back(new WonGameUI());
 
 		m_Modules.at(static_cast<int>(TypesUI::MainMenu))->m_pOnScreen = true;
 	}
@@ -102,6 +103,10 @@ void Render2D::RenderUI() {
 		//If player wants to upgrade, render it
 		if (m_UpgradeScreen) {
 			m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->Render();
+		}
+
+		if (true) {
+			m_Modules.at(static_cast<int>(TypesUI::WonGame))->Render();
 		}
 	}
 	//If not in game then render main menu

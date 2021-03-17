@@ -7,6 +7,7 @@
 #include "UI/PressInteractUI.h"
 #include "UI/CrosshairUI.h"
 #include "UI/UpgradeScreenUI.h"
+#include "UI/WonGameUI.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/InputEvents.h"

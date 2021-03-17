@@ -90,6 +90,7 @@
     <ClCompile Include="UI\UpgradeScreenUI.cpp" />
     <ClCompile Include="UI\UpgradeUI.cpp" />
     <ClCompile Include="GameEventManager.cpp" />
+    <ClCompile Include="UI\WonGameUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXCore.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="GameEventManager.h" />
     <ClInclude Include="GameEvent.h" />
     <ClInclude Include="PlanetFlavourText.h" />
+    <ClInclude Include="UI\WonGameUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />

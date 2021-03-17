@@ -267,6 +267,10 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="UI\WonGameUI.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="WaterSphere.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -354,6 +358,7 @@
     <ClInclude Include="UI\TypesUI.h" />
     <ClInclude Include="UI\UpgradeScreenUI.h" />
     <ClInclude Include="UI\UpgradeUI.h" />
+    <ClInclude Include="UI\WonGameUI.h" />
     <ClInclude Include="vertex.h" />
     <ClInclude Include="WaterSphere.h" />
   </ItemGroup>
