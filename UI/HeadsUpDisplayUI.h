@@ -99,7 +99,6 @@ private:
 	bool CreateWarningModule();
 	bool CreatePlanetDistanceModule();
 	bool CreateDamageModules();
-	bool CreateStabilizer();
 	bool CreateVelocity();
 	bool CreateTools();
 
