@@ -532,9 +532,20 @@ void HeadsUpDisplayUI::Render() {
 //Event functions
 void HeadsUpDisplayUI::SetPlanetDistance(float distanceToPlanet, std::wstring planetName) {
 	std::transform(planetName.begin(), planetName.end(), planetName.begin(), ::toupper);
-	m_pPlanetText = planetName;
-	m_pDistanceText = std::to_wstring(static_cast<unsigned int>(distanceToPlanet));
-	m_pDistanceText.append(L"m");
+	if (distanceToPlanet > 0.2)
+	{
+		m_pPlanetText = planetName;
+		m_pDistanceText = std::to_wstring(static_cast<unsigned int>(distanceToPlanet));
+		m_pDistanceText.append(L"m");
+	}
+	else
+	{
+		//Planet text will be the "error message" given if distance is too far.
+		//distanceToPlanet = 0.1 simply means we are too far away from a planet to scan it correctly. 
+		m_pPlanetText = planetName;
+		m_pDistanceText = L"";
+	}
+
 }
 
 void HeadsUpDisplayUI::SetCapacity(unsigned int currentAmount, unsigned int maximumAmount) {

@@ -288,6 +288,26 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 		}
 	}
 	
+	//Add flavour text.
+	for (size_t i = 0; i < m_planets.size(); i++) {
+		UINT type = m_planets[i]->GetPlanetType();
+		if (type != 0 && type != 1 && type != 2) {
+			m_planets[i]->SetPlanetFlavourText(m_flavourTexts.GetText(planetType::normal));
+		}
+		else {
+			switch (type) {
+			case 0:
+				m_planets[i]->SetPlanetFlavourText(m_flavourTexts.GetText(planetType::warm));
+				break;
+			case 1:
+				m_planets[i]->SetPlanetFlavourText(m_flavourTexts.GetText(planetType::cold));
+				break;
+			case 2:
+				m_planets[i]->SetPlanetFlavourText(m_flavourTexts.GetText(planetType::radio));
+			}
+		}
+	}
+
 	//Go through the planets and find a suitable one to start at.
 	std::uniform_int_distribution<int> distributionStartPosition(2, 5);
 	UINT counter = 0;
@@ -440,7 +460,7 @@ void Scene::Update() noexcept {
 	m_RenderData.totalNrOfPlanets = m_numPlanets;
 	m_RenderData.waterSpheres = &m_waterSpheres;
 
-	m_Picking.DisplayPickedObject();
+	m_Picking.DisplayPickedObject(m_player.HasAntennaUpgrade());
 
 	bool coldDamage = false;
 	bool heatDamage = false;
@@ -542,8 +562,16 @@ void Scene::CheckForCollisions() noexcept
 			{
 				//There is a hit:
 				m_IsInvincible = true;
-				m_player.UpdateHealth(-30);
-				m_player.getShip()->AddForce(pAsteroid->GetVelocity() * 2000);
+				if (!m_player.HasShieldUpgrade())
+				{
+					m_player.UpdateHealth(-30);
+					m_player.getShip()->AddForce(pAsteroid->GetVelocity() * 2000);
+				}
+				else
+				{
+					m_player.UpdateHealth(-15);
+					m_player.getShip()->AddForce(pAsteroid->GetVelocity());
+				}
 				pAsteroid->MarkAsDestroyed();
 				CameraShakeEvent csEvent(0.3f, 0.1f);
 				EventBuss::Get().Delegate(csEvent);
