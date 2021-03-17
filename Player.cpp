@@ -447,6 +447,8 @@ void Player::DelegatePlayerInfo() noexcept
 	m_PlayerInfo.storageUsage = m_storageUsage;
 	m_PlayerInfo.storageCapacity = m_storageCapacity;
 	m_PlayerInfo.inventory = m_inventory;
+	m_PlayerInfo.stabilizerActive = m_stabilizerActive;
+	m_PlayerInfo.shipVelocity = static_cast<int>((length(m_ship->GetVelocity())));
 	DelegatePlayerInfoEvent piEvent(&m_PlayerInfo);
 	EventBuss::Get().Delegate(piEvent);
 }

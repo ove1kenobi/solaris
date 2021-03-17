@@ -41,7 +41,7 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pStabilizer = true;
 
 	m_pVelocityText = L"330";
-	m_pUnitText = L"m/s";
+	m_pUnitText = L"km/s";
 
 	m_pWhite = 0xFFFDF9;
 	m_pYellow = 0xFFB724;
@@ -575,11 +575,13 @@ void HeadsUpDisplayUI::RenderDamageModule() {
 
 void HeadsUpDisplayUI::RenderStabilizer() {
 	if (m_pStabilizer) {
-		UpdateBrush(m_pRed, 1.0f);
+		UpdateBrush(m_pBlue, 1.0f);
 		m_pRenderTarget2D->FillEllipse(m_pStabilizerMode, m_pBrush.Get());
 		m_pStabilizerText = L"Stabilizer ON";
 	}
 	else {
+		UpdateBrush(m_pRed, 1.0f);
+		m_pRenderTarget2D->FillEllipse(m_pStabilizerMode, m_pBrush.Get());
 		m_pStabilizerText = L"Stabilizer OFF";
 	}
 	UpdateBrush(m_pWhite, 1.0f);
@@ -599,8 +601,6 @@ void HeadsUpDisplayUI::RenderStabilizer() {
 
 void HeadsUpDisplayUI::RenderVelocity() {
 	UpdateBrush(m_pRed, 0.5f);
-	//m_pRenderTarget2D->FillRectangle(m_pVelocityTextBox, m_pBrush.Get());
-	//m_pRenderTarget2D->FillRectangle(m_pUnitTextBox, m_pBrush.Get());
 
 	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
@@ -640,10 +640,6 @@ void HeadsUpDisplayUI::Render() {
    EndFrame();
 }
 
-void HeadsUpDisplayUI::SetVelocity()
-{
-}
-
 //Event functions
 void HeadsUpDisplayUI::SetPlanetDistance(float distanceToPlanet, std::wstring planetName) {
 	std::transform(planetName.begin(), planetName.end(), planetName.begin(), ::toupper);
@@ -651,7 +647,7 @@ void HeadsUpDisplayUI::SetPlanetDistance(float distanceToPlanet, std::wstring pl
 	{
 		m_pPlanetText = planetName;
 		m_pDistanceText = std::to_wstring(static_cast<unsigned int>(distanceToPlanet));
-		m_pDistanceText.append(L"m");
+		m_pDistanceText.append(L"km");
 	}
 	else
 	{
@@ -697,6 +693,8 @@ void HeadsUpDisplayUI::OnEvent(IEvent& event) noexcept {
 		m_pHealthBar.SetCurrentBar(PlayerInfo->HealthPercentage);
 		m_pOxygenBar.SetCurrentBar(PlayerInfo->oxygenPercentage);
 		m_pFuelBar.SetCurrentBar(PlayerInfo->fuelPercentage);
+		m_pStabilizer = PlayerInfo->stabilizerActive;
+		m_pVelocityText = std::to_wstring(PlayerInfo->shipVelocity);
 		SetCapacity(PlayerInfo->storageUsage, PlayerInfo->storageCapacity);
 		break;
 	}
