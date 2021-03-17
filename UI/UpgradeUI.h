@@ -1,14 +1,20 @@
 #pragma once
 #include "ModuleUI.h"
 
-class UpgradeUI : public ModuleUI {
+class UpgradeUI : public ModuleUI, public EventPublisher {
 private:
 	//To identify which upgrade it currently holds
 	unsigned int m_pID;
 	bool m_pBought;
+	bool m_pRenderBitmaps;
+
+	//Upgrade title
+	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pFont;
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTitleFormat;
+	D2D1_RECT_F m_pTitleBox;
+	std::wstring m_pTitle;
 
 	//Upgrade description
-	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pFont;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pUpgradeFormat;
 	D2D1_RECT_F m_pHoverBox;
 	D2D1_RECT_F m_pTextBox;
@@ -21,7 +27,15 @@ private:
 	std::vector<D2D1_RECT_F> m_pCostTextbox;
 	std::vector<std::wstring> m_pCost;
 
+	//Science requriement
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pScienceFormat;
+	ID2D1Bitmap* m_pScienceBitmap;
+	D2D1_RECT_F m_pSciencePosition;
+	D2D1_RECT_F m_pRequirementTextbox;
+	std::wstring m_pRequirement;
+
 	//Create functions
+	bool CreateTitle();
 	bool CreateDescription();
 	bool CreateCost();
 
@@ -29,6 +43,7 @@ private:
 	bool UpdateModules();
 
 	//Render functions
+	void RenderTitle();
 	void RenderDescription();
 	void RenderCost();
 public:
@@ -36,7 +51,8 @@ public:
 	virtual ~UpgradeUI();
 	bool Initialize();
 
-	void SetUpgrade(std::wstring description, unsigned int ID);
+	void SetUpgrade(std::wstring upgrade, std::wstring description, unsigned int ID);
+	void SetScience(unsigned int science);
 	void AddCost(std::wstring resource, std::wstring cost);
 	void SetHoverBox(D2D1_RECT_F hoverBox);
 

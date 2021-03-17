@@ -98,6 +98,7 @@ Player::~Player()
 	EventBuss::Get().RemoveListener(this, EventType::ToggleControlsEvent);
 	EventBuss::Get().RemoveListener(this, EventType::MouseMoveAbsoluteEvent);
 	EventBuss::Get().RemoveListener(this, EventType::ToggleTetheredEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DelegateUpgradeID);
 	EventBuss::Get().RemoveListener(this, EventType::GameEventSelectedEvent);
 }
 
@@ -105,6 +106,7 @@ bool Player::Initialize(PlayerCamera* camera)
 {
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::ToggleControlsEvent, EventType::MouseMoveAbsoluteEvent);
 	EventBuss::Get().AddListener(this, EventType::ToggleTetheredEvent, EventType::GameEventSelectedEvent);
+	EventBuss::Get().AddListener(this, EventType::DelegateUpgradeID);
 
 	m_camera = camera;
 	m_ship = new SpaceShip();
@@ -333,6 +335,66 @@ void Player::OnEvent(IEvent& event) noexcept
 				m_ship->SetVelocity(prevCenterToCurCenter);
 			}
 			m_TetheredToClosestPlanet = !m_TetheredToClosestPlanet;
+			break;
+		}
+		case EventType::DelegateUpgradeID:
+		{
+			unsigned int upgrade = static_cast<DelegateUpgradeID*>(&event)->GetID();
+			switch (upgrade)
+			{
+			case SpaceShip::afterburner: 
+			{
+				m_ship->Activate(upgrade);
+				break;
+			}
+			case SpaceShip::antenna:
+			{
+				m_ship->Activate(upgrade);
+				break;
+			}
+			case SpaceShip::cargo:
+			{
+				m_ship->Activate(upgrade);
+				break;
+			}
+			case SpaceShip::cold:
+			{
+				m_ship->Activate(upgrade);
+				break;
+			}
+			case SpaceShip::fuelcells:
+			{
+				m_ship->Activate(upgrade);
+				break;
+			}
+			case SpaceShip::livingquarters:
+			{
+				m_ship->Activate(upgrade);
+				break;
+			}
+			case SpaceShip::hot:
+			{
+				m_ship->Activate(upgrade);
+				break;
+			}
+			case SpaceShip::radProtect:
+			{
+				m_ship->Activate(upgrade);
+				break;
+			}
+			case SpaceShip::shield:
+			{
+				m_ship->Activate(upgrade);
+				break;
+			}
+			case SpaceShip::warpdrive:
+			{
+				m_ship->Activate(upgrade);
+				break;
+			}
+			default:
+				break;
+			}
 			break;
 		}
 	}

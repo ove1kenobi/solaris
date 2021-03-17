@@ -87,7 +87,7 @@ public:
 	}
 };
 
-class GameEventSelectedEvent : public IEvent{
+class GameEventSelectedEvent : public IEvent {
 private:
 	GameEvent m_gameEvent;
 public:
@@ -106,5 +106,29 @@ public:
 	[[nodiscard]] const GameEvent GetGameEvent() const noexcept
 	{
 		return m_gameEvent;
+	}
+};
+
+class DelegateUpgradeID : public IEvent
+{
+private:
+	unsigned int upgradeID;
+public:
+	DelegateUpgradeID(unsigned int ID) noexcept {
+		upgradeID = ID;
+	};
+	virtual ~DelegateUpgradeID() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::DelegateUpgradeID;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "DelegateUpgradeID";
+	}
+	[[nodiscard]] const int GetID() const noexcept
+	{
+		return upgradeID;
 	}
 };

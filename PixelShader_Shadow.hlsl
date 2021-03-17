@@ -21,8 +21,9 @@ struct PS_OUT
 PS_OUT ps_main(in PS_IN psIn)
 {
     PS_OUT psOut = (PS_OUT)0;
-    float lightDistance = length(psIn.inPositionWS - lightPosition); 
+    float lightDistance = length(psIn.inPositionWS - lightPosition);
     lightDistance = lightDistance / farPlane;
-    psOut.outColor.r = lightDistance; 
+    psOut.outColor.r = lightDistance;
+    
     return psOut;
 }

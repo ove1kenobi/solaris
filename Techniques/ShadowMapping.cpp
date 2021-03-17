@@ -13,8 +13,8 @@ ShadowMapping::ShadowMapping() noexcept
       m_CameraDirections{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
       m_CameraUpVectors{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
       m_SunPosition{ DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) },
-      m_TextureWidth{ 5120.0f },
-      m_TextureHeight{ 5120.0f },
+      m_TextureWidth{ 4096.0f },
+      m_TextureHeight{ 4096.0f },
       m_ClearColor{ 1.0f, 0.0f, 0.0f, 1.0f },
       m_ShadowBias{ 50.0f }
 {
@@ -219,8 +219,8 @@ void ShadowMapping::DoPasses(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& 
                                      &mappedSubresource),
                                      "Map");
             MatrixBufferShadow* data = (MatrixBufferShadow*)mappedSubresource.pData;
-            data->worldMatrix = DirectX::XMMatrixTranspose(worldMatrix);
-            data->worldViewProjectionMatrix = DirectX::XMMatrixTranspose(worldMatrix * viewMatrix * DirectX::XMLoadFloat4x4(&m_OrthographicProjection));
+            data->worldMatrix = worldMatrix;
+            data->worldViewProjectionMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixTranspose(worldMatrix) * viewMatrix * DirectX::XMLoadFloat4x4(&m_OrthographicProjection));
             pDeviceContext->Unmap(m_pMatrixCBuffer.Get(), 0);
             pDeviceContext->VSSetConstantBuffers(0u, 1u, m_pMatrixCBuffer.GetAddressOf());
             pDeviceContext->DrawIndexed(culledObjects[j]->getIndexBufferSize(), 0u, 0);
@@ -247,9 +247,9 @@ void ShadowMapping::BindSRV(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& p
 void ShadowMapping::UpdateBias(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& pDeviceContext) noexcept
 {
 #if defined(DEBUG) | defined(_DEBUG)
-    ImGui::Begin("Shadow");
-    ImGui::DragFloat("Bias", &m_ShadowBias, 0.001f, 0.0f, 40.0f);
-    ImGui::End();
+	ImGui::Begin("Shadow");
+	ImGui::DragFloat("Bias", &m_ShadowBias, 0.001f, 0.0f, 40.0f);
+	ImGui::End();
 #endif
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource = {};
 	HR_X(pDeviceContext->Map(m_pShadowDataBuffer.Get(),

@@ -8,8 +8,9 @@
 #include "EventSystem\EventPublisher.h"
 #include "EventSystem/InputEvents.h"
 #include "EventSystem/SoundEvents.h"
-#include "EventSystem\UtilityEvents.h"
 #include "EventSystem/UIEvents.h"
+#include "Resources.h"
+#include "EventSystem\UtilityEvents.h"
 #include "GameEvent.h"
 
 struct PlayerInfo
