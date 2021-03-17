@@ -12,6 +12,7 @@
 #include "Resources.h"
 #include "EventSystem\UtilityEvents.h"
 #include "GameEvent.h"
+#include "EventSystem/PlayerEvents.h"
 
 struct PlayerInfo
 {
@@ -57,9 +58,12 @@ private:
 	bool m_playerControlsActive, m_stabilizerActive;
 	float m_rotationSpeed;
 	bool m_TetheredToClosestPlanet;
+	bool m_lockCamera;
 
 	// Warp
-	bool m_startWarp;
+	bool m_immortal;
+	bool m_startShake;
+	bool m_initiateWarp;
 	float m_chargeTime;
 	float m_currentChargeTime;
 

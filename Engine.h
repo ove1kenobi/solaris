@@ -28,6 +28,7 @@ private:
 	LayerStack m_LayerStack;
 	bool m_Running;
 	bool m_MainMenuNotRunning;
+	bool m_ResetGame;
 	long double m_time;
 	int m_fps;
 private:

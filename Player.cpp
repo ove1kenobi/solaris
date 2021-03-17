@@ -76,15 +76,32 @@ void Player::ConsumeOxygen()
 
 void Player::ActivateWarpDrive()
 {
-	m_startWarp = true;
+	if (m_startShake) {
+		m_ship->SetVelocity(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
+		m_rotationSpeed = 0.0f;
+
+		CameraShakeEvent csEvent(5.0f, 0.01f);
+		EventBuss::Get().Delegate(csEvent);
+		m_startShake = false;
+	}
+
 	m_currentChargeTime += (float)m_time.DeltaTime();
 
-	// Add camera shake
+	if (m_currentChargeTime >= m_chargeTime) {
+		m_immortal = true;
+		m_lockCamera = true;
+		m_playerControlsActive = false;
 
-	if (m_currentChargeTime > m_chargeTime) {
-		// Lock camera
-		DirectX::XMFLOAT3 warpSpeed = m_camera->GetForwardVector(); // Multiply with some big value
+		m_ship->SetTilt(0.0f, 0.0f);
+		DirectX::XMFLOAT3 warpSpeed = m_camera->GetForwardVector() * 1000000.0f * m_time.DeltaTime();
 		m_ship->AddForce(warpSpeed);
+
+		// Display "You Won" text?
+
+		if (m_currentChargeTime > 3.0f + m_chargeTime) {
+			GameWonEvent gwEvent;
+			EventBuss::Get().Delegate(gwEvent);
+		}
 	}
 }
 
@@ -118,8 +135,11 @@ Player::Player()
 	m_stabilizerActive = true;
 	m_mousePosX = 0.0f;
 	m_mousePosY = 0.0f;
+	m_lockCamera = false;
 
-	m_startWarp = false;
+	m_immortal = false;
+	m_startShake = true;
+	m_initiateWarp = false;
 	m_chargeTime = 5.0f;
 	m_currentChargeTime = 0.0f;
 
@@ -171,6 +191,10 @@ bool Player::update(const std::vector<Planet*>& planets)
 	ImGui::Text("Storage Usage %d/%d", m_storageUsage, m_storageCapacity);
 	ImGui::End();
 #endif
+
+	if (m_initiateWarp) {
+		ActivateWarpDrive();
+	}
 
 	DirectX::XMFLOAT3 shipForce = { 0.0f, 0.0f, 0.0f };
 
@@ -248,9 +272,11 @@ bool Player::update(const std::vector<Planet*>& planets)
 		m_ship->UpdatePhysics();
 	}
 
-	DirectX::XMFLOAT3 a = m_ship->getCenter();
-	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
-	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
+	if (!m_lockCamera) {
+		DirectX::XMFLOAT3 a = m_ship->getCenter();
+		DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
+		m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
+	}
 
 	if (length(m_ship->GetVelocity()) < 200.0f) return false;
 	return true;
@@ -329,6 +355,9 @@ void Player::OnEvent(IEvent& event) noexcept
 				if (virKey == 'Q') {
 					if (m_stabilizerActive) m_stabilizerActive = false;
 					else m_stabilizerActive = true;
+				}
+				if (virKey == 'R' /*&& m_ship->IsUpgraded( (size_t)9 )*/) {
+					m_initiateWarp = true;
 				}
 			}
 			if (state == KeyState::KeyRelease && m_playerControlsActive) {
@@ -457,12 +486,14 @@ void Player::DelegatePlayerInfo() noexcept
 
 void Player::UpdateHealth(int value)
 {
-	m_inventory.health += value;
-	if (m_inventory.health > m_maxHealth) {
-		m_inventory.health = m_maxHealth;
-	}
-	else if (m_inventory.health < 0) {
-		m_inventory.health = 0;
+	if (!m_immortal) {
+		m_inventory.health += value;
+		if (m_inventory.health > m_maxHealth) {
+			m_inventory.health = m_maxHealth;
+		}
+		else if (m_inventory.health < 0) {
+			m_inventory.health = 0;
+		}
 	}
 }
 
@@ -501,5 +532,7 @@ void Player::DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcep
 
 void Player::Kill() noexcept
 {
-	m_inventory.health = 0;
+	if (m_immortal) {
+		m_inventory.health = 0;
+	}
 }
