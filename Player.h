@@ -47,7 +47,8 @@ private:
 
 	// Movement
 	PlayerInfo m_PlayerInfo;
-	float m_thrusterForce, m_desiredSpeed, m_topSpeed;
+	float m_thrusterForce, m_desiredSpeed;
+	float* m_topSpeed;
 	DirectX::XMFLOAT3 m_TetheredDistanceToUphold;
 	DirectX::XMFLOAT3 m_PreviousCenterPosition;
 
@@ -67,6 +68,10 @@ private:
 	float m_chargeTime;
 	float m_currentChargeTime;
 
+
+	//Upgrade data:
+	bool m_HasShieldUpgrade;
+	bool m_HasAntennaUpgrade;
 private:
 	void DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcept;
 	// Updates the rotation for the camera and the ship
@@ -92,5 +97,7 @@ public:
 	int GetMaxHealth() noexcept;
 	void UpdateMaxHealth(int value);
 	void Kill() noexcept;
+	[[nodiscard]] const bool& HasShieldUpgrade() const noexcept;
+	[[nodiscard]] const bool& HasAntennaUpgrade() const noexcept;
 };
 

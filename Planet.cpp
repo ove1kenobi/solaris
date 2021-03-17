@@ -85,3 +85,11 @@ UINT Planet::GetPlanetType() const noexcept
 {
 	return m_planetType;
 }
+
+void Planet::SetPlanetFlavourText(std::wstring text) {
+	m_FlavourText = text;
+}
+
+std::wstring Planet::GetPlanetFlavourText() const noexcept {
+	return m_FlavourText;
+}

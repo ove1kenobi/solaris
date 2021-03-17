@@ -24,5 +24,5 @@ public:
 	virtual ~MousePicking();
 	[[nodiscard]] const bool Initialize() const noexcept;
 	void DoIntersectionTests(const unsigned int& x, const unsigned int& y, const std::vector<GameObject*>& gameObjects) noexcept;
-	void DisplayPickedObject() noexcept;
+	void DisplayPickedObject(const bool& hasAntenna) noexcept;
 };

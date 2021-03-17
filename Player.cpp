@@ -108,7 +108,9 @@ void Player::ActivateWarpDrive()
 Player::Player()
 	: m_PlayerInfo{ },
 	  m_TetheredToClosestPlanet{ false },
-	  m_TetheredDistanceToUphold{ -1.0f, -1.0f, -1.0f }
+	  m_TetheredDistanceToUphold{ -1.0f, -1.0f, -1.0f },
+	  m_HasShieldUpgrade{ false },
+	  m_HasAntennaUpgrade{ false }
 {
 	m_maxHealth = 100;
 	m_fuelCapacity = 100.0f;
@@ -147,7 +149,7 @@ Player::Player()
 	m_camera = nullptr;
 	m_rotationSpeed = 1.0f;
 
-	m_topSpeed = 0.0f;
+	m_topSpeed = nullptr;
 	m_desiredSpeed = 0.0f;
 	m_thrusterForce = 500000.0f;
 }
@@ -178,12 +180,12 @@ bool Player::Initialize(PlayerCamera* camera)
 bool Player::update(const std::vector<Planet*>& planets)
 {
 #if defined(DEBUG) | defined(_DEBUG)
-	ImGui::Begin("Inventiry");
+	ImGui::Begin("Inventory");
 	ImGui::Text("Fuel: %f", m_inventory.fuel);
 	ImGui::Text("Oxygen: %f", m_inventory.oxygen);
 	ImGui::Text("Titanium: %d", m_inventory.titanium);
 	ImGui::Text("Scrap Metal: %d", m_inventory.scrapMetal);
-	ImGui::Text("Nanotech: %d", m_inventory.nanotech);
+	ImGui::Text("NanoTech: %d", m_inventory.nanotech);
 	ImGui::Text("Plasma: %d", m_inventory.plasma);
 	ImGui::Text("Radium: %d", m_inventory.radium);
 	ImGui::Text("Khionerite: %d", m_inventory.khionerite);
@@ -205,20 +207,20 @@ bool Player::update(const std::vector<Planet*>& planets)
 		if (m_moveForwards) {
 			if (m_stabilizerActive) {
 				m_desiredSpeed += m_thrusterForce / m_ship->GetMass() * (float)m_time.DeltaTime();
-				if (m_desiredSpeed > m_topSpeed) m_desiredSpeed = m_topSpeed;
+				if (m_desiredSpeed > *m_topSpeed) m_desiredSpeed = *m_topSpeed;
 			}
 			else {
-				DirectX::XMFLOAT3 desierdVelocity = m_camera->GetForwardVector() * m_topSpeed;
+				DirectX::XMFLOAT3 desierdVelocity = m_camera->GetForwardVector() * *m_topSpeed;
 				shipForce = shipForce + CalculateNeededForce(desierdVelocity);
 			}
 		}
 		if (m_moveBackwards) {
 			if (m_stabilizerActive) {
 				m_desiredSpeed -= m_thrusterForce / m_ship->GetMass() * (float)m_time.DeltaTime();
-				if (m_desiredSpeed < -m_topSpeed) m_desiredSpeed = -m_topSpeed;
+				if (m_desiredSpeed < -*m_topSpeed) m_desiredSpeed = -*m_topSpeed;
 			}
 			else {
-				DirectX::XMFLOAT3 desierdVelocity = -1.0f * m_camera->GetForwardVector() * m_topSpeed;
+				DirectX::XMFLOAT3 desierdVelocity = -1.0f * m_camera->GetForwardVector() * *m_topSpeed;
 				shipForce = shipForce + CalculateNeededForce(desierdVelocity);
 			}
 		}
@@ -418,16 +420,19 @@ void Player::OnEvent(IEvent& event) noexcept
 			case SpaceShip::afterburner: 
 			{
 				m_ship->Activate(upgrade);
+				m_ship->UpgradeToAfterburner();
 				break;
 			}
 			case SpaceShip::antenna:
 			{
 				m_ship->Activate(upgrade);
+				m_HasAntennaUpgrade = true;
 				break;
 			}
 			case SpaceShip::cargo:
 			{
 				m_ship->Activate(upgrade);
+				m_storageCapacity *= 2;
 				break;
 			}
 			case SpaceShip::cold:
@@ -438,11 +443,15 @@ void Player::OnEvent(IEvent& event) noexcept
 			case SpaceShip::fuelcells:
 			{
 				m_ship->Activate(upgrade);
+				m_fuelCapacity *= 2.0f;
+				m_inventory.fuel += 100.0f;
 				break;
 			}
 			case SpaceShip::livingquarters:
 			{
 				m_ship->Activate(upgrade);
+				m_oxygenCapacity *= 2.0f;
+				m_inventory.oxygen += 100.0f;
 				break;
 			}
 			case SpaceShip::hot:
@@ -458,6 +467,9 @@ void Player::OnEvent(IEvent& event) noexcept
 			case SpaceShip::shield:
 			{
 				m_ship->Activate(upgrade);
+				m_HasShieldUpgrade = true;
+				m_maxHealth *= 2;
+				m_inventory.health += 100;
 				break;
 			}
 			case SpaceShip::warpdrive:
@@ -535,4 +547,14 @@ void Player::Kill() noexcept
 	if (!m_immortal) {
 		m_inventory.health = 0;
 	}
+}
+
+const bool& Player::HasShieldUpgrade() const noexcept
+{
+	return m_HasShieldUpgrade;
+}
+
+const bool& Player::HasAntennaUpgrade() const noexcept
+{
+	return m_HasAntennaUpgrade;
 }

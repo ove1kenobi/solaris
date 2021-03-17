@@ -24,7 +24,7 @@ public:
 	void SetTilt(float pitchLerp, float rollLerp);
 	void SetForwardVector(DirectX::XMFLOAT3 forwardVector);
 
-	float GetTopSpeed();
+	float* GetTopSpeed();
 	DirectX::XMFLOAT3 GetVelocity();
 	DirectX::XMFLOAT3 getCenter();
 	virtual GameObject* update(DirectX::XMFLOAT4X4 VMatrix, DirectX::XMFLOAT4X4 PMatrix, const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext) override;
@@ -37,6 +37,7 @@ public:
 	std::vector<GameObject*>& GetUpgrades();
 	void SetVelocity(const DirectX::XMFLOAT3& velocity) noexcept;
 	void NullifyForces() noexcept;
+	void UpgradeToAfterburner() noexcept;
 
 	enum UpgradeTypes {
 		afterburner = 0, antenna, cargo, cold, fuelcells, livingquarters, shield, hot, warpdrive, numUpgrades, radProtect = numUpgrades
