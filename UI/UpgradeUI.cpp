@@ -7,12 +7,11 @@ UpgradeUI::UpgradeUI() noexcept {
 
 	m_pID = 0;
 	m_pBought = false;
+	m_pRenderBitmaps = false;
 }
 
 UpgradeUI::~UpgradeUI() {
-	for (auto const& bitmap : m_pResourceBitmap) {
-		bitmap->Release();
-	}
+
 }
 
 bool UpgradeUI::Initialize() {
@@ -25,6 +24,25 @@ bool UpgradeUI::Initialize() {
 	if (!CreateCost()) {
 		return false;
 	}
+	if (!CreateTitle()) {
+		return false;
+	}
+	return true;
+}
+
+bool UpgradeUI::CreateTitle() {
+	ErrorCheck(m_pTextFactory->CreateTextFormat(
+		L"Tenika",
+		m_pFont.Get(),
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		20.0f,
+		L"en-us",
+		&m_pTitleFormat
+	), "TextFormat");
+
+	m_pTitleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 	return true;
 }
 
@@ -55,11 +73,33 @@ bool UpgradeUI::CreateCost() {
 		L"en-us",
 		&m_pCostFormat
 	), "TextFormat");
+
+	ErrorCheck(m_pTextFactory->CreateTextFormat(
+		L"Tenika",
+		m_pFont.Get(),
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		20.0f,
+		L"en-us",
+		&m_pScienceFormat
+	), "TextFormat");
 	return true;
 }
 
 bool UpgradeUI::UpdateModules() {
 	return true;
+}
+
+void UpgradeUI::RenderTitle() {
+	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pTitle.c_str(),
+		(UINT32)m_pTitle.length(),
+		m_pTitleFormat.Get(),
+		m_pTitleBox,
+		m_pBrush.Get()
+	);
 }
 
 void UpgradeUI::RenderDescription() {
@@ -98,9 +138,23 @@ void UpgradeUI::RenderCost() {
 		);
 		i++;
 	}
+
+	if (m_pRenderBitmaps) {
+		m_pRenderTarget2D->DrawBitmap(m_pScienceBitmap, m_pSciencePosition);
+	}
+
+	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pRequirement.c_str(),
+		(UINT32)m_pRequirement.length(),
+		m_pScienceFormat.Get(),
+		m_pRequirementTextbox,
+		m_pBrush.Get()
+	);
 }
 
 void UpgradeUI::Render() {
+	RenderTitle();
 	RenderDescription();
 	RenderCost();
 
@@ -114,15 +168,41 @@ void UpgradeUI::OnClick(int mouseX, int mouseY) {
 	if (mouseX > m_pHoverBox.left && mouseX < m_pHoverBox.right &&
 		mouseY > m_pHoverBox.top && mouseY < m_pHoverBox.bottom &&
 		!m_pBought) {
-		m_pDescription = L"This event was clicked on! Time to edit player inventory.";
+		//Creates an event based on ID to figure out what upgrade was bought
+		DelegateUpgradeID uID(m_pID);
+		EventBuss::Get().Delegate(uID);
 		m_pBought = true;
-		//Create an event based on ID to figure out what upgrade was bought
 	}
 }
 
-void UpgradeUI::SetUpgrade(std::wstring description, unsigned int ID) {
+void UpgradeUI::SetUpgrade(std::wstring upgrade, std::wstring description, unsigned int ID) {
+	m_pTitle = upgrade;
 	m_pDescription = description;
 	m_pID = ID;
+}
+
+void UpgradeUI::SetScience(unsigned int science) {
+	//Create science icon
+	m_pSciencePosition = D2D1::RectF(
+		m_pHoverBox.right - 50.0f,
+		m_pHoverBox.top,
+		m_pHoverBox.right,
+		m_pHoverBox.top + 50.0f
+	);
+	//Create science bitmap
+	LoadBitmapFromFile(GetIconFilePath(L"Science.png").c_str(), &m_pScienceBitmap);
+
+	//Create text box
+	m_pRequirementTextbox = D2D1::RectF(
+		m_pSciencePosition.left,
+		m_pSciencePosition.top,
+		m_pSciencePosition.right,
+		m_pSciencePosition.bottom
+	);
+
+	//Load in text
+	m_pRequirement = std::to_wstring(science);
+	m_pRenderBitmaps = true;
 }
 
 void UpgradeUI::AddCost(std::wstring resource, std::wstring cost) {
@@ -167,8 +247,15 @@ void UpgradeUI::SetHoverBox(D2D1_RECT_F hoverBox) {
 	m_pTextBox = D2D1::RectF(
 		hoverBox.left + textPadding,
 		hoverBox.top + textPadding,
-		hoverBox.right - textPadding,
+		hoverBox.right - textPadding - 200.0f,
 		hoverBox.bottom - textPadding
+	);
+
+	m_pTitleBox = D2D1::RectF(
+		hoverBox.left + 20.0f,
+		hoverBox.top - 20.0f,
+		hoverBox.left + 200.0f,
+		hoverBox.top + 10.0f
 	);
 }
 
@@ -198,5 +285,11 @@ void UpgradeUI::OnEvent(IEvent& event) noexcept {
 }
 
 void UpgradeUI::CleanUp() {
-    //Will need bitmap clean up
+	m_pRenderBitmaps = false;
+	if (m_pScienceBitmap) {
+		m_pScienceBitmap->Release();
+	}
+	for (auto const& bitmap : m_pResourceBitmap) {
+		bitmap->Release();
+	}
 }

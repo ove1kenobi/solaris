@@ -288,6 +288,24 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 		}
 	}
 	
+	//Go through the planets and find a suitable one to start at.
+	std::uniform_int_distribution<int> distributionStartPosition(2, 5);
+	UINT counter = 0;
+	UINT startPos = distributionStartPosition(generator);
+	for (size_t i = 0; i < m_planets.size(); i++) {
+		UINT type = m_planets[i]->GetPlanetType();
+		if (type != 0 && type != 1 && type != 2) {
+			counter++;
+			if (counter == startPos) {
+				DirectX::XMFLOAT3 newCenter;
+				newCenter = m_planets[i]->GetCenter();
+				newCenter.y += 600.0f;
+				m_player.getShip()->SetCenter(newCenter);
+				break;
+			}
+		}
+	}
+
 	// Push sun to stack
 	this->m_gameObjects.push_back(m_sun);
 	//Add the ship to the gameObject vector.
