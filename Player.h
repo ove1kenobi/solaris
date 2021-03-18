@@ -35,6 +35,11 @@ private:
 	PlayerCamera* m_camera;
 	Time m_time;
 
+	// General
+	bool m_playerWon;
+	bool m_startEndgameScreen;
+	float m_endgameScreenTimer;
+
 	// Resources
 	int m_maxHealth;
 	float m_fuelCapacity;
@@ -67,7 +72,6 @@ private:
 	bool m_initiateWarp;
 	float m_chargeTime;
 	float m_currentChargeTime;
-
 
 	//Upgrade data:
 	bool m_HasShieldUpgrade;

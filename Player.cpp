@@ -89,19 +89,12 @@ void Player::ActivateWarpDrive()
 
 	if (m_currentChargeTime >= m_chargeTime) {
 		m_immortal = true;
-		m_lockCamera = true;
-		m_playerControlsActive = false;
+		m_playerWon = true;
+		m_startEndgameScreen = true;
 
 		m_ship->SetTilt(0.0f, 0.0f);
 		DirectX::XMFLOAT3 warpSpeed = m_camera->GetForwardVector() * 1000000.0f * (float)m_time.DeltaTime();
 		m_ship->AddForce(warpSpeed);
-
-		// Display "You Won" text?
-
-		if (m_currentChargeTime > 3.0f + m_chargeTime) {
-			GameWonEvent gwEvent;
-			EventBuss::Get().Delegate(gwEvent);
-		}
 	}
 }
 
@@ -112,6 +105,10 @@ Player::Player()
 	  m_HasShieldUpgrade{ false },
 	  m_HasAntennaUpgrade{ false }
 {
+	m_playerWon = false;
+	m_startEndgameScreen = false;
+	m_endgameScreenTimer = 0.0f;
+
 	m_maxHealth = 100;
 	m_fuelCapacity = 100.0f;
 	m_oxygenCapacity = 100.0f;
@@ -196,6 +193,26 @@ bool Player::update(const std::vector<Planet*>& planets)
 
 	if (m_initiateWarp) {
 		ActivateWarpDrive();
+	}
+
+	if (m_startEndgameScreen) {
+		m_lockCamera = true;
+		m_playerControlsActive = false;
+		m_endgameScreenTimer += (float)m_time.DeltaTime();
+
+		if (m_playerWon) {
+			DisplayEndgameText detEvent(L"You Won!");
+			EventBuss::Get().Delegate(detEvent);
+		}
+		else {
+			DisplayEndgameText detEvent(L"Game Over");
+			EventBuss::Get().Delegate(detEvent);
+		}
+
+		if (m_endgameScreenTimer > 3.0f) {
+			GameOverEvent goEvent(m_playerWon);
+			EventBuss::Get().Delegate(goEvent);
+		}
 	}
 
 	DirectX::XMFLOAT3 shipForce = { 0.0f, 0.0f, 0.0f };
@@ -503,8 +520,8 @@ void Player::UpdateHealth(int value)
 		if (m_inventory.health > m_maxHealth) {
 			m_inventory.health = m_maxHealth;
 		}
-		else if (m_inventory.health < 0) {
-			m_inventory.health = 0;
+		else if (m_inventory.health <= 0) {
+			Kill();
 		}
 	}
 }
@@ -546,6 +563,12 @@ void Player::Kill() noexcept
 {
 	if (!m_immortal) {
 		m_inventory.health = 0;
+		
+		DisplayEndgameText detEvent(L"Game Over");
+		EventBuss::Get().Delegate(detEvent);
+
+		m_playerWon = false;
+		m_startEndgameScreen = true;
 	}
 }
 

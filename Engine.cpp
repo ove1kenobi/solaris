@@ -15,7 +15,7 @@ Engine::~Engine()
 
 const bool Engine::Initialize()
 {
-	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent, EventType::ToggleStartGame, EventType::GameWonEvent);
+	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent, EventType::ToggleStartGame, EventType::GameOverEvent);
 
 	m_Render2D = new Render2D();
 	m_scene = new Scene();
@@ -99,11 +99,6 @@ void Engine::Run()
 		//Render:
 		Render();
 
-		if (m_scene->GetPlayerHealth() <= 0) {
-			m_ResetGame = true;
-		}
-
-		//The player died, restart the scene.
 		if (m_ResetGame) {
 			m_ResetGame = false;
 			//Deletes the scene aswell
@@ -145,7 +140,7 @@ void Engine::OnEvent(IEvent& event) noexcept
 		m_MainMenuNotRunning = true;
 		break;
 	}
-	case EventType::GameWonEvent:
+	case EventType::GameOverEvent:
 	{
 		m_ResetGame = true;
 		break;

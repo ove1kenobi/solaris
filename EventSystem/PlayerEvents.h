@@ -18,20 +18,27 @@ public:
 	}
 };
 
-class GameWonEvent : public IEvent
+class GameOverEvent : public IEvent
 {
 private:
-
+	bool m_playerWon;
 public:
-	GameWonEvent() noexcept = default;
-	virtual ~GameWonEvent() noexcept = default;
+	GameOverEvent(bool playerWon) noexcept 
+	{
+		m_playerWon = playerWon;
+	}
+	virtual ~GameOverEvent() noexcept = default;
 
 	[[nodiscard]] const EventType GetEventType() const noexcept override
 	{
-		return EventType::GameWonEvent;
+		return EventType::GameOverEvent;
 	}
 	[[nodiscard]] const std::string GetDebugName() const noexcept override
 	{
-		return "GameWonEvent";
+		return "GameOverEvent";
+	}
+	[[nodiscard]] const bool GetPlayerWon() const noexcept
+	{
+		return m_playerWon;
 	}
 };
