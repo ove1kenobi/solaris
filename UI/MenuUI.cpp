@@ -238,6 +238,10 @@ void MenuUI::RenderScreen() {
 	if (m_pRenderBitmaps) {
 		m_pRenderTarget2D->DrawBitmap(m_pBackgroundBitmap, m_pScreen);
 	}
+	if (!m_pOnScreen) {
+		UpdateBrush(D2D1::ColorF::Black, 0.75f);
+		m_pRenderTarget2D->FillRectangle(m_pScreen, m_pBrush.Get());
+	}
 }
 
 void MenuUI::RenderControls() {
@@ -295,10 +299,12 @@ void MenuUI::Render() {
 
 	RenderScreen();
 	RenderTitle();
-	RenderStart();
-	RenderControls();
-	RenderCredits();
-	RenderExit();
+	if (m_pOnScreen) {
+		RenderStart();
+		RenderControls();
+		RenderCredits();
+		RenderExit();
+	}
 
 	this->EndFrame();
 }

@@ -78,7 +78,6 @@ private:
 
 	//Create functions
 	bool CreateScreen();
-	bool CreateKeys();
 	bool CreateMouse();
 
 	//Update functions
