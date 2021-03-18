@@ -18,6 +18,14 @@ UpgradeUI::UpgradeUI() noexcept {
 	m_pCost.plasma = 0;
 	m_pCost.radium = 0;
 	m_pCost.khionerite = 0;
+
+	m_pYellow = 0xFFB724;
+	m_pWhite = 0xFFFDF9;
+	m_pCyan = 0x00ffff;
+	m_pGray = 0x393b3d;
+	m_pLightGray = 0x636363;
+	m_pLightBlue = 0x0BA4CC;
+	m_pDarkblue = 0x2741b4;
 	m_IsHovering = false;
 }
 
@@ -38,12 +46,15 @@ bool UpgradeUI::Initialize() {
 	if (!CreateTitle()) {
 		return false;
 	}
+	if (!CreateTools()) {
+		return false;
+	}
 	return true;
 }
 
 bool UpgradeUI::CreateTitle() {
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
-		L"Tenika",
+		L"Aware",
 		m_pFont.Get(),
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
@@ -53,7 +64,7 @@ bool UpgradeUI::CreateTitle() {
 		&m_pTitleFormat
 	), "TextFormat");
 
-	m_pTitleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	m_pTitleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 	return true;
 }
 
@@ -105,8 +116,34 @@ bool UpgradeUI::UpdateModules() {
 	return true;
 }
 
+bool UpgradeUI::CreateTools() {
+	D2D1_GRADIENT_STOP gradientStops[3];
+	gradientStops[0].color = D2D1::ColorF(m_pLightBlue, 0.25f);
+	gradientStops[0].position = 0.0f;
+	gradientStops[1].color = D2D1::ColorF(m_pCyan, 0.25f);
+	gradientStops[1].position = 0.5f;
+	gradientStops[2].color = D2D1::ColorF(m_pLightBlue, 0.25f);
+	gradientStops[2].position = 1.0f;
+
+	ErrorCheck(m_pRenderTarget2D->CreateGradientStopCollection(
+		gradientStops,
+		3,
+		D2D1_GAMMA_1_0,
+		D2D1_EXTEND_MODE_CLAMP,
+		&m_pMainGradientStops
+	), "GradientStops");
+
+	ErrorCheck(m_pRenderTarget2D->CreateLinearGradientBrush(
+		D2D1::LinearGradientBrushProperties(
+			D2D1::Point2F(m_pHoverBox.left, m_pWindowHeight),
+			D2D1::Point2F(m_pHoverBox.right, m_pWindowHeight)),
+		m_pMainGradientStops.Get(),
+		&m_pMainGradientBrush), "GradientBrush");
+	return true;
+}
+
 void UpgradeUI::RenderTitle() {
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	this->UpdateBrush(m_pYellow, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pTitle.c_str(),
 		(UINT32)m_pTitle.length(),
@@ -118,10 +155,13 @@ void UpgradeUI::RenderTitle() {
 
 void UpgradeUI::RenderDescription() {
 	//If hover
+	this->UpdateBrush(m_pGray, 1.0f);
+	m_pRenderTarget2D->FillRectangle(m_pHoverBox, m_pBrush.Get());
+
 	if (m_pMouseX > m_pHoverBox.left && m_pMouseX < m_pHoverBox.right &&
 		m_pMouseY > m_pHoverBox.top && m_pMouseY < m_pHoverBox.bottom &&
 		!m_pBought) {
-		this->UpdateBrush(D2D1::ColorF::Aquamarine, 0.5f);
+		this->UpdateBrush(m_pLightBlue, 0.5f);
 		if (m_IsHovering == false)
 		{
 			PlaySoundEvent playSoundEvent(SoundID::Hover, false);
@@ -130,12 +170,41 @@ void UpgradeUI::RenderDescription() {
 		}
 	}
 	else {
-		this->UpdateBrush(D2D1::ColorF::Aquamarine, 0.25f);
+		this->UpdateBrush(m_pDarkblue, 0.5f);
 		m_IsHovering = false;
 	}
 	m_pRenderTarget2D->FillRectangle(m_pHoverBox, m_pBrush.Get());
 
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	//Grid for the square
+	unsigned int gridSize = 25;
+	this->UpdateBrush(m_pCyan, 0.25f);
+	for (float x = m_pHoverBox.left; x < m_pHoverBox.right; x += gridSize)
+	{
+		m_pRenderTarget2D->DrawLine(
+			D2D1::Point2F(static_cast<FLOAT>(x), m_pHoverBox.top),
+			D2D1::Point2F(static_cast<FLOAT>(x), m_pHoverBox.bottom),
+			m_pBrush.Get(),
+			0.5f
+		);
+	}
+
+	for (float y = m_pHoverBox.top; y < m_pHoverBox.bottom; y += gridSize)
+	{
+		m_pRenderTarget2D->DrawLine(
+			D2D1::Point2F(m_pHoverBox.left, static_cast<FLOAT>(y)),
+			D2D1::Point2F(m_pHoverBox.right, static_cast<FLOAT>(y)),
+			m_pBrush.Get(),
+			0.5f
+		);
+	}
+
+	m_pRenderTarget2D->FillRectangle(&m_pHoverBox, m_pMainGradientBrush.Get());
+
+	UpdateBrush(m_pWhite, 0.5f);
+	m_pRenderTarget2D->DrawRectangle(m_pHoverBox, m_pBrush.Get());
+
+	this->UpdateBrush(m_pWhite, 1.0f);
+
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pDescription.c_str(),
 		(UINT32)m_pDescription.length(),
@@ -150,7 +219,7 @@ void UpgradeUI::RenderCost() {
 	if (m_pRenderBitmaps) {
 		for (auto const& bitmap : m_pResourceBitmap) {
 			m_pRenderTarget2D->DrawBitmap(bitmap, m_pResourcePosition.at(i));
-			this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+			this->UpdateBrush(m_pWhite, 1.0f);
 			m_pRenderTarget2D.Get()->DrawTextW(
 				m_pCostText.at(i).c_str(),
 				(UINT32)m_pCostText.at(i).length(),
@@ -164,7 +233,7 @@ void UpgradeUI::RenderCost() {
 		m_pRenderTarget2D->DrawBitmap(m_pScienceBitmap, m_pSciencePosition);
 	}
 
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pRequirement.c_str(),
 		(UINT32)m_pRequirement.length(),
@@ -207,8 +276,8 @@ bool UpgradeUI::CanAfford(Resources inventory) {
 }
 
 void UpgradeUI::Render() {
-	RenderTitle();
 	RenderDescription();
+	RenderTitle();
 	RenderCost();
 
 	if (m_pBought) {
@@ -336,17 +405,20 @@ void UpgradeUI::SetHoverBox(D2D1_RECT_F hoverBox) {
 
 	m_pTextBox = D2D1::RectF(
 		hoverBox.left + textPadding,
-		hoverBox.top + textPadding,
+		hoverBox.top + textPadding + 20.0f,
 		hoverBox.right - textPadding - 200.0f,
 		hoverBox.bottom - textPadding
 	);
 
 	m_pTitleBox = D2D1::RectF(
-		hoverBox.left + 20.0f,
-		hoverBox.top - 20.0f,
-		hoverBox.left + 200.0f,
-		hoverBox.top + 10.0f
+		hoverBox.left + textPadding,
+		hoverBox.top + 5.0f,
+		hoverBox.right,
+		hoverBox.top + 25.0f
 	);
+
+	m_pMainGradientBrush->SetStartPoint(D2D1::Point2F(m_pHoverBox.left, m_pWindowHeight));
+	m_pMainGradientBrush->SetEndPoint(D2D1::Point2F(m_pHoverBox.right, m_pWindowHeight));
 }
 
 void UpgradeUI::OnEvent(IEvent& event) noexcept {

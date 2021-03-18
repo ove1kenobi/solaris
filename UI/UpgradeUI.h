@@ -9,6 +9,17 @@ private:
 	bool m_pBought;
 	bool m_pRenderBitmaps;
 
+	//Colors
+	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pMainGradientBrush;
+	Microsoft::WRL::ComPtr<ID2D1GradientStopCollection> m_pMainGradientStops;
+	UINT32 m_pYellow;
+	UINT32 m_pWhite;
+	UINT32 m_pCyan;
+	UINT32 m_pGray;
+	UINT32 m_pLightGray;
+	UINT32 m_pLightBlue;
+	UINT32 m_pDarkblue;
+
 	//Upgrade title
 	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pFont;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTitleFormat;
@@ -43,6 +54,7 @@ private:
 	bool CreateTitle();
 	bool CreateDescription();
 	bool CreateCost();
+	bool CreateTools();
 
 	//Update functions
 	bool UpdateModules();

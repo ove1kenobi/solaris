@@ -100,6 +100,14 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="UI\ControlsUI.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="UI\CreditsUI.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="UI\CrosshairUI.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
@@ -119,6 +127,10 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="UI\PressInteractUI.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="UI\PressWinUI.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -274,6 +286,8 @@
     <ClInclude Include="PlanetFlavourText.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="SpaceShipUpgrade.h" />
+    <ClInclude Include="UI\ControlsUI.h" />
+    <ClInclude Include="UI\CreditsUI.h" />
     <ClInclude Include="UI\CrosshairUI.h" />
     <ClInclude Include="GameEvent.h" />
     <ClInclude Include="GameEventManager.h" />
@@ -286,6 +300,7 @@
     <ClInclude Include="UI\MenuUI.h" />
     <ClInclude Include="UI\ModuleUI.h" />
     <ClInclude Include="UI\PressInteractUI.h" />
+    <ClInclude Include="UI\PressWinUI.h" />
     <ClInclude Include="UI\RandomEventUI.h" />
     <ClInclude Include="UI\Button.h" />
     <ClInclude Include="DXCore.h" />

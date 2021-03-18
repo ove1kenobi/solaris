@@ -14,6 +14,10 @@ private:
 	Resources m_inventory;
 
 	//Colors
+	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pMainGradientBrush;
+	Microsoft::WRL::ComPtr<ID2D1GradientStopCollection> m_pMainGradientStops;
+	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pCornerGradientBrush;
+	Microsoft::WRL::ComPtr<ID2D1GradientStopCollection> m_pCornerGradientStops;
 	UINT32 m_pYellow;
 	UINT32 m_pWhite;
 	UINT32 m_pCyan;
@@ -26,8 +30,10 @@ private:
 	std::vector<UpgradeUI*> m_pUpgrades;
 
 	//Objective description
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pObjectiveFormat;
 	D2D1_RECT_F m_pObjectiveTitleBox;
 	std::wstring m_pObjectiveTitle;
+	D2D1_RECT_F m_pObjectiveDisplayBox;
 	D2D1_RECT_F m_pObjectiveTextBox;
 	std::wstring m_pObjectiveText;
 
@@ -35,14 +41,49 @@ private:
 	D2D1_RECT_F m_pControllerDisplay;
 	D2D1_RECT_F m_pControllerTitleBox;
 	std::wstring m_pControllerTitle;
+
 	//Press "E" send down probe to planet
+	D2D1_ROUNDED_RECT m_pButtonE;
+	D2D1_RECT_F m_pButtonBoxE;
+	std::wstring m_pButtonTextE;
+	D2D1_RECT_F m_pButtonBoxDescriptionE;
+	std::wstring m_pButtonTextDescriptionE;
+
 	//Press "Q" ship stabilizer
+	D2D1_ROUNDED_RECT m_pButtonQ;
+	D2D1_RECT_F m_pButtonBoxQ;
+	std::wstring m_pButtonTextQ;
+	D2D1_RECT_F m_pButtonBoxDescriptionQ;
+	std::wstring m_pButtonTextDescriptionQ;
+
 	//Press "W" accelerate forward
+	D2D1_ROUNDED_RECT m_pButtonW;
+	D2D1_RECT_F m_pButtonBoxW;
+	std::wstring m_pButtonTextW;
+	D2D1_RECT_F m_pButtonBoxDescriptionW;
+	std::wstring m_pButtonTextDescriptionW;
+
 	//Press "S" accelerate backwards
+	D2D1_ROUNDED_RECT m_pButtonS;
+	D2D1_RECT_F m_pButtonBoxS;
+	std::wstring m_pButtonTextS;
+	D2D1_RECT_F m_pButtonBoxDescriptionS;
+	std::wstring m_pButtonTextDescriptionS;
+
 	//Press "U" upgrade menu
+	D2D1_ROUNDED_RECT m_pButtonU;
+	D2D1_RECT_F m_pButtonBoxU;
+	std::wstring m_pButtonTextU;
+	D2D1_RECT_F m_pButtonBoxDescriptionU;
+	std::wstring m_pButtonTextDescriptionU;
 
 	//Press "Left mouse" select event
-	//Use "Mouse" movement
+	ID2D1Bitmap* m_pMouseBitmap;
+	D2D1_RECT_F m_pMousePosition;
+	D2D1_RECT_F m_pButtonBoxDescriptionLeft;
+	std::wstring m_pButtonTextDescriptionLeft;
+	D2D1_RECT_F m_pMouseBoxDescription;
+	std::wstring m_pMouseTextDescription;
 
 	//Vector of Resources
 	D2D1_RECT_F m_pInventoryTitleBox;
@@ -68,12 +109,14 @@ private:
 	bool CreateUpgrades();
 	bool CreateControllerDisplay();
 	bool CreateResourceList();
+	bool CreateTools();
 
 	bool UpdateScreen();
 	bool UpdateObjective();
 	bool UpdateUpgrades();
 	bool UpdateControllerDisplay();
 	bool UpdateResourceList();
+	bool UpdateTools();
 
 	bool UpdateModules();
 
