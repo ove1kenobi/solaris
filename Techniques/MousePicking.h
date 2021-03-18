@@ -5,6 +5,7 @@
 #include "..\EventSystem\UtilityEvents.h"
 #include "..\EventSystem\WindowEvents.h"
 #include "..\EventSystem\UIEvents.h"
+#include "..\EventSystem\SoundEvents.h"
 #include "..\PlayerCamera.h"
 #include "..\GameObject.h"
 #include "../Planet.h"
@@ -17,6 +18,7 @@ private:
 	unsigned int m_ClientHeight;
 	GameObject* m_pPickedObject;
 	float m_DistanceToObject;
+	bool m_IsCurrentlyPicking;
 private:
 	void OnEvent(IEvent& event) noexcept override;
 public:

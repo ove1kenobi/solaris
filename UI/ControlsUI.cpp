@@ -1,9 +1,13 @@
 #include "..\pch.h"
 #include "ControlsUI.h"
 
-ControlsUI::ControlsUI() noexcept {
+ControlsUI::ControlsUI() noexcept
+	: m_IsHoveringBack{ false } 
+{
 	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
+
+{
 
 	m_pScreen = D2D1::RectF();
 
@@ -110,6 +114,12 @@ void ControlsUI::RenderBack() {
 	if (m_pMouseX > m_pBackTextBox.left && m_pMouseX < m_pBackTextBox.right &&
 		m_pMouseY > m_pBackTextBox.top && m_pMouseY < m_pBackTextBox.bottom) {
 		this->UpdateBrush(m_pHighlight, 1.0f);
+		if (m_IsHoveringBack == false)
+		{
+			PlaySoundEvent playSoundEvent(SoundID::Hover, false);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsHoveringBack = true;
+		}
 	}
 	else {
 		this->UpdateBrush(m_pWhite, 1.0f);
@@ -172,6 +182,8 @@ void ControlsUI::OnEvent(IEvent& event) noexcept {
 			if (m_pMouseX > m_pBackTextBox.left && m_pMouseX < m_pBackTextBox.right &&
 				m_pMouseY > m_pBackTextBox.top && m_pMouseY < m_pBackTextBox.bottom) {
 				m_pOnScreen = false;
+				PlaySoundEvent playSoundEvent(SoundID::Click, false);
+				EventBuss::Get().Delegate(playSoundEvent);
 				ToggleControls tc;
 				EventBuss::Get().Delegate(tc);
 			}

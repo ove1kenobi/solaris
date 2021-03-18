@@ -16,6 +16,10 @@ MenuUI::MenuUI() noexcept {
 	m_pHighlight = 0xFFB724;
 
 	m_pRenderBitmaps = true;
+	m_IsHoveringStart = false;
+	m_IsHoveringExit = false;
+	m_IsHoveringControls = false;
+	m_IsHoveringCredits = false;
 }
 
 MenuUI::~MenuUI() {
@@ -183,9 +187,17 @@ void MenuUI::RenderStart() {
 	if (m_pMouseX > m_pStartTextBox.left && m_pMouseX < m_pStartTextBox.right &&
 		m_pMouseY > m_pStartTextBox.top && m_pMouseY < m_pStartTextBox.bottom) {
 		this->UpdateBrush(m_pHighlight, 1.0f);
+		if (m_IsHoveringStart == false)
+		{
+			//Do sound:
+			PlaySoundEvent playSoundEvent(SoundID::Hover, false);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsHoveringStart = true;
+		}
 	}
 	else {
 		this->UpdateBrush(m_pWhite, 1.0f);
+		m_IsHoveringStart = false;
 	}
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pStartText.c_str(),
@@ -201,9 +213,17 @@ void MenuUI::RenderExit() {
 	if (m_pMouseX > m_pExitTextBox.left && m_pMouseX < m_pExitTextBox.right &&
 		m_pMouseY > m_pExitTextBox.top && m_pMouseY < m_pExitTextBox.bottom) {
 		this->UpdateBrush(m_pHighlight, 1.0f);
+		if (m_IsHoveringExit == false)
+		{
+			//Do sound:
+			PlaySoundEvent playSoundEvent(SoundID::Hover, false);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsHoveringExit = true;
+		}
 	}
 	else {
 		this->UpdateBrush(m_pWhite, 1.0f);
+		m_IsHoveringExit = false;
 	}
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pExitText.c_str(),
@@ -225,9 +245,16 @@ void MenuUI::RenderControls() {
 	if (m_pMouseX > m_pControlsTextBox.left && m_pMouseX < m_pControlsTextBox.right &&
 		m_pMouseY > m_pControlsTextBox.top && m_pMouseY < m_pControlsTextBox.bottom) {
 		this->UpdateBrush(m_pHighlight, 1.0f);
+		if (m_IsHoveringControls == false)
+		{
+			PlaySoundEvent playSoundEvent(SoundID::Hover, false);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsHoveringControls = true;
+		}
 	}
 	else {
 		this->UpdateBrush(m_pWhite, 1.0f);
+		m_IsHoveringControls = false;
 	}
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pControlsText.c_str(),
@@ -243,9 +270,16 @@ void MenuUI::RenderCredits() {
 	if (m_pMouseX > m_pCreditsTextBox.left && m_pMouseX < m_pCreditsTextBox.right &&
 		m_pMouseY > m_pCreditsTextBox.top && m_pMouseY < m_pCreditsTextBox.bottom) {
 		this->UpdateBrush(m_pHighlight, 1.0f);
+		if (m_IsHoveringCredits == false)
+		{
+			PlaySoundEvent playSoundEvent(SoundID::Hover, false);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsHoveringCredits = true;
+		}
 	}
 	else {
 		this->UpdateBrush(m_pWhite, 1.0f);
+		m_IsHoveringCredits = false;
 	}
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pCreditsText.c_str(),
@@ -300,6 +334,8 @@ void MenuUI::OnEvent(IEvent& event) noexcept {
 			if (m_pMouseX > m_pStartTextBox.left && m_pMouseX < m_pStartTextBox.right &&
 				m_pMouseY > m_pStartTextBox.top && m_pMouseY < m_pStartTextBox.bottom) {
 				m_pOnScreen = false;
+				PlaySoundEvent playSoundEvent(SoundID::Click, false);
+				EventBuss::Get().Delegate(playSoundEvent);
 				ToggleStartGame sg;
 				EventBuss::Get().Delegate(sg);
 			}
@@ -321,6 +357,8 @@ void MenuUI::OnEvent(IEvent& event) noexcept {
 			if (m_pMouseX > m_pExitTextBox.left && m_pMouseX < m_pExitTextBox.right &&
 				m_pMouseY > m_pExitTextBox.top && m_pMouseY < m_pExitTextBox.bottom) {
 				m_pOnScreen = false;
+				PlaySoundEvent playSoundEvent(SoundID::Click, false);
+				EventBuss::Get().Delegate(playSoundEvent);
 				WindowCloseEvent ce;
 				EventBuss::Get().Delegate(ce);
 			}

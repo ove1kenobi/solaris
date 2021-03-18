@@ -22,7 +22,61 @@ bool SoundManager::Initialize(float musicVolume, float sfxVolumn)
 	m_songs.push_back("Sounds/SpaceAmbience.ogg");
 	
 	sf::SoundBuffer buffer;
-	if (!buffer.loadFromFile("Sounds/Thrusters.wav"))
+	if (!buffer.loadFromFile("Sounds/thrusters2.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/ship_destroyed.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/collision_asteroid.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/trusters2_end.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/stabilizers.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/event_screen.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/hover.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/pay_upgrade.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/wrong.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/warning.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/click.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+	if (!buffer.loadFromFile("Sounds/scan.wav"))
 		return false;
 	else
 		m_sounds.push_back(buffer);

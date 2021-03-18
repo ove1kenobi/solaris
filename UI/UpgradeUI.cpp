@@ -26,6 +26,7 @@ UpgradeUI::UpgradeUI() noexcept {
 	m_pLightGray = 0x636363;
 	m_pLightBlue = 0x0BA4CC;
 	m_pDarkblue = 0x2741b4;
+	m_IsHovering = false;
 }
 
 UpgradeUI::~UpgradeUI() {
@@ -161,9 +162,16 @@ void UpgradeUI::RenderDescription() {
 		m_pMouseY > m_pHoverBox.top && m_pMouseY < m_pHoverBox.bottom &&
 		!m_pBought) {
 		this->UpdateBrush(m_pLightBlue, 0.5f);
+		if (m_IsHovering == false)
+		{
+			PlaySoundEvent playSoundEvent(SoundID::Hover, false);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsHovering = true;
+		}
 	}
 	else {
 		this->UpdateBrush(m_pDarkblue, 0.5f);
+		m_IsHovering = false;
 	}
 	m_pRenderTarget2D->FillRectangle(m_pHoverBox, m_pBrush.Get());
 
@@ -292,14 +300,20 @@ void UpgradeUI::OnClick(int mouseX, int mouseY, Resources inventory) {
 				InvertCost();
 				DelegateUpgradeID uID(m_pID, m_pCost);
 				EventBuss::Get().Delegate(uID);
+				PlaySoundEvent playSoundEvent(SoundID::PayUpgrade, false);
+				EventBuss::Get().Delegate(playSoundEvent);
 				m_pBought = true;
 			}
 			else {
 				//Not enough resources!
+				PlaySoundEvent playSoundEvent(SoundID::Wrong, false);
+				EventBuss::Get().Delegate(playSoundEvent);
 			}
 		}
 		else {
 			//Not enough science!
+			PlaySoundEvent playSoundEvent(SoundID::Wrong, false);
+			EventBuss::Get().Delegate(playSoundEvent);
 		}
 	}
 }

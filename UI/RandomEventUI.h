@@ -3,6 +3,7 @@
 #include "..\EventSystem\WindowEvents.h"
 #include "../GameEvent.h"
 #include "../EventSystem/UIEvents.h"
+#include "../EventSystem/SoundEvents.h"
 
 class RandomEventUI : public Button, public EventPublisher {
 private:
@@ -23,6 +24,9 @@ private:
 
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pIconTextFormat;
 	bool m_pSelected;
+
+	//Sound logic:
+	bool m_IsHovering;
 
 	bool CreateText();
 	bool CreateDetails();

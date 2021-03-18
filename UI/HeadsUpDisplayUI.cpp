@@ -54,6 +54,7 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pRenderCold = false;
 	m_pRenderHeat = false;
 	m_pRenderRadiation = false;
+	m_IsInColdDangerZone = m_IsInHotDangerZone = m_IsInRadiationDangerZone = false;
 }
 
 HeadsUpDisplayUI::~HeadsUpDisplayUI() {
@@ -544,12 +545,33 @@ void HeadsUpDisplayUI::RenderDamageModule() {
 	//Cold damage
 	if (m_pRenderBitmaps && m_pRenderCold) {
 		m_pRenderTarget2D->DrawBitmap(m_pFrostBitmap, m_pScreen);
+		if (m_IsInColdDangerZone == false)
+		{
+			PlaySoundEvent playSoundEvent(SoundID::Warning, true);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsInColdDangerZone = true;
+		}
+	}
+	else
+	{
+		m_IsInColdDangerZone = false;
 	}
 
 	//Warm damage
 	if (m_pRenderHeat) {
 		m_pRenderTarget2D->FillRectangle(m_pScreen, m_pHeatRadialGradientBrush.Get());
+		if (m_IsInHotDangerZone == false)
+		{
+			PlaySoundEvent playSoundEvent(SoundID::Warning, true);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsInHotDangerZone = true;
+		}
 	}
+	else
+	{
+		m_IsInHotDangerZone = false;
+	}
+
 
 	//Radiation damage
 	if (m_pRenderRadiation) {
@@ -570,6 +592,21 @@ void HeadsUpDisplayUI::RenderDamageModule() {
 			m_pBrush.Get()
 		);
 		m_pRenderTarget2D->DrawRectangle(m_pRadiationScreen, m_pBrush.Get(), 10.0f);
+		if (m_IsInRadiationDangerZone == false)
+		{
+			PlaySoundEvent playSoundEvent(SoundID::Warning, true);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsInRadiationDangerZone = true;
+		}
+	}
+	else
+	{
+		m_IsInRadiationDangerZone = false;
+	}
+	if (!m_pRenderRadiation && !m_pRenderCold && !m_pRenderHeat)
+	{
+		StopLoopingSoundEvent stopLoopEvent(SoundID::Warning);
+		EventBuss::Get().Delegate(stopLoopEvent);
 	}
 }
 

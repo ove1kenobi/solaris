@@ -297,6 +297,14 @@ bool Player::update(const std::vector<Planet*>& planets)
 		m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
 	}
 
+	//Check if fuel is empty:
+	if (m_inventory.fuel <= 0)
+	{
+		//Simple check:
+		StopLoopingSoundEvent stopLoopEvent(SoundID::Thrusters);
+		EventBuss::Get().Delegate(stopLoopEvent);
+	}
+
 	if (length(m_ship->GetVelocity()) < 200.0f) return false;
 	return true;
 }
@@ -357,23 +365,42 @@ void Player::OnEvent(IEvent& event) noexcept
 
 			if (state == KeyState::KeyPress && m_playerControlsActive) {
 				if (virKey == 'W') {
-					PlaySoundEvent thrusterSound(SoundID::Thrusters, true, 1.2f);
-					EventBuss::Get().Delegate(thrusterSound);
+					if (m_inventory.fuel > 0.0f)
+					{
+						PlaySoundEvent thrusterSound(SoundID::Thrusters, true);
+						EventBuss::Get().Delegate(thrusterSound);
+					}
 					m_moveForwards = true;
 				}
 				if (virKey == 'S') {
-					PlaySoundEvent thrusterSound(SoundID::Thrusters, true);
-					EventBuss::Get().Delegate(thrusterSound);
+					if (m_inventory.fuel > 0.0f)
+					{
+						PlaySoundEvent thrusterSound(SoundID::Thrusters, true);
+						EventBuss::Get().Delegate(thrusterSound);
+					}
 					m_moveBackwards = true;
 				}
 				if (virKey == VK_SPACE) {
-					PlaySoundEvent thrusterSound(SoundID::Thrusters, true);
-					EventBuss::Get().Delegate(thrusterSound);
+					if (m_inventory.fuel > 0.0f)
+					{
+						PlaySoundEvent thrusterSound(SoundID::Thrusters, true);
+						EventBuss::Get().Delegate(thrusterSound);
+					}
 					m_stopMovement = true;
 				}
 				if (virKey == 'Q') {
-					if (m_stabilizerActive) m_stabilizerActive = false;
-					else m_stabilizerActive = true;
+					if (m_stabilizerActive)
+					{
+						StopLoopingSoundEvent stopPlaySoundEvent(SoundID::Stabilizers); 
+						EventBuss::Get().Delegate(stopPlaySoundEvent);
+						m_stabilizerActive = false;
+					}
+					else
+					{
+						PlaySoundEvent playSoundEvent(SoundID::Stabilizers, true);
+						EventBuss::Get().Delegate(playSoundEvent);
+						m_stabilizerActive = true;
+					}
 				}
 				if (virKey == 'R' && m_ship->IsUpgraded( (size_t)8 )) {
 					m_initiateWarp = true;
@@ -383,6 +410,11 @@ void Player::OnEvent(IEvent& event) noexcept
 				if (virKey == 'W') {
 					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
 					EventBuss::Get().Delegate(thrusterSound);
+					if (m_inventory.fuel > 0.0f)
+					{
+						PlaySoundEvent thrustersEndSound(SoundID::ThrustersEnd, false);
+						EventBuss::Get().Delegate(thrustersEndSound);
+					}
 					m_moveForwards = false;
 				}
 				if (virKey == 'S') {

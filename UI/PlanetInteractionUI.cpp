@@ -787,6 +787,8 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 			for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
 				if (m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY, m_availableGameEvents[i])) {
 					SetIcons(i, m_availableGameEvents[i].reward);
+					PlaySoundEvent playSoundEvent(SoundID::Click, false);
+					EventBuss::Get().Delegate(playSoundEvent);
 					m_gameEventSelected = true;
 					selected = i;
 				};

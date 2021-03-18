@@ -1,6 +1,7 @@
 #pragma once
 #include "..\EventSystem\WindowEvents.h"
 #include "ModuleUI.h"
+#include "..\EventSystem\SoundEvents.h"
 
 class MenuUI : public ModuleUI, EventPublisher {
 private:
@@ -38,6 +39,12 @@ private:
 	ID2D1Bitmap* m_pBackgroundBitmap;
 	D2D1_RECT_F m_pScreen;
 	bool m_pRenderBitmaps;
+
+	//Sound logics:
+	bool m_IsHoveringStart;
+	bool m_IsHoveringExit;
+	bool m_IsHoveringCredits;
+	bool m_IsHoveringControls;
 
 	//Create functions
 	bool CreateTitle();

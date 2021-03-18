@@ -1,5 +1,6 @@
 #pragma once
 #include "ModuleUI.h"
+#include "../EventSystem/SoundEvents.h"
 
 class CreditsUI : public ModuleUI {
 private:
@@ -13,6 +14,9 @@ private:
 	//Back button
 	D2D1_RECT_F m_pBackTextBox;
 	std::wstring m_pBackText;
+
+	//Sound logic:
+	bool m_IsHoveringBack;
 
 	//Create functions
 	bool CreateScreen();

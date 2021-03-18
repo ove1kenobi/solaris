@@ -176,6 +176,8 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 							EventBuss::Get().Delegate(controlsEvent);
 							ToggleTetheredEvent TTEvent;
 							EventBuss::Get().Delegate(TTEvent);
+							PlaySoundEvent playSoundEvent(SoundID::EventScreen, false);
+							EventBuss::Get().Delegate(playSoundEvent);
 
 							//Render planet interaction
 							if (m_PlanetInteraction) {
@@ -197,6 +199,8 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 				if (virKey == 'U' && !m_PlanetInteraction) {
 					ToggleControlsEvent controlsEvent;
 					EventBuss::Get().Delegate(controlsEvent);
+					PlaySoundEvent playSoundEvent(SoundID::EventScreen, false);
+					EventBuss::Get().Delegate(playSoundEvent);
 					m_UpgradeScreen = !m_UpgradeScreen;
 					m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->m_pOnScreen = m_UpgradeScreen;
 				}

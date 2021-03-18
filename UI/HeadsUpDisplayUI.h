@@ -92,6 +92,9 @@ private:
 	std::vector<D2D1_RECT_F> m_pIconPicture;
 	std::vector<std::wstring> m_pIconText;
 
+	//Sound logic:
+	bool m_IsInColdDangerZone, m_IsInHotDangerZone, m_IsInRadiationDangerZone;
+
 	//Create modules
 	bool CreateDisplayScreens();
 	bool CreateBars();

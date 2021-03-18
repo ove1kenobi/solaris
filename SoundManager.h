@@ -4,7 +4,6 @@
 #include "EventSystem/EventBuss.h"
 #include "EventSystem/SoundEvents.h"
 #include <SFML/Audio.hpp>
-#include <queue>
 
 class SoundManager : public IEventListener, public EventPublisher
 {

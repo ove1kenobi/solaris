@@ -1,5 +1,6 @@
 #pragma once
 #include "ModuleUI.h"
+#include "../EventSystem/SoundEvents.h"
 
 class ControlsUI : public ModuleUI {
 private:
@@ -71,6 +72,9 @@ private:
 	std::wstring m_pButtonTextDescriptionLeft;
 	D2D1_RECT_F m_pMouseBoxDescription;
 	std::wstring m_pMouseTextDescription;
+
+	//Sound logic:
+	bool m_IsHoveringBack;
 
 	//Create functions
 	bool CreateScreen();
