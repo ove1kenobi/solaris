@@ -8,7 +8,7 @@ PauseUI::PauseUI() noexcept {
 	m_pTitleTextBox = D2D1::RectF();
 	m_pTitleText = L"PAUSE";
 	m_pReturnText = L"RETURN";
-	m_pExitText = L"EXIT GAME";
+	m_pExitText = L"MAIN MENU";
 
 	m_pWhite = 0xFFFDF9;
 	m_pHighlight = 0xFFB724;

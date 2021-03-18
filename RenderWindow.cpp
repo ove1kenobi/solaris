@@ -34,12 +34,12 @@ RenderWindow::RenderWindow()
     winRect.right = m_clientWinWidth + winRect.left;
     winRect.top = 100;
     winRect.bottom = m_clientWinHeight + winRect.top;*/
-    //AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
+    AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
 
     m_winHandle = CreateWindowEx(0,                                              // Optional window style
                                  className,
                                  windowTitle,
-        WS_POPUP | WS_VISIBLE, //WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,       // Window style    //WS_POPUP | WS_VISIBLE if we want fullscreen
+                                 WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,       // Window style    //WS_POPUP | WS_VISIBLE if we want fullscreen
                                  0, 0, winRect.right - winRect.left, winRect.bottom - winRect.top,
                                  nullptr,                                        // Parent window
                                  nullptr,                                        // Menu
@@ -72,18 +72,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
     switch (uMsg)
     {
-        case WM_DESTROY:
-        {
-            PostQuitMessage(0);
-            WindowCloseEvent ce;
-            EventBuss::Get().Delegate(ce);
-            break;
-        }
-        case WM_CLOSE:
-        {
-            CloseWindow(hwnd);
-            break;
-        }
         /*
         case WM_INPUT:
         {
@@ -144,11 +132,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 EventBuss::Get().Delegate(event);
             }
             #endif
-            if (wParam == VK_ESCAPE)
-            {
-                CloseWindow(hwnd);
-                break;
-            }
             KeyState keyState;
             if ((lParam & 0x40000000) == 0) keyState = KeyState::KeyPress;
             else keyState = KeyState::KeyRepeat;

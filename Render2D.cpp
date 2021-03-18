@@ -212,7 +212,7 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 					m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->m_pOnScreen = m_UpgradeScreen;
 				}
 
-				if (virKey == 'P' && m_InGame) {
+				if (virKey == VK_ESCAPE && m_InGame) {
 					ToggleControlsEvent controlsEvent;
 					EventBuss::Get().Delegate(controlsEvent);
 					PlaySoundEvent playSoundEvent(SoundID::EventScreen, false);
