@@ -2,6 +2,7 @@
 #include "RandomEventUI.h"
 
 RandomEventUI::RandomEventUI() {
+	m_pSelected = false;
 	m_pHoverTextBox = D2D1::RectF();
 	m_pHoverText = L"SELECT";
 }
@@ -206,7 +207,8 @@ void RandomEventUI::Render(int mouseX, int mouseY) {
 
 	//if hover
 	if (mouseX > m_pHoverBox.left && mouseX < m_pHoverBox.right &&
-		mouseY > m_pHoverBox.top && mouseY < m_pHoverBox.bottom) {
+		mouseY > m_pHoverBox.top && mouseY < m_pHoverBox.bottom &&
+		!m_pSelected) {
 		m_pRenderTarget2D->FillGeometry(m_pLeftHover.Get(), m_pBrush.Get());
 		m_pRenderTarget2D->FillGeometry(m_pRightHover.Get(), m_pBrush.Get());
 		m_pRenderTarget2D->FillGeometry(m_pBottomHover.Get(), m_pBrush.Get());
@@ -225,6 +227,7 @@ void RandomEventUI::Render(int mouseX, int mouseY) {
 bool RandomEventUI::OnClick(int mouseX, int mouseY, GameEvent gameEvent) {
 	if (mouseX > m_pHoverBox.left && mouseX < m_pHoverBox.right &&
 		mouseY > m_pHoverBox.top && mouseY < m_pHoverBox.bottom) {
+		m_pSelected = true;
 		this->SetText(gameEvent.consequence);
 		GameEventSelectedEvent ev(gameEvent);
 		EventBuss::Get().Delegate(ev);
@@ -254,11 +257,13 @@ void RandomEventUI::OnEvent(IEvent& event) noexcept {
 }
 
 void RandomEventUI::ClearEvent() {
+	m_pSelected = true;
 	m_pText = L"";
 }
 
 void RandomEventUI::ClearIcons()
 {
+	m_pSelected = false;
 	for (auto const& bitmap : m_pIconBitmap) {
 		bitmap->Release();
 	}

@@ -116,14 +116,14 @@ Player::Player()
 	m_inventory.health = 100;
 	m_inventory.fuel = 100.0f;
 	m_inventory.oxygen = 100.0f;
-	m_inventory.titanium = 0;
-	m_inventory.scrapMetal = 0;
-	m_inventory.nanotech = 0;
-	m_inventory.plasma = 0;
-	m_inventory.radium = 0;
-	m_inventory.khionerite = 0;
-	m_inventory.science = 0;
-	m_storageUsage = 0;
+	m_inventory.titanium = 100;
+	m_inventory.scrapMetal = 100;
+	m_inventory.nanotech = 100;
+	m_inventory.plasma = 5;
+	m_inventory.radium = 5;
+	m_inventory.khionerite = 5;
+	m_inventory.science = 15;
+	m_storageUsage = 450;
 	m_oxygenConsumption = 0.17f;
 	m_engineEfficiency = 1.0f;
 
@@ -432,6 +432,7 @@ void Player::OnEvent(IEvent& event) noexcept
 		case EventType::DelegateUpgradeID:
 		{
 			unsigned int upgrade = static_cast<DelegateUpgradeID*>(&event)->GetID();
+			this->AddResources(static_cast<DelegateUpgradeID*>(&event)->GetCost());
 			switch (upgrade)
 			{
 			case SpaceShip::afterburner: 
@@ -509,6 +510,9 @@ void Player::DelegatePlayerInfo() noexcept
 	m_PlayerInfo.HealthPercentage = static_cast<float>(m_inventory.health) / static_cast<float>(m_maxHealth);
 	m_PlayerInfo.storageUsage = m_storageUsage;
 	m_PlayerInfo.storageCapacity = m_storageCapacity;
+	m_PlayerInfo.inventory = m_inventory;
+	m_PlayerInfo.stabilizerActive = m_stabilizerActive;
+	m_PlayerInfo.shipVelocity = static_cast<int>((length(m_ship->GetVelocity())));
 	DelegatePlayerInfoEvent piEvent(&m_PlayerInfo);
 	EventBuss::Get().Delegate(piEvent);
 }

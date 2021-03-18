@@ -1,17 +1,16 @@
 #include "..\pch.h"
-#include "PressInteractUI.h"
+#include "PressWinUI.h"
 
-PressInteractUI::PressInteractUI() noexcept {
+PressWinUI::PressWinUI() noexcept {
 	m_pTextBox = D2D1::RectF();
-	//m_pText = L"[E] Orbit and launch probe";
-	m_pText = L"[F] To pay respect to this poor planet";
+	m_pText = L"[R] Activate warpdrive";
 }
 
-PressInteractUI::~PressInteractUI() {
+PressWinUI::~PressWinUI() {
 
 }
 
-bool PressInteractUI::Initialize() {
+bool PressWinUI::Initialize() {
 	if (!CreateBrush()) {
 		return false;
 	}
@@ -21,7 +20,7 @@ bool PressInteractUI::Initialize() {
 	return true;
 }
 
-bool PressInteractUI::CreateText() {
+bool PressWinUI::CreateText() {
 	ErrorCheck(m_pTextFactory->GetSystemFontCollection(&m_pFont, false), "GetSystemFont");
 
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
@@ -39,17 +38,17 @@ bool PressInteractUI::CreateText() {
 	return true;
 }
 
-bool PressInteractUI::UpdateModules() {
+bool PressWinUI::UpdateModules() {
 	m_pTextBox = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) - 650.0f,
-		(m_pWindowHeight)- 400.0f,
+		(m_pWindowHeight)-400.0f,
 		(m_pWindowWidth / 2.0f) + 650.0f,
-		(m_pWindowHeight) - 300.0f
+		(m_pWindowHeight)-300.0f
 	);
 	return true;
 }
 
-void PressInteractUI::Render() {
+void PressWinUI::Render() {
 	this->BeginFrame();
 
 	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
@@ -64,11 +63,17 @@ void PressInteractUI::Render() {
 	this->EndFrame();
 }
 
-void PressInteractUI::OnEvent(IEvent& event) noexcept {
+void PressWinUI::OnEvent(IEvent& event) noexcept {
 	switch (event.GetEventType()) {
 	case EventType::DelegateDXEvent:
 	{
 		UpdateDXHandlers(event);
+		break;
+	}
+	case EventType::DelegateMouseCoordsEvent:
+	{
+		m_pMouseX = static_cast<DelegateMouseCoordsEvent*>(&event)->GetXCoord();
+		m_pMouseY = static_cast<DelegateMouseCoordsEvent*>(&event)->GetYCoord();
 		break;
 	}
 	case EventType::DelegateResolutionEvent:
@@ -83,6 +88,6 @@ void PressInteractUI::OnEvent(IEvent& event) noexcept {
 	}
 }
 
-void PressInteractUI::CleanUp() {
+void PressWinUI::CleanUp() {
 	//No clean up needed here
 }

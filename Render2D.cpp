@@ -26,6 +26,9 @@ Render2D::Render2D() noexcept
 	  m_PlanetInteraction{ false },
 	  m_UpgradeScreen{ false },
 	  m_InGame{ false },
+	  m_CanWin{false},
+	  m_Credits{ false },
+	  m_Controls{ false },
 	  m_DisplayText{ false }
 {
 	//Make render2D able to UI handle events (for now, only keyboard ones)
@@ -40,6 +43,9 @@ Render2D::Render2D() noexcept
 		m_Modules.push_back(new PressInteractUI());
 		m_Modules.push_back(new CrosshairUI());
 		m_Modules.push_back(new UpgradeScreenUI());
+		m_Modules.push_back(new ControlsUI());
+		m_Modules.push_back(new CreditsUI());
+		m_Modules.push_back(new PressWinUI());
 		m_Modules.push_back(new EndgameUI());
 
 		m_Modules.at(static_cast<int>(TypesUI::MainMenu))->m_pOnScreen = true;
@@ -107,6 +113,10 @@ void Render2D::RenderUI() {
 			m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->Render();
 		}
 
+		if(m_CanWin) {
+			m_Modules.at(static_cast<int>(TypesUI::PressWin))->Render();
+		}
+
 		if (m_DisplayText) {
 			m_Modules.at(static_cast<int>(TypesUI::WonGame))->Render();
 		}
@@ -116,6 +126,14 @@ void Render2D::RenderUI() {
 		ClearBackBufferEvent cbbEvent;
 		EventBuss::Get().Delegate(cbbEvent);
 		m_Modules.at(static_cast<int>(TypesUI::MainMenu))->Render();
+
+		if (m_Controls) {
+			m_Modules.at(static_cast<int>(TypesUI::Controls))->Render();
+		}
+
+		if (m_Credits) {
+			m_Modules.at(static_cast<int>(TypesUI::Credits))->Render();
+		}
 	}
 	//And finally always render crosshair on top of everything
 	m_Modules.at(static_cast<int>(TypesUI::Crosshair))->Render();
@@ -173,7 +191,7 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 					ToggleControlsEvent controlsEvent;
 					EventBuss::Get().Delegate(controlsEvent);
 					m_UpgradeScreen = !m_UpgradeScreen;
-					m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->m_pOnScreen = m_InGame;
+					m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->m_pOnScreen = m_UpgradeScreen;
 				}
 			}
 			break;

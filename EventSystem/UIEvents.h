@@ -112,10 +112,12 @@ public:
 class DelegateUpgradeID : public IEvent
 {
 private:
+	Resources upgradeCost;
 	unsigned int upgradeID;
 public:
-	DelegateUpgradeID(unsigned int ID) noexcept {
+	DelegateUpgradeID(unsigned int ID, Resources cost) noexcept {
 		upgradeID = ID;
+		upgradeCost = cost;
 	};
 	virtual ~DelegateUpgradeID() noexcept = default;
 
@@ -130,6 +132,10 @@ public:
 	[[nodiscard]] const int GetID() const noexcept
 	{
 		return upgradeID;
+	}
+	[[nodiscard]] const Resources GetCost() const noexcept
+	{
+		return upgradeCost;
 	}
 };
 

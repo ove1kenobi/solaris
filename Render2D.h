@@ -7,6 +7,9 @@
 #include "UI/PressInteractUI.h"
 #include "UI/CrosshairUI.h"
 #include "UI/UpgradeScreenUI.h"
+#include "UI/ControlsUI.h"
+#include "UI/CreditsUI.h"
+#include "UI/PressWinUI.h"
 #include "UI/EndgameUI.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
@@ -26,6 +29,9 @@ private:
 
 	bool m_PlanetInteraction;
 	bool m_UpgradeScreen;
+	bool m_CanWin;
+	bool m_Controls;
+	bool m_Credits;
 	bool m_InGame;
 	bool m_DisplayText;
 	std::wstring GetFontFilePath(std::wstring fontFile);

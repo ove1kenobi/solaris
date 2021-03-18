@@ -22,6 +22,14 @@ private:
 	D2D1_RECT_F m_pStartTextBox;
 	std::wstring m_pStartText;
 
+	//Controls
+	D2D1_RECT_F m_pControlsTextBox;
+	std::wstring m_pControlsText;
+
+	//Credits
+	D2D1_RECT_F m_pCreditsTextBox;
+	std::wstring m_pCreditsText;
+
 	//Exit game
 	D2D1_RECT_F m_pExitTextBox;
 	std::wstring m_pExitText;
@@ -48,6 +56,8 @@ private:
 	void RenderStart();
 	void RenderExit();
 	void RenderScreen();
+	void RenderControls();
+	void RenderCredits();
 protected:
 public:
 	MenuUI() noexcept;

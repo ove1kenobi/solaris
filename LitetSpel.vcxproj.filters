@@ -90,6 +90,9 @@
     <ClCompile Include="UI\UpgradeScreenUI.cpp" />
     <ClCompile Include="UI\UpgradeUI.cpp" />
     <ClCompile Include="GameEventManager.cpp" />
+    <ClCompile Include="UI\ControlsUI.cpp" />
+    <ClCompile Include="UI\CreditsUI.cpp" />
+    <ClCompile Include="UI\PressWinUI.cpp" />
     <ClCompile Include="UI\EndgameUI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +182,9 @@
     <ClInclude Include="GameEventManager.h" />
     <ClInclude Include="GameEvent.h" />
     <ClInclude Include="PlanetFlavourText.h" />
+    <ClInclude Include="UI\ControlsUI.h" />
+    <ClInclude Include="UI\CreditsUI.h" />
+    <ClInclude Include="UI\PressWinUI.h" />
     <ClInclude Include="UI\EndgameUI.h" />
   </ItemGroup>
   <ItemGroup>
