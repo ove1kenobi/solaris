@@ -7,8 +7,6 @@ ControlsUI::ControlsUI() noexcept
 	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
 
-{
-
 	m_pScreen = D2D1::RectF();
 
 	m_pBackTextBox = D2D1::RectF();
