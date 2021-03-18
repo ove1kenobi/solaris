@@ -102,9 +102,9 @@ void GameEventManager::CreateGameEvents()
 
 			L"Luckily you remember a few things from ancient languages-class and understand that it describes "
 			L"something about a new type of propellant. You do not pay much attention to it though and just "
-			L"grab a few cans of old fashioned fuel.",
+			L"grab a few cans of old fashioned fuel, one of the cans has a weird glow though.",
 
-			Resources{0, 30, 0, 0, 0, 0, 0, 0, 0, 1}
+			Resources{0, 30, 0, 0, 0, 0, 1, 0, 0, 1}
 		},
 
 		{
@@ -147,7 +147,7 @@ void GameEventManager::CreateGameEvents()
 			L"horrified expressions on their faces, within this everlasting tomb. Within their grasp you also notice some "
 			L"weird glow coming from the rocks the miners seemed to be excavating. What could have created this tragedy?",
 
-			Resources{0, 0, -30, 10, 0, 0, 0, 0, 0, 1}
+			Resources{0, 0, -30, 10, 0, 0, 0, 0, 1, 1}
 		},
 
 		{
@@ -224,7 +224,7 @@ void GameEventManager::CreateGameEvents()
 			L"either keep radioactivity from getting in, or from getting out. Everywhere around you there are smashed vials, it looks like "
 			L"whatever they were working on here was sabotaged. You manage to at least salvage some materials from the destroyed lab.",
 
-			Resources{0, 0, 0, 10, 10, 10, 0, 0, 0, 1}
+			Resources{0, 0, 0, 10, 10, 10, 0, 1, 0, 1}
 		}
 	};
 
@@ -422,6 +422,93 @@ void GameEventManager::CreateGameEvents()
 			L"The villagers are overjoyed but fear the return of more soldiers. You have room on the ship and take them with you.",
 
 			Resources{25, 0, 0, 5, 15, 0, 0, 0, 0, 1}
+		},
+
+		{
+			L"On this remote and insufferable planet you notice something strange in the distance, some sort of blue gigantic dome. "
+			L"Inside the dome you make out something green and tall, like trees. Investigate the dome?",
+
+			L"Inside is something you never thought you’d see. An ecosystem inhabited by every type of creature you could think of and also ones you could never imagine. "
+			L"There doesn’t seem to be a way to get inside the dome by design, by a bit away there’s an ancient campsite with old research equipment.",
+
+			Resources{10, 0, 20, 5, 5, 20, 0, 0, 0, 1}
+		},
+
+		{
+			L"After leaving your shuttle and stepping into this unknown world you take notice of the unusual amount of biodiversity. "
+			L"Traversing deeper into the wilds could be a great opportunity to scavenge for some more food and medicinal herbs, although, who knows what creatures lie within the forest?"
+			L"Will you take the risk?",
+
+			L"Trekking through the wilds took longer than expected. Sure, you found some provisions, but you’re exhausted. "
+			L"After taking a break below a tree you notice an old backpack hanging from a tree branch right above you. "
+			L"There’s a tag on it; “Property of Charlotte O’Han”. The backpack contained a few pieces of research materials.",
+
+			Resources{20, 0, -20, 15, 0, 0, 0, 0, 0, 1}
+		},
+
+		{
+			L"At the beach you spot a docked ship of some sort. Old, made of wood and barely holding up. "
+			L"At the top of the mast is an old pirate’s flag, you also hear some cackling coming from the Cabin."
+			L"Explore the ol’ Mary? Arrgh",
+
+			L"You call out and a mad old woman in make-shift pirate clothes slams the door open and calls you cabin boy like you’ve always been part of her “crew”. "
+			L"She proclaims to be the legendary Charlotte O’han, the most infamous pirate of the 7 galaxies. "
+			L"She spends the rest of the evening telling crazy stories over dinner.",
+
+			Resources{30, 30, 10, 0, 0, 0, 0, 0, 0, 1}
+		},
+
+		{
+			L"In the lush rainforest you find an ancient temple with the shape of a skull, with an ominous looking entrance. "
+			L"In a bush next to the entrance you see a hat sticking out? You try to grab the hat and an old man flies out of the bush. Interact with the man?",
+
+			L"“How dare you try to steal the great Imbiamba Jombes O’Han’s legendary hat!?”. He goes on and lectures you for another 20 minutes about his achievements before half-forcing you to be his sidekick on an adventure into the temple. "
+			L"You manage to grab all the treasure in the temple and he lets you have everything except a crystal skull. You couldn’t care less and leave him to his own.",
+
+			Resources{0, 0, -20, 20, 20, 20, 0, 0, 0, 1}
+		},
+
+		{
+			L"You’ve noticed something or someone following you for some time now. You notice movements behind a rock behind you. Confront the stalker?",
+
+			L"A child, not more than maybe 10 years old. He doesn’t seem to be fluid in any language but has very technologically advanced gear and clothes. "
+			L"The child seems very intent on becoming your accomplice. Having someone to converse with during your travels would be nice.",
+
+			Resources{0, 0, -20, 0, 10, 20, 0, 0, 0, 1}
+		},
+
+		{
+			L"At the corner of your eye you see something white and black move about, you turn around and see… a cow? "
+			L"A cow that looks at you with a smug face before running into a weird red portal of some sort. Follow the cow and show him who’s boss?",
+
+			L"You end up in a green field and are surrounded by, you guessed it, cows. They don’t seem to be aggressive. At the center of the field is a rather large cow with some kind of crown? "
+			L"Next to him lays a big axe on the ground. "
+			L"Neither him (or you for that matter) have much use for the axe, so you dismantle it for the materials and make your way back to the ship wondering if that really just happened.",
+
+			Resources{-20, 0, 0, 10, 10, 0, 0, 0, 0, 1}
+		},
+
+		{
+			L"As you prepare to make for the hangar to board the probe you notice a derelict spaceship trapped in the planets’ orbit. "
+			L"Its hull is badly damaged. An asteroid impact maybe? It seems old and weathered, old technology trapped in present time. Its size is almost that of your own ship. "
+			L"On the broken wings of the ship you make out a yellow insignia, and two letters: “SU”. Enter the ship?",
+
+			L"You are not the first to explore the ship since its sad demise. There are signs of scavengers having rummaged through and taken what materials they can find. "
+			L"On the bridge however, you find an old nav computer you think can be broken down into spare components. "
+			L"You also find the last unfinished sentence of what must be the ship’s last log: “We are under attack from a foreign vessel. Requesting assis...”.",
+
+			Resources{0, 0, 0, 2, 15, 0, 0, 0, 0, 1}
+		},
+
+		{
+			L"The moment you step out of the probe you hear the familiar sounds of gunfire and explosions in the distance. It seems a big battle is taking place not far from your position and you wonder whether to head in that direction. "
+			L"Battles are not pretty things, although they often leave valuable things in their wake, be it metal or titanium… Go in the direction of the battle sounds?",
+
+			L"It was a big battle alright. You lay hunkered down and watch from a safe distance, wondering what side will win. "
+			L"When searching the battlefield during the aftermath of the fight you realize the two sides fighting were offspring from the Solar Union, both vying for control of the land and the political directions of the Solar System previously aligned with the union. "
+			L"You also realize that battles indeed leave valuables behind…",
+
+			Resources{0, 0, 0, 10, 35, 5, 0, 0, 0, 1}
 		}
 	};
 
