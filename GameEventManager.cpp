@@ -104,7 +104,7 @@ void GameEventManager::CreateGameEvents()
 			L"something about a new type of propellant. You do not pay much attention to it though and just "
 			L"grab a few cans of old fashioned fuel, one of the cans has a weird glow though.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
 			Resources{0, 30, 0, 0, 0, 0, 1, 0, 0, 1}
 		},
 
@@ -115,7 +115,7 @@ void GameEventManager::CreateGameEvents()
 			L"Within the camp you find a tribe of steampunk nomads, who have made it their lifestyle to endlessly "
 			L"travel this landscape. You spend some time there, exchanging stories and provisions and exotic materials.",
 			
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 10, 0, 0, 0, 0, 1},
 			Resources{20, 0, -20, 0, 10, 10, 0, 0, 0, 1}
 		},
 
@@ -125,7 +125,7 @@ void GameEventManager::CreateGameEvents()
 			L"Investigating it further you see that the vessel is still intact and inside it you find some sort of propellant "
 			L"that you have never seen before! Maybe it could be useful for something?",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
 			Resources{0, 0, 0, 0, 0, 0, 1, 0, 0, 1}
 		},
 
@@ -137,7 +137,7 @@ void GameEventManager::CreateGameEvents()
 			L"After giving it a few cranks a purple-ish goo starts to flood out of the pump! Quickly you grab the sample canister "
 			L"you brought with you to scoop up a good amount of the liquid before the pump is destroyed by the pressure.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
 			Resources{-20, 0, 0, 0, 0, 0, 1, 0, 0, 1}
 		}
 	};
@@ -151,7 +151,7 @@ void GameEventManager::CreateGameEvents()
 			L"horrified expressions on their faces, within this everlasting tomb. Within their grasp you also notice some "
 			L"weird glow coming from the rocks the miners seemed to be excavating. What could have created this tragedy?",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
 			Resources{0, 0, -30, 10, 0, 0, 0, 0, 1, 1}
 		},
 
@@ -163,7 +163,7 @@ void GameEventManager::CreateGameEvents()
 			L"gets higher and higher. Before you know it you are in a blooming forest greeted by a small man, seemingly older than "
 			L"the forest itself. He helps you restock on supplies.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{40, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 			Resources{40, 20, 20, 0, 0, 0, 0, 0, 0, 1}
 		},
 
@@ -173,7 +173,7 @@ void GameEventManager::CreateGameEvents()
 			L"When trying to remove it it explodes! The explosion adds another layer of ice to these already frozen caverns and to "
 			L"your suit, luckily the ice shield that was crafted earlier for you and your ship protected you from an icy doom. ",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
 			Resources{0, 0, 0, 0, 0, 0, 0, 0, 1, 1}
 		},
 
@@ -185,7 +185,7 @@ void GameEventManager::CreateGameEvents()
 			L"how it made its way into the solar system as an asteroid and how many mining companies met their demise trying to extract "
 			L"the rock. They wave you goodbye after giving you a sample of their findings.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
 			Resources{0, 0, 20, 0, 0, 0, 0, 0, 1, 1}
 		}
 	};
@@ -198,7 +198,7 @@ void GameEventManager::CreateGameEvents()
 			L"After slipping when trying to take a closer look your suit rips below your elbow, the poisonous water starts pouring into "
 			L"the suit. You grab a piece of the skeleton's armor before hurrying back to the shuttle.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 20, 0, 0, 0, 0, 0, 1},
 			Resources{-50, 0, 0, 20, 10, 0, 0, 0, 0, 1}
 		},
 
@@ -211,7 +211,7 @@ void GameEventManager::CreateGameEvents()
 			L"mid-battle when this catastrophe struck. At the center is a crater, within is the remains of the nuke. "
 			L"On the side you see a name in big green letters, \"Shiro Hime\". You extract the powerful core of the nuke that is still partially intact.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
 			Resources{0, 0, 0, 0, 0, 10, 0, 1, 0, 1}
 		},
 
@@ -224,7 +224,7 @@ void GameEventManager::CreateGameEvents()
 			L"Turning around you see a piece of the glowing spots from the boar stuck in a sharp tree-branch. "
 			L"You grab the glowing hide and make your way out of the forest.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
 			Resources{0, 15, -20, 0, 0, 0, 0, 1, 0, 1}
 		},
 
@@ -235,7 +235,7 @@ void GameEventManager::CreateGameEvents()
 			L"either keep radioactivity from getting in, or from getting out. Everywhere around you there are smashed vials, it looks like "
 			L"whatever they were working on here was sabotaged. You manage to at least salvage some materials from the destroyed lab.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
 			Resources{0, 0, 0, 10, 10, 10, 0, 1, 0, 1}
 		}
 	};
@@ -250,7 +250,7 @@ void GameEventManager::CreateGameEvents()
 			L"Your ship takes some serious damage. A part from the ship \"The Anvil\" hit you. "
 			L"You salvage what you can and get out of the field of debris.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 15, 0, 0, 0, 0, 1},
 			Resources{-40, 5, 0, 10, 15, 0, 0, 0, 0, 1}
 		},
 
@@ -263,7 +263,7 @@ void GameEventManager::CreateGameEvents()
 			L"the ground like a gigantic spear skewering the earth. As you get closer you see it used to be a part of a spaceship, \"The Anvil\". "
 			L"It really was worth the effort.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 15, 0, 0, 0, 0, 0, 1},
 			Resources{-5, 0, -5, 15, 5, 0, 0, 0, 0, 1}
 		},
 
@@ -277,7 +277,7 @@ void GameEventManager::CreateGameEvents()
 			L"A group of obvius warriors approach. When you tell them of your quest several of the younger ones ask to join you. "
 			L"They bring some nice equipment along.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{40, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 			Resources{40, 0, 0, 0, 0, 5, 0, 0, 0, 1}
 		},
 
@@ -290,18 +290,18 @@ void GameEventManager::CreateGameEvents()
 			L"playing around. When time comes to leave the lake they give you many strange gifts from the deep. A few even turn out to "
 			L"be useful. A refreshing adventure, indeed.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 0, 10, 0, 0, 0, 1},
 			Resources{25, 0, 0, 0, 5, 10, 0, 0, 0, 1}
 		},
 
 		{
-			L"Descending into the planet?s atmosphere you had to dodge a lot of space-debris which looked to be from some kind of "
+			L"Descending into the planet's atmosphere you had to dodge a lot of space-debris which looked to be from some kind of "
 			L"large vessel. There also seems to be a lot of parts that have crashed into the planet. Explore the debris?",
 
 			L"Walking around in this futuristic junkyard you see a metal plate stating: \"PROPERTY OF THE SOLAR UNION - UNIT BABEL IX\". "
 			L"You grab a few plates for the raw materials and hope that no one will miss them.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 10, 0, 0, 0, 0, 1},
 			Resources{0, 0, 0, 10, 10, 0, 0, 0, 0, 1}
 		},
 
@@ -314,7 +314,7 @@ void GameEventManager::CreateGameEvents()
 			L"crashed with this ship and that it was a part of the renowned space station Babel IX. They let you have the fuel that "
 			L"is still left in the vessel as they do not have any use for it.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 100, 0, 0, 0, 0, 0, 0, 0, 1},
 			Resources{30, 100, 0, 0, 0, 0, 0, 0, 0, 1}
 		},
 
@@ -327,7 +327,7 @@ void GameEventManager::CreateGameEvents()
 			L"as clear as day. He quickly snatches the metal from your hands and throws you some other materials, undoubtedly in his mind "
 			L"worth less than the Nanotech, before scurrying off.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 10, 0, 0, 0, 0, 1},
 			Resources{0, 0, 0, 10, 10, -10, 0, 0, 0, 1}
 		},
 
@@ -339,7 +339,7 @@ void GameEventManager::CreateGameEvents()
 			L"some materials you found earlier and left you bound to a pole and waved you goodbye saying \"Viva la revolución!\". After a few "
 			L"hours of struggle you manage to break loose and make it back to the shuttle. At least you got a few hours of rest while bound.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 30, 0, 0, 0, 0, 0, 0, 1},
 			Resources{30, 0, 30, -5, -5, -5, 0, 0, 0, 1}
 		},
 
@@ -349,7 +349,7 @@ void GameEventManager::CreateGameEvents()
 			L"It turns out the shuttle's motor was malfunctioning and required repairs, meanwhile it exposed you to extreme heat for a few minutes. "
 			L"After having made the repairs you notice a hidden compartment in the back of the shuttle stashed with provisions!",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 50, 0, 0, 0, 0, 0, 0, 0, 1},
 			Resources{-30, 50, 50, 0, -10, 20, 0, 0, 0, 1}
 		},
 			
@@ -362,7 +362,7 @@ void GameEventManager::CreateGameEvents()
 			L"A quick scan of the asteroids shows you that they're mixed with Nanotech. "
 			L"The extraction part, while fruitful, takes a painstakingly long time.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 0, 30, 0, 0, 0, 1},
 			Resources{0, 0, -50, 0, 0, 30, 0, 0, 0, 1}
 		},
 
@@ -374,7 +374,7 @@ void GameEventManager::CreateGameEvents()
 			L"You decide to step into a cave not far from your original position, where you stumble upon a hastily abandoned small camp. "
 			L"As you gather what materials you can find you wonder what made the owners leave in such a hurry?",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 10, 0, 0, 0, 0, 1},
 			Resources{0, 0, 0, 1, 10, 1, 0, 0, 0, 1}
 		},
 
@@ -388,7 +388,7 @@ void GameEventManager::CreateGameEvents()
 			L"You also come to feel the ominous feeling of being watched, eyes prying as soon as you turn your back. "
 			L"You make it out after what feels like a lifetime, and with little to show for it.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 2, 0, 0, 0, 0, 0, 1},
 			Resources{0, 0, -40, 2, 10, 0, 0, 0, 0, 1}
 		},
 
@@ -401,7 +401,7 @@ void GameEventManager::CreateGameEvents()
 			L"When you reach the center of the town you see the source of the singing before you, a woman in rough garbs holding her small baby in her arms. "
 			L"She looks up towards you with a sad expression. Painted on a wall of a building are the crossed out letters \"SU\".",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 20, 0, 0, 0, 0, 1},
 			Resources{0, 20, 0, 0, 20, 5, 0, 0, 0, 1}
 		},
 
@@ -414,7 +414,7 @@ void GameEventManager::CreateGameEvents()
 			L"Yet it had inevitably failed, and war had ensued. "
 			L"What remains are scattered political units all vying for control of the SU, and the bloody battles that follow.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 5, 0, 0, 0, 0, 0, 1},
 			Resources{0, 30, 0, 5, 10, 5, 0, 0, 0, 1}
 		},
 
@@ -426,7 +426,7 @@ void GameEventManager::CreateGameEvents()
 			L"Crouching low, you dash from cover to cover. By the fuel cells there is what seems like an advanced radar and it has an important component you need. "
 			L"You take it and grab some fuel cells and run.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 25, 0, 0, 0, 0, 0, 0, 0, 1},
 			Resources{0, 25, 0, 0, 0, 5, 0, 0, 0, 1}
 		},
 
@@ -438,7 +438,7 @@ void GameEventManager::CreateGameEvents()
 			L"After interrogation and a solid beating they throw you in prison. Another prisoner, the scientist Irma Govnorova, tends to your wounds. "
 			L"During that night you find a way to escape together. For good measure you steal some advanced equipment on your way out.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 0, 5, 0, 0, 0, 1},
 			Resources{-25, 0, -5, 0, 0, 5, 0, 0, 0, 1}
 		},
 
@@ -450,7 +450,7 @@ void GameEventManager::CreateGameEvents()
 			L"You drive ahead and after a few warning shots the rest of the soldiers surrender. "
 			L"The villagers are overjoyed but fear the return of more soldiers. You have room on the ship and take them with you.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 15, 0, 0, 0, 0, 1},
 			Resources{25, 0, 0, 5, 15, 0, 0, 0, 0, 1}
 		},
 
@@ -461,7 +461,7 @@ void GameEventManager::CreateGameEvents()
 			L"Inside is something you never thought you'd see. An ecosystem inhabited by every type of creature you could think of and also ones you could never imagine. "
 			L"There doesn't seem to be a way to get inside the dome by design, by a bit away there's an ancient campsite with old research equipment.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 20, 0, 0, 0, 0, 0, 0, 1},
 			Resources{10, 0, 20, 5, 5, 20, 0, 0, 0, 1}
 		},
 
@@ -474,7 +474,7 @@ void GameEventManager::CreateGameEvents()
 			L"After taking a break below a tree you notice an old backpack hanging from a tree branch right above you. "
 			L"There's a tag on it; \"Property of Charlotte O'Han\". The backpack contained a few pieces of research materials.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 15, 0, 0, 0, 0, 0, 1},
 			Resources{20, 0, -20, 15, 0, 0, 0, 0, 0, 1}
 		},
 
@@ -487,7 +487,7 @@ void GameEventManager::CreateGameEvents()
 			L"She proclaims to be the legendary Charlotte O'han, the most infamous pirate of the 7 galaxies. "
 			L"She spends the rest of the evening telling crazy stories over dinner.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 10, 0, 0, 0, 0, 0, 0, 1},
 			Resources{30, 30, 10, 0, 0, 0, 0, 0, 0, 1}
 		},
 
@@ -495,10 +495,10 @@ void GameEventManager::CreateGameEvents()
 			L"In the lush rainforest you find an ancient temple with the shape of a skull, with an ominous looking entrance. "
 			L"In a bush next to the entrance you see a hat sticking out? You try to grab the hat and an old man flies out of the bush. Interact with the man?",
 
-			L"?How dare you try to steal the great Imbiamba Jombes O'Han's legendary hat!??. He goes on and lectures you for another 20 minutes about his achievements before half-forcing you to be his sidekick on an adventure into the temple. "
+			L"\"How dare you try to steal the great Imbiamba Jombes O'Han's legendary hat!?\". He goes on and lectures you for another 20 minutes about his achievements before half-forcing you to be his sidekick on an adventure into the temple. "
 			L"You manage to grab all the treasure in the temple and he lets you have everything except a crystal skull. You couldn't care less and leave him to his own.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, -20, 0, 0, 0, 0, 0, 0, 1},
 			Resources{0, 0, -20, 20, 20, 20, 0, 0, 0, 1}
 		},
 
@@ -508,7 +508,7 @@ void GameEventManager::CreateGameEvents()
 			L"A child, not more than maybe 10 years old. He doesn't seem to be fluid in any language but has very technologically advanced gear and clothes. "
 			L"The child seems very intent on becoming your accomplice. Having someone to converse with during your travels would be nice.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 0, 20, 0, 0, 0, 1},
 			Resources{0, 0, -20, 0, 10, 20, 0, 0, 0, 1}
 		},
 
@@ -520,7 +520,7 @@ void GameEventManager::CreateGameEvents()
 			L"Next to him lays a big axe on the ground. "
 			L"Neither him (or you for that matter) have much use for the axe, so you dismantle it for the materials and make your way back to the ship wondering if that really just happened.",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{-20, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 			Resources{-20, 0, 0, 10, 10, 0, 0, 0, 0, 1}
 		},
 
@@ -533,7 +533,7 @@ void GameEventManager::CreateGameEvents()
 			L"On the bridge however, you find an old nav computer you think can be broken down into spare components. "
 			L"You also find the last unfinished sentence of what must be the ship's last log: \"We are under attack from a foreign vessel. Requesting assis...\".",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 15, 0, 0, 0, 0, 1},
 			Resources{0, 0, 0, 2, 15, 0, 0, 0, 0, 1}
 		},
 
@@ -545,8 +545,60 @@ void GameEventManager::CreateGameEvents()
 			L"When searching the battlefield during the aftermath of the fight you realize the two sides fighting were offspring from the Solar Union, both vying for control of the land and the political directions of the Solar System previously aligned with the union. "
 			L"You also realize that battles indeed leave valuables behind?",
 
-			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			Resources{0, 0, 0, 0, 0, 5, 0, 0, 0, 1},
 			Resources{0, 0, 0, 10, 35, 5, 0, 0, 0, 1}
+		},
+
+		{
+			L"Whilst doing the regular probe preparation routine for your planetary mission you suddenly find yourself thrown to the ground from an explosion, originating from the outer hull of the ship. "
+			L"Are you under attack? Arriving at the bridge you realize this is indeed the case. "
+			L"Mining turrets are targeting the ship from the nearby asteroids, unleashing a barrage of plasma shots. "
+			L"Destroying them might yield some good scrap metal...",
+
+			L"You call out to the bridge to answer fire. You hear the hum of the engines as they rotate the ship into position, and the sound of the ion cannons loading up. "
+			L"Just then you are hit by another barrage from the turrets, and you struggle to stay on your feet. \"Now!\", you call out, and with a spectacular explosion the turrets are disintegrated from the blast. "
+			L"As the probes gather up what remains from the turrets you wonder who put them there...",
+
+			Resources{0, 0, 0, 0, 40, 0, 0, 0, 0, 1},
+			Resources{-30, 0, 0, 2, 40, 0, 0, 0, 0, 1}
+		},
+
+		{
+			L"When scanning the planet for a drop zone you notice something else in its orbit. Inside its asteroid belt a facility can be seen, perched on top of a massive asteroid. "
+			L"What’s more, drones are flying to and fro the facility, carrying minerals and asteroid samples. "
+			L"Other drones perform scans and load the valuables into small freighter ships standing by in a queue-like formation. This might be the time for a clever hit-and-run...",
+
+			L"You scan the closest freighter ship for its ID and match its signature with your own. "
+			L"You then steer the ship towards the procession of mining freighters and put the ship into place, opening the cargo bay hatch. "
+			L"You then hold your breath, and wait. Some time later you steer the ship away from the facility with a big grin on your face. "
+			L"You couldn’t believe your eyes when the drones started to load up the cargo with the minerals...",
+
+			Resources{0, 0, 0, 20, 0, 0, 0, 0, 0, 1},
+			Resources{0, 0, 0, 20, 50, 15, 0, 0, 0, 1}
+		},
+
+		{
+			L"In the distance you see a large spherical shape in the ground. It looks as if some kind of object has crashed, transforming the surrounding environment as a result of the impact. "
+			L"Investigate the object?",
+
+			L"When you arrive you quickly realize that it’s an asteroid. What’s odd about it is its preserved form."
+			L"It has barely taken any damage from the impact. What’s more, there’s some kind of marking on its side; \"Courtesy of the ALU Mining Corporation\". "
+			L"Further analysis of the asteroid reveals the reason for its preserved form - the inside is made up of densely packed Titanium...",
+
+			Resources{0, 0, 0, 45, 0, 0, 0, 0, 0, 1},
+			Resources{0, 0, 0, 45, 0, 0, 0, 0, 0, 1}
+		},
+
+		{
+			L"On your way down to the planet you notice a massive asteroid with a gaping hole into its center. Inside you can see a platform, and on top of it metallic crates. "
+			L"From your vantage point you see no evidence of any life forms, and you wonder whether the crates have been abandoned or forgotten. Investigate the asteroid?",
+
+			L"You steer the probe towards the asteroid, entering the hole to its center. You set the probes’ lights to illuminate the room and exit. "
+			L"Just like you suspected the area is void of life. On top of the crates it says \"ALU Mining Corporation\" in engraved letters. "
+			L"Just when you are about to load the first crate there’s a pang of pain in your head and you feel a presence in the edge of your mind. You quickly escape - this is no regular asteroid...",
+
+			Resources{0, 0, 0, 0, 35, 0, 0, 0, 0, 1},
+			Resources{-30, 0, 0, 15, 35, 15, 0, 0, 0, 1}
 		}
 	};
 
