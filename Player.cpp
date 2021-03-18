@@ -133,7 +133,7 @@ Player::Player()
 	m_moveBackwards = false;
 	m_stopMovement = false;
 	m_playerControlsActive = true;
-	m_stabilizerActive = true;
+	m_stabilizerActive = false;
 	m_mousePosX = 0.0f;
 	m_mousePosY = 0.0f;
 	m_lockCamera = false;

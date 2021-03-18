@@ -104,6 +104,7 @@ void GameEventManager::CreateGameEvents()
 			L"something about a new type of propellant. You do not pay much attention to it though and just "
 			L"grab a few cans of old fashioned fuel, one of the cans has a weird glow though.",
 
+			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			Resources{0, 30, 0, 0, 0, 0, 1, 0, 0, 1}
 		},
 
@@ -150,6 +151,7 @@ void GameEventManager::CreateGameEvents()
 			L"horrified expressions on their faces, within this everlasting tomb. Within their grasp you also notice some "
 			L"weird glow coming from the rocks the miners seemed to be excavating. What could have created this tragedy?",
 
+			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			Resources{0, 0, -30, 10, 0, 0, 0, 0, 1, 1}
 		},
 
@@ -176,7 +178,7 @@ void GameEventManager::CreateGameEvents()
 		},
 
 		{
-			L"On the planet?s surface you see a sign indicating some kind of settlement. Follow the sign?",
+			L"On the planet's surface you see a sign indicating some kind of settlement. Follow the sign?",
 
 			L"You find out that it is a research station! Inside are a couple of friendly researchers, "
 			L"telling you that they are here to extract the renown mineral Khionerite. They tell you all about the story of the mineral, "
@@ -194,7 +196,7 @@ void GameEventManager::CreateGameEvents()
 			L"radioactive purple water. Investigate the remains?",
 
 			L"After slipping when trying to take a closer look your suit rips below your elbow, the poisonous water starts pouring into "
-			L"the suit. You grab a piece of the skeleton?s armor before hurrying back to the shuttle.",
+			L"the suit. You grab a piece of the skeleton's armor before hurrying back to the shuttle.",
 
 			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			Resources{-50, 0, 0, 20, 10, 0, 0, 0, 0, 1}
@@ -205,9 +207,9 @@ void GameEventManager::CreateGameEvents()
 			L"a perfect spot to land. Change course and land there?",
 
 			L"After landing you walk out of the shuttle into a barren landscape. Compared to the rest of this planet the outcrop is all black, "
-			L"like it was burned. It?s the remnants of a battlefield, with the two factions being "
+			L"like it was burned. It's the remnants of a battlefield, with the two factions being "
 			L"mid-battle when this catastrophe struck. At the center is a crater, within is the remains of the nuke. "
-			L"On the side you see a name in big green letters, ?Shiro Hime?. You extract the powerful core of the nuke that is still partially intact.",
+			L"On the side you see a name in big green letters, \"Shiro Hime\". You extract the powerful core of the nuke that is still partially intact.",
 
 			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			Resources{0, 0, 0, 0, 0, 10, 0, 1, 0, 1}
@@ -233,6 +235,7 @@ void GameEventManager::CreateGameEvents()
 			L"either keep radioactivity from getting in, or from getting out. Everywhere around you there are smashed vials, it looks like "
 			L"whatever they were working on here was sabotaged. You manage to at least salvage some materials from the destroyed lab.",
 
+			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			Resources{0, 0, 0, 10, 10, 10, 0, 1, 0, 1}
 		}
 	};
@@ -244,7 +247,7 @@ void GameEventManager::CreateGameEvents()
 
 			L"You carefully navigate between meteorites. You see metallic shrapnel among the debris. "
 			L"Suddenly you get rammed by a massive metallic structure. You freeze for a moment while the screeching sound of metal on metal seems to go on forever. "
-			L"Your ship takes some serious damage. A part from the ship ?The Anvil? hit you. "
+			L"Your ship takes some serious damage. A part from the ship \"The Anvil\" hit you. "
 			L"You salvage what you can and get out of the field of debris.",
 
 			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -252,12 +255,12 @@ void GameEventManager::CreateGameEvents()
 		},
 
 		{
-			L"You stand at the edge of a massive crater. It?s quite a walk but there is something odd at the center that you think might be "
+			L"You stand at the edge of a massive crater. It's quite a walk but there is something odd at the center that you think might be "
 			L"worth investigating. Will you take a closer look?",
 
 			L"You really underestimated that walk and the slope towards the bottom proved more treacherous than anticipated. After a tiring "
 			L"trek and more than a few tumbles you close in on the oddity in the middle of the crater. A gleaming metallic object juts out of "
-			L"the ground like a gigantic spear skewering the earth. As you get closer you see it used to be a part of a spaceship, ?The Anvil?. "
+			L"the ground like a gigantic spear skewering the earth. As you get closer you see it used to be a part of a spaceship, \"The Anvil\". "
 			L"It really was worth the effort.",
 
 			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -295,7 +298,7 @@ void GameEventManager::CreateGameEvents()
 			L"Descending into the planet?s atmosphere you had to dodge a lot of space-debris which looked to be from some kind of "
 			L"large vessel. There also seems to be a lot of parts that have crashed into the planet. Explore the debris?",
 
-			L"Walking around in this futuristic junkyard you see a metal plate stating: ?PROPERTY OF THE SOLAR UNION - UNIT BABEL IX?. "
+			L"Walking around in this futuristic junkyard you see a metal plate stating: \"PROPERTY OF THE SOLAR UNION - UNIT BABEL IX\". "
 			L"You grab a few plates for the raw materials and hope that no one will miss them.",
 
 			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -333,7 +336,7 @@ void GameEventManager::CreateGameEvents()
 			L"One of the men suddenly brings his rifle down from his shoulder and aims at his comrade. Intervene?",
 
 			L"Bandits! It turns out that they knew you were there all along and played this theatre to make you come out of hiding. They took "
-			L"some materials you found earlier and left you bound to a pole and waved you goodbye saying ?Viva la revoluci?n!?. After a few "
+			L"some materials you found earlier and left you bound to a pole and waved you goodbye saying \"Viva la revolución!\". After a few "
 			L"hours of struggle you manage to break loose and make it back to the shuttle. At least you got a few hours of rest while bound.",
 
 			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -341,9 +344,9 @@ void GameEventManager::CreateGameEvents()
 		},
 
 		{
-			L"On your way down to the planet?s surface you see a few red flashing lights on your control panel. Do you want to try and find the problem when you land?",
+			L"On your way down to the planet's surface you see a few red flashing lights on your control panel. Do you want to try and find the problem when you land?",
 
-			L"It turns out the shuttle?s motor was malfunctioning and required repairs, meanwhile it exposed you to extreme heat for a few minutes. "
+			L"It turns out the shuttle's motor was malfunctioning and required repairs, meanwhile it exposed you to extreme heat for a few minutes. "
 			L"After having made the repairs you notice a hidden compartment in the back of the shuttle stashed with provisions!",
 
 			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -354,9 +357,9 @@ void GameEventManager::CreateGameEvents()
 			L"Moments after having been launched from the ship you notice something odd about the asteroid belt that surrounds the planet. "
 			L"Bathed in the light of the dying sun it sometimes seems to flicker and shine in odd ways. Explore the asteroid belt?",
 
-			L"You engage manual controls and steer the probe off from it?s programmed path, towards the asteroid belt instead. "
-			L"Small thuds against the hull of the probe tells you you?ve arrived at the belt, and that you must proceed with caution. "
-			L"A quick scan of the asteroids shows you that they?re mixed with Nanotech. "
+			L"You engage manual controls and steer the probe off from it's programmed path, towards the asteroid belt instead. "
+			L"Small thuds against the hull of the probe tells you you've arrived at the belt, and that you must proceed with caution. "
+			L"A quick scan of the asteroids shows you that they're mixed with Nanotech. "
 			L"The extraction part, while fruitful, takes a painstakingly long time.",
 
 			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -396,7 +399,7 @@ void GameEventManager::CreateGameEvents()
 
 			L"You enter a large glade in a forest area, the singing voice is now as clear as the overgrown ruins of the small town that stands before you. "
 			L"When you reach the center of the town you see the source of the singing before you, a woman in rough garbs holding her small baby in her arms. "
-			L"She looks up towards you with a sad expression. Painted on a wall of a building are the crossed out letters ?SU?.",
+			L"She looks up towards you with a sad expression. Painted on a wall of a building are the crossed out letters \"SU\".",
 
 			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			Resources{0, 20, 0, 0, 20, 5, 0, 0, 0, 1}
@@ -407,7 +410,7 @@ void GameEventManager::CreateGameEvents()
 			L"One of the members notices you and signals for you to join them. "
 			L"You wonder what goods they might offer, as you ponder on whether to accept the invitation. Join the caravan?",
 
-			L"As you spend the evening with the caravan they tell you they are the remnants of a trading empire belonging to the so called ?Solar Union?, a vast network of planets united under a common banner in order to uphold peace in the solar system. "
+			L"As you spend the evening with the caravan they tell you they are the remnants of a trading empire belonging to the so called \"Solar Union\", a vast network of planets united under a common banner in order to uphold peace in the solar system. "
 			L"Yet it had inevitably failed, and war had ensued. "
 			L"What remains are scattered political units all vying for control of the SU, and the bloody battles that follow.",
 
@@ -419,7 +422,7 @@ void GameEventManager::CreateGameEvents()
 			L"While exploring the planet you chance upon a small fort of some kind. "
 			L"You spot fuel cells but there are a lot of guards. Wait for an opportunity to snatch some?",
 
-			L"At sunset something happens in the encampment and the opportunity you?ve been waiting for presents itself. "
+			L"At sunset something happens in the encampment and the opportunity you've been waiting for presents itself. "
 			L"Crouching low, you dash from cover to cover. By the fuel cells there is what seems like an advanced radar and it has an important component you need. "
 			L"You take it and grab some fuel cells and run.",
 
@@ -455,9 +458,10 @@ void GameEventManager::CreateGameEvents()
 			L"On this remote and insufferable planet you notice something strange in the distance, some sort of blue gigantic dome. "
 			L"Inside the dome you make out something green and tall, like trees. Investigate the dome?",
 
-			L"Inside is something you never thought you?d see. An ecosystem inhabited by every type of creature you could think of and also ones you could never imagine. "
-			L"There doesn?t seem to be a way to get inside the dome by design, by a bit away there?s an ancient campsite with old research equipment.",
+			L"Inside is something you never thought you'd see. An ecosystem inhabited by every type of creature you could think of and also ones you could never imagine. "
+			L"There doesn't seem to be a way to get inside the dome by design, by a bit away there's an ancient campsite with old research equipment.",
 
+			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			Resources{10, 0, 20, 5, 5, 20, 0, 0, 0, 1}
 		},
 
@@ -466,22 +470,24 @@ void GameEventManager::CreateGameEvents()
 			L"Traversing deeper into the wilds could be a great opportunity to scavenge for some more food and medicinal herbs, although, who knows what creatures lie within the forest?"
 			L"Will you take the risk?",
 
-			L"Trekking through the wilds took longer than expected. Sure, you found some provisions, but you?re exhausted. "
+			L"Trekking through the wilds took longer than expected. Sure, you found some provisions, but you're exhausted. "
 			L"After taking a break below a tree you notice an old backpack hanging from a tree branch right above you. "
-			L"There?s a tag on it; ?Property of Charlotte O?Han?. The backpack contained a few pieces of research materials.",
+			L"There's a tag on it; \"Property of Charlotte O'Han\". The backpack contained a few pieces of research materials.",
 
+			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			Resources{20, 0, -20, 15, 0, 0, 0, 0, 0, 1}
 		},
 
 		{
 			L"At the beach you spot a docked ship of some sort. Old, made of wood and barely holding up. "
-			L"At the top of the mast is an old pirate?s flag, you also hear some cackling coming from the Cabin."
-			L"Explore the ol? Mary? Arrgh",
+			L"At the top of the mast is an old pirate's flag, you also hear some cackling coming from the Cabin."
+			L"Explore the ol' Mary? Arrgh",
 
-			L"You call out and a mad old woman in make-shift pirate clothes slams the door open and calls you cabin boy like you?ve always been part of her ?crew?. "
-			L"She proclaims to be the legendary Charlotte O?han, the most infamous pirate of the 7 galaxies. "
+			L"You call out and a mad old woman in make-shift pirate clothes slams the door open and calls you cabin boy like you've always been part of her \"crew\". "
+			L"She proclaims to be the legendary Charlotte O'han, the most infamous pirate of the 7 galaxies. "
 			L"She spends the rest of the evening telling crazy stories over dinner.",
 
+			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			Resources{30, 30, 10, 0, 0, 0, 0, 0, 0, 1}
 		},
 
@@ -489,41 +495,45 @@ void GameEventManager::CreateGameEvents()
 			L"In the lush rainforest you find an ancient temple with the shape of a skull, with an ominous looking entrance. "
 			L"In a bush next to the entrance you see a hat sticking out? You try to grab the hat and an old man flies out of the bush. Interact with the man?",
 
-			L"?How dare you try to steal the great Imbiamba Jombes O?Han?s legendary hat!??. He goes on and lectures you for another 20 minutes about his achievements before half-forcing you to be his sidekick on an adventure into the temple. "
-			L"You manage to grab all the treasure in the temple and he lets you have everything except a crystal skull. You couldn?t care less and leave him to his own.",
+			L"?How dare you try to steal the great Imbiamba Jombes O'Han's legendary hat!??. He goes on and lectures you for another 20 minutes about his achievements before half-forcing you to be his sidekick on an adventure into the temple. "
+			L"You manage to grab all the treasure in the temple and he lets you have everything except a crystal skull. You couldn't care less and leave him to his own.",
 
+			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			Resources{0, 0, -20, 20, 20, 20, 0, 0, 0, 1}
 		},
 
 		{
-			L"You?ve noticed something or someone following you for some time now. You notice movements behind a rock behind you. Confront the stalker?",
+			L"You've noticed something or someone following you for some time now. You notice movements behind a rock behind you. Confront the stalker?",
 
-			L"A child, not more than maybe 10 years old. He doesn?t seem to be fluid in any language but has very technologically advanced gear and clothes. "
+			L"A child, not more than maybe 10 years old. He doesn't seem to be fluid in any language but has very technologically advanced gear and clothes. "
 			L"The child seems very intent on becoming your accomplice. Having someone to converse with during your travels would be nice.",
 
+			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			Resources{0, 0, -20, 0, 10, 20, 0, 0, 0, 1}
 		},
 
 		{
-			L"At the corner of your eye you see something white and black move about, you turn around and see? a cow? "
-			L"A cow that looks at you with a smug face before running into a weird red portal of some sort. Follow the cow and show him who?s boss?",
+			L"At the corner of your eye you see something white and black move about, you turn around and see... a cow? "
+			L"A cow that looks at you with a smug face before running into a weird red portal of some sort. Follow the cow and show him who's boss?",
 
-			L"You end up in a green field and are surrounded by, you guessed it, cows. They don?t seem to be aggressive. At the center of the field is a rather large cow with some kind of crown? "
+			L"You end up in a green field and are surrounded by, you guessed it, cows. They don't seem to be aggressive. At the center of the field is a rather large cow with some kind of crown? "
 			L"Next to him lays a big axe on the ground. "
 			L"Neither him (or you for that matter) have much use for the axe, so you dismantle it for the materials and make your way back to the ship wondering if that really just happened.",
 
+			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			Resources{-20, 0, 0, 10, 10, 0, 0, 0, 0, 1}
 		},
 
 		{
-			L"As you prepare to make for the hangar to board the probe you notice a derelict spaceship trapped in the planets? orbit. "
+			L"As you prepare to make for the hangar to board the probe you notice a derelict spaceship trapped in the planets' orbit. "
 			L"Its hull is badly damaged. An asteroid impact maybe? It seems old and weathered, old technology trapped in present time. Its size is almost that of your own ship. "
-			L"On the broken wings of the ship you make out a yellow insignia, and two letters: ?SU?. Enter the ship?",
+			L"On the broken wings of the ship you make out a yellow insignia, and two letters: \"SU\". Enter the ship?",
 
 			L"You are not the first to explore the ship since its sad demise. There are signs of scavengers having rummaged through and taken what materials they can find. "
 			L"On the bridge however, you find an old nav computer you think can be broken down into spare components. "
-			L"You also find the last unfinished sentence of what must be the ship?s last log: ?We are under attack from a foreign vessel. Requesting assis...?.",
+			L"You also find the last unfinished sentence of what must be the ship's last log: \"We are under attack from a foreign vessel. Requesting assis...\".",
 
+			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			Resources{0, 0, 0, 2, 15, 0, 0, 0, 0, 1}
 		},
 
@@ -535,6 +545,7 @@ void GameEventManager::CreateGameEvents()
 			L"When searching the battlefield during the aftermath of the fight you realize the two sides fighting were offspring from the Solar Union, both vying for control of the land and the political directions of the Solar System previously aligned with the union. "
 			L"You also realize that battles indeed leave valuables behind?",
 
+			Resources{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			Resources{0, 0, 0, 10, 35, 5, 0, 0, 0, 1}
 		}
 	};
