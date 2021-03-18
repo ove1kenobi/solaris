@@ -50,6 +50,60 @@ public:
 	}
 };
 
+class ToggleControls : public IEvent
+{
+private:
+
+public:
+	ToggleControls() noexcept = default;
+	virtual ~ToggleControls() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::ToggleControls;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "ToggleControls";
+	}
+};
+
+class ToggleCredits : public IEvent
+{
+private:
+
+public:
+	ToggleCredits() noexcept = default;
+	virtual ~ToggleCredits() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::ToggleCredits;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "ToggleCredits";
+	}
+};
+
+class TogglePressToWinGame : public IEvent
+{
+private:
+
+public:
+	TogglePressToWinGame() noexcept = default;
+	virtual ~TogglePressToWinGame() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::TogglePressToWinGame;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "TogglePressToWinGame";
+	}
+};
+
 class ToggleDamageHUD : public IEvent
 {
 private:

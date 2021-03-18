@@ -32,7 +32,11 @@ Render2D::Render2D() noexcept
 	  m_DisplayText{ false }
 {
 	//Make render2D able to UI handle events (for now, only keyboard ones)
-	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::DelegatePlayerInfoEvent, EventType::DisplayEndgameText);
+	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::DelegatePlayerInfoEvent);
+	EventBuss::Get().AddListener(this, EventType::TogglePressToWinGame);
+	EventBuss::Get().AddListener(this, EventType::ToggleControls);
+	EventBuss::Get().AddListener(this, EventType::ToggleCredits);
+	EventBuss::Get().AddListener(this, EventType::DisplayEndgameText);
 
 	if (AddFonts()) {
 		//Set start UI and load them all into an vector
@@ -65,6 +69,9 @@ Render2D::~Render2D() {
 
 	EventBuss::Get().RemoveListener(this, EventType::KeyboardEvent);
 	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
+	EventBuss::Get().RemoveListener(this, EventType::TogglePressToWinGame);
+	EventBuss::Get().RemoveListener(this, EventType::ToggleControls);
+	EventBuss::Get().RemoveListener(this, EventType::ToggleCredits);
 	EventBuss::Get().RemoveListener(this, EventType::DisplayEndgameText);
 }
 
@@ -104,6 +111,10 @@ void Render2D::RenderUI() {
 			m_Modules.at(static_cast<int>(TypesUI::PressInteract))->Render();
 		}
 
+		if (m_CanWin && !m_PlanetInteraction && !m_UpgradeScreen) {
+			m_Modules.at(static_cast<int>(TypesUI::PressWin))->Render();
+		}
+
 		//If player was able to interact with planet, render it
 		if (m_PlanetInteraction) {
 			m_Modules.at(static_cast<int>(TypesUI::PlanetInteraction))->Render();
@@ -111,10 +122,6 @@ void Render2D::RenderUI() {
 		//If player wants to upgrade, render it
 		if (m_UpgradeScreen) {
 			m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->Render();
-		}
-
-		if(m_CanWin) {
-			m_Modules.at(static_cast<int>(TypesUI::PressWin))->Render();
 		}
 
 		if (m_DisplayText) {
@@ -197,6 +204,10 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 					m_UpgradeScreen = !m_UpgradeScreen;
 					m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->m_pOnScreen = m_UpgradeScreen;
 				}
+
+				if (virKey == 'R' && m_CanWin) {
+					m_CanWin = false;
+				}
 			}
 			break;
 		}
@@ -204,6 +215,27 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 		{
 			DelegatePlayerInfoEvent& derivedEvent = static_cast<DelegatePlayerInfoEvent&>(event);
 			m_pPlayerInfo = derivedEvent.GetPlayerInfo();
+			break;
+		}
+		case EventType::TogglePressToWinGame:
+		{
+			m_CanWin = true;
+			break;
+		}
+		case EventType::ToggleCredits:
+		{
+			//main menu is false once in here
+			m_Modules.at(static_cast<int>(TypesUI::MainMenu))->m_pOnScreen = m_Credits;
+			m_Credits = !m_Credits;
+			m_Modules.at(static_cast<int>(TypesUI::Credits))->m_pOnScreen = m_Credits;
+			break;
+		}
+		case EventType::ToggleControls:
+		{
+			//main menu is false once in here
+			m_Modules.at(static_cast<int>(TypesUI::MainMenu))->m_pOnScreen = m_Controls;
+			m_Controls = !m_Controls;
+			m_Modules.at(static_cast<int>(TypesUI::Controls))->m_pOnScreen = m_Controls;
 			break;
 		}
 		case EventType::DisplayEndgameText:
