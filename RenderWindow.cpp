@@ -72,18 +72,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
     switch (uMsg)
     {
-        case WM_DESTROY:
-        {
-            PostQuitMessage(0);
-            WindowCloseEvent ce;
-            EventBuss::Get().Delegate(ce);
-            break;
-        }
-        case WM_CLOSE:
-        {
-            CloseWindow(hwnd);
-            break;
-        }
         /*
         case WM_INPUT:
         {
@@ -144,11 +132,6 @@ LRESULT RenderWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
                 EventBuss::Get().Delegate(event);
             }
             #endif
-            if (wParam == VK_ESCAPE)
-            {
-                CloseWindow(hwnd);
-                break;
-            }
             KeyState keyState;
             if ((lParam & 0x40000000) == 0) keyState = KeyState::KeyPress;
             else keyState = KeyState::KeyRepeat;

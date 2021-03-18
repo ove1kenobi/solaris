@@ -30,7 +30,7 @@ ControlsUI::ControlsUI() noexcept
 	m_pButtonBoxS = D2D1::RectF();
 	m_pButtonBoxDescriptionS = D2D1::RectF();
 	m_pButtonTextS = L"S";
-	m_pButtonTextDescriptionS = L"Accelerate backwards";
+	m_pButtonTextDescriptionS = L"Accelerate backwards.";
 
 	m_pButtonBoxU = D2D1::RectF();
 	m_pButtonBoxDescriptionU = D2D1::RectF();

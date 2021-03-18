@@ -29,7 +29,8 @@ Render2D::Render2D() noexcept
 	  m_CanWin{false},
 	  m_Credits{ false },
 	  m_Controls{ false },
-	  m_DisplayText{ false }
+	  m_DisplayText{ false },
+	  m_Paused{ false }
 {
 	//Make render2D able to UI handle events (for now, only keyboard ones)
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::DelegatePlayerInfoEvent);
@@ -37,10 +38,10 @@ Render2D::Render2D() noexcept
 	EventBuss::Get().AddListener(this, EventType::ToggleControls);
 	EventBuss::Get().AddListener(this, EventType::ToggleCredits);
 	EventBuss::Get().AddListener(this, EventType::DisplayEndgameText);
+	EventBuss::Get().AddListener(this, EventType::TogglePauseGame);
 
 	if (AddFonts()) {
 		//Set start UI and load them all into an vector
-		m_CurrentUI = TypesUI::PlanetInteraction;
 		m_Modules.push_back(new PlanetInteractionUI());
 		m_Modules.push_back(new HeadsUpDisplayUI());
 		m_Modules.push_back(new MenuUI());
@@ -51,6 +52,7 @@ Render2D::Render2D() noexcept
 		m_Modules.push_back(new CreditsUI());
 		m_Modules.push_back(new PressWinUI());
 		m_Modules.push_back(new EndgameUI());
+		m_Modules.push_back(new PauseUI());
 
 		m_Modules.at(static_cast<int>(TypesUI::MainMenu))->m_pOnScreen = true;
 	}
@@ -73,6 +75,7 @@ Render2D::~Render2D() {
 	EventBuss::Get().RemoveListener(this, EventType::ToggleControls);
 	EventBuss::Get().RemoveListener(this, EventType::ToggleCredits);
 	EventBuss::Get().RemoveListener(this, EventType::DisplayEndgameText);
+	EventBuss::Get().RemoveListener(this, EventType::TogglePauseGame);
 }
 
 const bool Render2D::Initialize() noexcept {
@@ -126,6 +129,10 @@ void Render2D::RenderUI() {
 
 		if (m_DisplayText) {
 			m_Modules.at(static_cast<int>(TypesUI::Endgame))->Render();
+		}
+
+		if (m_Paused && !m_DisplayText) {
+			m_Modules.at(static_cast<int>(TypesUI::Pause))->Render();
 		}
 	}
 	//If not in game then render main menu
@@ -205,6 +212,15 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 					m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->m_pOnScreen = m_UpgradeScreen;
 				}
 
+				if (virKey == VK_ESCAPE && m_InGame) {
+					ToggleControlsEvent controlsEvent;
+					EventBuss::Get().Delegate(controlsEvent);
+					PlaySoundEvent playSoundEvent(SoundID::EventScreen, false);
+					EventBuss::Get().Delegate(playSoundEvent);
+					m_Paused = !m_Paused;
+					m_Modules.at(static_cast<int>(TypesUI::Pause))->m_pOnScreen = m_Paused;
+				}
+
 				if (virKey == 'R' && m_CanWin) {
 					m_CanWin = false;
 				}
@@ -236,6 +252,16 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 			m_Modules.at(static_cast<int>(TypesUI::MainMenu))->m_pOnScreen = m_Controls;
 			m_Controls = !m_Controls;
 			m_Modules.at(static_cast<int>(TypesUI::Controls))->m_pOnScreen = m_Controls;
+			break;
+		}
+		case EventType::TogglePauseGame:
+		{
+			m_Paused = !m_Paused;
+			ToggleControlsEvent controlsEvent;
+			EventBuss::Get().Delegate(controlsEvent);
+			PlaySoundEvent playSoundEvent(SoundID::EventScreen, false);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_Modules.at(static_cast<int>(TypesUI::Pause))->m_pOnScreen = m_Paused;
 			break;
 		}
 		case EventType::DisplayEndgameText:

@@ -43,6 +43,9 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pVelocityText = L"330";
 	m_pUnitText = L"km/s";
 
+	m_pUpgradeTextBox = D2D1::RectF();
+	m_pUpgradeText = L"[U] upgrade menu";
+
 	m_pWhite = 0xFFFDF9;
 	m_pYellow = 0xFFB724;
 	m_pBlue = 0x0BA4CC;
@@ -429,13 +432,20 @@ bool HeadsUpDisplayUI::UpdateStabilizer() {
 bool HeadsUpDisplayUI::UpdateVelocity() {
 	m_pVelocityTextBox = D2D1::RectF(
 		20.0f,
-		m_pWindowHeight - 145.0f,
+		m_pWindowHeight - 185.0f,
 		m_pWindowWidth / 2.0f,
-		m_pWindowHeight - 60.0f
+		m_pWindowHeight - 100.0f
 	);
 
 	m_pUnitTextBox = D2D1::RectF(
 		215.0f,
+		m_pWindowHeight - 135.0f,
+		m_pWindowWidth / 2.0f,
+		m_pWindowHeight - 100.0f
+	);
+
+	m_pUpgradeTextBox = D2D1::RectF(
+		25.0f,
 		m_pWindowHeight - 95.0f,
 		m_pWindowWidth / 2.0f,
 		m_pWindowHeight - 60.0f
@@ -637,8 +647,6 @@ void HeadsUpDisplayUI::RenderStabilizer() {
 }
 
 void HeadsUpDisplayUI::RenderVelocity() {
-	UpdateBrush(m_pRed, 0.5f);
-
 	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pVelocityText.c_str(),
@@ -653,6 +661,14 @@ void HeadsUpDisplayUI::RenderVelocity() {
 		(UINT32)m_pUnitText.length(),
 		m_pHUDFormat.Get(),
 		m_pUnitTextBox,
+		m_pBrush.Get()
+	);
+
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pUpgradeText.c_str(),
+		(UINT32)m_pUpgradeText.length(),
+		m_pHUDFormat.Get(),
+		m_pUpgradeTextBox,
 		m_pBrush.Get()
 	);
 }
