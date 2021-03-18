@@ -13,7 +13,8 @@ enum class SoundID {
 	Wrong,
 	Warning,
 	Click,
-	Scan
+	Scan,
+	WarpDrive
 };
 
 enum class MusicID {

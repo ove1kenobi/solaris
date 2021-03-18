@@ -80,8 +80,10 @@ void Player::ActivateWarpDrive()
 		m_ship->SetVelocity(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
 		m_rotationSpeed = 0.0f;
 
-		CameraShakeEvent csEvent(5.0f, 0.01f);
+		CameraShakeEvent csEvent(m_chargeTime, 0.01f);
 		EventBuss::Get().Delegate(csEvent);
+		PlaySoundEvent soundEvent(SoundID::WarpDrive, false);
+		EventBuss::Get().Delegate(soundEvent);
 		m_startShake = false;
 	}
 
@@ -139,7 +141,7 @@ Player::Player()
 	m_immortal = false;
 	m_startShake = true;
 	m_initiateWarp = false;
-	m_chargeTime = 5.0f;
+	m_chargeTime = 10.5f;
 	m_currentChargeTime = 0.0f;
 
 	m_ship = nullptr;
