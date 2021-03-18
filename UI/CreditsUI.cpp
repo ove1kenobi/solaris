@@ -10,6 +10,9 @@ CreditsUI::~CreditsUI() {
 }
 
 bool CreditsUI::Initialize() {
+	if (!CreateBrush()) {
+		return false;
+	}
     if (!CreateScreen()) {
         return false;
     }

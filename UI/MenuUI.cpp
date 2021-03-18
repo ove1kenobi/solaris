@@ -303,6 +303,20 @@ void MenuUI::OnEvent(IEvent& event) noexcept {
 				ToggleStartGame sg;
 				EventBuss::Get().Delegate(sg);
 			}
+			//Controls
+			if (m_pMouseX > m_pControlsTextBox.left && m_pMouseX < m_pControlsTextBox.right &&
+				m_pMouseY > m_pControlsTextBox.top && m_pMouseY < m_pControlsTextBox.bottom) {
+				m_pOnScreen = false;
+				ToggleControls tc;
+				EventBuss::Get().Delegate(tc);
+			}
+			//Credits
+			if (m_pMouseX > m_pCreditsTextBox.left && m_pMouseX < m_pCreditsTextBox.right &&
+				m_pMouseY > m_pCreditsTextBox.top && m_pMouseY < m_pCreditsTextBox.bottom) {
+				m_pOnScreen = false;
+				ToggleCredits tc;
+				EventBuss::Get().Delegate(tc);
+			}
 			//Exit game
 			if (m_pMouseX > m_pExitTextBox.left && m_pMouseX < m_pExitTextBox.right &&
 				m_pMouseY > m_pExitTextBox.top && m_pMouseY < m_pExitTextBox.bottom) {

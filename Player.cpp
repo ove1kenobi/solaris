@@ -429,6 +429,8 @@ void Player::OnEvent(IEvent& event) noexcept
 			case SpaceShip::warpdrive:
 			{
 				m_ship->Activate(upgrade);
+				TogglePressToWinGame pwg;
+				EventBuss::Get().Delegate(pwg);
 				break;
 			}
 			default:
