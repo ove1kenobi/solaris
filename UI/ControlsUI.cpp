@@ -1,40 +1,61 @@
 #include "..\pch.h"
 #include "ControlsUI.h"
 
-bool ControlsUI::CreateScreen()
-{
-    return false;
+ControlsUI::ControlsUI() noexcept {
+
+}
+
+ControlsUI::~ControlsUI() {
+
+}
+
+bool ControlsUI::Initialize() {
+	if (!CreateScreen()) {
+		return false;
+	}
+	return true;
+}
+
+bool ControlsUI::CreateScreen() {
+    return true;
 }
 
 bool ControlsUI::UpdateScreen()
 {
-    return false;
+    return true;
 }
 
-bool ControlsUI::UpdateModules()
-{
-    return false;
+bool ControlsUI::UpdateModules() {
+	if (!UpdateScreen()) {
+		return false;
+	}
+    return true;
 }
 
-void ControlsUI::RenderScreen()
-{
+void ControlsUI::RenderScreen() {
+
 }
 
-ControlsUI::ControlsUI() noexcept
-{
+void ControlsUI::RenderBack() {
+	//if hover
+	if (m_pMouseX > m_pBackTextBox.left && m_pMouseX < m_pBackTextBox.right &&
+		m_pMouseY > m_pBackTextBox.top && m_pMouseY < m_pBackTextBox.bottom) {
+		//this->UpdateBrush(m_pHighlight, 1.0f);
+	}
+	else {
+		//this->UpdateBrush(m_pWhite, 1.0f);
+	}
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pBackText.c_str(),
+		(UINT32)m_pBackText.length(),
+		m_pButtonFormat.Get(),
+		m_pBackTextBox,
+		m_pBrush.Get()
+	);
 }
 
-ControlsUI::~ControlsUI()
-{
-}
+void ControlsUI::Render() {
 
-bool ControlsUI::Initialize()
-{
-    return false;
-}
-
-void ControlsUI::Render()
-{
 }
 
 void ControlsUI::OnEvent(IEvent& event) noexcept {
@@ -64,21 +85,13 @@ void ControlsUI::OnEvent(IEvent& event) noexcept {
 		KeyState state = static_cast<MouseButtonEvent*>(&event)->GetKeyState();
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
 		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && m_pOnScreen) {
-			/*
-			//Start game
-			if (m_pMouseX > m_pStartTextBox.left && m_pMouseX < m_pStartTextBox.right &&
-				m_pMouseY > m_pStartTextBox.top && m_pMouseY < m_pStartTextBox.bottom) {
+			//Back button
+			if (m_pMouseX > m_pBackTextBox.left && m_pMouseX < m_pBackTextBox.right &&
+				m_pMouseY > m_pBackTextBox.top && m_pMouseY < m_pBackTextBox.bottom) {
 				m_pOnScreen = false;
-				ToggleStartGame sg;
-				EventBuss::Get().Delegate(sg);
+				//ToggleBackMenu bm;
+				//EventBuss::Get().Delegate(bm);
 			}
-			//Exit game
-			if (m_pMouseX > m_pExitTextBox.left && m_pMouseX < m_pExitTextBox.right &&
-				m_pMouseY > m_pExitTextBox.top && m_pMouseY < m_pExitTextBox.bottom) {
-				m_pOnScreen = false;
-				WindowCloseEvent ce;
-				EventBuss::Get().Delegate(ce);
-			}*/
 		}
 		break;
 	}

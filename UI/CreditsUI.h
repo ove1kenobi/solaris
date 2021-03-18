@@ -3,11 +3,16 @@
 
 class CreditsUI : public ModuleUI {
 private:
-	//Text
-	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pFont;
-	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pFormat;
-	D2D1_RECT_F m_pTextBox;
-	std::wstring m_pText;
+	//General
+	Microsoft::WRL::ComPtr<IDWriteFontCollection> m_pTextFont;
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pButtonFormat;
+
+	//Screen
+	D2D1_RECT_F m_pScreen;
+
+	//Back button
+	D2D1_RECT_F m_pBackTextBox;
+	std::wstring m_pBackText;
 
 	//Create functions
 	bool CreateScreen();
@@ -17,6 +22,7 @@ private:
 	bool UpdateModules();
 
 	void RenderScreen();
+	void RenderBack();
 protected:
 public:
 	CreditsUI() noexcept;
