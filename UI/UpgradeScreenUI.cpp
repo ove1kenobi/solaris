@@ -7,16 +7,16 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
 
 	m_pScreen = D2D1::RectF();
-	m_pObjectiveTextBox = D2D1::RectF();
+	m_pObjectiveDisplayBox = D2D1::RectF();
 	m_pControllerDisplay = D2D1::RectF();
 	m_pResourceDisplay = D2D1::RectF();
 
 	m_pDisplayPadding = 20.0f;
 
-	m_pObjectiveTitle = L"Objective";
-	m_pControllerTitle = L"Controls";
-	m_pInventoryTitle = L"Inventory";
-	m_pObjectiveText = L"Find a way to escape the solar system.";
+	m_pObjectiveTitle = L"OBJECTIVE";
+	m_pControllerTitle = L"CONTROLS";
+	m_pInventoryTitle = L"INVENTORY";
+	m_pObjectiveText = L"Find a way to escape the solar system...";
 	m_pRequirement = L"0";
 
 	m_pButtonTextE = L"E";
@@ -91,6 +91,9 @@ bool UpgradeScreenUI::Initialize() {
 	if (!CreateResourceList()) {
 		return false;
 	}
+	if (!CreateTools()) {
+		return false;
+	}
     return true;
 }
 
@@ -103,18 +106,18 @@ bool UpgradeScreenUI::CreateScreen() {
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		18.0f,
+		20.0f,
 		L"en-us",
 		&m_pFormat
 	), "TextFormat");
 
 	ErrorCheck(m_pTextFactory->CreateTextFormat(
-		L"Tenika",
+		L"Aware",
 		m_pFont.Get(),
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		24.0f,
+		36.0f,
 		L"en-us",
 		&m_pTitleFormat
 	), "TextFormat");
@@ -122,6 +125,18 @@ bool UpgradeScreenUI::CreateScreen() {
 }
 
 bool UpgradeScreenUI::CreateObjective() {
+	ErrorCheck(m_pTextFactory->CreateTextFormat(
+		L"Tenika",
+		m_pFont.Get(),
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		30.0f,
+		L"en-us",
+		&m_pObjectiveFormat
+	), "TextFormat");
+
+	//m_pObjectiveFormat.Get()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 	return true;
 }
 
@@ -165,6 +180,56 @@ bool UpgradeScreenUI::CreateResourceList() {
 	return true;
 }
 
+bool UpgradeScreenUI::CreateTools() {
+	//Main gradient
+	D2D1_GRADIENT_STOP gradientStops[3];
+	gradientStops[0].color = D2D1::ColorF(m_pLightBlue, 0.25f);
+	gradientStops[0].position = 0.0f;
+	gradientStops[1].color = D2D1::ColorF(m_pCyan, 0.25f);
+	gradientStops[1].position = 0.5f;
+	gradientStops[2].color = D2D1::ColorF(m_pLightBlue, 0.25f);
+	gradientStops[2].position = 1.0f;
+
+	ErrorCheck(m_pRenderTarget2D->CreateGradientStopCollection(
+		gradientStops,
+		3,
+		D2D1_GAMMA_1_0,
+		D2D1_EXTEND_MODE_CLAMP,
+		&m_pMainGradientStops
+	), "GradientStops");
+
+	ErrorCheck(m_pRenderTarget2D->CreateLinearGradientBrush(
+		D2D1::LinearGradientBrushProperties(
+			D2D1::Point2F(m_pControllerDisplay.left, m_pWindowHeight),
+			D2D1::Point2F(m_pControllerDisplay.right, m_pWindowHeight)),
+		m_pMainGradientStops.Get(),
+		&m_pMainGradientBrush), "GradientBrush");
+
+	//Corner gradient
+	gradientStops[0].color = D2D1::ColorF(m_pLightGray, 0.25f);
+	gradientStops[0].position = 0.0f;
+	gradientStops[1].color = D2D1::ColorF(m_pGray, 0.75f);
+	gradientStops[1].position = 0.5f;
+	gradientStops[2].color = D2D1::ColorF(m_pLightGray, 0.25f);
+	gradientStops[2].position = 1.0f;
+
+	ErrorCheck(m_pRenderTarget2D->CreateGradientStopCollection(
+		gradientStops,
+		3,
+		D2D1_GAMMA_1_0,
+		D2D1_EXTEND_MODE_CLAMP,
+		&m_pCornerGradientStops
+	), "GradientStops");
+
+	ErrorCheck(m_pRenderTarget2D->CreateLinearGradientBrush(
+		D2D1::LinearGradientBrushProperties(
+			D2D1::Point2F(0.0f, m_pWindowHeight),
+			D2D1::Point2F(0.0f, m_pWindowHeight)),
+		m_pCornerGradientStops.Get(),
+		&m_pCornerGradientBrush), "GradientBrush");
+	return true;
+}
+
 //Update functions
 bool UpgradeScreenUI::UpdateScreen() {
     m_pScreen = D2D1::RectF(
@@ -177,18 +242,26 @@ bool UpgradeScreenUI::UpdateScreen() {
 }
 
 bool UpgradeScreenUI::UpdateObjective() {
-	m_pObjectiveTextBox = D2D1::RectF(
+	m_pObjectiveDisplayBox = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) + m_pDisplayPadding,
 		0.0f + m_pDisplayPadding,
 		m_pWindowWidth - m_pDisplayPadding,
 		200.0f - m_pDisplayPadding
 	);
 
+	float padding = 20.0f;
+	m_pObjectiveTextBox = D2D1::RectF(
+		m_pObjectiveDisplayBox.left + padding,
+		m_pObjectiveDisplayBox.top + padding + 10.0f,
+		m_pObjectiveDisplayBox.right - padding,
+		m_pObjectiveDisplayBox.bottom - padding
+	);
+
 	m_pObjectiveTitleBox = D2D1::RectF(
-		m_pObjectiveTextBox.left,
-		m_pObjectiveTextBox.top - 20.0f,
-		m_pObjectiveTextBox.right,
-		m_pObjectiveTextBox.top + 20.0f
+		m_pObjectiveDisplayBox.left + 20.0f,
+		m_pObjectiveDisplayBox.top - 20.0f,
+		m_pObjectiveDisplayBox.right,
+		m_pObjectiveDisplayBox.top + 20.0f
 	);
 	return true;
 }
@@ -208,70 +281,70 @@ bool UpgradeScreenUI::UpdateUpgrades() {
 
 	
 	//Afterburner
-	m_pUpgrades.at(0)->SetUpgrade(L"AfterBurner",L"Raises your ships maximum speed by 40%.", 0);
+	m_pUpgrades.at(0)->SetUpgrade(L"AFTERBURNER",L"Raises your ships maximum speed by 40%.", 0);
 	m_pUpgrades.at(0)->AddCost(L"Scrap.png", L"10");
 	m_pUpgrades.at(0)->AddCost(L"Titanium.png", L"10");
 	m_pUpgrades.at(0)->AddCost(L"Nanotech.png", L"10");
 	m_pUpgrades.at(0)->SetScience(1);
 
 	//Antenna
-	m_pUpgrades.at(1)->SetUpgrade(L"Antenna", L"Allows you to see a planet’s name from any distance.", 1);
+	m_pUpgrades.at(1)->SetUpgrade(L"ANTENNA", L"Allows you to see a planet’s name from any distance.", 1);
 	m_pUpgrades.at(1)->AddCost(L"Titanium.png", L"10");
 	m_pUpgrades.at(1)->AddCost(L"Nanotech.png", L"10");
 	m_pUpgrades.at(1)->AddCost(L"Scrap.png", L"10");
 	m_pUpgrades.at(1)->SetScience(1);
 
 	//Cargo
-	m_pUpgrades.at(2)->SetUpgrade(L"Cargo", L"Doubles your max-weight, allowing you to carry more materials", 2);
+	m_pUpgrades.at(2)->SetUpgrade(L"CARGO", L"Doubles your max-weight, allowing you to carry more materials.", 2);
 	m_pUpgrades.at(2)->AddCost(L"Titanium.png", L"10");
 	m_pUpgrades.at(2)->AddCost(L"Nanotech.png", L"10");
 	m_pUpgrades.at(2)->AddCost(L"Scrap.png", L"10");
 	m_pUpgrades.at(2)->SetScience(1);
 
 	//Cold shield
-	m_pUpgrades.at(3)->SetUpgrade(L"Cold shield", L"Allows the ship to travel to the colder parts of the solar system without freezing.", 3);
+	m_pUpgrades.at(3)->SetUpgrade(L"COLD SHIELD", L"Allows the ship to travel to the colder parts of the solar system without freezing.", 3);
 	m_pUpgrades.at(3)->AddCost(L"Titanium.png", L"20");
 	m_pUpgrades.at(3)->AddCost(L"Nanotech.png", L"20");
 	m_pUpgrades.at(3)->AddCost(L"Scrap.png", L"20");
 	m_pUpgrades.at(3)->SetScience(5);
 
 	//Warm shield
-	m_pUpgrades.at(4)->SetUpgrade(L"Warm shield", L"Allows the ship to travel very close to the sun, without succumbing to the heat.", 7);
+	m_pUpgrades.at(4)->SetUpgrade(L"WARM SHIELD", L"Allows the ship to travel very close to the sun, without succumbing to the heat.", 7);
 	m_pUpgrades.at(4)->AddCost(L"Titanium.png", L"20");
 	m_pUpgrades.at(4)->AddCost(L"Nanotech.png", L"20");
 	m_pUpgrades.at(4)->AddCost(L"Scrap.png", L"20");
 	m_pUpgrades.at(4)->SetScience(5);
 
 	//Radioactive shield
-	m_pUpgrades.at(5)->SetUpgrade(L"Radioactive shield", L"Allows the ship to approach radioactive planets without being exposed to the radioactivity.", 9);
+	m_pUpgrades.at(5)->SetUpgrade(L"RADIOACTIVE SHIELD", L"Allows the ship to approach radioactive planets without being exposed to the radioactivity.", 9);
 	m_pUpgrades.at(5)->AddCost(L"Titanium.png", L"20");
 	m_pUpgrades.at(5)->AddCost(L"Nanotech.png", L"20");
 	m_pUpgrades.at(5)->AddCost(L"Scrap.png", L"20");
 	m_pUpgrades.at(5)->SetScience(5);
 
 	//Fuel cells
-	m_pUpgrades.at(6)->SetUpgrade(L"Fuel cells", L"Increases max fuel by 100%, also gives fuel equal to the max fuel before this upgrade.", 4);
+	m_pUpgrades.at(6)->SetUpgrade(L"FUEL CELLS", L"Increases max fuel by 100%, also gives fuel equal to the max fuel before this upgrade.", 4);
 	m_pUpgrades.at(6)->AddCost(L"Titanium.png", L"50");
 	m_pUpgrades.at(6)->AddCost(L"Nanotech.png", L"5");
 	m_pUpgrades.at(6)->AddCost(L"Scrap.png", L"5");
 	m_pUpgrades.at(6)->SetScience(8);
 
 	//Living quarters
-	m_pUpgrades.at(7)->SetUpgrade(L"Living quarters", L"Increases max Oxygen by 100%, also gives Oxygen equal to the max oxygen before this upgrade.", 5);
+	m_pUpgrades.at(7)->SetUpgrade(L"LIVING QUARTERS", L"Increases max Oxygen by 100%, also gives Oxygen equal to the max oxygen before this upgrade.", 5);
 	m_pUpgrades.at(7)->AddCost(L"Titanium.png", L"5");
 	m_pUpgrades.at(7)->AddCost(L"Nanotech.png", L"50");
 	m_pUpgrades.at(7)->AddCost(L"Scrap.png", L"5");
 	m_pUpgrades.at(7)->SetScience(8);
 
 	//Shield
-	m_pUpgrades.at(8)->SetUpgrade(L"Shield", L"Increases max Health by 100%, also restores Health equal to the max health before this upgrade. Also takes half damage from asteroids.", 6);
+	m_pUpgrades.at(8)->SetUpgrade(L"SHIELD", L"Increases max Health by 100%, also restores Health equal to the max health before this upgrade. Also takes half damage from asteroids.", 6);
 	m_pUpgrades.at(8)->AddCost(L"Titanium.png", L"5");
 	m_pUpgrades.at(8)->AddCost(L"Nanotech.png", L"5");
 	m_pUpgrades.at(8)->AddCost(L"Scrap.png", L"50");
 	m_pUpgrades.at(8)->SetScience(8);
 
 	//Warpdrive
-	m_pUpgrades.at(9)->SetUpgrade(L"Warpdrive", L"Allows for interstellar travel, giving you an opportunity to escape from the solar system.", 8);
+	m_pUpgrades.at(9)->SetUpgrade(L"WARPDRIVE", L"Allows for interstellar travel, giving you an opportunity to escape from the solar system.", 8);
 	m_pUpgrades.at(9)->AddCost(L"Plasma.png", L"1");
 	m_pUpgrades.at(9)->AddCost(L"Khionerite.png", L"1");
 	m_pUpgrades.at(9)->AddCost(L"Radium.png", L"1");
@@ -283,42 +356,44 @@ bool UpgradeScreenUI::UpdateControllerDisplay() {
 	//Screen and title
 	m_pControllerDisplay = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) + m_pDisplayPadding,
-		m_pObjectiveTextBox.bottom + m_pDisplayPadding,
+		m_pObjectiveDisplayBox.bottom + m_pDisplayPadding,
 		m_pWindowWidth - m_pDisplayPadding,
-		m_pObjectiveTextBox.bottom + 600.0f - m_pDisplayPadding
+		m_pObjectiveDisplayBox.bottom + 600.0f - m_pDisplayPadding
 	);
 
 	m_pControllerTitleBox = D2D1::RectF(
-		m_pControllerDisplay.left,
+		m_pControllerDisplay.left + 20.0f,
 		m_pControllerDisplay.top - 20.0f,
 		m_pControllerDisplay.right,
 		m_pControllerDisplay.top + 20.0f
 	);
 
-	float offset = 20.0f;
+	float offsetX = 30.0f;
+	float offsetY = 40.0f;
 	float buttonSize = 75.0f;
+	float buttonDistance = 20.0f;
 	//Button E
 	m_pButtonE = D2D1::RoundedRect(
 		D2D1::RectF(
-			m_pControllerDisplay.left + offset,
-			m_pControllerDisplay.top + offset,
-			m_pControllerDisplay.left + buttonSize + offset,
-			m_pControllerDisplay.top + buttonSize + offset
+			m_pControllerDisplay.left + offsetX,
+			m_pControllerDisplay.top + offsetY,
+			m_pControllerDisplay.left + buttonSize + offsetX,
+			m_pControllerDisplay.top + buttonSize + offsetY
 		),
 		10.f,
 		10.f
 	);
 
 	m_pButtonBoxE = D2D1::RectF(
-		m_pControllerDisplay.left + offset,
-		m_pControllerDisplay.top + offset,
-		m_pControllerDisplay.left + buttonSize + offset,
-		m_pControllerDisplay.top + buttonSize + offset
+		m_pControllerDisplay.left + offsetX,
+		m_pControllerDisplay.top + offsetY + 20.0f,
+		m_pControllerDisplay.left + buttonSize + offsetX,
+		m_pControllerDisplay.top + buttonSize + offsetY
 	);
 
 	m_pButtonBoxDescriptionE = D2D1::RectF(
-		m_pButtonBoxE.right,
-		m_pButtonBoxE.top,
+		m_pButtonBoxE.right + 10.0f,
+		m_pButtonBoxE.top + 5.0f,
 		m_pButtonBoxE.right + 400.0f,
 		m_pButtonBoxE.bottom
 	);
@@ -326,52 +401,78 @@ bool UpgradeScreenUI::UpdateControllerDisplay() {
 	//Button Q
 	m_pButtonQ = D2D1::RoundedRect(
 		D2D1::RectF(
-			m_pControllerDisplay.left + offset,
-			m_pControllerDisplay.top + offset + buttonSize + 10.0f,
-			m_pControllerDisplay.left + buttonSize + offset,
-			m_pControllerDisplay.top + buttonSize*2 + offset + 10.0f
+			m_pControllerDisplay.left + offsetX,
+			m_pControllerDisplay.top + offsetY + buttonSize + buttonDistance,
+			m_pControllerDisplay.left + buttonSize + offsetX,
+			m_pControllerDisplay.top + buttonSize*2 + offsetY + buttonDistance
 		),
 		10.f,
 		10.f
 	);
 
 	m_pButtonBoxQ = D2D1::RectF(
-			m_pControllerDisplay.left + offset,
-			m_pControllerDisplay.top + offset + buttonSize + 10.0f,
-			m_pControllerDisplay.left + buttonSize + offset,
-			m_pControllerDisplay.top + buttonSize * 2 + offset + 10.0f
+			m_pControllerDisplay.left + offsetX,
+			m_pControllerDisplay.top + offsetY + buttonSize + buttonDistance + 20.0f,
+			m_pControllerDisplay.left + buttonSize + offsetX,
+			m_pControllerDisplay.top + buttonSize * 2 + offsetY + buttonDistance
 	);
 
 	m_pButtonBoxDescriptionQ = D2D1::RectF(
-		m_pButtonBoxQ.right,
-		m_pButtonBoxQ.top,
+		m_pButtonBoxQ.right + 10.0f,
+		m_pButtonBoxQ.top + 5.0f,
 		m_pButtonBoxQ.right + 400.0f,
 		m_pButtonBoxQ.bottom
+	);
+
+	//Button U
+	m_pButtonU = D2D1::RoundedRect(
+		D2D1::RectF(
+			m_pControllerDisplay.left + offsetX,
+			m_pControllerDisplay.top + offsetY + buttonSize * 2.0f + buttonDistance * 2.0f,
+			m_pControllerDisplay.left + buttonSize + offsetX,
+			m_pControllerDisplay.top + buttonSize * 3.0f + offsetY + buttonDistance * 2.0f
+		),
+		10.f,
+		10.f
+	);
+
+	m_pButtonBoxU = D2D1::RectF(
+		m_pControllerDisplay.left + offsetX,
+		m_pControllerDisplay.top + offsetY + buttonSize * 2.0f + buttonDistance * 2.0f + 20.0f,
+		m_pControllerDisplay.left + buttonSize + offsetX,
+		m_pControllerDisplay.top + buttonSize * 3.0f + offsetY + buttonDistance * 2.0f
+	);
+
+	m_pButtonBoxDescriptionU = D2D1::RectF(
+		m_pButtonBoxU.right + 10.0f,
+		m_pButtonBoxU.top + 5.0f,
+		m_pButtonBoxU.right + 400.0f,
+		m_pButtonBoxU.bottom
 	);
 
 
 	//Button W
 	m_pButtonW = D2D1::RoundedRect(
 		D2D1::RectF(
-			m_pControllerDisplay.left + offset,
-			m_pControllerDisplay.bottom - offset - buttonSize - 10.0f,
-			m_pControllerDisplay.left + buttonSize + offset,
-			m_pControllerDisplay.bottom - buttonSize*2.0f - offset - 10.0f
+			m_pControllerDisplay.left + offsetX,
+			m_pControllerDisplay.top + offsetY* 2.0f + buttonSize * 3.0f + buttonDistance * 3.0f,
+			m_pControllerDisplay.left + buttonSize + offsetX,
+			m_pControllerDisplay.top + buttonSize * 4.0f + offsetY* 2.0f + buttonDistance * 3.0f
 		),
 		10.f,
 		10.f
 	);
 
 	m_pButtonBoxW = D2D1::RectF(
-		m_pControllerDisplay.left + offset,
-		m_pControllerDisplay.bottom - offset - buttonSize - 10.0f,
-		m_pControllerDisplay.left + buttonSize + offset,
-		m_pControllerDisplay.bottom - buttonSize * 2.0f - offset - 10.0f
+		m_pControllerDisplay.left + offsetX,
+		m_pControllerDisplay.top + offsetY*2.0f + buttonSize * 3.0f + buttonDistance * 3.0f + 20.0f,
+		m_pControllerDisplay.left + buttonSize + offsetX,
+		m_pControllerDisplay.top + buttonSize * 4.0f + offsetY*2.0f + buttonDistance * 3.0f
 	);
 
 	m_pButtonBoxDescriptionW = D2D1::RectF(
-		m_pButtonBoxW.right,
-		m_pButtonBoxW.top,
+		m_pButtonBoxW.right + 10.0f,
+		m_pButtonBoxW.top + 5.0f,
 		m_pButtonBoxW.right + 400.0f,
 		m_pButtonBoxW.bottom
 	);
@@ -380,76 +481,49 @@ bool UpgradeScreenUI::UpdateControllerDisplay() {
 	//Button S
 	m_pButtonS = D2D1::RoundedRect(
 		D2D1::RectF(
-			m_pControllerDisplay.left + offset,
-			m_pControllerDisplay.bottom - offset,
-			m_pControllerDisplay.left + buttonSize + offset,
-			m_pControllerDisplay.bottom - buttonSize - offset
+			m_pControllerDisplay.left + offsetX,
+			m_pControllerDisplay.top + offsetY* 2.0f + buttonSize * 4.0f + buttonDistance * 4.0f,
+			m_pControllerDisplay.left + buttonSize + offsetX,
+			m_pControllerDisplay.top + buttonSize * 5.0f + offsetY* 2.0f + buttonDistance * 4.0f
 		),
 		10.f,
 		10.f
 	);
 
 	m_pButtonBoxS = D2D1::RectF(
-		m_pControllerDisplay.left + offset,
-		m_pControllerDisplay.bottom - offset,
-		m_pControllerDisplay.left + buttonSize + offset,
-		m_pControllerDisplay.bottom - buttonSize - offset
+		m_pControllerDisplay.left + offsetX,
+		m_pControllerDisplay.top + offsetY* 2.0f + buttonSize * 4.0f + buttonDistance * 4.0f + 20.0f,
+		m_pControllerDisplay.left + buttonSize + offsetX,
+		m_pControllerDisplay.top + buttonSize * 5.0f + offsetY* 2.0f + buttonDistance * 4.0f
 	);
 
 	m_pButtonBoxDescriptionS = D2D1::RectF(
-		m_pButtonBoxS.right,
-		m_pButtonBoxS.top,
+		m_pButtonBoxS.right + 10.0f,
+		m_pButtonBoxS.top + 5.0f,
 		m_pButtonBoxS.right + 400.0f,
 		m_pButtonBoxS.bottom
 	);
 
-
-	//Button U
-	m_pButtonU = D2D1::RoundedRect(
-		D2D1::RectF(
-			m_pControllerDisplay.left + offset,
-			m_pControllerDisplay.top + offset + buttonSize*2.0f + 10.0f*2.0f,
-			m_pControllerDisplay.left + buttonSize + offset,
-			m_pControllerDisplay.top + buttonSize * 3.0f + offset + 10.0f*2.0f
-		),
-		10.f,
-		10.f
-	);
-
-	m_pButtonBoxU = D2D1::RectF(
-		m_pControllerDisplay.left + offset,
-		m_pControllerDisplay.top + offset + buttonSize * 2.0f + 10.0f * 2.0f,
-		m_pControllerDisplay.left + buttonSize + offset,
-		m_pControllerDisplay.top + buttonSize * 3.0f + offset + 10.0f * 2.0f
-	);
-
-	m_pButtonBoxDescriptionU = D2D1::RectF(
-		m_pButtonBoxU.right,
-		m_pButtonBoxU.top,
-		m_pButtonBoxU.right + 400.0f,
-		m_pButtonBoxU.bottom
-	);
-
 	//Mouse
 	m_pMousePosition = D2D1::RectF(
-		m_pControllerDisplay.right - offset,
-		m_pControllerDisplay.top + offset,
-		m_pControllerDisplay.right - 450.0f - offset,
-		m_pControllerDisplay.top + 450.0f + offset
+		m_pControllerDisplay.right - offsetX,
+		m_pControllerDisplay.top + offsetX,
+		m_pControllerDisplay.right - 450.0f - offsetX,
+		m_pControllerDisplay.top + 450.0f + offsetX
 	);
 
 	m_pButtonBoxDescriptionLeft = D2D1::RectF(
-		m_pControllerDisplay.right - offset,
-		m_pControllerDisplay.top + offset,
-		m_pControllerDisplay.right - 450.0f - offset,
-		m_pMousePosition.top
+		m_pControllerDisplay.right - offsetX,
+		m_pControllerDisplay.top + offsetX + 90.0f,
+		m_pControllerDisplay.right - 380.0f - offsetX,
+		m_pMousePosition.top + 110.0f
 	);
 
 	m_pMouseBoxDescription = D2D1::RectF(
-		m_pControllerDisplay.right - offset,
-		m_pMousePosition.bottom,
-		m_pControllerDisplay.right - 450.0f - offset,
-		m_pControllerDisplay.bottom - offset
+		m_pControllerDisplay.right - offsetX,
+		m_pMousePosition.bottom - 25.0f,
+		m_pControllerDisplay.right - 355.0f - offsetX,
+		m_pControllerDisplay.bottom - offsetX
 	);
 	return true;
 }
@@ -469,7 +543,7 @@ bool UpgradeScreenUI::UpdateResourceList() {
 	);
 
 	m_pInventoryTitleBox = D2D1::RectF(
-		m_pResourceDisplay.left,
+		m_pResourceDisplay.left + 20.0f,
 		m_pResourceDisplay.top - 20.0f,
 		m_pResourceDisplay.right,
 		m_pResourceDisplay.top + 20.0f
@@ -490,7 +564,7 @@ bool UpgradeScreenUI::UpdateResourceList() {
 		//Create square for text
 		m_pAmountTextbox.push_back(D2D1::RectF(
 			m_pResourcePosition.at(m_pResourcePosition.size() - 1).right + 5.0f,
-			m_pResourcePosition.at(m_pResourcePosition.size() - 1).top,
+			m_pResourcePosition.at(m_pResourcePosition.size() - 1).top + 20.0f,
 			m_pResourcePosition.at(m_pResourcePosition.size() - 1).right + iconSize + 5.0f,
 			m_pResourcePosition.at(m_pResourcePosition.size() - 1).bottom
 		));
@@ -498,7 +572,7 @@ bool UpgradeScreenUI::UpdateResourceList() {
 		m_pDescriptionTextbox.push_back(D2D1::RectF(
 			m_pResourcePosition.at(m_pResourcePosition.size() - 1).left - 20.0f,
 			m_pResourcePosition.at(m_pResourcePosition.size() - 1).top - 25.0f,
-			m_pResourcePosition.at(m_pResourcePosition.size() - 1).right + iconSize + 20.0f,
+			m_pResourcePosition.at(m_pResourcePosition.size() - 1).right + 20.0f,
 			m_pResourcePosition.at(m_pResourcePosition.size() - 1).top + 5.0f
 		));
 
@@ -526,6 +600,14 @@ bool UpgradeScreenUI::UpdateResourceList() {
 	return true;
 }
 
+bool UpgradeScreenUI::UpdateTools() {
+	m_pMainGradientBrush->SetStartPoint(D2D1::Point2F(m_pControllerDisplay.left, m_pWindowHeight));
+	m_pMainGradientBrush->SetEndPoint(D2D1::Point2F(m_pControllerDisplay.right, m_pWindowHeight));
+	m_pCornerGradientBrush->SetStartPoint(D2D1::Point2F(0.0f, m_pWindowHeight));
+	m_pCornerGradientBrush->SetEndPoint(D2D1::Point2F(0.0f, m_pWindowHeight));
+	return true;
+}
+
 bool UpgradeScreenUI::UpdateModules() {
     if (!UpdateScreen()) {
         return false;
@@ -542,27 +624,64 @@ bool UpgradeScreenUI::UpdateModules() {
 	if (!UpdateResourceList()) {
 		return false;
 	}
+	if (!UpdateTools()) {
+		return false;
+	}
     return true;
 }
 
 void UpgradeScreenUI::RenderScreen() {
-	this->UpdateBrush(m_pGray, 1.0f);
+	this->UpdateBrush(m_pGray, 0.25f);
 	m_pRenderTarget2D->FillRectangle(m_pScreen, m_pBrush.Get());
+	m_pRenderTarget2D->FillRectangle(m_pScreen, m_pCornerGradientBrush.Get());
 }
 
 void UpgradeScreenUI::RenderObjective() {
+	m_pObjectiveFormat.Get()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+	m_pFormat.Get()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+	this->UpdateBrush(m_pGray, 1.0f);
+	m_pRenderTarget2D->FillRectangle(m_pObjectiveDisplayBox, m_pBrush.Get());
 	this->UpdateBrush(m_pDarkblue, 0.5f);
-	m_pRenderTarget2D->FillRectangle(m_pObjectiveTextBox, m_pBrush.Get());
+	m_pRenderTarget2D->FillRectangle(m_pObjectiveDisplayBox, m_pBrush.Get());
+
+	//Grid for the square
+	unsigned int gridSize = 25;
+	this->UpdateBrush(m_pCyan, 0.25f);
+	for (float x = m_pObjectiveDisplayBox.left; x < m_pObjectiveDisplayBox.right; x += gridSize)
+	{
+		m_pRenderTarget2D->DrawLine(
+			D2D1::Point2F(static_cast<FLOAT>(x), m_pObjectiveDisplayBox.top),
+			D2D1::Point2F(static_cast<FLOAT>(x), m_pObjectiveDisplayBox.bottom),
+			m_pBrush.Get(),
+			0.5f
+		);
+	}
+
+	for (float y = m_pObjectiveDisplayBox.top; y < m_pObjectiveDisplayBox.bottom; y += gridSize)
+	{
+		m_pRenderTarget2D->DrawLine(
+			D2D1::Point2F(m_pObjectiveDisplayBox.left, static_cast<FLOAT>(y)),
+			D2D1::Point2F(m_pObjectiveDisplayBox.right, static_cast<FLOAT>(y)),
+			m_pBrush.Get(),
+			0.5f
+		);
+	}
+
+	m_pRenderTarget2D->FillRectangle(&m_pObjectiveDisplayBox, m_pMainGradientBrush.Get());
+
+	UpdateBrush(m_pWhite, 0.5f);
+	m_pRenderTarget2D->DrawRectangle(m_pObjectiveDisplayBox, m_pBrush.Get());
 
 	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pObjectiveText.c_str(),
 		(UINT32)m_pObjectiveText.length(),
-		m_pFormat.Get(),
+		m_pObjectiveFormat.Get(),
 		m_pObjectiveTextBox,
 		m_pBrush.Get()
 	);
 
+	this->UpdateBrush(m_pYellow, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pObjectiveTitle.c_str(),
 		(UINT32)m_pObjectiveTitle.length(),
@@ -579,10 +698,42 @@ void UpgradeScreenUI::RenderUpgrades() {
 }
 
 void UpgradeScreenUI::RenderControllerDisplay() {
+	m_pObjectiveFormat.Get()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	this->UpdateBrush(m_pGray, 1.0f);
+	m_pRenderTarget2D->FillRectangle(m_pControllerDisplay, m_pBrush.Get());
 	this->UpdateBrush(m_pDarkblue, 0.5f);
 	m_pRenderTarget2D->FillRectangle(m_pControllerDisplay, m_pBrush.Get());
 
-	this->UpdateBrush(m_pWhite, 1.0f);
+	//Grid for the square
+	unsigned int gridSize = 25;
+	this->UpdateBrush(m_pCyan, 0.25f);
+	for (float x = m_pControllerDisplay.left; x < m_pControllerDisplay.right; x += gridSize)
+	{
+		m_pRenderTarget2D->DrawLine(
+			D2D1::Point2F(static_cast<FLOAT>(x), m_pControllerDisplay.top),
+			D2D1::Point2F(static_cast<FLOAT>(x), m_pControllerDisplay.bottom),
+			m_pBrush.Get(),
+			0.5f
+		);
+	}
+
+	for (float y = m_pControllerDisplay.top; y < m_pControllerDisplay.bottom; y += gridSize)
+	{
+		m_pRenderTarget2D->DrawLine(
+			D2D1::Point2F(m_pControllerDisplay.left, static_cast<FLOAT>(y)),
+			D2D1::Point2F(m_pControllerDisplay.right, static_cast<FLOAT>(y)),
+			m_pBrush.Get(),
+			0.5f
+		);
+	}
+
+	m_pRenderTarget2D->FillRectangle(&m_pControllerDisplay, m_pMainGradientBrush.Get());
+
+	UpdateBrush(m_pWhite, 0.5f);
+	m_pRenderTarget2D->DrawRectangle(m_pControllerDisplay, m_pBrush.Get());
+
+
+	this->UpdateBrush(m_pYellow, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pControllerTitle.c_str(),
 		(UINT32)m_pControllerTitle.length(),
@@ -591,23 +742,26 @@ void UpgradeScreenUI::RenderControllerDisplay() {
 		m_pBrush.Get()
 	);
 
-	this->UpdateBrush(m_pYellow, 0.5f);
+	this->UpdateBrush(m_pLightGray, 1.0f);
 	m_pRenderTarget2D->FillRoundedRectangle(m_pButtonE, m_pBrush.Get());
 	m_pRenderTarget2D->FillRoundedRectangle(m_pButtonQ, m_pBrush.Get());
 	m_pRenderTarget2D->FillRoundedRectangle(m_pButtonW, m_pBrush.Get());
 	m_pRenderTarget2D->FillRoundedRectangle(m_pButtonS, m_pBrush.Get());
 	m_pRenderTarget2D->FillRoundedRectangle(m_pButtonU, m_pBrush.Get());
+	this->UpdateBrush(m_pWhite, 1.0f);
+	float edgeSize = 5.0f;
+	m_pRenderTarget2D->DrawRoundedRectangle(m_pButtonE, m_pBrush.Get(), edgeSize);
+	m_pRenderTarget2D->DrawRoundedRectangle(m_pButtonQ, m_pBrush.Get(), edgeSize);
+	m_pRenderTarget2D->DrawRoundedRectangle(m_pButtonW, m_pBrush.Get(), edgeSize);
+	m_pRenderTarget2D->DrawRoundedRectangle(m_pButtonS, m_pBrush.Get(), edgeSize);
+	m_pRenderTarget2D->DrawRoundedRectangle(m_pButtonU, m_pBrush.Get(), edgeSize);
 
 	//Button E
-	this->UpdateBrush(m_pWhite, 0.25f);
-	m_pRenderTarget2D->FillRectangle(m_pButtonBoxE, m_pBrush.Get());
-	m_pRenderTarget2D->FillRectangle(m_pButtonBoxDescriptionE, m_pBrush.Get());
-
 	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pButtonTextE.c_str(),
 		(UINT32)m_pButtonTextE.length(),
-		m_pFormat.Get(),
+		m_pObjectiveFormat.Get(),
 		m_pButtonBoxE,
 		m_pBrush.Get()
 	);
@@ -621,15 +775,11 @@ void UpgradeScreenUI::RenderControllerDisplay() {
 	);
 
 	//Button Q
-	this->UpdateBrush(m_pWhite, 0.25f);
-	m_pRenderTarget2D->FillRectangle(m_pButtonBoxQ, m_pBrush.Get());
-	m_pRenderTarget2D->FillRectangle(m_pButtonBoxDescriptionQ, m_pBrush.Get());
-
 	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pButtonTextQ.c_str(),
 		(UINT32)m_pButtonTextQ.length(),
-		m_pFormat.Get(),
+		m_pObjectiveFormat.Get(),
 		m_pButtonBoxQ,
 		m_pBrush.Get()
 	);
@@ -643,15 +793,11 @@ void UpgradeScreenUI::RenderControllerDisplay() {
 	);
 
 	//Button W
-	this->UpdateBrush(m_pWhite, 0.25f);
-	m_pRenderTarget2D->FillRectangle(m_pButtonBoxW, m_pBrush.Get());
-	m_pRenderTarget2D->FillRectangle(m_pButtonBoxDescriptionW, m_pBrush.Get());
-
 	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pButtonTextW.c_str(),
 		(UINT32)m_pButtonTextW.length(),
-		m_pFormat.Get(),
+		m_pObjectiveFormat.Get(),
 		m_pButtonBoxW,
 		m_pBrush.Get()
 	);
@@ -665,15 +811,11 @@ void UpgradeScreenUI::RenderControllerDisplay() {
 	);
 
 	//Button S
-	this->UpdateBrush(m_pWhite, 0.25f);
-	m_pRenderTarget2D->FillRectangle(m_pButtonBoxS, m_pBrush.Get());
-	m_pRenderTarget2D->FillRectangle(m_pButtonBoxDescriptionS, m_pBrush.Get());
-
 	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pButtonTextS.c_str(),
 		(UINT32)m_pButtonTextS.length(),
-		m_pFormat.Get(),
+		m_pObjectiveFormat.Get(),
 		m_pButtonBoxS,
 		m_pBrush.Get()
 	);
@@ -687,15 +829,11 @@ void UpgradeScreenUI::RenderControllerDisplay() {
 	);
 
 	//Button U
-	this->UpdateBrush(m_pWhite, 0.25f);
-	m_pRenderTarget2D->FillRectangle(m_pButtonBoxU, m_pBrush.Get());
-	m_pRenderTarget2D->FillRectangle(m_pButtonBoxDescriptionU, m_pBrush.Get());
-
 	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pButtonTextU.c_str(),
 		(UINT32)m_pButtonTextU.length(),
-		m_pFormat.Get(),
+		m_pObjectiveFormat.Get(),
 		m_pButtonBoxU,
 		m_pBrush.Get()
 	);
@@ -713,6 +851,7 @@ void UpgradeScreenUI::RenderControllerDisplay() {
 		m_pRenderTarget2D->DrawBitmap(m_pMouseBitmap, m_pMousePosition);
 	}
 
+	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pButtonTextDescriptionLeft.c_str(),
 		(UINT32)m_pButtonTextDescriptionLeft.length(),
@@ -731,8 +870,38 @@ void UpgradeScreenUI::RenderControllerDisplay() {
 }
 
 void UpgradeScreenUI::RenderResourceList() {
+	this->UpdateBrush(m_pGray, 1.0f);
+	m_pRenderTarget2D->FillRectangle(m_pResourceDisplay, m_pBrush.Get());
 	this->UpdateBrush(m_pDarkblue, 0.5f);
 	m_pRenderTarget2D->FillRectangle(m_pResourceDisplay, m_pBrush.Get());
+
+	//Grid for the square
+	unsigned int gridSize = 25;
+	this->UpdateBrush(m_pCyan, 0.25f);
+	for (float x = m_pResourceDisplay.left; x < m_pResourceDisplay.right; x += gridSize)
+	{
+		m_pRenderTarget2D->DrawLine(
+			D2D1::Point2F(static_cast<FLOAT>(x), m_pResourceDisplay.top),
+			D2D1::Point2F(static_cast<FLOAT>(x), m_pResourceDisplay.bottom),
+			m_pBrush.Get(),
+			0.5f
+		);
+	}
+
+	for (float y = m_pResourceDisplay.top; y < m_pResourceDisplay.bottom; y += gridSize)
+	{
+		m_pRenderTarget2D->DrawLine(
+			D2D1::Point2F(m_pResourceDisplay.left, static_cast<FLOAT>(y)),
+			D2D1::Point2F(m_pResourceDisplay.right, static_cast<FLOAT>(y)),
+			m_pBrush.Get(),
+			0.5f
+		);
+	}
+
+	m_pRenderTarget2D->FillRectangle(&m_pResourceDisplay, m_pMainGradientBrush.Get());
+
+	UpdateBrush(m_pWhite, 0.5f);
+	m_pRenderTarget2D->DrawRectangle(m_pResourceDisplay, m_pBrush.Get());
 
 	unsigned int i = 0;
 	for (auto const& bitmap : m_pResourceBitmap) {
@@ -755,9 +924,6 @@ void UpgradeScreenUI::RenderResourceList() {
 			m_pDescriptionTextbox.at(i),
 			m_pBrush.Get()
 		);
-
-		this->UpdateBrush(D2D1::ColorF::Red, 0.25f);
-		m_pRenderTarget2D->FillRectangle(m_pDescriptionTextbox.at(i), m_pBrush.Get());
 		i++;
 	}
 
@@ -765,7 +931,7 @@ void UpgradeScreenUI::RenderResourceList() {
 		m_pRenderTarget2D->DrawBitmap(m_pScienceBitmap, m_pSciencePosition);
 	}
 
-	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	this->UpdateBrush(m_pWhite, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pRequirement.c_str(),
 		(UINT32)m_pRequirement.length(),
@@ -774,6 +940,7 @@ void UpgradeScreenUI::RenderResourceList() {
 		m_pBrush.Get()
 	);
 
+	this->UpdateBrush(m_pYellow, 1.0f);
 	m_pRenderTarget2D.Get()->DrawTextW(
 		m_pInventoryTitle.c_str(),
 		(UINT32)m_pInventoryTitle.length(),

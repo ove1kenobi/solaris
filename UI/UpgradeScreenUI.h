@@ -14,6 +14,10 @@ private:
 	Resources m_inventory;
 
 	//Colors
+	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pMainGradientBrush;
+	Microsoft::WRL::ComPtr<ID2D1GradientStopCollection> m_pMainGradientStops;
+	Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> m_pCornerGradientBrush;
+	Microsoft::WRL::ComPtr<ID2D1GradientStopCollection> m_pCornerGradientStops;
 	UINT32 m_pYellow;
 	UINT32 m_pWhite;
 	UINT32 m_pCyan;
@@ -26,8 +30,10 @@ private:
 	std::vector<UpgradeUI*> m_pUpgrades;
 
 	//Objective description
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pObjectiveFormat;
 	D2D1_RECT_F m_pObjectiveTitleBox;
 	std::wstring m_pObjectiveTitle;
+	D2D1_RECT_F m_pObjectiveDisplayBox;
 	D2D1_RECT_F m_pObjectiveTextBox;
 	std::wstring m_pObjectiveText;
 
@@ -103,12 +109,14 @@ private:
 	bool CreateUpgrades();
 	bool CreateControllerDisplay();
 	bool CreateResourceList();
+	bool CreateTools();
 
 	bool UpdateScreen();
 	bool UpdateObjective();
 	bool UpdateUpgrades();
 	bool UpdateControllerDisplay();
 	bool UpdateResourceList();
+	bool UpdateTools();
 
 	bool UpdateModules();
 

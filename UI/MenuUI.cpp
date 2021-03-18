@@ -8,6 +8,8 @@ MenuUI::MenuUI() noexcept {
 	m_pTitleTextBox = D2D1::RectF();
 	m_pTitleText = L"SOLARIS";
 	m_pStartText = L"START";
+	m_pControlsText = L"CONTROLS";
+	m_pCreditsText = L"CREDITS";
 	m_pExitText = L"EXIT GAME";
 
 	m_pWhite = 0xFFFDF9;
@@ -97,20 +99,38 @@ bool MenuUI::UpdateTitle() {
 }
 
 bool MenuUI::UpdateButtons() {
+	float buttonSize = 50.0f;
+	float buttonPadding = 25.0f;
 	//Height 50
 	m_pStartTextBox = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) - 120.0f,
-		(m_pWindowHeight / 2.0f) + 175.0f,
+		(m_pWindowHeight / 2.0f) + 150.0f,
 		(m_pWindowWidth / 2.0f) + 120.0f,
-		(m_pWindowHeight / 2.0f) + 225.0f
+		(m_pWindowHeight / 2.0f) + 200.0f
+	);
+
+	//Height 50
+	m_pControlsTextBox = D2D1::RectF(
+		(m_pWindowWidth / 2.0f) - 180.0f,
+		m_pStartTextBox.bottom + buttonPadding,
+		(m_pWindowWidth / 2.0f) + 180.0f,
+		m_pStartTextBox.bottom + buttonSize + buttonPadding
+	);
+
+	//Height 50
+	m_pCreditsTextBox = D2D1::RectF(
+		(m_pWindowWidth / 2.0f) - 180.0f,
+		m_pControlsTextBox.bottom + buttonPadding,
+		(m_pWindowWidth / 2.0f) + 180.0f,
+		m_pControlsTextBox.bottom + buttonSize + buttonPadding
 	);
 
 	//Height 50
 	m_pExitTextBox = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) - 180.0f,
-		(m_pWindowHeight / 2.0f) + 275.0f,
+		m_pCreditsTextBox.bottom + buttonPadding,
 		(m_pWindowWidth / 2.0f) + 180.0f,
-		(m_pWindowHeight / 2.0f) + 325.0f
+		m_pCreditsTextBox.bottom + buttonSize + buttonPadding
 	);
 	return true;
 }
@@ -200,12 +220,50 @@ void MenuUI::RenderScreen() {
 	}
 }
 
+void MenuUI::RenderControls() {
+	//if hover
+	if (m_pMouseX > m_pControlsTextBox.left && m_pMouseX < m_pControlsTextBox.right &&
+		m_pMouseY > m_pControlsTextBox.top && m_pMouseY < m_pControlsTextBox.bottom) {
+		this->UpdateBrush(m_pHighlight, 1.0f);
+	}
+	else {
+		this->UpdateBrush(m_pWhite, 1.0f);
+	}
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pControlsText.c_str(),
+		(UINT32)m_pControlsText.length(),
+		m_pButtonFormat.Get(),
+		m_pControlsTextBox,
+		m_pBrush.Get()
+	);
+}
+
+void MenuUI::RenderCredits() {
+	//if hover
+	if (m_pMouseX > m_pCreditsTextBox.left && m_pMouseX < m_pCreditsTextBox.right &&
+		m_pMouseY > m_pCreditsTextBox.top && m_pMouseY < m_pCreditsTextBox.bottom) {
+		this->UpdateBrush(m_pHighlight, 1.0f);
+	}
+	else {
+		this->UpdateBrush(m_pWhite, 1.0f);
+	}
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pCreditsText.c_str(),
+		(UINT32)m_pCreditsText.length(),
+		m_pButtonFormat.Get(),
+		m_pCreditsTextBox,
+		m_pBrush.Get()
+	);
+}
+
 void MenuUI::Render() {
 	this->BeginFrame();
 
 	RenderScreen();
 	RenderTitle();
 	RenderStart();
+	RenderControls();
+	RenderCredits();
 	RenderExit();
 
 	this->EndFrame();
