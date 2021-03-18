@@ -140,17 +140,17 @@ void MousePicking::DisplayPickedObject(const bool& hasAntenna) noexcept
 				EventBuss::Get().Delegate(pde);
 			}
 		}
-		//if (m_IsCurrentlyPicking == false)
-		//{
-		//	PlaySoundEvent playSoundEvent(SoundID::Beep, false);
-		//	EventBuss::Get().Delegate(playSoundEvent);
-		//	m_IsCurrentlyPicking = true;
-		//}
+		if (m_IsCurrentlyPicking == false)
+		{
+			PlaySoundEvent playSoundEvent(SoundID::Scan, false);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsCurrentlyPicking = true;
+		}
 	}
 	else
 	{
 		DelegatePlanetDistanceEvent pde(0.0f, L"");
 		EventBuss::Get().Delegate(pde);
-		//m_IsCurrentlyPicking = false;
+		m_IsCurrentlyPicking = false;
 	}
 }

@@ -226,8 +226,6 @@ void MenuUI::Render() {
 	RenderStart();
 	RenderExit();
 
-	//RenderHelpGrid(50);
-
 	this->EndFrame();
 }
 
@@ -262,6 +260,8 @@ void MenuUI::OnEvent(IEvent& event) noexcept {
 			if (m_pMouseX > m_pStartTextBox.left && m_pMouseX < m_pStartTextBox.right &&
 				m_pMouseY > m_pStartTextBox.top && m_pMouseY < m_pStartTextBox.bottom) {
 				m_pOnScreen = false;
+				PlaySoundEvent playSoundEvent(SoundID::Click, false);
+				EventBuss::Get().Delegate(playSoundEvent);
 				ToggleStartGame sg;
 				EventBuss::Get().Delegate(sg);
 			}
@@ -269,6 +269,8 @@ void MenuUI::OnEvent(IEvent& event) noexcept {
 			if (m_pMouseX > m_pExitTextBox.left && m_pMouseX < m_pExitTextBox.right &&
 				m_pMouseY > m_pExitTextBox.top && m_pMouseY < m_pExitTextBox.bottom) {
 				m_pOnScreen = false;
+				PlaySoundEvent playSoundEvent(SoundID::Click, false);
+				EventBuss::Get().Delegate(playSoundEvent);
 				WindowCloseEvent ce;
 				EventBuss::Get().Delegate(ce);
 			}

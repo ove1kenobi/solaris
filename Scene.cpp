@@ -495,9 +495,7 @@ void Scene::Update() noexcept {
 				m_damageTimer = 0.0f;
 			}
 		}
-		
 	}
-	
 
 	//Radioactive planets
 	if (!radioactiveUpgrade) {

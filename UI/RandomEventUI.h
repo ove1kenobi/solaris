@@ -23,6 +23,7 @@ private:
 	std::vector<std::wstring> m_pIconAmount;
 
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pIconTextFormat;
+	bool m_pSelected;
 
 	//Sound logic:
 	bool m_IsHovering;

@@ -9,34 +9,15 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pPlanetNameTextBox = D2D1::RectF();
 	m_pPlanetFlavourTextBox = D2D1::RectF();
 
+	m_pMouseX = 0u;
+	m_pMouseY = 0u;
+
 	m_pRandomEvents.push_back(new RandomEventUI());
 	m_pRandomEvents.push_back(new RandomEventUI());
 	m_pRandomEvents.push_back(new RandomEventUI());
 
 	//Has to start on try to be able to enter planet interaction for the first time
 	m_gameEventSelected = true;
-
-	m_pPlanetFlavourText = L"Luke Skywalker has returned to his home planet of Tatooine in an attempt "
-		L"to rescue his friend Han Solo from the clutches of the vile gangster Jabba the Hutt."
-		L" Little does Luke know that the GALACTIC EMPIRE has secretly begun construction on a new "
-		L"armored space station even more powerful than the first dreaded Death Star."
-		L"When completed, this ultimate weapon will spell certain doom for the small band "
-		L"of rebels struggling to restore freedom to the galaxy...";
-
-	m_pRandomEvents.at(0)->SetText(L"It is a period of civil war. Rebel spaceships, striking from a hidden base, "
-		L"have won their first victory against the evil Galactic Empire. During the battle, "
-		L"Rebel spies managed to steal secret plans to the Empire?s ultimate weapon, the death star, "
-		L"an armored space station with enough power to destroy an entire planet. ");
-
-	m_pRandomEvents.at(1)->SetText(L"It is a dark time for the Rebellion.Although the Death Star has been destroyed, "
-		L"Imperial troops have driven the Rebel forces from their hidden baseand pursued them across the galaxy."
-		L"Evading the dreaded Imperial Starfleet, a group of freedom fighters led by Luke Skywalker has"
-		L" established a new secret base on the remote ice world of Hoth.");
-
-	m_pRandomEvents.at(2)->SetText(L"Turmoil has engulfed the Galactic Republic. "
-		L"The taxation of trade routes to outlying star systems is in dispute."
-		L"Hoping to resolve the matter with a blockade of deadly battleships, "
-		L"the greedy Trade Federation has stopped all shipping to the small planet of Naboo.");
 
 	m_pYellow = 0xFFB724;
 	m_pWhite = 0xFFFDF9;		
@@ -45,6 +26,10 @@ PlanetInteractionUI::PlanetInteractionUI() noexcept {
 	m_pLightGray = 0x636363;	
 	m_pLightBlue = 0x0BA4CC;
 	m_pDarkblue = 0x2741b4;	
+
+	m_pScreenOffset = 0.0f;
+	m_pPadding = 0.0f;
+	m_pBlockSize = 0.0f;
 
 }
 
@@ -802,6 +787,8 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 			for (unsigned int i = 0; i < m_pRandomEvents.size(); i++) {
 				if (m_pRandomEvents.at(i)->OnClick(m_pMouseX, m_pMouseY, m_availableGameEvents[i])) {
 					SetIcons(i, m_availableGameEvents[i].reward);
+					PlaySoundEvent playSoundEvent(SoundID::Click, false);
+					EventBuss::Get().Delegate(playSoundEvent);
 					m_gameEventSelected = true;
 					selected = i;
 				};
@@ -827,8 +814,7 @@ void PlanetInteractionUI::OnEvent(IEvent& event) noexcept {
 	case EventType::DelegatePlayerInfoEvent:
 	{
 		DelegatePlayerInfoEvent& derivedEvent = static_cast<DelegatePlayerInfoEvent&>(event);
-		m_pPlayerInfo = derivedEvent.GetPlayerInfo();
-		SetPlanetName(m_pPlayerInfo->closestPlanet->GetName());
+		SetPlanetName(derivedEvent.GetPlayerInfo()->closestPlanet->GetName());
 		break;
 	}
 	default:

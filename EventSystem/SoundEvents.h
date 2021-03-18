@@ -7,10 +7,13 @@ enum class SoundID {
 	AsteroidCollision,
 	ThrustersEnd,
 	Stabilizers,
-	//Beep,
 	EventScreen,
 	Hover,
-	PayUpgrade
+	PayUpgrade,
+	Wrong,
+	Warning,
+	Click,
+	Scan
 };
 
 enum class MusicID {

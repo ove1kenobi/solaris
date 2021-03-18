@@ -47,11 +47,6 @@ bool SoundManager::Initialize(float musicVolume, float sfxVolumn)
 	else
 		m_sounds.push_back(buffer);
 
-	//	if (!buffer.loadFromFile("Sounds/beep.wav"))
-	//		return false;
-	//	else
-	//		m_sounds.push_back(buffer);
-
 	if (!buffer.loadFromFile("Sounds/event_screen.wav"))
 		return false;
 	else
@@ -63,6 +58,25 @@ bool SoundManager::Initialize(float musicVolume, float sfxVolumn)
 		m_sounds.push_back(buffer);
 
 	if (!buffer.loadFromFile("Sounds/pay_upgrade.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/wrong.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/warning.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+
+	if (!buffer.loadFromFile("Sounds/click.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
+	if (!buffer.loadFromFile("Sounds/scan.wav"))
 		return false;
 	else
 		m_sounds.push_back(buffer);

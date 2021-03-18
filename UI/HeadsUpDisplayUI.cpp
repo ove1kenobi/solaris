@@ -37,6 +37,12 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pRadiationTextBox = D2D1::RectF();
 	m_pRadiationText = L"RADIATION AREA";
 
+	m_pStabilizerText = L"Stabilizer";
+	m_pStabilizer = true;
+
+	m_pVelocityText = L"330";
+	m_pUnitText = L"m/s";
+
 	m_pWhite = 0xFFFDF9;
 	m_pYellow = 0xFFB724;
 	m_pBlue = 0x0BA4CC;
@@ -48,6 +54,7 @@ HeadsUpDisplayUI::HeadsUpDisplayUI() {
 	m_pRenderCold = false;
 	m_pRenderHeat = false;
 	m_pRenderRadiation = false;
+	m_IsInColdDangerZone = m_IsInHotDangerZone = m_IsInRadiationDangerZone = false;
 }
 
 HeadsUpDisplayUI::~HeadsUpDisplayUI() {
@@ -77,6 +84,9 @@ bool HeadsUpDisplayUI::Initialize() {
 		return false;
 	}
 	if (!CreateDamageModules()) {
+		return false;
+	}
+	if (!CreateVelocity()) {
 		return false;
 	}
 	return true;
@@ -198,6 +208,20 @@ bool HeadsUpDisplayUI::CreateDamageModules() {
 	return true;
 }
 
+bool HeadsUpDisplayUI::CreateVelocity() {
+	ErrorCheck(m_pTextFactory->CreateTextFormat(
+		L"Tenika",
+		NULL,
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		80.0f,
+		L"en-us",
+		&m_pVelocityFormat
+	), "TextFormat");
+	return true;
+}
+
 bool HeadsUpDisplayUI::CreateTools() {
 	return this->CreateBrush();
 }
@@ -296,7 +320,7 @@ bool HeadsUpDisplayUI::UpdateBars() {
 	);
 
 	m_pCapacityTextBox = D2D1::RectF(
-		m_pRightDisplayScreen.left + ((m_pRightDisplayScreen.right - m_pRightDisplayScreen.left) / 2.0f),
+		m_pRightDisplayScreen.left + 300.0f,
 		m_pCapacityIcon.top,
 		barRight,
 		m_pCapacityIcon.bottom
@@ -308,9 +332,9 @@ bool HeadsUpDisplayUI::UpdateWarningModule() {
 	bool updated = false;
 
 	m_pWarningTextBox = D2D1::RectF(
-		m_pCapacityTextBox.left - 50.0f,
+		m_pCapacityTextBox.left - 30.0f,
 		m_pCapacityTextBox.bottom,
-		m_pCapacityTextBox.left - 20.0f,
+		m_pCapacityTextBox.left - 0.0f,
 		m_pCapacityTextBox.bottom - 22.0f
 	);
 
@@ -318,12 +342,12 @@ bool HeadsUpDisplayUI::UpdateWarningModule() {
 		m_pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
 		m_pSink->BeginFigure(
-			D2D1::Point2F(m_pCapacityTextBox.left - 50.0f, m_pCapacityTextBox.bottom),
+			D2D1::Point2F(m_pCapacityTextBox.left - 30.0f, m_pCapacityTextBox.bottom),
 			D2D1_FIGURE_BEGIN_FILLED
 		);
 		D2D1_POINT_2F points[] = {
-			D2D1::Point2F(m_pCapacityTextBox.left - 20.0f, m_pCapacityTextBox.bottom),
-			D2D1::Point2F(m_pCapacityTextBox.left - 35.0f, m_pCapacityTextBox.bottom - 26.0f)
+			D2D1::Point2F(m_pCapacityTextBox.left - 0.0f, m_pCapacityTextBox.bottom),
+			D2D1::Point2F(m_pCapacityTextBox.left - 15.0f, m_pCapacityTextBox.bottom - 26.0f)
 		};
 		m_pSink->AddLines(points, ARRAYSIZE(points));
 		m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
@@ -386,6 +410,39 @@ bool HeadsUpDisplayUI::UpdateDamageModules() {
 	return true;
 }
 
+bool HeadsUpDisplayUI::UpdateStabilizer() {
+	m_pStabilizerMode = D2D1::Ellipse(
+		D2D1::Point2F(40.0f, m_pWindowHeight - 50.0f),
+		10.0f,
+		10.0f
+	);
+
+	m_pStabilizerTextBox = D2D1::RectF(
+		60.0f,
+		m_pWindowHeight - 60.0f,
+		m_pWindowWidth / 2.0f,
+		m_pWindowHeight - 40.0f
+	);
+	return true;
+}
+
+bool HeadsUpDisplayUI::UpdateVelocity() {
+	m_pVelocityTextBox = D2D1::RectF(
+		20.0f,
+		m_pWindowHeight - 145.0f,
+		m_pWindowWidth / 2.0f,
+		m_pWindowHeight - 60.0f
+	);
+
+	m_pUnitTextBox = D2D1::RectF(
+		215.0f,
+		m_pWindowHeight - 95.0f,
+		m_pWindowWidth / 2.0f,
+		m_pWindowHeight - 60.0f
+	);
+	return true;
+}
+
 bool HeadsUpDisplayUI::UpdateTools() {
 	return true;
 }
@@ -407,6 +464,12 @@ bool HeadsUpDisplayUI::UpdateModules() {
 		return false;
 	}
 	if (!UpdateTools()) {
+		return false;
+	}
+	if (!UpdateStabilizer()) {
+		return false;
+	}
+	if (!UpdateVelocity()) {
 		return false;
 	}
 	return true;
@@ -482,12 +545,33 @@ void HeadsUpDisplayUI::RenderDamageModule() {
 	//Cold damage
 	if (m_pRenderBitmaps && m_pRenderCold) {
 		m_pRenderTarget2D->DrawBitmap(m_pFrostBitmap, m_pScreen);
+		if (m_IsInColdDangerZone == false)
+		{
+			PlaySoundEvent playSoundEvent(SoundID::Warning, true);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsInColdDangerZone = true;
+		}
+	}
+	else
+	{
+		m_IsInColdDangerZone = false;
 	}
 
 	//Warm damage
 	if (m_pRenderHeat) {
 		m_pRenderTarget2D->FillRectangle(m_pScreen, m_pHeatRadialGradientBrush.Get());
+		if (m_IsInHotDangerZone == false)
+		{
+			PlaySoundEvent playSoundEvent(SoundID::Warning, true);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsInHotDangerZone = true;
+		}
 	}
+	else
+	{
+		m_IsInHotDangerZone = false;
+	}
+
 
 	//Radiation damage
 	if (m_pRenderRadiation) {
@@ -508,7 +592,69 @@ void HeadsUpDisplayUI::RenderDamageModule() {
 			m_pBrush.Get()
 		);
 		m_pRenderTarget2D->DrawRectangle(m_pRadiationScreen, m_pBrush.Get(), 10.0f);
+		if (m_IsInRadiationDangerZone == false)
+		{
+			PlaySoundEvent playSoundEvent(SoundID::Warning, true);
+			EventBuss::Get().Delegate(playSoundEvent);
+			m_IsInRadiationDangerZone = true;
+		}
 	}
+	else
+	{
+		m_IsInRadiationDangerZone = false;
+	}
+	if (!m_pRenderRadiation && !m_pRenderCold && !m_pRenderHeat)
+	{
+		StopLoopingSoundEvent stopLoopEvent(SoundID::Warning);
+		EventBuss::Get().Delegate(stopLoopEvent);
+	}
+}
+
+void HeadsUpDisplayUI::RenderStabilizer() {
+	if (m_pStabilizer) {
+		UpdateBrush(m_pRed, 1.0f);
+		m_pRenderTarget2D->FillEllipse(m_pStabilizerMode, m_pBrush.Get());
+		m_pStabilizerText = L"Stabilizer ON";
+	}
+	else {
+		m_pStabilizerText = L"Stabilizer OFF";
+	}
+	UpdateBrush(m_pWhite, 1.0f);
+	m_pRenderTarget2D->DrawEllipse(m_pStabilizerMode, m_pBrush.Get(), 2.0f);
+
+	ErrorCheck(m_pHUDFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING), "TextAlignment");
+
+	this->UpdateBrush(m_pWhite, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pStabilizerText.c_str(),
+		(UINT32)m_pStabilizerText.length(),
+		m_pHUDFormat.Get(),
+		m_pStabilizerTextBox,
+		m_pBrush.Get()
+	);
+}
+
+void HeadsUpDisplayUI::RenderVelocity() {
+	UpdateBrush(m_pRed, 0.5f);
+	//m_pRenderTarget2D->FillRectangle(m_pVelocityTextBox, m_pBrush.Get());
+	//m_pRenderTarget2D->FillRectangle(m_pUnitTextBox, m_pBrush.Get());
+
+	this->UpdateBrush(m_pWhite, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pVelocityText.c_str(),
+		(UINT32)m_pVelocityText.length(),
+		m_pVelocityFormat.Get(),
+		m_pVelocityTextBox,
+		m_pBrush.Get()
+	);
+
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pUnitText.c_str(),
+		(UINT32)m_pUnitText.length(),
+		m_pHUDFormat.Get(),
+		m_pUnitTextBox,
+		m_pBrush.Get()
+	);
 }
 
 void HeadsUpDisplayUI::Render() {
@@ -522,11 +668,17 @@ void HeadsUpDisplayUI::Render() {
 
    RenderBars();
    RenderCapacity();
+   RenderStabilizer();
+   RenderVelocity();
 
    if (m_pCapacityWarning) {
 	   RenderWarningModule();
    }
    EndFrame();
+}
+
+void HeadsUpDisplayUI::SetVelocity()
+{
 }
 
 //Event functions

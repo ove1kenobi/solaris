@@ -2,17 +2,24 @@
 #include "UpgradeScreenUI.h"
 
 UpgradeScreenUI::UpgradeScreenUI() noexcept {
+	EventBuss::Get().AddListener(this, EventType::DelegatePlayerInfoEvent);
 	EventBuss::Get().AddListener(this, EventType::MouseButtonEvent);
 	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
 
 	m_pScreen = D2D1::RectF();
 	m_pObjectiveTextBox = D2D1::RectF();
-	m_pShipDisplay = D2D1::RectF();
+	m_pControllerDisplay = D2D1::RectF();
 	m_pResourceDisplay = D2D1::RectF();
 
 	m_pDisplayPadding = 20.0f;
 
+	m_pObjectiveTitle = L"Objective";
+	m_pControllerTitle = L"Controls";
+	m_pInventoryTitle = L"Inventory";
 	m_pObjectiveText = L"Find a way to escape the solar system.";
+	m_pRequirement = L"0";
+
+	m_pRenderBitmaps = true;
 
 	//Create upgrade objects
 	for (unsigned int i = 0; i < 10; i++) {
@@ -20,13 +27,12 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 	}
 
 	//List pictures we will need
-	resources.push_back(L"Khionerite.png");
-	resources.push_back(L"Nanotech.png");
-	resources.push_back(L"Plasma.png");
-	resources.push_back(L"Radium.png");
-	resources.push_back(L"Scrap.png");
-	resources.push_back(L"Titanium.png");
-	resources.push_back(L"Science.png");
+	resources.push_back(L"Khionerite");
+	resources.push_back(L"Nanotech");
+	resources.push_back(L"Plasma");
+	resources.push_back(L"Radium");
+	resources.push_back(L"Scrap");
+	resources.push_back(L"Titanium");
 
 	m_pYellow = 0xFFB724;
 	m_pWhite = 0xFFFDF9;
@@ -38,6 +44,7 @@ UpgradeScreenUI::UpgradeScreenUI() noexcept {
 }
 
 UpgradeScreenUI::~UpgradeScreenUI() {
+	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
 	EventBuss::Get().RemoveListener(this, EventType::WindowCloseEvent);
 	EventBuss::Get().RemoveListener(this, EventType::MouseButtonEvent);
 
@@ -64,7 +71,7 @@ bool UpgradeScreenUI::Initialize() {
 	if (!CreateUpgrades()) {
 		return false;
 	}
-	if (!CreateShipDisplay()) {
+	if (!CreateControllerDisplay()) {
 		return false;
 	}
 	if (!CreateResourceList()) {
@@ -86,11 +93,21 @@ bool UpgradeScreenUI::CreateScreen() {
 		L"en-us",
 		&m_pFormat
 	), "TextFormat");
+
+	ErrorCheck(m_pTextFactory->CreateTextFormat(
+		L"Tenika",
+		m_pFont.Get(),
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		24.0f,
+		L"en-us",
+		&m_pTitleFormat
+	), "TextFormat");
     return true;
 }
 
 bool UpgradeScreenUI::CreateObjective() {
-
 	return true;
 }
 
@@ -103,7 +120,7 @@ bool UpgradeScreenUI::CreateUpgrades() {
 	return true;
 }
 
-bool UpgradeScreenUI::CreateShipDisplay() {
+bool UpgradeScreenUI::CreateControllerDisplay() {
 	//For now we do not need it, but later once I get to design
 	//LoadBitmapFromFile(GetIconFilePath(L"Health.png").c_str(), &m_pShipBitmap);
 	return true;
@@ -114,9 +131,24 @@ bool UpgradeScreenUI::CreateResourceList() {
 
 	//Create resource bitmaps
 	for (unsigned int i = 0; i < resources.size(); i++) {
-		LoadBitmapFromFile(GetIconFilePath(resources.at(i)).c_str(), &holder);
+		LoadBitmapFromFile(GetIconFilePath((resources.at(i)) + L".png").c_str(), &holder);
 		m_pResourceBitmap.push_back(holder);
 	}
+
+	//Create format
+	ErrorCheck(m_pTextFactory->CreateTextFormat(
+		L"Tenika",
+		m_pFont.Get(),
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		20.0f,
+		L"en-us",
+		&m_pScienceFormat
+	), "TextFormat");
+
+	//Create science bitmap
+	LoadBitmapFromFile(GetIconFilePath(L"Science.png").c_str(), &m_pScienceBitmap);
 	return true;
 }
 
@@ -138,6 +170,13 @@ bool UpgradeScreenUI::UpdateObjective() {
 		m_pWindowWidth - m_pDisplayPadding,
 		200.0f - m_pDisplayPadding
 	);
+
+	m_pObjectiveTitleBox = D2D1::RectF(
+		m_pObjectiveTextBox.left,
+		m_pObjectiveTextBox.top - 20.0f,
+		m_pObjectiveTextBox.right,
+		m_pObjectiveTextBox.top + 20.0f
+	);
 	return true;
 }
 
@@ -154,8 +193,7 @@ bool UpgradeScreenUI::UpdateUpgrades() {
 		));
 	}
 
-	//TODO: create an enum(or find one) to figure out what upgrade goes to what ID
-
+	
 	//Afterburner
 	m_pUpgrades.at(0)->SetUpgrade(L"AfterBurner",L"Raises your ships maximum speed by 40%.", 0);
 	m_pUpgrades.at(0)->AddCost(L"Scrap.png", L"10");
@@ -228,38 +266,54 @@ bool UpgradeScreenUI::UpdateUpgrades() {
 	return true;
 }
 
-bool UpgradeScreenUI::UpdateShipDisplay() {
-	m_pShipDisplay = D2D1::RectF(
+bool UpgradeScreenUI::UpdateControllerDisplay() {
+	m_pControllerDisplay = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) + m_pDisplayPadding,
 		m_pObjectiveTextBox.bottom + m_pDisplayPadding,
 		m_pWindowWidth - m_pDisplayPadding,
 		m_pObjectiveTextBox.bottom + 600.0f - m_pDisplayPadding
 	);
+
+	m_pControllerTitleBox = D2D1::RectF(
+		m_pControllerDisplay.left,
+		m_pControllerDisplay.top - 20.0f,
+		m_pControllerDisplay.right,
+		m_pControllerDisplay.top + 20.0f
+	);
 	return true;
 }
 
 bool UpgradeScreenUI::UpdateResourceList() {
-	float iconSize = 50.0f;
+	float iconSize = 70.0f;
 	float amountSize = 50.0f;
-	float padding = 10.0f;
+	float padding = 20.0f;
+	float offsetX = 65.0f;
+	float offsetY = 50.0f;
 
 	m_pResourceDisplay = D2D1::RectF(
 		(m_pWindowWidth / 2.0f) + m_pDisplayPadding,
-		m_pShipDisplay.bottom + m_pDisplayPadding,
+		m_pControllerDisplay.bottom + m_pDisplayPadding,
 		m_pWindowWidth - m_pDisplayPadding,
 		m_pWindowHeight - m_pDisplayPadding
 	);
 
+	m_pInventoryTitleBox = D2D1::RectF(
+		m_pResourceDisplay.left,
+		m_pResourceDisplay.top - 20.0f,
+		m_pResourceDisplay.right,
+		m_pResourceDisplay.top + 20.0f
+	);
+
 	for (unsigned int i = 0; i < resources.size(); i++) {
-		float x = static_cast<float>(m_pResourcePosition.size() % 2);
-		float y = floor(static_cast<float>(m_pResourcePosition.size()) / 2.0f);
+		float y = static_cast<float>(m_pResourcePosition.size() % 2);
+		float x = floor(static_cast<float>(m_pResourcePosition.size()) / 2.0f);
 
 		//Create square for picture
 		m_pResourcePosition.push_back(D2D1::RectF(
-			m_pResourceDisplay.left + (iconSize + iconSize + padding) * x,
-			m_pResourceDisplay.top + (padding + iconSize) * y,
-			m_pResourceDisplay.left + iconSize + (iconSize + iconSize + padding) * x,
-			m_pResourceDisplay.top + iconSize + (padding + iconSize) * y
+			m_pResourceDisplay.left + offsetX +(iconSize + iconSize + padding + offsetX) * x,
+			m_pResourceDisplay.top + offsetY +(padding + iconSize + 10.0f) * y,
+			m_pResourceDisplay.left + offsetX + iconSize + (iconSize + iconSize + padding + offsetX) * x,
+			m_pResourceDisplay.top + offsetY + iconSize + (padding + iconSize + 10.0f) * y
 		));
 
 		//Create square for text
@@ -270,9 +324,34 @@ bool UpgradeScreenUI::UpdateResourceList() {
 			m_pResourcePosition.at(m_pResourcePosition.size() - 1).bottom
 		));
 
+		m_pDescriptionTextbox.push_back(D2D1::RectF(
+			m_pResourcePosition.at(m_pResourcePosition.size() - 1).left - 20.0f,
+			m_pResourcePosition.at(m_pResourcePosition.size() - 1).top - 25.0f,
+			m_pResourcePosition.at(m_pResourcePosition.size() - 1).right + iconSize + 20.0f,
+			m_pResourcePosition.at(m_pResourcePosition.size() - 1).top + 5.0f
+		));
+
 		//Add text
 		m_pAmount.push_back(L"0");
 	}
+
+	//Create science icon
+	float scienceOffset = 50.0f;
+	float scienceSize = 125.0f;
+	m_pSciencePosition = D2D1::RectF(
+		m_pResourceDisplay.right - scienceSize - scienceOffset,
+		((m_pResourceDisplay.bottom - m_pResourceDisplay.top) / 2.0f) + m_pResourceDisplay.top - (scienceSize/2.0f),
+		m_pResourceDisplay.right - scienceOffset,
+		((m_pResourceDisplay.bottom - m_pResourceDisplay.top) / 2.0f) + m_pResourceDisplay.top + (scienceSize / 2.0f)
+	);
+
+	//Create text box
+	m_pRequirementTextbox = D2D1::RectF(
+		m_pSciencePosition.left,
+		m_pSciencePosition.top,
+		m_pSciencePosition.right,
+		m_pSciencePosition.bottom
+	);
 	return true;
 }
 
@@ -286,7 +365,7 @@ bool UpgradeScreenUI::UpdateModules() {
 	if (!UpdateUpgrades()) {
 		return false;
 	}
-	if (!UpdateShipDisplay()) {
+	if (!UpdateControllerDisplay()) {
 		return false;
 	}
 	if (!UpdateResourceList()) {
@@ -312,6 +391,14 @@ void UpgradeScreenUI::RenderObjective() {
 		m_pObjectiveTextBox,
 		m_pBrush.Get()
 	);
+
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pObjectiveTitle.c_str(),
+		(UINT32)m_pObjectiveTitle.length(),
+		m_pTitleFormat.Get(),
+		m_pObjectiveTitleBox,
+		m_pBrush.Get()
+	);
 }
 
 void UpgradeScreenUI::RenderUpgrades() {
@@ -320,9 +407,18 @@ void UpgradeScreenUI::RenderUpgrades() {
 	}
 }
 
-void UpgradeScreenUI::RenderShipDisplay() {
+void UpgradeScreenUI::RenderControllerDisplay() {
 	this->UpdateBrush(m_pDarkblue, 0.5f);
-	m_pRenderTarget2D->FillRectangle(m_pShipDisplay, m_pBrush.Get());
+	m_pRenderTarget2D->FillRectangle(m_pControllerDisplay, m_pBrush.Get());
+
+	this->UpdateBrush(m_pWhite, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pControllerTitle.c_str(),
+		(UINT32)m_pControllerTitle.length(),
+		m_pTitleFormat.Get(),
+		m_pControllerTitleBox,
+		m_pBrush.Get()
+	);
 }
 
 void UpgradeScreenUI::RenderResourceList() {
@@ -333,6 +429,7 @@ void UpgradeScreenUI::RenderResourceList() {
 	for (auto const& bitmap : m_pResourceBitmap) {
 		m_pRenderTarget2D->DrawBitmap(bitmap, m_pResourcePosition.at(i));
 		this->UpdateBrush(m_pWhite, 1.0f);
+		m_pFormat.Get()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 		m_pRenderTarget2D.Get()->DrawTextW(
 			m_pAmount.at(i).c_str(),
 			(UINT32)m_pAmount.at(i).length(),
@@ -340,8 +437,41 @@ void UpgradeScreenUI::RenderResourceList() {
 			m_pAmountTextbox.at(i),
 			m_pBrush.Get()
 		);
+
+		m_pFormat.Get()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+		m_pRenderTarget2D.Get()->DrawTextW(
+			resources.at(i).c_str(),
+			(UINT32)resources.at(i).length(),
+			m_pFormat.Get(),
+			m_pDescriptionTextbox.at(i),
+			m_pBrush.Get()
+		);
+
+		this->UpdateBrush(D2D1::ColorF::Red, 0.25f);
+		m_pRenderTarget2D->FillRectangle(m_pDescriptionTextbox.at(i), m_pBrush.Get());
 		i++;
 	}
+
+	if (m_pRenderBitmaps) {
+		m_pRenderTarget2D->DrawBitmap(m_pScienceBitmap, m_pSciencePosition);
+	}
+
+	this->UpdateBrush(D2D1::ColorF::Snow, 1.0f);
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pRequirement.c_str(),
+		(UINT32)m_pRequirement.length(),
+		m_pScienceFormat.Get(),
+		m_pRequirementTextbox,
+		m_pBrush.Get()
+	);
+
+	m_pRenderTarget2D.Get()->DrawTextW(
+		m_pInventoryTitle.c_str(),
+		(UINT32)m_pInventoryTitle.length(),
+		m_pTitleFormat.Get(),
+		m_pInventoryTitleBox,
+		m_pBrush.Get()
+	);
 }
 
 void UpgradeScreenUI::Render() {
@@ -350,14 +480,10 @@ void UpgradeScreenUI::Render() {
 	RenderScreen();
 	RenderObjective();
 	RenderUpgrades();
-	RenderShipDisplay();
+	RenderControllerDisplay();
 	RenderResourceList();
 
 	EndFrame();
-}
-
-void UpgradeScreenUI::UpdateAmount() {
-
 }
 
 void UpgradeScreenUI::OnEvent(IEvent& event) noexcept {
@@ -380,7 +506,20 @@ void UpgradeScreenUI::OnEvent(IEvent& event) noexcept {
 		this->UpdateModules();
 		break;
 	}
-	//For clicking on UI elements
+	case EventType::DelegatePlayerInfoEvent:
+	{
+		DelegatePlayerInfoEvent& derivedEvent = static_cast<DelegatePlayerInfoEvent&>(event);
+		PlayerInfo* PlayerInfo = derivedEvent.GetPlayerInfo();
+		m_inventory = PlayerInfo->inventory;
+		m_pAmount.at(0) = std::to_wstring(PlayerInfo->inventory.khionerite);
+		m_pAmount.at(1) = std::to_wstring(PlayerInfo->inventory.nanotech);
+		m_pAmount.at(2) = std::to_wstring(PlayerInfo->inventory.plasma);
+		m_pAmount.at(3) = std::to_wstring(PlayerInfo->inventory.radium);
+		m_pAmount.at(4) = std::to_wstring(PlayerInfo->inventory.scrapMetal);
+		m_pAmount.at(5) = std::to_wstring(PlayerInfo->inventory.titanium);
+		m_pRequirement = std::to_wstring(PlayerInfo->inventory.science);
+		break;
+	}
 	case EventType::MouseButtonEvent:
 	{
 		m_pMouseX = static_cast<MouseButtonEvent*>(&event)->GetXCoord();
@@ -389,7 +528,7 @@ void UpgradeScreenUI::OnEvent(IEvent& event) noexcept {
 		int virKey = static_cast<MouseButtonEvent*>(&event)->GetVirtualKeyCode();
 		if (virKey == VK_LBUTTON && state == KeyState::KeyPress && m_pOnScreen) {
 			for (unsigned int i = 0; i < m_pUpgrades.size(); i++) {
-				m_pUpgrades.at(i)->OnClick(m_pMouseX, m_pMouseY);
+				m_pUpgrades.at(i)->OnClick(m_pMouseX, m_pMouseY, m_inventory);
 			}
 		}
 		break;
@@ -404,7 +543,10 @@ void UpgradeScreenUI::OnEvent(IEvent& event) noexcept {
 }
 
 void UpgradeScreenUI::CleanUp() {
-    //Will need bitmap clean up later
+	m_pRenderBitmaps = false;
+	if (m_pScienceBitmap) {
+		m_pScienceBitmap->Release();
+	}
 	for (unsigned int i = 0; i < m_pUpgrades.size(); i++) {
 		m_pUpgrades.at(i)->CleanUp();
 	}
