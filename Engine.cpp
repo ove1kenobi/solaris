@@ -101,8 +101,7 @@ void Engine::Run()
 
 		if (m_ResetGame) {
 			m_ResetGame = false;
-			StopLoopingSoundEvent stopLoopEvent(SoundID::Warning);
-			EventBuss::Get().Delegate(stopLoopEvent);
+			m_SoundManager.ClearLoopingSounds();
 			//Deletes the scene aswell
 			m_LayerStack.RemoveFirst();
 
@@ -139,6 +138,9 @@ void Engine::OnEvent(IEvent& event) noexcept
 	}
 	case EventType::ToggleStartGame: 
 	{
+		//Enable player controls
+		ToggleControlsEvent myEvent;
+		EventBuss::Get().Delegate(myEvent);
 		m_MainMenuNotRunning = true;
 		break;
 	}

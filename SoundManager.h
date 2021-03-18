@@ -29,5 +29,7 @@ public:
 	void Update();
 
 	void OnEvent(IEvent& event) noexcept;
+
+	void ClearLoopingSounds();
 };
 

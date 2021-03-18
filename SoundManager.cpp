@@ -166,3 +166,9 @@ void SoundManager::OnEvent(IEvent& event) noexcept
 		}
 	}
 }
+
+void SoundManager::ClearLoopingSounds() {
+	for (size_t i = 0; i < m_loopingSounds.size(); i++) {
+		m_loopingSounds[i].stop();
+	}
+}

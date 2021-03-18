@@ -342,8 +342,6 @@ bool Scene::init(unsigned int screenWidth, unsigned int screenHeight, Microsoft:
 
 	m_nextAstroSpawnTime = m_time.SinceStart() + 5.0;
 
-	PlaySoundEvent playSoundEvent(SoundID::Stabilizers, true);
-	EventBuss::Get().Delegate(playSoundEvent);
 	return true;
 }
 

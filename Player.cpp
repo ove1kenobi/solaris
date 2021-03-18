@@ -132,7 +132,7 @@ Player::Player()
 	m_moveForwards = false;
 	m_moveBackwards = false;
 	m_stopMovement = false;
-	m_playerControlsActive = true;
+	m_playerControlsActive = false;
 	m_stabilizerActive = false;
 	m_mousePosX = 0.0f;
 	m_mousePosY = 0.0f;
@@ -141,7 +141,7 @@ Player::Player()
 	m_immortal = false;
 	m_startShake = true;
 	m_initiateWarp = false;
-	m_chargeTime = 13.0f;
+	m_chargeTime = 14.87075f;
 	m_currentChargeTime = 0.0f;
 
 	m_ship = nullptr;
@@ -412,11 +412,11 @@ void Player::OnEvent(IEvent& event) noexcept
 					m_initiateWarp = true;
 				}
 			}
-			if (state == KeyState::KeyRelease && m_playerControlsActive) {
+			if (state == KeyState::KeyRelease) {
 				if (virKey == 'W') {
 					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
 					EventBuss::Get().Delegate(thrusterSound);
-					if (m_inventory.fuel > 0.0f)
+					if (m_inventory.fuel > 0.0f && m_playerControlsActive)
 					{
 						PlaySoundEvent thrustersEndSound(SoundID::ThrustersEnd, false);
 						EventBuss::Get().Delegate(thrustersEndSound);

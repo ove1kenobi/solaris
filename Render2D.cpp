@@ -170,7 +170,7 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 				They are close enough to the planet
 				They have an event picked (to prevent them from exiting)
 				*/
-				if (virKey == 'E')
+				if (virKey == 'E' && m_InGame)
 				{
 					if (m_pPlayerInfo)
 					{
@@ -178,6 +178,10 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 							&& m_pPlayerInfo->closestPlanet->IsVisited() == false &&
 							static_cast<PlanetInteractionUI*>(m_Modules[(int)TypesUI::PlanetInteraction])->m_gameEventSelected == true)
 						{
+							//Stop thruster sound if interacting with a planet
+							StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
+							EventBuss::Get().Delegate(thrusterSound);
+
 							//Planet interaction events
 							ToggleControlsEvent controlsEvent;
 							EventBuss::Get().Delegate(controlsEvent);
@@ -203,7 +207,11 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 					}
 				}
 				//If player goes in the upgrade screen we also do not want things to update
-				if (virKey == 'U' && !m_PlanetInteraction) {
+				if (virKey == 'U' && !m_PlanetInteraction && m_InGame) {
+					//Stop thruster sound if in upgrade menu.
+					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
+					EventBuss::Get().Delegate(thrusterSound);
+
 					ToggleControlsEvent controlsEvent;
 					EventBuss::Get().Delegate(controlsEvent);
 					PlaySoundEvent playSoundEvent(SoundID::EventScreen, false);
@@ -213,6 +221,10 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 				}
 
 				if (virKey == VK_ESCAPE && m_InGame) {
+					//Stop thruster sound if the pause menu gets opened.
+					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
+					EventBuss::Get().Delegate(thrusterSound);
+
 					ToggleControlsEvent controlsEvent;
 					EventBuss::Get().Delegate(controlsEvent);
 					PlaySoundEvent playSoundEvent(SoundID::EventScreen, false);
