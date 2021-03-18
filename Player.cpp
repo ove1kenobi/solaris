@@ -76,6 +76,12 @@ void Player::ConsumeOxygen()
 
 void Player::ActivateWarpDrive()
 {
+	//Activate stabilizer when flying away, otherwise its affected by gravity while flying away
+	m_stabilizerActive = true;
+	//Stop thruster sound.
+	StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
+	EventBuss::Get().Delegate(thrusterSound);
+
 	if (m_startShake) {
 		m_ship->SetVelocity(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
 		m_rotationSpeed = 0.0f;
