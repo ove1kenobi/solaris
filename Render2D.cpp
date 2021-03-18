@@ -118,7 +118,7 @@ void Render2D::RenderUI() {
 		}
 
 		if (m_DisplayText) {
-			m_Modules.at(static_cast<int>(TypesUI::WonGame))->Render();
+			m_Modules.at(static_cast<int>(TypesUI::Endgame))->Render();
 		}
 	}
 	//If not in game then render main menu
@@ -206,7 +206,7 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 		{
 			m_DisplayText = true;
 			std::wstring endgameText = static_cast<DisplayEndgameText*>(&event)->GetEndgameText();
-			static_cast<EndgameUI*>(m_Modules[(int)TypesUI::WonGame])->SetText(endgameText);
+			static_cast<EndgameUI*>(m_Modules[(int)TypesUI::Endgame])->SetText(endgameText);
 			break;
 		}
 		default:
