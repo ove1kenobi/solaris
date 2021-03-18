@@ -11,6 +11,7 @@
 #include "UI/CreditsUI.h"
 #include "UI/PressWinUI.h"
 #include "UI/EndgameUI.h"
+#include "UI/PauseUI.h"
 #include "EventSystem/IEventListener.h"
 #include "EventSystem/EventPublisher.h"
 #include "EventSystem/InputEvents.h"
@@ -23,7 +24,6 @@
 class Render2D : public EventPublisher, IEventListener {
 private:
 	GameEventManager gameEventManager;
-	TypesUI m_CurrentUI;
 	std::vector<ModuleUI*> m_Modules;
 	PlayerInfo* m_pPlayerInfo;
 
@@ -33,6 +33,7 @@ private:
 	bool m_Controls;
 	bool m_Credits;
 	bool m_InGame;
+	bool m_Paused;
 	bool m_DisplayText;
 	std::wstring GetFontFilePath(std::wstring fontFile);
 	bool AddFonts();
