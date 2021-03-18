@@ -102,6 +102,8 @@ void Engine::Run()
 
 		//The player died, restart the scene.
 		if (m_scene->GetPlayerHealth() <= 0) {
+			StopLoopingSoundEvent stopLoopEvent(SoundID::Warning);
+			EventBuss::Get().Delegate(stopLoopEvent);
 			//Deletes the scene aswell
 			m_LayerStack.RemoveFirst();
 			

@@ -3,8 +3,7 @@
 
 PressInteractUI::PressInteractUI() noexcept {
 	m_pTextBox = D2D1::RectF();
-	//m_pText = L"[E] Orbit and launch probe";
-	m_pText = L"[F] To pay respect to this poor planet";
+	m_pText = L"[E] Orbit and launch probe";
 }
 
 PressInteractUI::~PressInteractUI() {

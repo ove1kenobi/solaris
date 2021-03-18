@@ -236,6 +236,14 @@ bool Player::update(const std::vector<Planet*>& planets)
 	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
 	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
 
+	//Check if fuel is empty:
+	if (m_inventory.fuel <= 0)
+	{
+		//Simple check:
+		StopLoopingSoundEvent stopLoopEvent(SoundID::Thrusters);
+		EventBuss::Get().Delegate(stopLoopEvent);
+	}
+
 	if (length(m_ship->GetVelocity()) < 200.0f) return false;
 	return true;
 }
@@ -296,18 +304,27 @@ void Player::OnEvent(IEvent& event) noexcept
 
 			if (state == KeyState::KeyPress && m_playerControlsActive) {
 				if (virKey == 'W') {
-					PlaySoundEvent thrusterSound(SoundID::Thrusters, true, 1.2f);
-					EventBuss::Get().Delegate(thrusterSound);
+					if (m_inventory.fuel > 0.0f)
+					{
+						PlaySoundEvent thrusterSound(SoundID::Thrusters, true);
+						EventBuss::Get().Delegate(thrusterSound);
+					}
 					m_moveForwards = true;
 				}
 				if (virKey == 'S') {
-					PlaySoundEvent thrusterSound(SoundID::Thrusters, true);
-					EventBuss::Get().Delegate(thrusterSound);
+					if (m_inventory.fuel > 0.0f)
+					{
+						PlaySoundEvent thrusterSound(SoundID::Thrusters, true);
+						EventBuss::Get().Delegate(thrusterSound);
+					}
 					m_moveBackwards = true;
 				}
 				if (virKey == VK_SPACE) {
-					PlaySoundEvent thrusterSound(SoundID::Thrusters, true);
-					EventBuss::Get().Delegate(thrusterSound);
+					if (m_inventory.fuel > 0.0f)
+					{
+						PlaySoundEvent thrusterSound(SoundID::Thrusters, true);
+						EventBuss::Get().Delegate(thrusterSound);
+					}
 					m_stopMovement = true;
 				}
 				if (virKey == 'Q') {
@@ -329,8 +346,11 @@ void Player::OnEvent(IEvent& event) noexcept
 				if (virKey == 'W') {
 					StopLoopingSoundEvent thrusterSound(SoundID::Thrusters);
 					EventBuss::Get().Delegate(thrusterSound);
-					PlaySoundEvent thrustersEndSound(SoundID::ThrustersEnd, false);
-					EventBuss::Get().Delegate(thrustersEndSound);
+					if (m_inventory.fuel > 0.0f)
+					{
+						PlaySoundEvent thrustersEndSound(SoundID::ThrustersEnd, false);
+						EventBuss::Get().Delegate(thrustersEndSound);
+					}
 					m_moveForwards = false;
 				}
 				if (virKey == 'S') {
