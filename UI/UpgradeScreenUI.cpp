@@ -135,8 +135,6 @@ bool UpgradeScreenUI::CreateObjective() {
 		L"en-us",
 		&m_pObjectiveFormat
 	), "TextFormat");
-
-	//m_pObjectiveFormat.Get()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 	return true;
 }
 

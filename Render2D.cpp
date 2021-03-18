@@ -25,7 +25,10 @@ Render2D::Render2D() noexcept
 	: m_pPlayerInfo{ nullptr },
 	  m_PlanetInteraction{ false },
 	  m_UpgradeScreen{ false },
-	  m_InGame{ false }
+	  m_InGame{ false },
+	  m_CanWin{false},
+	  m_Credits{ false },
+	  m_Controls{ false }
 {
 	//Make render2D able to UI handle events (for now, only keyboard ones)
 	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::DelegatePlayerInfoEvent);
@@ -39,6 +42,9 @@ Render2D::Render2D() noexcept
 		m_Modules.push_back(new PressInteractUI());
 		m_Modules.push_back(new CrosshairUI());
 		m_Modules.push_back(new UpgradeScreenUI());
+		m_Modules.push_back(new ControlsUI());
+		m_Modules.push_back(new CreditsUI());
+		m_Modules.push_back(new PressWinUI());
 
 		m_Modules.at(static_cast<int>(TypesUI::MainMenu))->m_pOnScreen = true;
 	}
@@ -103,12 +109,24 @@ void Render2D::RenderUI() {
 		if (m_UpgradeScreen) {
 			m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->Render();
 		}
+
+		if(m_CanWin) {
+			m_Modules.at(static_cast<int>(TypesUI::PressWin))->Render();
+		}
 	}
 	//If not in game then render main menu
 	else {
 		ClearBackBufferEvent cbbEvent;
 		EventBuss::Get().Delegate(cbbEvent);
 		m_Modules.at(static_cast<int>(TypesUI::MainMenu))->Render();
+
+		if (m_Controls) {
+			m_Modules.at(static_cast<int>(TypesUI::Controls))->Render();
+		}
+
+		if (m_Credits) {
+			m_Modules.at(static_cast<int>(TypesUI::Credits))->Render();
+		}
 	}
 	//And finally always render crosshair on top of everything
 	m_Modules.at(static_cast<int>(TypesUI::Crosshair))->Render();
