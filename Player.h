@@ -12,6 +12,7 @@
 #include "Resources.h"
 #include "EventSystem\UtilityEvents.h"
 #include "GameEvent.h"
+#include "EventSystem/PlayerEvents.h"
 
 struct PlayerInfo
 {
@@ -37,6 +38,11 @@ private:
 	PlayerCamera* m_camera;
 	Time m_time;
 
+	// General
+	bool m_playerWon;
+	bool m_startEndgameScreen;
+	float m_endgameScreenTimer;
+
 	// Resources
 	int m_maxHealth;
 	float m_fuelCapacity;
@@ -61,6 +67,14 @@ private:
 	bool m_playerControlsActive, m_stabilizerActive;
 	float m_rotationSpeed;
 	bool m_TetheredToClosestPlanet;
+	bool m_lockCamera;
+
+	// Warp
+	bool m_immortal;
+	bool m_startShake;
+	bool m_initiateWarp;
+	float m_chargeTime;
+	float m_currentChargeTime;
 
 	//Upgrade data:
 	bool m_HasShieldUpgrade;
@@ -73,6 +87,7 @@ private:
 	int AddToInventory(int currentResource, int resourceToAdd);
 	DirectX::XMFLOAT3 ConsumeFuel(DirectX::XMFLOAT3 GeneratedPower);
 	void ConsumeOxygen();
+	void ActivateWarpDrive();
 public:
 	Player();
 	virtual ~Player();

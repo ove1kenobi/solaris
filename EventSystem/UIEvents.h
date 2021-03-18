@@ -192,3 +192,27 @@ public:
 		return upgradeCost;
 	}
 };
+
+class DisplayEndgameText : public IEvent
+{
+private:
+	std::wstring m_endgameText;
+public:
+	DisplayEndgameText(std::wstring endgameText) noexcept {
+		m_endgameText = endgameText;
+	};
+	virtual ~DisplayEndgameText() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::DisplayEndgameText;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "DisplayEndgameText";
+	}
+	[[nodiscard]] const std::wstring GetEndgameText() const noexcept
+	{
+		return m_endgameText;
+	}
+};
