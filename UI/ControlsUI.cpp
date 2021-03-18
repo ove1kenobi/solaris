@@ -347,6 +347,7 @@ void ControlsUI::RenderBack() {
 	}
 	else {
 		this->UpdateBrush(m_pWhite, 1.0f);
+		m_IsHoveringBack = false;
 	}
 
 	m_pRenderTarget2D.Get()->DrawTextW(

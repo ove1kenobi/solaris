@@ -349,6 +349,8 @@ void MenuUI::OnEvent(IEvent& event) noexcept {
 			if (m_pMouseX > m_pControlsTextBox.left && m_pMouseX < m_pControlsTextBox.right &&
 				m_pMouseY > m_pControlsTextBox.top && m_pMouseY < m_pControlsTextBox.bottom) {
 				m_pOnScreen = false;
+				PlaySoundEvent playSoundEvent(SoundID::Click, false);
+				EventBuss::Get().Delegate(playSoundEvent);
 				ToggleControls tc;
 				EventBuss::Get().Delegate(tc);
 			}
@@ -356,6 +358,8 @@ void MenuUI::OnEvent(IEvent& event) noexcept {
 			if (m_pMouseX > m_pCreditsTextBox.left && m_pMouseX < m_pCreditsTextBox.right &&
 				m_pMouseY > m_pCreditsTextBox.top && m_pMouseY < m_pCreditsTextBox.bottom) {
 				m_pOnScreen = false;
+				PlaySoundEvent playSoundEvent(SoundID::Click, false);
+				EventBuss::Get().Delegate(playSoundEvent);
 				ToggleCredits tc;
 				EventBuss::Get().Delegate(tc);
 			}
