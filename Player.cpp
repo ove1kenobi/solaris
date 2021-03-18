@@ -74,6 +74,30 @@ void Player::ConsumeOxygen()
 	}
 }
 
+void Player::ActivateWarpDrive()
+{
+	if (m_startShake) {
+		m_ship->SetVelocity(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
+		m_rotationSpeed = 0.0f;
+
+		CameraShakeEvent csEvent(5.0f, 0.01f);
+		EventBuss::Get().Delegate(csEvent);
+		m_startShake = false;
+	}
+
+	m_currentChargeTime += (float)m_time.DeltaTime();
+
+	if (m_currentChargeTime >= m_chargeTime) {
+		m_immortal = true;
+		m_playerWon = true;
+		m_startEndgameScreen = true;
+
+		m_ship->SetTilt(0.0f, 0.0f);
+		DirectX::XMFLOAT3 warpSpeed = m_camera->GetForwardVector() * 1000000.0f * (float)m_time.DeltaTime();
+		m_ship->AddForce(warpSpeed);
+	}
+}
+
 Player::Player()
 	: m_PlayerInfo{ },
 	  m_TetheredToClosestPlanet{ false },
@@ -81,6 +105,10 @@ Player::Player()
 	  m_HasShieldUpgrade{ false },
 	  m_HasAntennaUpgrade{ false }
 {
+	m_playerWon = false;
+	m_startEndgameScreen = false;
+	m_endgameScreenTimer = 0.0f;
+
 	m_maxHealth = 100;
 	m_fuelCapacity = 100.0f;
 	m_oxygenCapacity = 100.0f;
@@ -106,6 +134,13 @@ Player::Player()
 	m_stabilizerActive = true;
 	m_mousePosX = 0.0f;
 	m_mousePosY = 0.0f;
+	m_lockCamera = false;
+
+	m_immortal = false;
+	m_startShake = true;
+	m_initiateWarp = false;
+	m_chargeTime = 5.0f;
+	m_currentChargeTime = 0.0f;
 
 	m_ship = nullptr;
 	m_camera = nullptr;
@@ -155,6 +190,30 @@ bool Player::update(const std::vector<Planet*>& planets)
 	ImGui::Text("Storage Usage %d/%d", m_storageUsage, m_storageCapacity);
 	ImGui::End();
 #endif
+
+	if (m_initiateWarp) {
+		ActivateWarpDrive();
+	}
+
+	if (m_startEndgameScreen) {
+		m_lockCamera = true;
+		m_playerControlsActive = false;
+		m_endgameScreenTimer += (float)m_time.DeltaTime();
+
+		if (m_playerWon) {
+			DisplayEndgameText detEvent(L"You Won!");
+			EventBuss::Get().Delegate(detEvent);
+		}
+		else {
+			DisplayEndgameText detEvent(L"Game Over");
+			EventBuss::Get().Delegate(detEvent);
+		}
+
+		if (m_endgameScreenTimer > 3.0f) {
+			GameOverEvent goEvent(m_playerWon);
+			EventBuss::Get().Delegate(goEvent);
+		}
+	}
 
 	DirectX::XMFLOAT3 shipForce = { 0.0f, 0.0f, 0.0f };
 
@@ -232,9 +291,11 @@ bool Player::update(const std::vector<Planet*>& planets)
 		m_ship->UpdatePhysics();
 	}
 
-	DirectX::XMFLOAT3 a = m_ship->getCenter();
-	DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
-	m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
+	if (!m_lockCamera) {
+		DirectX::XMFLOAT3 a = m_ship->getCenter();
+		DirectX::XMFLOAT4 shipCenter = { a.x, a.y, a.z, 1.0f };
+		m_camera->update(DirectX::XMLoadFloat4(&shipCenter));
+	}
 
 	//Check if fuel is empty:
 	if (m_inventory.fuel <= 0)
@@ -340,6 +401,9 @@ void Player::OnEvent(IEvent& event) noexcept
 						EventBuss::Get().Delegate(playSoundEvent);
 						m_stabilizerActive = true;
 					}
+				}
+				if (virKey == 'R' && m_ship->IsUpgraded( (size_t)8 )) {
+					m_initiateWarp = true;
 				}
 			}
 			if (state == KeyState::KeyRelease && m_playerControlsActive) {
@@ -487,12 +551,14 @@ void Player::DelegatePlayerInfo() noexcept
 
 void Player::UpdateHealth(int value)
 {
-	m_inventory.health += value;
-	if (m_inventory.health > m_maxHealth) {
-		m_inventory.health = m_maxHealth;
-	}
-	else if (m_inventory.health < 0) {
-		m_inventory.health = 0;
+	if (!m_immortal) {
+		m_inventory.health += value;
+		if (m_inventory.health > m_maxHealth) {
+			m_inventory.health = m_maxHealth;
+		}
+		else if (m_inventory.health <= 0) {
+			Kill();
+		}
 	}
 }
 
@@ -531,7 +597,15 @@ void Player::DetermineClosestPlanet(const std::vector<Planet*>& planets) noexcep
 
 void Player::Kill() noexcept
 {
-	m_inventory.health = 0;
+	if (!m_immortal) {
+		m_inventory.health = 0;
+		
+		DisplayEndgameText detEvent(L"Game Over");
+		EventBuss::Get().Delegate(detEvent);
+
+		m_playerWon = false;
+		m_startEndgameScreen = true;
+	}
 }
 
 const bool& Player::HasShieldUpgrade() const noexcept

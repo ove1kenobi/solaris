@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 Engine::Engine() noexcept
-	: m_Running{ true }, m_time{ 0.0 }, m_fps{ 0 }, m_Render2D{ nullptr }, m_scene{ nullptr }, m_MainMenuNotRunning{ false }
+	: m_Running{ true }, m_time{ 0.0 }, m_fps{ 0 }, m_Render2D{ nullptr }, m_scene{ nullptr }, m_MainMenuNotRunning{ false }, m_ResetGame{ false }
 {
 	m_gameTime.Update();
 }
@@ -15,8 +15,7 @@ Engine::~Engine()
 
 const bool Engine::Initialize()
 {
-	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent);
-	EventBuss::Get().AddListener(this, EventType::ToggleStartGame);
+	EventBuss::Get().AddListener(this, EventType::WindowCloseEvent, EventType::ToggleStartGame, EventType::GameOverEvent);
 
 	m_Render2D = new Render2D();
 	m_scene = new Scene();
@@ -100,13 +99,13 @@ void Engine::Run()
 		//Render:
 		Render();
 
-		//The player died, restart the scene.
-		if (m_scene->GetPlayerHealth() <= 0) {
+		if (m_ResetGame) {
+			m_ResetGame = false;
 			StopLoopingSoundEvent stopLoopEvent(SoundID::Warning);
 			EventBuss::Get().Delegate(stopLoopEvent);
 			//Deletes the scene aswell
 			m_LayerStack.RemoveFirst();
-			
+
 			m_Render2D->CleanUp();
 			delete m_Render2D;
 
@@ -141,6 +140,11 @@ void Engine::OnEvent(IEvent& event) noexcept
 	case EventType::ToggleStartGame: 
 	{
 		m_MainMenuNotRunning = true;
+		break;
+	}
+	case EventType::GameOverEvent:
+	{
+		m_ResetGame = true;
 		break;
 	}
 	default:

@@ -28,10 +28,11 @@ Render2D::Render2D() noexcept
 	  m_InGame{ false },
 	  m_CanWin{false},
 	  m_Credits{ false },
-	  m_Controls{ false }
+	  m_Controls{ false },
+	  m_DisplayText{ false }
 {
 	//Make render2D able to UI handle events (for now, only keyboard ones)
-	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::DelegatePlayerInfoEvent);
+	EventBuss::Get().AddListener(this, EventType::KeyboardEvent, EventType::DelegatePlayerInfoEvent, EventType::DisplayEndgameText);
 
 	if (AddFonts()) {
 		//Set start UI and load them all into an vector
@@ -45,6 +46,7 @@ Render2D::Render2D() noexcept
 		m_Modules.push_back(new ControlsUI());
 		m_Modules.push_back(new CreditsUI());
 		m_Modules.push_back(new PressWinUI());
+		m_Modules.push_back(new EndgameUI());
 
 		m_Modules.at(static_cast<int>(TypesUI::MainMenu))->m_pOnScreen = true;
 	}
@@ -63,6 +65,7 @@ Render2D::~Render2D() {
 
 	EventBuss::Get().RemoveListener(this, EventType::KeyboardEvent);
 	EventBuss::Get().RemoveListener(this, EventType::DelegatePlayerInfoEvent);
+	EventBuss::Get().RemoveListener(this, EventType::DisplayEndgameText);
 }
 
 const bool Render2D::Initialize() noexcept {
@@ -112,6 +115,10 @@ void Render2D::RenderUI() {
 
 		if(m_CanWin) {
 			m_Modules.at(static_cast<int>(TypesUI::PressWin))->Render();
+		}
+
+		if (m_DisplayText) {
+			m_Modules.at(static_cast<int>(TypesUI::Endgame))->Render();
 		}
 	}
 	//If not in game then render main menu
@@ -197,6 +204,13 @@ void Render2D::OnEvent(IEvent& event) noexcept {
 		{
 			DelegatePlayerInfoEvent& derivedEvent = static_cast<DelegatePlayerInfoEvent&>(event);
 			m_pPlayerInfo = derivedEvent.GetPlayerInfo();
+			break;
+		}
+		case EventType::DisplayEndgameText:
+		{
+			m_DisplayText = true;
+			std::wstring endgameText = static_cast<DisplayEndgameText*>(&event)->GetEndgameText();
+			static_cast<EndgameUI*>(m_Modules[(int)TypesUI::Endgame])->SetText(endgameText);
 			break;
 		}
 		default:
