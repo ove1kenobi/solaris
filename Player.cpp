@@ -90,7 +90,7 @@ void Player::ActivateWarpDrive()
 	if (m_currentChargeTime >= m_chargeTime) {
 		m_immortal = true;
 		m_playerWon = true;
-		m_startEndgameScreen = true;
+		m_playerIsDead = true;
 
 		m_ship->SetTilt(0.0f, 0.0f);
 		DirectX::XMFLOAT3 warpSpeed = m_camera->GetForwardVector() * 1000000.0f * (float)m_time.DeltaTime();
@@ -106,7 +106,7 @@ Player::Player()
 	  m_HasAntennaUpgrade{ false }
 {
 	m_playerWon = false;
-	m_startEndgameScreen = false;
+	m_playerIsDead = false;
 	m_endgameScreenTimer = 0.0f;
 
 	m_maxHealth = 100;
@@ -195,7 +195,7 @@ bool Player::update(const std::vector<Planet*>& planets)
 		ActivateWarpDrive();
 	}
 
-	if (m_startEndgameScreen) {
+	if (m_playerIsDead) {
 		m_lockCamera = true;
 		m_playerControlsActive = false;
 		m_endgameScreenTimer += (float)m_time.DeltaTime();
@@ -604,8 +604,13 @@ void Player::Kill() noexcept
 		EventBuss::Get().Delegate(detEvent);
 
 		m_playerWon = false;
-		m_startEndgameScreen = true;
+		m_playerIsDead = true;
 	}
+}
+
+bool Player::GetPlayerIsDead()
+{
+	return m_playerIsDead;
 }
 
 const bool& Player::HasShieldUpgrade() const noexcept

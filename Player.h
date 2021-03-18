@@ -40,7 +40,7 @@ private:
 
 	// General
 	bool m_playerWon;
-	bool m_startEndgameScreen;
+	bool m_playerIsDead;
 	float m_endgameScreenTimer;
 
 	// Resources
@@ -104,6 +104,7 @@ public:
 	int GetMaxHealth() noexcept;
 	void UpdateMaxHealth(int value);
 	void Kill() noexcept;
+	bool GetPlayerIsDead();
 	[[nodiscard]] const bool& HasShieldUpgrade() const noexcept;
 	[[nodiscard]] const bool& HasAntennaUpgrade() const noexcept;
 };

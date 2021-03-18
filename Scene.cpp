@@ -437,7 +437,9 @@ void Scene::Update() noexcept {
 		}
 	}
 
-	CheckForCollisions();
+	if (!m_player.GetPlayerIsDead()) {
+		CheckForCollisions();
+	}
 	GameObject* del = nullptr;
 	std::vector<GameObject*> remove;
 	for (GameObject* astr : this->m_gameObjects) {
