@@ -6,5 +6,5 @@ enum class EventType { WindowCloseEvent = 0, GetRenderObjectsEvent, SendRenderOb
 					   BindBackBufferEvent, RequestSunEvent, DelegateSunEvent, ResetDefaultViewportEvent, CreateShadowMapViewportEvent, SetShadowMapViewportEvent, SetShadowBlendStateEvent, ResetDefaultBlendStateEvent, DelegatePlanetDistanceEvent,
 					   PlaySoundEvent, SetMusicEvent, StopLoopingSoundEvent, DelegatePlayerInfoEvent, ToggleControlsEvent, ToggleTetheredEvent, ToggleStartGame,
 					   ToggleDamageHUD, ClearBackBufferEvent, GameEventSelectedEvent, CameraShakeEvent, DelegateUpgradeID, GameOverEvent, DisplayEndgameText,
-					   TogglePressToWinGame, ToggleCredits, ToggleControls
+					   TogglePressToWinGame, ToggleCredits, ToggleControls, TogglePauseGame
 };

@@ -84,6 +84,10 @@ private:
 	std::wstring m_pUnitText;
 	bool m_pMaxVelocity;
 
+	//Controler
+	D2D1_RECT_F m_pUpgradeTextBox;
+	std::wstring m_pUpgradeText;
+
 	bool m_pRenderCold;
 	bool m_pRenderHeat;
 	bool m_pRenderRadiation;

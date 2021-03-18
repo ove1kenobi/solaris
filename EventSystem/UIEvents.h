@@ -50,6 +50,24 @@ public:
 	}
 };
 
+class TogglePauseGame : public IEvent
+{
+private:
+
+public:
+	TogglePauseGame() noexcept = default;
+	virtual ~TogglePauseGame() noexcept = default;
+
+	[[nodiscard]] const EventType GetEventType() const noexcept override
+	{
+		return EventType::TogglePauseGame;
+	}
+	[[nodiscard]] const std::string GetDebugName() const noexcept override
+	{
+		return "TogglePauseGame";
+	}
+};
+
 class ToggleControls : public IEvent
 {
 private:

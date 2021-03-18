@@ -126,6 +126,10 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="UI\PauseUI.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="UI\PressInteractUI.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\pch.h</PrecompiledHeaderFile>
@@ -303,6 +307,7 @@
     <ClInclude Include="UI\HeadsUpDisplayUI.h" />
     <ClInclude Include="UI\MenuUI.h" />
     <ClInclude Include="UI\ModuleUI.h" />
+    <ClInclude Include="UI\PauseUI.h" />
     <ClInclude Include="UI\PressInteractUI.h" />
     <ClInclude Include="UI\PressWinUI.h" />
     <ClInclude Include="UI\RandomEventUI.h" />

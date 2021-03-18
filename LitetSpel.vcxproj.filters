@@ -94,6 +94,7 @@
     <ClCompile Include="UI\CreditsUI.cpp" />
     <ClCompile Include="UI\PressWinUI.cpp" />
     <ClCompile Include="UI\EndgameUI.cpp" />
+    <ClCompile Include="UI\PauseUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXCore.h" />
@@ -186,6 +187,7 @@
     <ClInclude Include="UI\CreditsUI.h" />
     <ClInclude Include="UI\PressWinUI.h" />
     <ClInclude Include="UI\EndgameUI.h" />
+    <ClInclude Include="UI\PauseUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SNoise.hlsli" />
