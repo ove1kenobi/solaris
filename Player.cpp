@@ -124,14 +124,14 @@ Player::Player()
 	m_inventory.health = 100;
 	m_inventory.fuel = 100.0f;
 	m_inventory.oxygen = 100.0f;
-	m_inventory.titanium = 100;
-	m_inventory.scrapMetal = 100;
-	m_inventory.nanotech = 100;
-	m_inventory.plasma = 5;
-	m_inventory.radium = 5;
-	m_inventory.khionerite = 5;
-	m_inventory.science = 15;
-	m_storageUsage = 450;
+	m_inventory.titanium = 0;
+	m_inventory.scrapMetal = 0;
+	m_inventory.nanotech = 0;
+	m_inventory.plasma = 0;
+	m_inventory.radium = 0;
+	m_inventory.khionerite = 0;
+	m_inventory.science = 0;
+	m_storageUsage = 0;
 	m_oxygenConsumption = 0.17f;
 	m_engineEfficiency = 1.0f;
 

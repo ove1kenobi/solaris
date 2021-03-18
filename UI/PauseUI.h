@@ -17,6 +17,7 @@ private:
 	UINT32 m_pCyan;
 	UINT32 m_pLightBlue;
 	UINT32 m_pDarkblue;
+	UINT32 m_pGray;
 
 	//Title
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTitleFormat;

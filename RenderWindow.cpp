@@ -34,12 +34,12 @@ RenderWindow::RenderWindow()
     winRect.right = m_clientWinWidth + winRect.left;
     winRect.top = 100;
     winRect.bottom = m_clientWinHeight + winRect.top;*/
-    AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
+    //AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
 
     m_winHandle = CreateWindowEx(0,                                              // Optional window style
                                  className,
                                  windowTitle,
-                                 WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,       // Window style    //WS_POPUP | WS_VISIBLE if we want fullscreen
+        WS_POPUP | WS_VISIBLE, // WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,       // Window style    //WS_POPUP | WS_VISIBLE if we want fullscreen
                                  0, 0, winRect.right - winRect.left, winRect.bottom - winRect.top,
                                  nullptr,                                        // Parent window
                                  nullptr,                                        // Menu

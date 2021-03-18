@@ -15,6 +15,7 @@ PauseUI::PauseUI() noexcept {
 	m_pCyan = 0x00ffff;
 	m_pLightBlue = 0x0BA4CC;
 	m_pDarkblue = 0x2741b4;
+	m_pGray = 0x393b3d;
 
 	m_IsHoveringReturn = false;
 	m_IsHoveringExit = false;
@@ -231,6 +232,15 @@ void PauseUI::RenderExit() {
 }
 
 void PauseUI::RenderScreen() {
+	this->UpdateBrush(D2D1::ColorF::Black, 0.5f);
+	m_pRenderTarget2D->FillRectangle(D2D1::RectF(
+		0.0f,
+		0.0f,
+		m_pWindowWidth,
+		m_pWindowHeight
+	), m_pBrush.Get());
+	this->UpdateBrush(m_pGray, 1.0f);
+	m_pRenderTarget2D->FillRectangle(m_pScreen, m_pBrush.Get());
 	this->UpdateBrush(m_pDarkblue, 0.5f);
 	m_pRenderTarget2D->FillRectangle(m_pScreen, m_pBrush.Get());
 
