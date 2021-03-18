@@ -141,7 +141,7 @@ Player::Player()
 	m_immortal = false;
 	m_startShake = true;
 	m_initiateWarp = false;
-	m_chargeTime = 10.5f;
+	m_chargeTime = 13.0f;
 	m_currentChargeTime = 0.0f;
 
 	m_ship = nullptr;
@@ -393,12 +393,16 @@ void Player::OnEvent(IEvent& event) noexcept
 				if (virKey == 'Q') {
 					if (m_stabilizerActive)
 					{
+						PlaySoundEvent avtivateSound(SoundID::ActivateStabilizers, false);
+						EventBuss::Get().Delegate(avtivateSound);
 						StopLoopingSoundEvent stopPlaySoundEvent(SoundID::Stabilizers); 
 						EventBuss::Get().Delegate(stopPlaySoundEvent);
 						m_stabilizerActive = false;
 					}
 					else
 					{
+						PlaySoundEvent avtivateSound(SoundID::ActivateStabilizers, false);
+						EventBuss::Get().Delegate(avtivateSound);
 						PlaySoundEvent playSoundEvent(SoundID::Stabilizers, true);
 						EventBuss::Get().Delegate(playSoundEvent);
 						m_stabilizerActive = true;

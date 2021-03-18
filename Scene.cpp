@@ -575,7 +575,7 @@ void Scene::CheckForCollisions() noexcept
 					}
 					else
 					{
-						PlaySoundEvent soundEvent(SoundID::AsteroidCollision, false);
+						PlaySoundEvent soundEvent(SoundID::AsteroidCollision, false, 0.5f);
 						EventBuss::Get().Delegate(soundEvent);
 					}
 				}
@@ -590,7 +590,7 @@ void Scene::CheckForCollisions() noexcept
 					}
 					else
 					{
-						PlaySoundEvent soundEvent(SoundID::AsteroidCollision, false);
+						PlaySoundEvent soundEvent(SoundID::AsteroidCollision, false, 0.5f);
 						EventBuss::Get().Delegate(soundEvent);
 					}
 				}

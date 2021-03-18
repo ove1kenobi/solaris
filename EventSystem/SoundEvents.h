@@ -14,7 +14,8 @@ enum class SoundID {
 	Warning,
 	Click,
 	Scan,
-	WarpDrive
+	WarpDrive,
+	ActivateStabilizers
 };
 
 enum class MusicID {

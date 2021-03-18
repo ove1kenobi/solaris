@@ -84,6 +84,10 @@ bool SoundManager::Initialize(float musicVolume, float sfxVolumn)
 		return false;
 	else
 		m_sounds.push_back(buffer);
+	if (!buffer.loadFromFile("Sounds/Stabilizers_activate.wav"))
+		return false;
+	else
+		m_sounds.push_back(buffer);
 
 	for (unsigned int i = 0; i < m_sounds.size(); i++) {
 		m_loopingSounds.push_back(sf::Sound(m_sounds[i]));
