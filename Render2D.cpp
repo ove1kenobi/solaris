@@ -124,10 +124,6 @@ void Render2D::RenderUI() {
 			m_Modules.at(static_cast<int>(TypesUI::UpgradeScreen))->Render();
 		}
 
-		if(m_CanWin) {
-			m_Modules.at(static_cast<int>(TypesUI::PressWin))->Render();
-		}
-
 		if (m_DisplayText) {
 			m_Modules.at(static_cast<int>(TypesUI::Endgame))->Render();
 		}
