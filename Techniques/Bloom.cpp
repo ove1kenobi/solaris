@@ -11,8 +11,8 @@ Bloom::Bloom() noexcept
 const bool Bloom::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice)
 {
 	D3D11_TEXTURE2D_DESC textureDescriptor = {};
-	textureDescriptor.Width = 1880;
-	textureDescriptor.Height = 1040;
+	textureDescriptor.Width = 1920;
+	textureDescriptor.Height = 1080;
 	textureDescriptor.MipLevels = 1u;
 	textureDescriptor.ArraySize = 1u;
 	textureDescriptor.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -45,7 +45,7 @@ const bool Bloom::Initialize(const Microsoft::WRL::ComPtr<ID3D11Device>& pDevice
 										 &m_pShaderResourceViewBright), 
 										 "CreateShaderResourceView");
 
-	if (!m_GaussianBlur.Initialize(pDevice, 1880, 1040))
+	if (!m_GaussianBlur.Initialize(pDevice, 1920, 1080))
 		return false;
 
 	return true;
